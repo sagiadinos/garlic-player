@@ -37,9 +37,15 @@ class TPlaylist : public TBase
 {
     Q_OBJECT
 public:
-    explicit   TPlaylist(QObject * parent = 0);
+               TPlaylist(QObject * parent = 0);
     TFoundTag  getFoundTag();
+    QString    getType(){ return "base_playlist";}
+    void       beginPlay(){}
+public slots:
+    void       emitfinished(){}
 protected:
+    QList<QDomElement>            ar_playlist;
+    QList<QDomElement>::iterator  iterator;
     TFoundTag  found_tag;
     QObject   *parent_playlist;
     void       reactByTag();
@@ -52,6 +58,8 @@ protected:
     void       doSeq();
     void       doPar();
     void       doExcl();
+protected slots:
+    void play(){}
 signals:
     void       foundMedia(QObject *, TFoundTag found_tag);
     void       foundPlaylist(QObject *, TFoundTag found_tag);

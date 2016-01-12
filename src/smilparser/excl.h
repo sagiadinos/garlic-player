@@ -27,7 +27,14 @@ class TExcl : public TPlaylist
 public:
     TExcl(QObject * parent = 0);
     bool parse(QDomElement element);
+    bool         next();
     QString      getType(){return "excl";}
+    void     beginPlay();
+public slots:
+    void     play();
+private:
+    int     count_childs       = 0;
+    void    setPlaylist();
 };
 
 #endif // TEXCL_H

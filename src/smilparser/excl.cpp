@@ -24,9 +24,72 @@ TExcl::TExcl(QObject *parent)
     setObjectName("TExcl");
 }
 
+
 bool TExcl::parse(QDomElement element)
 {
-    Q_UNUSED(element);
+    actual_element = element; // must set to get inherited Attributed
+    setBaseAttributes();
+    if (element.hasChildNodes())
+    {
+        setPlaylist();
+        QDomNodeList childs = element.childNodes();
+        int count_childs    = childs.length();
+        for (int i = 0; i < count_childs; i++)
+        {
+            // ToDo: Determine which of the Child elements shoud be active
+            actual_element = childs.item(i).toElement();
+        }
+
+    }
     return false;
 }
 
+void TExcl::beginPlay()
+{
+    // ToDo: get Info about begin from TTiming.
+    reactByTag();
+}
+
+void TExcl::play()
+{
+
+}
+
+
+/**
+ * @brief TExcl::next means to stop, pause, defer the active element
+ *        and set another element to active.
+ *
+ * @return
+ */
+bool TExcl::next()
+{
+//    if (active_childs == 0)
+//    {
+//        if(checkRepeatCountStatus())
+//        {
+//            for (int i = 0; i < count_childs; i++)
+//            {
+//                actual_element = childs.item(i).toElement();
+//                reactByTag();
+//            }
+//        }
+//        else
+//        {
+//            // ToDo: get Info about end from TTiming. may be is it necessary not to end the playlist.
+//            end();
+//        }
+//    }
+    return false;
+}
+
+void TExcl::setPlaylist()
+{
+    // put all playlist elements into a QList
+    QDomNodeList childs = actual_element.childNodes();
+    count_childs        = childs.length();
+    for (int i = 0; i < count_childs; i++)
+    {
+        ar_playlist.append(childs.item(i).toElement());
+    }
+}

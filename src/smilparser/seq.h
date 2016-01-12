@@ -34,9 +34,10 @@ public:
     bool next();
     bool previous();
     QString      getType(){return "seq";}
-protected:
-    QList<QDomElement>            ar_playlist;
-    QList<QDomElement>::iterator  iterator;
+    void     beginPlay();
+public slots:
+    void     play();
+    void     emitfinished();
 private:
     bool    random            = false;
     int     pickNumber        = 0;

@@ -16,38 +16,38 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#ifndef TAUDIO_H
-#define TAUDIO_H
+#ifndef TEST_SMILTIMINGS_H
+#define TEST_SMILTIMINGS_H
 
-#include "media.h"
-#include <QtAV>
-#include <QtAVWidgets>
+#include "AutoTest.h"
+#include "smilparser/timings/timing.h"
 
-struct showAudio
-{
-    QString media_type;
-    QString region;
-};
-
-class TAudio :public TMedia
+/**
+ * @brief To save a test file this will test TTiming and TClockvalue which is inherited from TTiming
+ */
+class testTiming : public TTiming
 {
     Q_OBJECT
 public:
-    TAudio(QObject * parent = 0);
-    ~TAudio();
-    bool      parse(QDomElement domelement);
-    showAudio getMediaForShow();
-    QString   getType() {return "audio";}
-    void     beginPlay();
-public slots:
-    void     play();
-    void      emitfinished();
-protected:
-    QObject *parent_object;
-    QtAV::VideoOutput *output;
-    QtAV::AVPlayer    *media_player;
-    showAudio show_audio;
-    void      setAttributes();
+    testTiming(QObject * parent = 0){Q_UNUSED(parent);}
+    qint64    test_calculateDuration(QString dur){return calculateMilliseconds(dur);}
+    WallClock test_parseWallclock(QString iso_date){return parseWallclock(iso_date);}
 };
 
-#endif // TAUDIO_H
+
+class test_SmilTimings : public QObject
+{
+    Q_OBJECT
+private slots:
+    void initTestCase(){}
+    void test_calculateDuration();
+    void test_parseWallclock();
+    void test_checkStatus();
+    void test_getNextTrigger();
+    void cleanupTestCase(){}
+};
+
+DECLARE_TEST(test_SmilTimings)
+
+
+#endif // TEST_SMILTIMINGS_H

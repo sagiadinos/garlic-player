@@ -50,7 +50,6 @@ void TPlaylist::reactByTag()
         doExcl();
 }
 
-
 void TPlaylist::doRef()
 {
     if (actual_element.hasAttribute("type"))

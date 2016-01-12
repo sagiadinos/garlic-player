@@ -43,11 +43,21 @@ showVideo TVideo::getMediaForShow()
     return show_video;
 }
 
+void TVideo::beginPlay()
+{
+    setTimedStart();
+    return;
+}
+
 void TVideo::play()
 {
-   media_player->play();
-   return;
+    if (!setTimedEnd()) // when end or duration is not specified end on video duration
+        connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished()));
+    media_player->play();
+    emit started(parent_playlist, this);
+    return;
 }
+
 
 QString TVideo::getFit()
 {
@@ -64,7 +74,6 @@ void TVideo::setAttributes()
     show_video.region      = region;
     show_video.video_item  = new QtAV::GraphicsItemRenderer;
     media_player           = new QtAV::AVPlayer;
-    connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished())); // 10s
     media_player->setRenderer(show_video.video_item);
 
     if (src.mid(0, 4) == "http")

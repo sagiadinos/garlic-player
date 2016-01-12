@@ -42,10 +42,11 @@ public:
     bool     parse(QDomElement domelement);
     showImg  getMediaForShow();
     QString  getFit();
-    void  play();
     QString  getType() {return "image";}
+    void     beginPlay();
 public slots:
-    void        emitfinished();
+    void     play();
+    void     emitfinished();
 protected:
     showImg show_img;
     void    setAttributes();

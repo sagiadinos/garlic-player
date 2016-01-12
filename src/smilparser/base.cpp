@@ -26,26 +26,66 @@ TBase::TBase(QObject * parent)
 
 // ========================= protected methods ======================================================
 
+void TBase::setTimedStart()
+{
+    if (begin.getStatus() == "ms") // look if begin should be delayed
+        QTimer::singleShot(begin.getMilliseconds(), this, SLOT(play())); // 10s
+    else // play imediately
+        play();
+}
+
+bool TBase::setTimedEnd()
+{
+    bool ret = false;
+    if (dur.getStatus() == "ms") // set end of simple duration
+    {
+        if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
+            QTimer::singleShot(end.getMilliseconds(), this, SLOT(emitfinished())); // 10s
+        else
+            QTimer::singleShot(dur.getMilliseconds(), this, SLOT(emitfinished())); // 10s
+        ret = true;
+    }
+    else if (dur.getStatus() == "indefinite" || end.getStatus() == "indefinite")
+        ret = true;  // end time is set so no media end can be used
+    else if (end.getStatus() == "wallclock")
+    {
+        // Todo get
+    }
+    else
+    {
+        //  if end specified simple duration is indefinited
+        if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
+        {
+            QTimer::singleShot(end.getMilliseconds(), this, SLOT(emitfinished())); // 10s
+            ret = true;
+        }
+
+    }
+    return ret;
+}
+
+
+
 void TBase::setBaseAttributes()
 {
     if (actual_element.hasAttribute("id"))
         id = actual_element.attribute("id");
     if (actual_element.hasAttribute("xml:id")) // In SMIL 3.0 superset old SMIL 2.0 id.
         id = actual_element.attribute("xml:id");
-    if (actual_element.hasAttribute("begin"))
-        begin = actual_element.attribute("begin");
-    if (actual_element.hasAttribute("end"))
-        end = actual_element.attribute("end");
-    if (actual_element.hasAttribute("title"))
-        title = actual_element.attribute("title");
-    if (actual_element.hasAttribute("title"))
-        title = actual_element.attribute("title");
-    if (actual_element.hasAttribute("dur"))
+    if (id == "") // get line and column number as alternative when no
     {
-        dur       = actual_element.attribute("dur");
-        if (dur != "media" && dur != "indefinite")
-            duration  = calculateDuration(dur);
+        id = "T"+QString(actual_element.lineNumber()) + QString(actual_element.columnNumber());
     }
+
+    if (actual_element.hasAttribute("title"))
+        title = actual_element.attribute("title");
+
+    if (actual_element.hasAttribute("begin"))
+        begin.parse(actual_element.attribute("begin"));
+    if (actual_element.hasAttribute("end"))
+        end.parse(actual_element.attribute("end"));
+    if (actual_element.hasAttribute("dur"))
+        dur.parse(actual_element.attribute("dur"));
     if (actual_element.hasAttribute("repeatCount"))
         setRepeatCount(actual_element.attribute("repeatCount"));
     return;

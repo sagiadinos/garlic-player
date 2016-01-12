@@ -42,13 +42,14 @@ public:
     bool     parse(QDomElement domelement);
     showWeb  getMediaForShow();
     QString  getFit();
-    void  play();
     QString  getType() {return "web";}
+    void     beginPlay();
 public slots:
-    void        emitfinished();
+    void     play();
+    void     emitfinished();
 protected:
-    showWeb show_web;
-    void    setAttributes();
+    showWeb  show_web;
+    void     setAttributes();
 };
 
 

@@ -25,6 +25,7 @@
 #include <QtXml>
 #include <QDebug>
 #include <configuration.h>
+#include "smilparser/timings/timing.h"
 
 /**
  * @brief The abstract TBase class should inherited for all smil elements in body section
@@ -49,42 +50,38 @@ class TBase : public QObject
     Q_OBJECT
 public:
     explicit TBase(QObject * parent = 0);
-    virtual  QString getType() = 0;
-    virtual  bool    parse(QDomElement element) = 0;
-
-    QString     getDur(){return dur;}
-    qint64      getDuration(){return duration;}
-    QString     getID(){return id;}
-    QString     getBegin(){return begin;}
-    QString     getEnd(){return end;}
-    QString     getTitle(){return title;}
+    virtual  QString  getType() = 0;
+    virtual  bool     parse(QDomElement element) = 0; // prepare for begin
+    virtual  void     beginPlay() = 0;      // what to do when parent sends an order to begin executions
+             QString  getID(){return id;}
+             QString  getTitle(){return title;}
+public slots:
+    virtual void        emitfinished() = 0;
 protected:
-    QDomElement actual_element;
-    QString     dur            = "";
-    qint64      duration       = 0;  // conversion in milliseconds
-    QString     id             = "";
-    QString     begin          = "0";
-    qint64      begin_clock    = 0;  // use when begin has normal clock values like duration
-    int         begin_repeat   = 0;  // use when wallclock with repeat
-    int         begin_period   = 0;  // in millisceonds use when wallclock has period
+            QTimer      begin_timer, end_timer;
+            QDomElement actual_element;
+            QString     id                   = "";
+            TClockValue dur, min, max;
+            TTiming     begin, end;
+            QObject    *parent_playlist;
 
-    QString     end            = "";
-    qint64      end_clock      = 0;  // use when end has normal clock values like duration
-    int         end_repeat     = 0;  // use when end wallclock with repeat
-    int         end_period     = 0;  // in millisceonds use when wallclock has period
+            QString     title          = "";
 
-    QString     title          = "";
-
-    int         repeatCount    = 0;
-    int         internal_count = 1;
-    bool        indefinite     = false;
-    void        setBaseAttributes();
-    bool        checkRepeatCountStatus();
-    qint64      calculateDuration(QString duration);
+            int         repeatCount    = 0;
+            int         internal_count = 1;
+            bool        indefinite     = false;
+            void        setTimedStart();
+            bool        setTimedEnd();
+            void        setBaseAttributes();
+            bool        checkRepeatCountStatus();
+            qint64      calculateDuration(QString duration);
+protected slots:
+    virtual void play() = 0;
 private:
-    void        setRepeatCount(QString rC);
+            void        setRepeatCount(QString rC);
 signals:
-    void        finished(QObject * , QObject *);
+            void        started(QObject * , QObject *);
+            void        finished(QObject * , QObject *);
 };
 
 #endif // TBASE_H

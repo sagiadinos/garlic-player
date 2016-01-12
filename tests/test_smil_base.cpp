@@ -24,8 +24,6 @@ void Test_SmilBase::test_setBaseAttributes()
     // test with default
     testBase MyPlaylist;
     QCOMPARE(MyPlaylist.getID(), QString(""));
-    QCOMPARE(MyPlaylist.getBegin(), QString("0"));
-    QCOMPARE(MyPlaylist.getEnd(), QString(""));
     QCOMPARE(MyPlaylist.getTitle(), QString(""));
     QCOMPARE(MyPlaylist.getRepeatCount(), int(0));
     QCOMPARE(MyPlaylist.getIndefinite(), false);
@@ -41,7 +39,6 @@ void Test_SmilBase::test_setBaseAttributes()
     QCOMPARE(MyPlaylist.getID(), QString("old id"));
     QCOMPARE(MyPlaylist.getRepeatCount(), int(25));
     QCOMPARE(MyPlaylist.getIndefinite(), false);
-    QCOMPARE(MyPlaylist.getDuration(), qint64(23000));
 
     // test with new SMIL 3.0 xml:id and rest of supporteed values
     document.setContent(QString("<seq id=\"old id\" xml:id=\"xml id\" begin=\"10s\" end=\"20s\" title=\"test seq\" repeatCount=\"indefinite\" />"));
@@ -50,8 +47,6 @@ void Test_SmilBase::test_setBaseAttributes()
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_setBaseAttributes();
     QCOMPARE(MyPlaylist.getID(), QString("xml id"));
-    QCOMPARE(MyPlaylist.getBegin(), QString("10s"));
-    QCOMPARE(MyPlaylist.getEnd(), QString("20s"));
     QCOMPARE(MyPlaylist.getTitle(), QString("test seq"));
     QCOMPARE(MyPlaylist.getIndefinite(), true);
     return;
@@ -69,21 +64,6 @@ void Test_SmilBase::test_checkRepeatCountStatus()
     QCOMPARE(MyPlaylist.test_checkRepeatCountStatus(), false);
     MyPlaylist.setForRepeatCountCheck(2, 1, false);
     QCOMPARE(MyPlaylist.test_checkRepeatCountStatus(), true);
-    return;
-}
-
-void Test_SmilBase::test_calculateDuration()
-{
-    testBase MyPlaylist;
-    // Full clock
-    QCOMPARE(MyPlaylist.test_calculateDuration("02:31:05.5"), qint64(9065500));
-    QCOMPARE(MyPlaylist.test_calculateDuration("5.02s"), qint64(5020));
-    QCOMPARE(MyPlaylist.test_calculateDuration("5.02"), qint64(5020));
-    QCOMPARE(MyPlaylist.test_calculateDuration("2h"), qint64(7200000));
-    QCOMPARE(MyPlaylist.test_calculateDuration("2.213h"), qint64(7966800));
-    QCOMPARE(MyPlaylist.test_calculateDuration("12.7713h"), qint64(45976680));
-    QCOMPARE(MyPlaylist.test_calculateDuration("11min"), qint64(660000));
-    QCOMPARE(MyPlaylist.test_calculateDuration("4.15min"), qint64(249000));
     return;
 }
 

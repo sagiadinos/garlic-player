@@ -30,17 +30,17 @@ bool TPar::parse(QDomElement element)
     setBaseAttributes();
     if (element.hasChildNodes())
     {
-        childs       = element.childNodes();
-        count_childs = childs.length();
-        for (int i = 0; i < count_childs; i++)
-        {
-            actual_element = childs.item(i).toElement();
-            reactByTag();
-        }
-
+        setPlaylist();
     }
     return false;
 }
+
+void TPar::beginPlay()
+{
+    // ToDo: get Info about begin from TTiming.
+    play();
+}
+
 
 /**
  * @brief TPar::next means that it looks if there are no active elements
@@ -54,16 +54,36 @@ bool TPar::next()
     {
         if(checkRepeatCountStatus())
         {
-            for (int i = 0; i < count_childs; i++)
-            {
-                actual_element = childs.item(i).toElement();
-                reactByTag();
-            }
+            play();
         }
         else
-            emit finished(parent_playlist, this);
+        {
+            // ToDo: get Info about end from TTiming. may be is it necessary not to end the playlist.
+
+        }
     }
     return false;
+}
+
+void TPar::play()
+{
+    for (int i = 0; i < count_childs; i++)
+    {
+        actual_element = childs.item(i).toElement();
+        reactByTag();
+    }
+    return;
+}
+
+void TPar::setPlaylist()
+{
+    // put all playlist elements into a QList
+    QDomNodeList childs = actual_element.childNodes();
+    count_childs        = childs.length();
+    for (int i = 0; i < count_childs; i++)
+    {
+        ar_playlist.append(childs.item(i).toElement());
+    }
 }
 
 
@@ -77,5 +97,6 @@ void TPar::decActiveChilds()
     active_childs--;
     return;
 }
+
 
 // next means here that it should be check only if playliste can be started from begin

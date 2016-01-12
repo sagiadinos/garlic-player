@@ -40,9 +40,10 @@ public:
     bool      parse(QDomElement domelement);
     showVideo getMediaForShow();
     QString   getFit();
-    void      play();
     QString   getType() {return "video";}
+    void      beginPlay();
 public slots:
+    void      play();
     void      emitfinished();
 protected:
     QtAV::AVPlayer *media_player;

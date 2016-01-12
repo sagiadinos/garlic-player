@@ -43,11 +43,18 @@ showImg TImage::getMediaForShow()
     return show_img;
 }
 
+void TImage::beginPlay()
+{
+    setTimedStart();
+    return;
+}
+
 void TImage::play()
 {
-    if (dur != "media" && dur != "indefinite")
-        QTimer::singleShot(getDuration(), this, SLOT(emitfinished())); // 10s
-   return;
+    if (!setTimedEnd()) // when end or duration is not specified stop imediately
+        QTimer::singleShot(100, this, SLOT(emitfinished())); // 10s
+    emit started(parent_playlist, this);
+    return;
 }
 
 QString TImage::getFit()

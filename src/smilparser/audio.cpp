@@ -43,10 +43,19 @@ showAudio TAudio::getMediaForShow()
     return show_audio;
 }
 
+void TAudio::beginPlay()
+{
+    setTimedStart();
+    return;
+}
+
 void TAudio::play()
 {
-   media_player->play();
-   return;
+    if (!setTimedEnd()) // when end or duration is not specified end on video duration
+        connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished()));
+    media_player->play();
+    emit started(parent_playlist, this);
+    return;
 }
 
 // ====================  protected methods =================================

@@ -36,9 +36,36 @@ bool TSeq::parse(QDomElement element)
         setPlaylist();
         iterator       = ar_playlist.begin();
         actual_element = *iterator;
-        reactByTag();
     }
     return true;
+}
+
+void TSeq::beginPlay()
+{
+    if (begin.getStatus() == "ms") // look if begin should be delayed
+        QTimer::singleShot(begin.getMilliseconds(), this, SLOT(play())); // 10s
+    else // play imediately
+        play();
+   return;
+}
+
+void TSeq::play()
+{
+    if (dur.getStatus() == "ms")
+    {
+        if (end.getStatus() == "ms") // end attribute has priority over dur
+            QTimer::singleShot(end.getMilliseconds(), this, SLOT(emitfinished()));
+        else
+            QTimer::singleShot(dur.getMilliseconds(), this, SLOT(emitfinished()));
+    }
+    reactByTag();
+    emit started(parent_playlist, this);
+    return;
+}
+
+void TSeq::emitfinished()
+{
+
 }
 
 void TSeq::doMetaData()
@@ -82,7 +109,11 @@ bool TSeq::next()
             reactByTag();
         }
         else
+        {
+            // ToDo: get Info about end from TTiming. may bee is it secessary not end the playlist.
+            // cause dur or end-Attribute exeeds the length of all the sequential played media
             emit finished(parent_playlist, this);
+        }
     }
     return ret;
 }
@@ -94,7 +125,6 @@ bool TSeq::previous()
 
 void TSeq::setPlaylist()
 {
-    // put all playlist elements into a QVector-Array for fast random access
     QDomNodeList childs = actual_element.parentNode().childNodes();
     int          length = childs.length();
     QDomElement  element;

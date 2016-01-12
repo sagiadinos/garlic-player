@@ -39,10 +39,17 @@ bool TWeb::parse(QDomElement domelement)
     return true;
 }
 
+void TWeb::beginPlay()
+{
+    setTimedStart();
+    return;
+}
+
 void TWeb::play()
 {
-    if (dur != "media" && dur != "indefinite")
-        QTimer::singleShot(getDuration(), this, SLOT(emitfinished())); // 10s
+    if (!setTimedEnd()) // when end or duration is not specified stop imediately
+        QTimer::singleShot(100, this, SLOT(emitfinished())); // 10s
+    emit started(parent_playlist, this);
     return;
 }
 

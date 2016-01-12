@@ -67,12 +67,10 @@ protected:
     TSeq           *MySeq;
     TPar           *MyPar;
     TExcl          *MyExcl;
-    QSet<TSeq *>    seq_list;
-    QSet<TSeq *>::iterator actual_seq_playlist;
-    QSet<TPar *>    par_list;
-    QSet<TPar *>::iterator actual_par_playlist;
-    QSet<TExcl *>   excl_list;
-    QSet<TExcl *>::iterator actual_excl_playlist;
+    QHash<QString, QObject *> ar_playlists;
+    QHash<QString, QObject *>::iterator ar_playlists_iterator;
+//    QSet<QObject *> ar_media;
+//    QSet<QObject *>::iterator ar_media_iterator;
     showImg         ImgAttr;
 private:
     void selectPlaylistForNextAction(QObject *parent);

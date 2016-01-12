@@ -36,16 +36,15 @@ public:
             QString     getFileName();
             QString     getCacheControl();
             QString     getLogContentId();
-    virtual void        play()         = 0;
     virtual QString     getType() = 0;
 public slots:
-    virtual void        emitfinished() = 0;
+    virtual void        emitfinished(){}
 protected:
+
     QString region, src, exec, index_path  = "";
     QString filename, cache_control, log_content_id  = "";
     void   setBaseMediaAttributes();
     void   setBaseParameters();
-    QObject *parent_playlist;
 };
 
 #endif // MEDIA_H

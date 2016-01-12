@@ -31,10 +31,13 @@ public:
     QString      getType(){return "par";}
     void         incActiveChilds();
     void         decActiveChilds();
-protected:
-    QString      endsync            = "last";
+    void         beginPlay();
+protected slots:
+    void         play();
 private:
+    QString      endsync            = "last";
     QDomNodeList childs;
+    void         setPlaylist();
     int          active_childs      = 0;
     int          count_childs       = 0;
 

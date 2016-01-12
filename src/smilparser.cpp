@@ -25,9 +25,7 @@ TSmil::TSmil(QObject * parent)
 
 TSmil::~TSmil()
 {
-    seq_list.clear();
-    par_list.clear();
-    excl_list.clear();
+    ar_playlists.clear();
 }
 
 void TSmil::init(QString smil_index)
@@ -128,7 +126,7 @@ void TSmil::handleMedia(QObject *parent, TFoundTag found_tag)
     }
 
     QString playlist_type = parent->objectName();
-    if (playlist_type == "TPar")
+    if (playlist_type == "TPar")  // increment active child to determine end of a par
     {
         MyPar  = qobject_cast<TPar *> (parent);
         MyPar->incActiveChilds();
@@ -138,36 +136,42 @@ void TSmil::handleMedia(QObject *parent, TFoundTag found_tag)
 
 void TSmil::handlePlaylist(QObject *parent, TFoundTag found_tag)
 {
+    QDomElement dom_element = found_tag.dom_element;
     if (found_tag.name == "seq") // if first Time then init
     {
-        actual_seq_playlist = seq_list.insert(new TSeq(parent));
-        MySeq = *actual_seq_playlist;
+        MySeq  = new TSeq(parent);
+        MySeq->parse(dom_element);
+        if (ar_playlists.find(MySeq->getID()) != ar_playlists.end())
+            ar_playlists.insert(MySeq->getID(), MySeq);
         connect(MySeq, SIGNAL(foundMedia(QObject *, TFoundTag )), this, SLOT(handleMedia(QObject *, TFoundTag)));
         connect(MySeq, SIGNAL(finished(QObject *, QObject *)), this, SLOT(finishedPlaylist(QObject *, QObject *)));
         connect(MySeq, SIGNAL(foundPlaylist(QObject *, TFoundTag )), this, SLOT(handlePlaylist(QObject *, TFoundTag)));
-        MySeq->parse(found_tag.dom_element);
+        MySeq->beginPlay();
     }
     else if (found_tag.name == "par")
     {
-        actual_par_playlist = par_list.insert(new TPar(parent));
-        MyPar = *actual_par_playlist;
+        MyPar = new TPar(parent);
+        MyPar->parse(dom_element);
+        if (ar_playlists.find(MyPar->getID()) != ar_playlists.end())
+            ar_playlists.insert(MyPar->getID(), MyPar);
         connect(MyPar, SIGNAL(foundMedia(QObject *, TFoundTag )), this, SLOT(handleMedia(QObject *, TFoundTag)));
         connect(MyPar, SIGNAL(finished(QObject *, QObject *)), this, SLOT(finishedPlaylist(QObject *, QObject *)));
         connect(MyPar, SIGNAL(foundPlaylist(QObject *, TFoundTag )), this, SLOT(handlePlaylist(QObject *, TFoundTag)));
-        MyPar->parse(found_tag.dom_element);
+        MyPar->beginPlay();
     }
     else if (found_tag.name == "excl")
     {
-        actual_excl_playlist = excl_list.insert(new TExcl(parent));
-        MyExcl = *actual_excl_playlist;
+        MyExcl = new TExcl(parent);
+        MyExcl->parse(dom_element);
+        if (ar_playlists.find(MyExcl->getID()) != ar_playlists.end())
+           ar_playlists.insert(MyExcl->getID(), MyExcl);
         connect(MyExcl, SIGNAL(foundMedia(QObject *, TFoundTag )), this, SLOT(handleMedia(QObject *, TFoundTag)));
         connect(MyExcl, SIGNAL(finished(QObject *, QObject *)), this, SLOT(finishedPlaylist(QObject *, QObject *)));
         connect(MyExcl, SIGNAL(foundPlaylist(QObject *, TFoundTag )), this, SLOT(handlePlaylist(QObject *, TFoundTag)));
-        MyExcl->parse(found_tag.dom_element);
     }
 
     QString playlist_type = parent->objectName();
-    if (playlist_type == "TPar")
+    if (playlist_type == "TPar") // increment active child to determine end of par
     {
         MyPar  = qobject_cast<TPar *> (parent);
         MyPar->incActiveChilds();
@@ -177,14 +181,7 @@ void TSmil::handlePlaylist(QObject *parent, TFoundTag found_tag)
 
 void TSmil::finishedPlaylist(QObject *parent, QObject *playlist)
 {
-    QString playlist_type = playlist->objectName();
-    if (playlist_type == "TSeq")
-      seq_list.remove(qobject_cast<TSeq *> (playlist));
-    else if (playlist_type == "TPar")
-      par_list.remove(qobject_cast<TPar *> (playlist));
-    else if (playlist_type == "TExcl")
-      excl_list.remove(qobject_cast<TExcl *> (playlist));
-
+ //   ar_playlists.remove(playlist);
     selectPlaylistForNextAction(parent);
 }
 

@@ -32,7 +32,7 @@ TConfiguration::TConfiguration()
 
     QString absolute_path = dir.absolutePath();
     if (absolute_path.contains("/bin"))
-        base_path     = absolute_path.mid(0, absolute_path.length()-3)+"/";
+        base_path     = absolute_path.mid(0, absolute_path.length()-3); // "/" is set when xyz/bin
     else
         base_path     = absolute_path+"/";
 }

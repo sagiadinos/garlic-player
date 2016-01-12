@@ -29,15 +29,19 @@ public:
     testBase(QObject * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
     QString   getType(){return "test base";}
     bool      parse(QDomElement element){Q_UNUSED(element);return true;}
+    void      beginPlay(){}
     void      test_setBaseAttributes(){setBaseAttributes();}
     bool      test_checkRepeatCountStatus(){return checkRepeatCountStatus();}
-    qint64    test_calculateDuration(QString dur){return calculateDuration(dur);}
 
     void      setActiveElement(QDomElement element){actual_element = element;}
 
     void      setForRepeatCountCheck(int rC, int r_c, bool in){repeatCount=rC;internal_count=r_c;indefinite=in;}
     int       getRepeatCount(){return repeatCount;}
     bool      getIndefinite(){return indefinite;}
+public slots:
+    void        emitfinished(){}
+protected slots:
+    void play(){}
 };
 
 
@@ -48,7 +52,6 @@ private slots:
     void initTestCase(){}
     void test_setBaseAttributes();
     void test_checkRepeatCountStatus();
-    void test_calculateDuration();
     void cleanupTestCase(){}
 };
 
