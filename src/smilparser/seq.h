@@ -19,7 +19,7 @@
 #ifndef SEQ_H
 #define SEQ_H
 #include <QList>
-#include <smilparser/playlist.h>
+#include "smilparser/playlist.h"
 
 /**
  * @brief   The TSeq class parses Seq-Tag

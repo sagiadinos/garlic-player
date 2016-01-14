@@ -32,16 +32,10 @@ bool TExcl::parse(QDomElement element)
     if (element.hasChildNodes())
     {
         setPlaylist();
-        QDomNodeList childs = element.childNodes();
-        int count_childs    = childs.length();
-        for (int i = 0; i < count_childs; i++)
-        {
-            // ToDo: Determine which of the Child elements shoud be active
-            actual_element = childs.item(i).toElement();
-        }
-
     }
-    return false;
+    else
+        return false;
+    return true;
 }
 
 void TExcl::beginPlay()
@@ -55,7 +49,6 @@ void TExcl::play()
 
 }
 
-
 /**
  * @brief TExcl::next means to stop, pause, defer the active element
  *        and set another element to active.
@@ -64,32 +57,33 @@ void TExcl::play()
  */
 bool TExcl::next()
 {
-//    if (active_childs == 0)
-//    {
-//        if(checkRepeatCountStatus())
-//        {
-//            for (int i = 0; i < count_childs; i++)
-//            {
-//                actual_element = childs.item(i).toElement();
-//                reactByTag();
-//            }
-//        }
-//        else
-//        {
-//            // ToDo: get Info about end from TTiming. may be is it necessary not to end the playlist.
-//            end();
-//        }
-//    }
     return false;
 }
 
 void TExcl::setPlaylist()
 {
-    // put all playlist elements into a QList
     QDomNodeList childs = actual_element.childNodes();
     count_childs        = childs.length();
+    QDomElement  element;
     for (int i = 0; i < count_childs; i++)
     {
-        ar_playlist.append(childs.item(i).toElement());
+        element = childs.item(i).toElement();
+        if (element.tagName() == "priorityClass")
+            setPriorityClass(element);
+        else // if there is no priorityClass childs will be grouped to a "virtually priorityClass"
+        {
+           setPriorityClass(actual_element);
+           break; // mixing of elements with or no priorityClass are not allowed, cause it is a kind of nesting http://www.w3.org/TR/REC-smil/smil-timing.html#Timing-priorityClassElement
+        }
     }
+    return;
 }
+
+void TExcl::setPriorityClass(QDomElement element)
+{
+    TPriorityClass MyPriorityClass;
+//    if (MyPriorityClass.parse(element))
+//        ar_priorities.insert(MyPriorityClass);
+    return;
+}
+

@@ -62,7 +62,7 @@ qint64 TTiming::getNextTrigger(QDateTime datetime)
         if (wall_clock.repeats == -1)
         {
             // find out the next possible trigger based on the datetime of the wallclock
-            // Not very efficient when start date is years ago but premature optimization is the root of all evil
+            // Not very efficient when start date is years ago but premature optimization is the root of all evil ;-)
             int i = 0;
             do
             {

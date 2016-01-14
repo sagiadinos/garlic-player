@@ -26,35 +26,61 @@ TBody::TBody(QObject * parent)
 
 bool TBody::parse(QDomElement element)
 {
-    bool ret = false;
+    actual_element = element; // must set to get inherited Attributed
+    setBaseAttributes();
     if (element.hasChildNodes())
     {
-         actual_element = element.firstChildElement();
-         if (!actual_element.isNull())
-         {
-             reactByTag();
-             ret = true;
-         }
+        actual_element = element.firstChildElement();
+        setPlaylist();
+        iterator       = ar_playlist.begin();
+        actual_element = *iterator;
+    }
+    else
+        return false;
+    return true;
+}
+
+void TBody::beginPlay()
+{
+   play();
+   return;
+}
+
+void TBody::play()
+{
+    reactByTag();
+    emit started(parent_playlist, this);
+    return;
+}
+
+
+bool TBody::next()
+{
+    bool ret = false;
+    iterator++; // inc iterator first only when inc result smaller than  .end()
+    if (iterator < ar_playlist.end())  // cause .end() pointing to the imaginary item after the last item in the vector
+    {
+        actual_element = *iterator;
+        ret            = true;
+        reactByTag();
     }
     return ret;
 }
 
-bool TBody::next()
-{
-    QDomElement next = actual_element.nextSiblingElement();
-    if (next.isNull())
-        return false;
-    actual_element = next.toElement();
-    reactByTag();
-    return true;
-}
-
 bool TBody::previous()
 {
-    QDomElement next = actual_element.previousSiblingElement();
-    if (next.isNull())
-        return false;
-    actual_element = next;
-    reactByTag();
-    return true;
+     return true;
+}
+
+void TBody::setPlaylist()
+{
+    QDomNodeList childs = actual_element.parentNode().childNodes();
+    int          length = childs.length();
+    QDomElement  element;
+    for (int i = 0; i < length; i++)
+    {
+        element = childs.item(i).toElement();
+        ar_playlist.append(element);
+    }
+    return;
 }

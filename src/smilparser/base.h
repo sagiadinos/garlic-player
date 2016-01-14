@@ -27,6 +27,7 @@
 #include <configuration.h>
 #include "smilparser/timings/timing.h"
 
+
 /**
  * @brief The abstract TBase class should inherited for all smil elements in body section
  *        Here comes is the init of all common attributes:
@@ -49,6 +50,9 @@ class TBase : public QObject
 {
     Q_OBJECT
 public:
+    const int _stopped  = 0;
+    const int _playing  = 1;
+    const int _pausing  = 2;
     explicit TBase(QObject * parent = 0);
     virtual  QString  getType() = 0;
     virtual  bool     parse(QDomElement element) = 0; // prepare for begin
@@ -64,9 +68,8 @@ protected:
             TClockValue dur, min, max;
             TTiming     begin, end;
             QObject    *parent_playlist;
-
+            int         status         = 0;
             QString     title          = "";
-
             int         repeatCount    = 0;
             int         internal_count = 1;
             bool        indefinite     = false;

@@ -20,7 +20,6 @@
 #include <QLayout>
 
 TRegion::TRegion(QWidget *p)
-    //: QGraphicsView(parent)
 {
     parent = p;
     scene = new QGraphicsScene();

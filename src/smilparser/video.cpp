@@ -54,6 +54,7 @@ void TVideo::play()
     if (!setTimedEnd()) // when end or duration is not specified end on video duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished()));
     media_player->play();
+    status = _playing;
     emit started(parent_playlist, this);
     return;
 }
@@ -90,6 +91,7 @@ void TVideo::setAttributes()
 
 void TVideo::emitfinished()
 {
+    status = _stopped;
     emit finished(parent_playlist, this);
 }
 

@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :  QWidget(parent)
 
 void MainWindow::setSmilIndex(QString smil_path)
 {
+//    qDebug() << MyConfig.getPaths("var");
     MySmil = new TSmil();
     if (smil_path == "")
         MySmil->init(MyConfig.getPaths("var")+"simple_seq.smil");

@@ -41,7 +41,8 @@ void TSmil::beginSmilParsing()
     connect(MyBody, SIGNAL(foundMedia(QObject *, TFoundTag )), this, SLOT(handleMedia(QObject *, TFoundTag)));
     connect(MyBody, SIGNAL(finished(QObject *, QObject *)), this, SLOT(finishedPlaylist(QObject *, QObject *)));
     connect(MyBody, SIGNAL(foundPlaylist(QObject *, TFoundTag )), this, SLOT(handlePlaylist(QObject *, TFoundTag)));
-    MyBody->parse(MyFile.getBody());
+    if (MyBody->parse(MyFile.getBody()))
+        MyBody->beginPlay();
     return;
 }
 

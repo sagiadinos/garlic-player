@@ -19,22 +19,26 @@
 #ifndef TEXCL_H
 #define TEXCL_H
 
-#include <smilparser/playlist.h>
+#include "smilparser/priorityclass.h"
 
 class TExcl : public TPlaylist
 {
     Q_OBJECT
 public:
     TExcl(QObject * parent = 0);
-    bool parse(QDomElement element);
-    bool         next();
-    QString      getType(){return "excl";}
-    void     beginPlay();
+    bool      parse(QDomElement element);
+    bool      next();
+    QString   getType(){return "excl";}
+    void      beginPlay();
 public slots:
-    void     play();
+    void      play();
 private:
-    int     count_childs       = 0;
-    void    setPlaylist();
+    QQueue<QDomElement>                       pause_queue;
+    QSet<TPriorityClass>                ar_priorities;
+//    QHash<int, TPriorityClass>::iterator      iterator;
+    int       count_childs       = 0;
+    void      setPlaylist();
+    void      setPriorityClass(QDomElement element);
 };
 
 #endif // TEXCL_H

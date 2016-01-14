@@ -47,9 +47,13 @@ void TWeb::beginPlay()
 
 void TWeb::play()
 {
-    if (!setTimedEnd()) // when end or duration is not specified stop imediately
-        QTimer::singleShot(100, this, SLOT(emitfinished())); // 10s
-    emit started(parent_playlist, this);
+    if (setTimedEnd())
+    {
+        status = _playing;
+        emit started(parent_playlist, this);
+    }
+    else // when end or duration is not specified stop imediately
+        emitfinished();
     return;
 }
 
@@ -83,5 +87,6 @@ void TWeb::setAttributes()
 
 void TWeb::emitfinished()
 {
+    status = _stopped;
     emit finished(parent_playlist, this);
 }

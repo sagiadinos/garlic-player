@@ -19,7 +19,7 @@
 #ifndef TPAR_H
 #define TPAR_H
 
-#include <smilparser/playlist.h>
+#include "smilparser/playlist.h"
 
 class TPar : public TPlaylist
 {
