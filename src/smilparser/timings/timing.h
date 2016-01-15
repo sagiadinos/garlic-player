@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -21,8 +21,6 @@
 
 #include <QObject>
 #include <QDateTime>
-#include <QTimer>
-#include <QTimerEvent>
 #include <QRegularExpression>
 #include <timings/clock_value.h>
 #include <QDebug>
@@ -49,7 +47,6 @@ struct WallClock
  * @brief The Timing class parses values of begin, end and dur. It differs between full/partial clock, timecount or wallclock values
  *        in ISO 8601 datetime-format with periods and repeats enhancements.  ISo 8601 Datetimes can only be in begin or end attributes.
  *
- *        inits QTimer event for given value
  *
  * When Timer first event started in past and has repeats the class has to calculate rest of repeats until end or indefinite
  *

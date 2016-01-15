@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -20,7 +20,7 @@
 
 TExcl::TExcl(QObject *parent)
 {
-    Q_UNUSED(parent);
+    parent_playlist = parent;
     setObjectName("TExcl");
 }
 
@@ -40,14 +40,23 @@ bool TExcl::parse(QDomElement element)
 
 void TExcl::beginPlay()
 {
-    // ToDo: get Info about begin from TTiming.
-    reactByTag();
-}
+    setTimedStart();
+    return;
+ }
 
 void TExcl::play()
 {
 
 }
+
+
+void TExcl::changeActiveElement(QObject *element)
+{
+    Q_UNUSED(element);
+}
+
+
+
 
 /**
  * @brief TExcl::next means to stop, pause, defer the active element
@@ -81,9 +90,9 @@ void TExcl::setPlaylist()
 
 void TExcl::setPriorityClass(QDomElement element)
 {
-    TPriorityClass MyPriorityClass;
-//    if (MyPriorityClass.parse(element))
-//        ar_priorities.insert(MyPriorityClass);
+    TPriorityClass *MyPriorityClass = new TPriorityClass(this);
+    if (MyPriorityClass->parse(element))
+        ar_priorities.insert(MyPriorityClass);
     return;
 }
 

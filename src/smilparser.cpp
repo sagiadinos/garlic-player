@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -38,9 +38,8 @@ void TSmil::init(QString smil_index)
 void TSmil::beginSmilParsing()
 {
     MyBody = new TBody();
-    connect(MyBody, SIGNAL(foundMedia(QObject *, TFoundTag )), this, SLOT(handleMedia(QObject *, TFoundTag)));
-    connect(MyBody, SIGNAL(finished(QObject *, QObject *)), this, SLOT(finishedPlaylist(QObject *, QObject *)));
-    connect(MyBody, SIGNAL(foundPlaylist(QObject *, TFoundTag )), this, SLOT(handlePlaylist(QObject *, TFoundTag)));
+    connect(MyBody, SIGNAL(foundElement(QObject *, TFoundTag )), this, SLOT(handleFoundElement(QObject *, TFoundTag)));
+    connect(MyBody, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedElement(QObject *, QObject *)));
     if (MyBody->parse(MyFile.getBody()))
         MyBody->beginPlay();
     return;
@@ -88,123 +87,149 @@ void TSmil::next(TExcl *MyExcl)
     return;
 }
 
-void TSmil::handleMedia(QObject *parent, TFoundTag found_tag)
+void TSmil::handleFoundElement(QObject *parent, TFoundTag found_tag)
 {
     if (found_tag.name == "img")
     {
         TImage *MyImage = new TImage(parent);
-        MyImage->setIndexPath(index_path);
-        connect(MyImage, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedMedia(QObject *, QObject *)));
+        MyImage->setIndexPath(index_path); // must set before parse to find media
         MyImage->parse(found_tag.dom_element);
-        MyImage->play();
-        emit playMedia(MyImage);
+        if (ar_media.find(MyImage->getID()) != ar_media.end())
+           ar_media.insert(MyImage->getID(), MyImage);
+        connect(MyImage, SIGNAL(started(QObject *, QObject *)), this, SLOT(emitstartedElement(QObject *, QObject *)));
+        connect(MyImage, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedElement(QObject *, QObject *)));
+        MyImage->beginPlay();
     }
     else if (found_tag.name == "video")
     {
         TVideo *MyVideo = new TVideo(parent);
         MyVideo->setIndexPath(index_path);
-        connect(MyVideo, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedMedia(QObject *, QObject *)));
         MyVideo->parse(found_tag.dom_element);
-        MyVideo->play();
-        emit playMedia(MyVideo);
+        if (ar_media.find(MyVideo->getID()) != ar_media.end())
+           ar_media.insert(MyVideo->getID(), MyVideo);
+        connect(MyVideo, SIGNAL(started(QObject *, QObject *)), this, SLOT(emitstartedElement(QObject *, QObject *)));
+        connect(MyVideo, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedElement(QObject *, QObject *)));
+        MyVideo->beginPlay();
     }
     else if (found_tag.name == "audio")
     {
         TAudio *MyAudio = new TAudio(parent);
         MyAudio->setIndexPath(index_path);
-        connect(MyAudio, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedMedia(QObject *, QObject *)));
         MyAudio->parse(found_tag.dom_element);
-        MyAudio->play();
-        emit playMedia(MyAudio);
+        if (ar_media.find(MyAudio->getID()) != ar_media.end())
+           ar_media.insert(MyAudio->getID(), MyAudio);
+        connect(MyAudio, SIGNAL(started(QObject *, QObject *)), this, SLOT(emitstartedElement(QObject *, QObject *)));
+        connect(MyAudio, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedElement(QObject *, QObject *)));
+        MyAudio->beginPlay();
     }
     else if (found_tag.name == "web")
     {
         TWeb *MyWeb = new TWeb(parent);
-        connect(MyWeb, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedMedia(QObject *, QObject *)));
         MyWeb->parse(found_tag.dom_element);
-        MyWeb->play();
-        emit playMedia(MyWeb);
+        if (ar_media.find(MyWeb->getID()) != ar_media.end())
+           ar_media.insert(MyWeb->getID(), MyWeb);
+        connect(MyWeb, SIGNAL(started(QObject *, QObject *)), this, SLOT(emitstartedElement(QObject *, QObject *)));
+        connect(MyWeb, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedElement(QObject *, QObject *)));
+        MyWeb->beginPlay();
     }
-
-    QString playlist_type = parent->objectName();
-    if (playlist_type == "TPar")  // increment active child to determine end of a par
-    {
-        MyPar  = qobject_cast<TPar *> (parent);
-        MyPar->incActiveChilds();
-    }
-    return;
-}
-
-void TSmil::handlePlaylist(QObject *parent, TFoundTag found_tag)
-{
-    QDomElement dom_element = found_tag.dom_element;
     if (found_tag.name == "seq") // if first Time then init
     {
         MySeq  = new TSeq(parent);
-        MySeq->parse(dom_element);
+        MySeq->parse(found_tag.dom_element);
         if (ar_playlists.find(MySeq->getID()) != ar_playlists.end())
             ar_playlists.insert(MySeq->getID(), MySeq);
-        connect(MySeq, SIGNAL(foundMedia(QObject *, TFoundTag )), this, SLOT(handleMedia(QObject *, TFoundTag)));
-        connect(MySeq, SIGNAL(finished(QObject *, QObject *)), this, SLOT(finishedPlaylist(QObject *, QObject *)));
-        connect(MySeq, SIGNAL(foundPlaylist(QObject *, TFoundTag )), this, SLOT(handlePlaylist(QObject *, TFoundTag)));
+        connect(MySeq, SIGNAL(foundElement(QObject *, TFoundTag )), this, SLOT(handleFoundElement(QObject *, TFoundTag)));
+        connect(MySeq, SIGNAL(started(QObject *, QObject *)), this, SLOT(emitstartedElement(QObject *, QObject *)));
+        connect(MySeq, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedElement(QObject *, QObject *)));
         MySeq->beginPlay();
     }
     else if (found_tag.name == "par")
     {
         MyPar = new TPar(parent);
-        MyPar->parse(dom_element);
+        MyPar->parse(found_tag.dom_element);
         if (ar_playlists.find(MyPar->getID()) != ar_playlists.end())
             ar_playlists.insert(MyPar->getID(), MyPar);
-        connect(MyPar, SIGNAL(foundMedia(QObject *, TFoundTag )), this, SLOT(handleMedia(QObject *, TFoundTag)));
-        connect(MyPar, SIGNAL(finished(QObject *, QObject *)), this, SLOT(finishedPlaylist(QObject *, QObject *)));
-        connect(MyPar, SIGNAL(foundPlaylist(QObject *, TFoundTag )), this, SLOT(handlePlaylist(QObject *, TFoundTag)));
+        connect(MyPar, SIGNAL(foundElement(QObject *, TFoundTag )), this, SLOT(handleFoundElement(QObject *, TFoundTag)));
+        connect(MyPar, SIGNAL(started(QObject *, QObject *)), this, SLOT(emitstartedElement(QObject *, QObject *)));
+        connect(MyPar, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedElement(QObject *, QObject *)));
         MyPar->beginPlay();
     }
     else if (found_tag.name == "excl")
     {
         MyExcl = new TExcl(parent);
-        MyExcl->parse(dom_element);
+        MyExcl->parse(found_tag.dom_element);
         if (ar_playlists.find(MyExcl->getID()) != ar_playlists.end())
            ar_playlists.insert(MyExcl->getID(), MyExcl);
-        connect(MyExcl, SIGNAL(foundMedia(QObject *, TFoundTag )), this, SLOT(handleMedia(QObject *, TFoundTag)));
-        connect(MyExcl, SIGNAL(finished(QObject *, QObject *)), this, SLOT(finishedPlaylist(QObject *, QObject *)));
-        connect(MyExcl, SIGNAL(foundPlaylist(QObject *, TFoundTag )), this, SLOT(handlePlaylist(QObject *, TFoundTag)));
-    }
-
-    QString playlist_type = parent->objectName();
-    if (playlist_type == "TPar") // increment active child to determine end of par
-    {
-        MyPar  = qobject_cast<TPar *> (parent);
-        MyPar->incActiveChilds();
+        connect(MyExcl, SIGNAL(foundElement(QObject *, TFoundTag )), this, SLOT(handleFoundElement(QObject *, TFoundTag)));
+        connect(MyExcl, SIGNAL(started(QObject *, QObject *)), this, SLOT(emitstartedElement(QObject *, QObject *)));
+        connect(MyExcl, SIGNAL(finished(QObject *, QObject *)), this, SLOT(emitfinishedElement(QObject *, QObject *)));
+        MyExcl->beginPlay();
     }
     return;
 }
 
-void TSmil::finishedPlaylist(QObject *parent, QObject *playlist)
+
+void TSmil::emitstartedElement(QObject *parent, QObject *element)
 {
- //   ar_playlists.remove(playlist);
-    selectPlaylistForNextAction(parent);
+    QString type = element->objectName();
+    if (type == "TImage")
+    {
+        emit playMedia(element);
+    }
+    else if (type == "TVideo")
+    {
+        emit playMedia(element);
+    }
+    else if (type == "TAudio")
+    {
+        emit playMedia(element);
+    }
+    else if (type == "TWeb")
+    {
+        emit playMedia(element);
+    }
+    type = parent->objectName();
+    if (type == "TPar")  // increment active child to determine end of a par
+    {
+        MyPar  = qobject_cast<TPar *> (parent);
+        MyPar->incActiveChilds();
+    }
+
+    if (type == "TExcl")  // stop or pause the actual active element
+    {
+        MyExcl  = qobject_cast<TExcl *> (parent);
+        MyExcl->changeActiveElement(element); // stops or pause the other sibling elements
+    }
+
+    return;
 }
 
-void TSmil::emitfinishedMedia(QObject *parent, QObject *media)
-{
-    emit finishedMedia(media);
 
-    QString media_type = media->objectName();
-    if (media_type == "TImage")
-        delete qobject_cast<TImage *> (media);
-    else if (media_type == "TVideo")
-        delete qobject_cast<TVideo *> (media);
-    else if (media_type == "TAudio")
-        delete qobject_cast<TAudio *> (media);
-    else if (media_type == "TWeb")
-        delete qobject_cast<TWeb *> (media);
-    selectPlaylistForNextAction(parent);
-}
-
-void TSmil::selectPlaylistForNextAction(QObject *parent)
+void TSmil::emitfinishedElement(QObject *parent, QObject *element)
 {
-    QString type = parent->objectName();
+    QString type = element->objectName();
+    if (type == "TImage")
+    {
+        emit finishedMedia(element);
+        delete qobject_cast<TImage *> (element);
+    }
+    else if (type == "TVideo")
+    {
+        emit finishedMedia(element);
+        delete qobject_cast<TVideo *> (element);
+    }
+    else if (type == "TAudio")
+    {
+        emit finishedMedia(element);
+        delete qobject_cast<TAudio *> (element);
+    }
+    else if (type == "TWeb")
+    {
+        emit finishedMedia(element);
+        delete qobject_cast<TWeb *> (element);
+    }
+
+    type = parent->objectName();
     if (type == "TSeq")
         next(qobject_cast<TSeq *> (parent));
     else if (type == "TPar")

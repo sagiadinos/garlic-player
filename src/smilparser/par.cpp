@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -37,8 +37,25 @@ bool TPar::parse(QDomElement element)
 
 void TPar::beginPlay()
 {
-    // ToDo: get Info about begin from TTiming.
-    play();
+    setTimedStart();
+    return;
+}
+
+void TPar::play()
+{
+    if (setTimedEnd() || ar_playlist.length() > 0)
+    {
+        for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
+        {
+            actual_element = *iterator;
+            reactByTag();
+        }
+        status   = _playing;
+        emit started(parent_playlist, this);
+    }
+    else // when end or duration is not specified or no child elements stop imediately
+        emitfinished();
+    return;
 }
 
 
@@ -65,15 +82,6 @@ bool TPar::next()
     return false;
 }
 
-void TPar::play()
-{
-    for (int i = 0; i < count_childs; i++)
-    {
-        actual_element = childs.item(i).toElement();
-        reactByTag();
-    }
-    return;
-}
 
 void TPar::setPlaylist()
 {

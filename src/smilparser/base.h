@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -24,9 +24,9 @@
 #include <QStringList>
 #include <QtXml>
 #include <QDebug>
+#include <QTimer>
 #include <configuration.h>
 #include "smilparser/timings/timing.h"
-
 
 /**
  * @brief The abstract TBase class should inherited for all smil elements in body section
@@ -52,17 +52,22 @@ class TBase : public QObject
 public:
     const int _stopped  = 0;
     const int _playing  = 1;
-    const int _pausing  = 2;
+    const int _paused   = 2;
     explicit TBase(QObject * parent = 0);
     virtual  QString  getType() = 0;
     virtual  bool     parse(QDomElement element) = 0; // prepare for begin
     virtual  void     beginPlay() = 0;      // what to do when parent sends an order to begin executions
+             void     pause();
+             void     stop();
+             void     resume();
+             int      getStatus(){return status;}
              QString  getID(){return id;}
              QString  getTitle(){return title;}
 public slots:
     virtual void        emitfinished() = 0;
 protected:
-            QTimer      begin_timer, end_timer;
+            QTimer      *begin_timer, *end_timer;
+            int         begin_remaining, end_remaining;
             QDomElement actual_element;
             QString     id                   = "";
             TClockValue dur, min, max;

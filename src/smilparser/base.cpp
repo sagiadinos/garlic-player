@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -21,6 +21,49 @@
 TBase::TBase(QObject * parent)
 {
     Q_UNUSED(parent);
+    begin_timer = new QTimer(this);
+    connect(begin_timer, SIGNAL(timeout()), this, SLOT(play()));
+    end_timer = new QTimer(this);
+    connect(end_timer, SIGNAL(timeout()), this, SLOT(emitfinished()));
+    begin_remaining = 0;
+    end_remaining   = 0;
+
+}
+
+void TBase::pause()
+{
+    if (begin_timer->isActive())
+    {
+        begin_remaining = begin_timer->remainingTime();
+        begin_timer->stop();
+    }
+
+    if (end_timer->isActive())
+    {
+        begin_remaining = begin_timer->remainingTime();
+        end_timer->stop();
+    }
+    status = _paused;
+    return;
+}
+
+
+void TBase::stop()
+{
+    if (begin_timer->isActive())
+        begin_timer->stop();
+    if (end_timer->isActive())
+        end_timer->stop();
+    begin_remaining = 0;
+    end_remaining   = 0;
+    status = _stopped;
+}
+
+void TBase::resume()
+{
+    begin_remaining = 0;
+    end_remaining   = 0;
+    status          = _playing;
 }
 
 
@@ -29,7 +72,10 @@ TBase::TBase(QObject * parent)
 void TBase::setTimedStart()
 {
     if (begin.getStatus() == "ms") // look if begin should be delayed
-        QTimer::singleShot(begin.getMilliseconds(), this, SLOT(play())); // 10s
+    {
+        begin_timer->setSingleShot(true);
+        begin_timer->start(begin.getMilliseconds());
+    }
     else // play imediately
         play();
 }
@@ -37,26 +83,27 @@ void TBase::setTimedStart()
 bool TBase::setTimedEnd()
 {
     bool ret = false;
+    end_timer->setSingleShot(true);
     if (dur.getStatus() == "ms") // set end of simple duration
     {
         if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
-            QTimer::singleShot(end.getMilliseconds(), this, SLOT(emitfinished())); // 10s
+            end_timer->start(end.getMilliseconds());
         else
-            QTimer::singleShot(dur.getMilliseconds(), this, SLOT(emitfinished())); // 10s
+            end_timer->start(dur.getMilliseconds());
         ret = true;
     }
     else if (dur.getStatus() == "indefinite" || end.getStatus() == "indefinite")
         ret = true;  // end time is set so no media end can be used
     else if (end.getStatus() == "wallclock")
     {
-        // Todo get
+        // Todo implement an m,ore efficeinet getNextTrigger
     }
     else
     {
         //  if end specified simple duration is indefinited
         if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
         {
-            QTimer::singleShot(end.getMilliseconds(), this, SLOT(emitfinished())); // 10s
+            end_timer->start(end.getMilliseconds());
             ret = true;
         }
 

@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -30,11 +30,12 @@ public:
     bool      next();
     QString   getType(){return "excl";}
     void      beginPlay();
+    void      changeActiveElement(QObject *element);
 public slots:
     void      play();
 private:
     QQueue<QDomElement>                       pause_queue;
-    QSet<TPriorityClass>                ar_priorities;
+    QSet<TPriorityClass *>                ar_priorities;
 //    QHash<int, TPriorityClass>::iterator      iterator;
     int       count_childs       = 0;
     void      setPlaylist();

@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -42,24 +42,20 @@ bool TSeq::parse(QDomElement element)
 
 void TSeq::beginPlay()
 {
-    if (begin.getStatus() == "ms") // look if begin should be delayed
-        QTimer::singleShot(begin.getMilliseconds(), this, SLOT(play())); // 10s
-    else // play imediately
-        play();
-   return;
+    setTimedStart();
+    return;
 }
 
 void TSeq::play()
 {
-    if (dur.getStatus() == "ms")
+    if (setTimedEnd() || ar_playlist.length() > 0)
     {
-        if (end.getStatus() == "ms") // end attribute has priority over dur
-            QTimer::singleShot(end.getMilliseconds(), this, SLOT(emitfinished()));
-        else
-            QTimer::singleShot(dur.getMilliseconds(), this, SLOT(emitfinished()));
+        status = _playing;
+        reactByTag();
+        emit started(parent_playlist, this);
     }
-    reactByTag();
-    emit started(parent_playlist, this);
+    else // when end or duration is not specified or no child elements stop imediately
+        emitfinished();
     return;
 }
 

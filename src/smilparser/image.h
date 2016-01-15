@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -20,7 +20,6 @@
 #define IMAGE_H
 
 #include "media.h"
-#include <QTimer>
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
 

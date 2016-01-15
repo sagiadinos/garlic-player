@@ -18,10 +18,7 @@ bool TPriorityClass::parse(QDomElement element)
 
 void TPriorityClass::beginPlay()
 {
-    if (begin.getStatus() == "ms") // look if begin should be delayed
-        QTimer::singleShot(begin.getMilliseconds(), this, SLOT(play())); // 10s
-    else // play imediately
-        play();
+    play();
 }
 
 void TPriorityClass::play()

@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -30,23 +30,23 @@ class TSeq : public TPlaylist
     Q_OBJECT
 public:
     TSeq(QObject * parent = 0);
-    bool parse(QDomElement element);
-    bool next();
-    bool previous();
-    QString      getType(){return "seq";}
+    bool     parse(QDomElement element);
+    bool     next();
+    bool     previous();
+    QString  getType(){return "seq";}
     void     beginPlay();
 public slots:
     void     play();
     void     emitfinished();
 private:
-    bool    random            = false;
-    int     pickNumber        = 0;
-    int     internal_pick     = 0;
-    QString pickingAlgorithm  = "";
-    QString pickingBehavior   = "";
-    void    setPlaylist();
-    void    randomizePlaylist();
-    void    doMetaData();
+    bool     random            = false;
+    int      pickNumber        = 0;
+    int      internal_pick     = 0;
+    QString  pickingAlgorithm  = "";
+    QString  pickingBehavior   = "";
+    void     setPlaylist();
+    void     randomizePlaylist();
+    void     doMetaData();
 };
 
 #endif // SEQ_H

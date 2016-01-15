@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -53,10 +53,9 @@ public:
     void  next(TPar *MyPar);
     void  next(TExcl *MyExcl);
 public slots:
-    void  handleMedia(QObject *parent, TFoundTag found_tag);
-    void  handlePlaylist(QObject *parent, TFoundTag found_tag);
-    void  emitfinishedMedia(QObject *, QObject *);
-    void  finishedPlaylist(QObject *, QObject *);
+    void  handleFoundElement(QObject *parent, TFoundTag found_tag);
+    void  emitstartedElement(QObject *, QObject *);
+    void  emitfinishedElement(QObject *, QObject *);
 protected:
     QDomElement     parser;
     QString         index_path;
@@ -69,11 +68,10 @@ protected:
     TExcl          *MyExcl;
     QHash<QString, QObject *> ar_playlists;
     QHash<QString, QObject *>::iterator ar_playlists_iterator;
-//    QSet<QObject *> ar_media;
-//    QSet<QObject *>::iterator ar_media_iterator;
+    QHash<QString, QObject *> ar_media;
+    QHash<QString, QObject *>::iterator ar_media_iterator;
     showImg         ImgAttr;
 private:
-    void selectPlaylistForNextAction(QObject *parent);
 
 signals:
     void            playMedia(QObject *media);

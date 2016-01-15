@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -29,7 +29,7 @@ void MainWindow::setSmilIndex(QString smil_path)
 //    qDebug() << MyConfig.getPaths("var");
     MySmil = new TSmil();
     if (smil_path == "")
-        MySmil->init(MyConfig.getPaths("var")+"simple_seq.smil");
+        MySmil->init(MyConfig.getPaths("var")+"simple_multizone.smil");
     else
         MySmil->init(smil_path);
     MyHead = MySmil->getHeader();

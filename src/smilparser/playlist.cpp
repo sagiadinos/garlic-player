@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-.control.com>
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -69,7 +69,7 @@ void TPlaylist::doImage()
 {
     found_tag.name         = "img";
     found_tag.dom_element  = actual_element;
-    emit foundMedia(this, found_tag);
+    emit foundElement(this, found_tag);
     return;
 }
 
@@ -77,7 +77,7 @@ void TPlaylist::doVideo()
 {
     found_tag.name         = "video";
     found_tag.dom_element  = actual_element;
-    emit foundMedia(this, found_tag);
+    emit foundElement(this, found_tag);
     return;
 }
 
@@ -85,7 +85,7 @@ void TPlaylist::doAudio()
 {
     found_tag.name         = "audio";
     found_tag.dom_element  = actual_element;
-    emit foundMedia(this, found_tag);
+    emit foundElement(this, found_tag);
     return;
 }
 
@@ -93,7 +93,7 @@ void TPlaylist::doWeb()
 {
     found_tag.name         = "web";
     found_tag.dom_element  = actual_element;
-    emit foundMedia(this, found_tag);
+    emit foundElement(this, found_tag);
     return;
 }
 
@@ -101,7 +101,7 @@ void TPlaylist::doSeq()
 {
     found_tag.name         = "seq";
     found_tag.dom_element  = actual_element;
-    emit foundPlaylist(this, found_tag);
+    emit foundElement(this, found_tag);
     return;
 }
 
@@ -109,7 +109,7 @@ void TPlaylist::doPar()
 {
     found_tag.name         = "par";
     found_tag.dom_element  = actual_element;
-    emit foundPlaylist(this, found_tag);
+    emit foundElement(this, found_tag);
     return;
 }
 
@@ -117,7 +117,7 @@ void TPlaylist::doExcl()
 {
     found_tag.name         = "excl";
     found_tag.dom_element  = actual_element;
-    emit foundPlaylist(this, found_tag);
+    emit foundElement(this, found_tag);
     return;
 }
 
@@ -125,7 +125,7 @@ void TPlaylist::doPrefetch()
 {
     found_tag.name         = "prefetch";
     found_tag.dom_element  = actual_element;
-    emit foundMedia(this, found_tag);
+    emit foundElement(this, found_tag);
     return;
 }
 
