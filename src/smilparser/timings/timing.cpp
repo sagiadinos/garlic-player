@@ -52,26 +52,24 @@ void TTiming::parse(QString s_val)
     return;
 }
 
-qint64 TTiming::getNextTrigger(QDateTime datetime)
+qint64 TTiming::getNextTrigger(QDateTime actual)
 {
     qint64    ret       = 0;
     QDateTime calculate = wall_clock.datetime;
-    if (datetime > wall_clock.datetime)
+    if (actual > wall_clock.datetime)
     {
         // if wallclock date is in past and repeats -1 (indefinite) get time for the next event/trigger/shot from period
         if (wall_clock.repeats == -1)
         {
             // find out the next possible trigger based on the datetime of the wallclock
-            // Not very efficient when start date is years ago but premature optimization is the root of all evil ;-)
             int i = 0;
             do
             {
-                calculate = addWallClockInterval(calculate);
+                calculate = addWallClockIntervalOptimized(actual, calculate); // do some shortcuts cause addWallClockInterval is extremly slow on long times
                 i++;
             }
-            while (datetime > calculate);
-            qDebug() << i;
-            ret = datetime.msecsTo(calculate);
+            while (actual > calculate);
+            ret = actual.msecsTo(calculate);
         }
         // if wallclock date is in past and repeats > 0 calculate elapsed time since init and look if there is be another event possible
         else if (wall_clock.repeats > 0)
@@ -82,14 +80,14 @@ qint64 TTiming::getNextTrigger(QDateTime datetime)
                 calculate = addWallClockInterval(calculate);
                 i++;
             }
-            while (datetime > calculate && i < wall_clock.repeats+1);
-            if (datetime < calculate)
-                ret = datetime.msecsTo(calculate);
+            while (actual > calculate && i < wall_clock.repeats+1);
+            if (actual < calculate)
+                ret = actual.msecsTo(calculate);
         }
         // repeat 0 return 0 ms
     }
     else // datetime of wallclock is in future
-        ret = datetime.msecsTo(wall_clock.datetime);
+        ret = actual.msecsTo(wall_clock.datetime);
     return ret;
 }
 
@@ -165,13 +163,44 @@ QDateTime TTiming::analyseDate(QString date)
         return QDateTime::fromString(date, "yyyy-MM-dd");
 }
 
-QDateTime TTiming::addWallClockInterval(QDateTime datetime)
+QDateTime TTiming::addWallClockInterval(QDateTime calculated)
 {
-    datetime = datetime.addYears(wall_clock.period.years);
-    datetime = datetime.addMonths(wall_clock.period.months);
-    datetime = datetime.addDays(wall_clock.period.days);
-    return datetime.addSecs((wall_clock.period.hours*3600) + (wall_clock.period.minutes*60) + (wall_clock.period.seconds));
+    calculated = calculated.addYears(wall_clock.period.years);
+    calculated = calculated.addMonths(wall_clock.period.months);
+    calculated = calculated.addDays(wall_clock.period.days);
+    return calculated.addSecs((wall_clock.period.hours*3600) + (wall_clock.period.minutes*60) + (wall_clock.period.seconds));
 }
 
+/**
+ * @brief TTiming::addWallClockIntervalOptimized skips to long distances
+ * @param actual
+ * @param calculated
+ * @return
+ */
+QDateTime TTiming::addWallClockIntervalOptimized(QDateTime actual, QDateTime calculated)
+{
+    if (wall_clock.period.years == 0)
+        calculated = calculated.addYears(actual.date().year()-calculated.date().year()); // should give 0 on iterations
+    else
+        calculated = calculated.addYears(wall_clock.period.years);
+    if (wall_clock.period.months == 0)
+        calculated = calculated.addMonths(actual.date().month()-calculated.date().month());
+    else
+        calculated = calculated.addMonths(wall_clock.period.months);
+
+    if (wall_clock.period.days == 0)
+        calculated = calculated.addMonths(actual.date().day()-calculated.date().day());
+    else
+        calculated = calculated.addDays(wall_clock.period.days);
+    if (wall_clock.period.hours == 0)
+        calculated = calculated.addSecs((actual.time().hour()-calculated.time().hour())*3600);
+    else
+        calculated = calculated.addSecs(wall_clock.period.hours*3600);
+    if (wall_clock.period.minutes == 0)
+        calculated = calculated.addSecs((actual.time().minute()-calculated.time().minute())*60);
+    else
+        calculated = calculated.addSecs(wall_clock.period.minutes*60);
+    return calculated.addSecs(wall_clock.period.seconds);
+}
 
 

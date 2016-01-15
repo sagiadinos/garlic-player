@@ -63,7 +63,7 @@ public:
     void      calculate();
     void      parse(QString svalue);
     WallClock getWallClock();
-    qint64    getNextTrigger(QDateTime datetime);
+    qint64    getNextTrigger(QDateTime actual);
 protected:
     WallClock parseWallclock(QString iso_date);
 private:
@@ -72,7 +72,8 @@ private:
     IsoPeriod  analysePeriods(QString p_value);
     int        analyseRepeats(QString r_value);
     QDateTime  analyseDate(QString date);
-    QDateTime  addWallClockInterval(QDateTime datetime);
+    QDateTime  addWallClockInterval(QDateTime calculated);
+    QDateTime  addWallClockIntervalOptimized(QDateTime actual, QDateTime calculated);
 signals:
 
 public slots:
