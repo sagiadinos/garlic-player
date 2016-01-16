@@ -30,9 +30,9 @@ TAudio::~TAudio()
     delete output;
 }
 
-bool TAudio::parse(QDomElement domelement)
+bool TAudio::parse(QDomElement element)
 {
-    actual_element = domelement;
+    root_element   = element;
     setAttributes();
     setBaseParameters();
     return true;
@@ -55,7 +55,7 @@ void TAudio::play()
         connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished()));
     media_player->play();
     status = _playing;
-    emit started(parent_playlist, this);
+    emit startedMedia(parent_playlist, this);
     return;
 }
 
@@ -80,9 +80,4 @@ void TAudio::setAttributes()
 
 // ====================  private methods =================================
 
-void TAudio::emitfinished()
-{
-    status = _stopped;
-    emit finished(parent_playlist, this);
-}
 

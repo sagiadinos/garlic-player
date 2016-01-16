@@ -37,14 +37,13 @@ class TVideo : public TMedia
 public:
     TVideo(QObject * parent = 0);
     ~TVideo();
-    bool      parse(QDomElement domelement);
+    bool      parse(QDomElement element);
     showVideo getMediaForShow();
     QString   getFit();
     QString   getType() {return "video";}
     void      beginPlay();
 public slots:
     void      play();
-    void      emitfinished();
 protected:
     QtAV::AVPlayer *media_player;
     showVideo       show_video;

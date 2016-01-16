@@ -39,14 +39,13 @@ class TWeb : public TMedia
 public:
     explicit TWeb(QObject * parent = 0);
     ~TWeb();
-    bool     parse(QDomElement domelement);
+    bool     parse(QDomElement element);
     showWeb  getMediaForShow();
     QString  getFit();
     QString  getType() {return "web";}
     void     beginPlay();
 public slots:
     void     play();
-    void     emitfinished();
 protected:
     showWeb  show_web;
     void     setAttributes();

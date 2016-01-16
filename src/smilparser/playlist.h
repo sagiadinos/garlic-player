@@ -42,26 +42,29 @@ public:
     QString    getType(){ return "base_playlist";}
     void       beginPlay(){}
 public slots:
-    void       emitfinished(){}
+        void   emitfinished();
 protected:
     QList<QDomElement>            ar_playlist;
     QList<QDomElement>::iterator  iterator;
-    TFoundTag  found_tag;
-    QObject   *parent_playlist;
-    void       reactByTag();
-    void       doRef();
-    void       doImage();
-    void       doVideo();
-    void       doAudio();
-    void       doWeb();
-    void       doPrefetch();
-    void       doSeq();
-    void       doPar();
-    void       doExcl();
+    QDomElement actual_element;
+    TFoundTag   found_tag;
+    QObject    *parent_playlist;
+    void        reactByTag();
+    void        doRef();
+    void        doImage();
+    void        doVideo();
+    void        doAudio();
+    void        doWeb();
+    void        doPrefetch();
+    void        doSeq();
+    void        doPar();
+    void        doExcl();
 protected slots:
-    void play(){}
+    void        play(){}
 signals:
     void       foundElement(QObject *, TFoundTag found_tag);
+    void       startedPlaylist(QObject * , QObject *);
+    void       finishedPlaylist(QObject * , QObject *);
 
 };
 

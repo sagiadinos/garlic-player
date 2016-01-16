@@ -37,6 +37,7 @@ protected slots:
 private:
     QString      endsync            = "last";
     QDomNodeList childs;
+    void         restart();
     void         setPlaylist();
     int          active_childs      = 0;
     int          count_childs       = 0;

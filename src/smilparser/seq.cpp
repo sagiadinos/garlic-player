@@ -21,12 +21,13 @@
 TSeq::TSeq(QObject * parent)
 {
     parent_playlist = parent;
+    initTimer();
     setObjectName("TSeq");
 }
 
 bool TSeq::parse(QDomElement element)
 {
-    actual_element = element; // must set to get inherited Attributed
+    root_element   = element;
     setBaseAttributes();
     if (element.hasChildNodes())
     {
@@ -51,22 +52,26 @@ void TSeq::play()
     if (setTimedEnd() || ar_playlist.length() > 0)
     {
         status = _playing;
-        reactByTag();
-        emit started(parent_playlist, this);
+        restart();
+        emit startedPlaylist(parent_playlist, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
         emitfinished();
     return;
 }
 
-void TSeq::emitfinished()
+void TSeq::restart()
 {
-
+    iterator       = ar_playlist.begin();
+    actual_element = *iterator;
+    reactByTag();
+    return;
 }
+
 
 void TSeq::doMetaData()
 {
-    QDomNodeList childs = actual_element.childNodes();
+    QDomNodeList childs = root_element.childNodes();
     QDomElement  element;
     int          length = childs.length();
     for (int i = 0; i < length; i++)
@@ -99,16 +104,12 @@ bool TSeq::next()
     {
         if (checkRepeatCountStatus())
         {
-            iterator       = ar_playlist.begin();
-            actual_element = *iterator;
+            restart();
             ret            = true;
-            reactByTag();
         }
         else
         {
-            // ToDo: get Info about end from TTiming. may bee is it secessary not end the playlist.
-            // cause dur or end-Attribute exeeds the length of all the sequential played media
-            emit finished(parent_playlist, this);
+            emitfinished();
         }
     }
     return ret;
@@ -121,7 +122,7 @@ bool TSeq::previous()
 
 void TSeq::setPlaylist()
 {
-    QDomNodeList childs = actual_element.parentNode().childNodes();
+    QDomNodeList childs = root_element.childNodes();
     int          length = childs.length();
     QDomElement  element;
     for (int i = 0; i < length; i++)

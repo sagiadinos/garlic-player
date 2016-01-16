@@ -27,7 +27,7 @@ TExcl::TExcl(QObject *parent)
 
 bool TExcl::parse(QDomElement element)
 {
-    actual_element = element; // must set to get inherited Attributed
+    root_element   = element;
     setBaseAttributes();
     if (element.hasChildNodes())
     {
@@ -42,17 +42,48 @@ void TExcl::beginPlay()
 {
     setTimedStart();
     return;
- }
+}
 
 void TExcl::play()
 {
-
+    if (setTimedEnd() || ar_playlist.length() > 0)
+    {
+        for (ar_priorities_iterator =  ar_priorities.begin(); ar_priorities_iterator != ar_priorities.end(); ar_priorities_iterator++)
+        {
+            ActivePriorityClass = *ar_priorities_iterator;
+            ActivePriorityClass->beginPlay();
+        }
+        status   = _playing;
+        emit startedPlaylist(parent_playlist, this);
+    }
+    else // when end or duration is not specified or no child elements stop imediately
+        emitfinished();
+    return;
 }
 
 
-void TExcl::changeActiveElement(QObject *element)
+void TExcl::changeActiveChild(QDomElement element)
 {
-    Q_UNUSED(element);
+    // Element can be a media or a playlist.
+    actual_element = element;
+    // found the priorityClass this element is grouped and mark this priorityClass as active put them in a queue etc...
+    for (ar_priorities_iterator =  ar_priorities.begin(); ar_priorities_iterator != ar_priorities.end(); ar_priorities_iterator++)
+    {
+        if (ActivePriorityClass->findElement(element))
+        {
+            NewActivePriorityClass = *ar_priorities_iterator;
+            if (ActivePriorityClass == NewActivePriorityClass)
+            {
+                if (ActivePriorityClass->getPeers() == "stop")
+                {
+//                    ActivePriorityClass->stopActiveElement();
+//                    NewActivePriorityClass->setActiveElement(element);
+                }
+            }
+        }
+    }
+
+    // found the priorityClass for the actual active element and stop/pause or defer all processes
 }
 
 
@@ -71,7 +102,7 @@ bool TExcl::next()
 
 void TExcl::setPlaylist()
 {
-    QDomNodeList childs = actual_element.childNodes();
+    QDomNodeList childs = root_element.childNodes();
     count_childs        = childs.length();
     QDomElement  element;
     for (int i = 0; i < count_childs; i++)
@@ -81,7 +112,7 @@ void TExcl::setPlaylist()
             setPriorityClass(element);
         else // if there is no priorityClass childs will be grouped to a "virtually priorityClass"
         {
-           setPriorityClass(actual_element);
+           setPriorityClass(root_element);
            break; // mixing of elements with or no priorityClass are not allowed, cause it is a kind of nesting http://www.w3.org/TR/REC-smil/smil-timing.html#Timing-priorityClassElement
         }
     }

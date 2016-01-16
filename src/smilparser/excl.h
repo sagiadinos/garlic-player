@@ -30,13 +30,14 @@ public:
     bool      next();
     QString   getType(){return "excl";}
     void      beginPlay();
-    void      changeActiveElement(QObject *element);
+    void      changeActiveChild(QDomElement element);
 public slots:
     void      play();
 private:
-    QQueue<QDomElement>                       pause_queue;
+    TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
+    QQueue<QDomElement>                   pause_queue;
     QSet<TPriorityClass *>                ar_priorities;
-//    QHash<int, TPriorityClass>::iterator      iterator;
+    QSet<TPriorityClass *>::iterator      ar_priorities_iterator;
     int       count_childs       = 0;
     void      setPlaylist();
     void      setPriorityClass(QDomElement element);

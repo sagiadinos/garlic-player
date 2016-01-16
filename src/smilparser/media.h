@@ -38,13 +38,17 @@ public:
             QString     getLogContentId();
     virtual QString     getType() = 0;
 public slots:
-    virtual void        emitfinished(){}
+        void emitfinished();
 protected:
-
     QString region, src, exec, index_path  = "";
     QString filename, cache_control, log_content_id  = "";
     void   setBaseMediaAttributes();
     void   setBaseParameters();
+signals:
+signals:
+    void        startedMedia(QObject * , QObject *);
+    void        finishedMedia(QObject * , QObject *);
+
 };
 
 #endif // MEDIA_H

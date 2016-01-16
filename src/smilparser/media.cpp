@@ -62,22 +62,29 @@ QString TMedia::getCacheControl()
 void TMedia::setBaseMediaAttributes()
 {
     region = title = src = exec = "";
-    if (actual_element.hasAttribute("region"))
-        region = actual_element.attribute("region");
-    if (actual_element.hasAttribute("src"))
-        src = actual_element.attribute("src");
-    if (actual_element.hasAttribute("exec"))
-        exec = actual_element.attribute("exec");
+    if (root_element.hasAttribute("region"))
+        region = root_element.attribute("region");
+    if (root_element.hasAttribute("src"))
+        src = root_element.attribute("src");
+    if (root_element.hasAttribute("exec"))
+        exec = root_element.attribute("exec");
     setBaseAttributes();
     return;
 }
 
+void TMedia::emitfinished()
+{
+    status = _stopped;
+    emit finishedMedia(parent_playlist, this);
+}
+
+
 void TMedia::setBaseParameters()
 {
     cache_control = filename = log_content_id = "";
-    if (actual_element.hasChildNodes())
+    if (root_element.hasChildNodes())
     {
-        QDomNodeList childs = actual_element.childNodes();
+        QDomNodeList childs = root_element.childNodes();
         QDomElement param;
         for (int i = 0; i < childs.length(); i++)
         {

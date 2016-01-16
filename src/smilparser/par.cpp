@@ -20,13 +20,14 @@
 
 TPar::TPar(QObject *parent)
 {
+    initTimer();
     parent_playlist = parent;
     setObjectName("TPar");
 }
 
 bool TPar::parse(QDomElement element)
 {
-    actual_element = element; // must set to get inherited Attributed
+    root_element   = element;
     setBaseAttributes();
     if (element.hasChildNodes())
     {
@@ -45,19 +46,14 @@ void TPar::play()
 {
     if (setTimedEnd() || ar_playlist.length() > 0)
     {
-        for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
-        {
-            actual_element = *iterator;
-            reactByTag();
-        }
+        restart();
         status   = _playing;
-        emit started(parent_playlist, this);
+        emit startedPlaylist(parent_playlist, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
         emitfinished();
     return;
 }
-
 
 /**
  * @brief TPar::next means that it looks if there are no active elements
@@ -71,22 +67,30 @@ bool TPar::next()
     {
         if(checkRepeatCountStatus())
         {
-            play();
+            restart();
         }
         else
         {
-            // ToDo: get Info about end from TTiming. may be is it necessary not to end the playlist.
-
+            emitfinished();
         }
     }
     return false;
 }
 
+void TPar::restart()
+{
+    for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
+    {
+        actual_element = *iterator;
+        reactByTag();
+    }
+    return;
+}
 
 void TPar::setPlaylist()
 {
     // put all playlist elements into a QList
-    QDomNodeList childs = actual_element.childNodes();
+    QDomNodeList childs = root_element.childNodes();
     count_childs        = childs.length();
     for (int i = 0; i < count_childs; i++)
     {

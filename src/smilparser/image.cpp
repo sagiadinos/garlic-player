@@ -21,18 +21,20 @@
 TImage::TImage(QObject *parent)
 {
     parent_playlist = parent;
+    initTimer();
     setObjectName("TImage");
 }
 
 TImage::~TImage()
 {
     delete show_img.image_item;
+
 }
 
 
-bool TImage::parse(QDomElement domelement)
+bool TImage::parse(QDomElement element)
 {
-    actual_element = domelement;
+    root_element   = element;
     setAttributes();
     setBaseParameters();
     return true;
@@ -54,7 +56,7 @@ void TImage::play()
     if (setTimedEnd())
     {
         status = _playing;
-        emit started(parent_playlist, this);
+        emit startedMedia(parent_playlist, this);
     }
     else // when end or duration is not specified stop imediately
         emitfinished();
@@ -82,16 +84,9 @@ void TImage::setAttributes()
 
     show_img.image_item = new QGraphicsPixmapItem();
     show_img.image_item->setPixmap(show_img.pixmap);
-    if (actual_element.hasAttribute("fit"))
-        show_img.fit = actual_element.attribute("fit");
+    if (root_element.hasAttribute("fit"))
+        show_img.fit = root_element.attribute("fit");
     return;
 }
 
 // ====================  private methods =================================
-
-void TImage::emitfinished()
-{
-    status = _stopped;
-    emit finished(parent_playlist, this);
-}
-

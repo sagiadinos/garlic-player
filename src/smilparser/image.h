@@ -38,14 +38,13 @@ class TImage : public TMedia
 public:
     TImage(QObject * parent = 0);
     ~TImage();
-    bool     parse(QDomElement domelement);
+    bool     parse(QDomElement element);
     showImg  getMediaForShow();
     QString  getFit();
     QString  getType() {return "image";}
     void     beginPlay();
 public slots:
     void     play();
-    void     emitfinished();
 protected:
     showImg show_img;
     void    setAttributes();

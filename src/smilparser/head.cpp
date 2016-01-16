@@ -176,4 +176,3 @@ qreal THead::calculatePercentBasedOnRoot(QString value, qreal root)
       ret = 0;
     return ret/100; // to have a easy calculatable value for resize zones
 }
-

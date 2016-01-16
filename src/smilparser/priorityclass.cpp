@@ -2,12 +2,13 @@
 
 TPriorityClass::TPriorityClass(QObject *parent)
 {
-    Q_UNUSED(parent);
+    parent_playlist = parent;
+    setObjectName("TExcl"); // priorityClass elements may only appear as immediate children of excl elements
 }
 
 bool TPriorityClass::parse(QDomElement element)
 {
-    actual_element = element; // must set to get inherited Attributed
+    root_element   = element;
     setAttributes();
     if (element.hasChildNodes())
         setPlaylist();
@@ -18,11 +19,35 @@ bool TPriorityClass::parse(QDomElement element)
 
 void TPriorityClass::beginPlay()
 {
-    play();
+    setTimedStart();
+    return;
+}
+
+bool TPriorityClass::findElement(QDomElement element)
+{
+    for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
+    {
+        if (element == *iterator)
+            return true;
+    }
+    return false;
 }
 
 void TPriorityClass::play()
 {
+    if (setTimedEnd() || ar_playlist.length() > 0)
+    {
+        for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
+        {
+            actual_element = *iterator;
+            reactByTag();
+        }
+        status   = _playing;
+        emit startedPlaylist(parent_playlist, parent_playlist); // priorityClass elements may only appear as immediate children of excl elements
+    }
+    else // when end or duration is not specified or no child elements stop imediately
+        emitfinished();
+    return;
 
 }
 

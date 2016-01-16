@@ -31,9 +31,9 @@ TWeb::~TWeb()
 }
 
 
-bool TWeb::parse(QDomElement domelement)
+bool TWeb::parse(QDomElement element)
 {
-    actual_element = domelement;
+    root_element   = element;
     setAttributes();
     setBaseParameters();
     return true;
@@ -50,7 +50,7 @@ void TWeb::play()
     if (setTimedEnd())
     {
         status = _playing;
-        emit started(parent_playlist, this);
+        emit startedMedia(parent_playlist, this);
     }
     else // when end or duration is not specified stop imediately
         emitfinished();
@@ -80,13 +80,7 @@ void TWeb::setAttributes()
     show_web.browser->setUrl(QUrl(show_web.url));
     show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
     show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
-    if (actual_element.hasAttribute("fit"))
-        show_web.fit = actual_element.attribute("fit");
+    if (root_element.hasAttribute("fit"))
+        show_web.fit = root_element.attribute("fit");
     return;
-}
-
-void TWeb::emitfinished()
-{
-    status = _stopped;
-    emit finished(parent_playlist, this);
 }

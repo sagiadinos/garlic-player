@@ -50,46 +50,47 @@ class TBase : public QObject
 {
     Q_OBJECT
 public:
-    const int _stopped  = 0;
-    const int _playing  = 1;
-    const int _paused   = 2;
-    explicit TBase(QObject * parent = 0);
-    virtual  QString  getType() = 0;
-    virtual  bool     parse(QDomElement element) = 0; // prepare for begin
-    virtual  void     beginPlay() = 0;      // what to do when parent sends an order to begin executions
-             void     pause();
-             void     stop();
-             void     resume();
-             int      getStatus(){return status;}
-             QString  getID(){return id;}
-             QString  getTitle(){return title;}
+    const     int        _stopped  = 0;
+    const     int        _playing  = 1;
+    const     int        _paused   = 2;
+
+    explicit             TBase(QObject * parent = 0);
+    virtual  QString     getType() = 0;
+    virtual  bool        parse(QDomElement element) = 0; // prepare for begin
+    virtual  void        beginPlay() = 0;      // what to do when parent sends an order to begin executions
+             QDomElement getRootElement(){return root_element;}
+             void        pause();
+             void        stop();
+             void        resume();
+             int         getStatus(){return status;}
+             QString     getID(){return id;}
+             QString     getTitle(){return title;}
+    static   QString     parseID(QDomElement element);
 public slots:
-    virtual void        emitfinished() = 0;
+        virtual void emitfinished() = 0;
 protected:
-            QTimer      *begin_timer, *end_timer;
-            int         begin_remaining, end_remaining;
-            QDomElement actual_element;
-            QString     id                   = "";
-            TClockValue dur, min, max;
-            TTiming     begin, end;
-            QObject    *parent_playlist;
-            int         status         = 0;
-            QString     title          = "";
-            int         repeatCount    = 0;
-            int         internal_count = 1;
-            bool        indefinite     = false;
-            void        setTimedStart();
-            bool        setTimedEnd();
-            void        setBaseAttributes();
-            bool        checkRepeatCountStatus();
-            qint64      calculateDuration(QString duration);
+            QTimer       begin_timer, end_timer, dur_timer;
+            int          begin_remaining, end_remaining, dur_remaining;
+            QDomElement  root_element;
+            QString      id                   = "";
+            TClockValue  dur, min, max;
+            TTiming      begin, end;
+            QObject     *parent_playlist;
+            int          status         = 0;
+            QString      title          = "";
+            int          repeatCount    = 0;
+            int          internal_count = 1;
+            bool         indefinite     = false;
+            void         setTimedStart();
+            bool         setTimedEnd();
+            void         setBaseAttributes();
+            bool         checkRepeatCountStatus();
+            void         initTimer();
 protected slots:
-    virtual void play() = 0;
+    virtual void         play() = 0;
+            void         finishedImplicitDuration();
 private:
             void        setRepeatCount(QString rC);
-signals:
-            void        started(QObject * , QObject *);
-            void        finished(QObject * , QObject *);
 };
 
 #endif // TBASE_H

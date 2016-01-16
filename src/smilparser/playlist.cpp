@@ -50,6 +50,12 @@ void TPlaylist::reactByTag()
         doExcl();
 }
 
+void TPlaylist::emitfinished()
+{
+    status = _stopped;
+    emit finishedPlaylist(parent_playlist, this);
+}
+
 void TPlaylist::doRef()
 {
     if (actual_element.hasAttribute("type"))

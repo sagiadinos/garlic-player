@@ -35,13 +35,12 @@ class TAudio :public TMedia
 public:
     TAudio(QObject * parent = 0);
     ~TAudio();
-    bool      parse(QDomElement domelement);
+    bool      parse(QDomElement element);
     showAudio getMediaForShow();
     QString   getType() {return "audio";}
     void     beginPlay();
 public slots:
     void     play();
-    void      emitfinished();
 protected:
     QObject *parent_object;
     QtAV::VideoOutput *output;

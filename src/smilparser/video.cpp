@@ -30,9 +30,9 @@ TVideo::~TVideo()
     delete show_video.video_item;
 }
 
-bool TVideo::parse(QDomElement domelement)
+bool TVideo::parse(QDomElement element)
 {
-    actual_element = domelement;
+    root_element   = element;
     setAttributes();
     setBaseParameters();
     return true;
@@ -55,7 +55,7 @@ void TVideo::play()
         connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished()));
     media_player->play();
     status = _playing;
-    emit started(parent_playlist, this);
+    emit startedMedia(parent_playlist, this);
     return;
 }
 
@@ -82,16 +82,10 @@ void TVideo::setAttributes()
     else // get relative paths
         media_player->setFile(index_path+src);
 
-    if (actual_element.hasAttribute("fit"))
-        show_video.fit = actual_element.attribute("fit");
+    if (root_element.hasAttribute("fit"))
+        show_video.fit = root_element.attribute("fit");
     return;
 }
 
 // ====================  private methods =================================
-
-void TVideo::emitfinished()
-{
-    status = _stopped;
-    emit finished(parent_playlist, this);
-}
 

@@ -24,9 +24,17 @@ TBody::TBody(QObject * parent)
     setObjectName("TBody");
 }
 
+TBody::~TBody()
+{
+    ar_playlist.clear();
+}
+
+
 bool TBody::parse(QDomElement element)
 {
-    actual_element = element; // must set to get inherited Attributed
+    bool ret = false;
+    root_element   = element;
+    actual_element = element;
     setBaseAttributes();
     if (element.hasChildNodes())
     {
@@ -34,10 +42,11 @@ bool TBody::parse(QDomElement element)
         setPlaylist();
         iterator       = ar_playlist.begin();
         actual_element = *iterator;
+        ret = true;
     }
     else
-        return false;
-    return true;
+       emitfinished();
+    return ret;
 }
 
 void TBody::beginPlay()
@@ -49,7 +58,7 @@ void TBody::beginPlay()
 void TBody::play()
 {
     reactByTag();
-    emit started(parent_playlist, this);
+    emit startedPlaylist(parent_playlist, this);
     return;
 }
 
@@ -64,6 +73,8 @@ bool TBody::next()
         ret            = true;
         reactByTag();
     }
+    else
+        emitfinished();
     return ret;
 }
 
