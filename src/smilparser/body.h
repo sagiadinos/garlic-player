@@ -33,8 +33,12 @@ public:
     bool        next();
     bool        previous();
     QString     getType(){return "seq";}
+protected:
+    void     play(){}
+    void     pause(){}
+    void     stop(){}
 public slots:
-    void     play();
+    void     checkBeforePlay();
 private:
     void    setPlaylist();
 };

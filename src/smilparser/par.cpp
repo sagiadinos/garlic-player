@@ -42,12 +42,13 @@ void TPar::beginPlay()
     return;
 }
 
-void TPar::play()
+void TPar::checkBeforePlay()
 {
     if (setTimedEnd() || ar_playlist.length() > 0)
     {
-        restart();
-        status   = _playing;
+        resetInternalRepeatCount();
+        play();
+        status = _playing;
         emit startedPlaylist(parent_playlist, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
@@ -67,7 +68,7 @@ bool TPar::next()
     {
         if(checkRepeatCountStatus())
         {
-            restart();
+            play();
         }
         else
         {
@@ -77,15 +78,29 @@ bool TPar::next()
     return false;
 }
 
-void TPar::restart()
+void TPar::play()
 {
     for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
     {
-        actual_element = *iterator;
+        active_element = *iterator;
         reactByTag();
     }
+    status = _playing;
     return;
 }
+
+void TPar::pause()
+{
+    status = _paused;
+    return;
+}
+
+void TPar::stop()
+{
+    status = _stopped;
+    return;
+}
+
 
 void TPar::setPlaylist()
 {

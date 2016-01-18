@@ -31,12 +31,12 @@ bool TSeq::parse(QDomElement element)
     setBaseAttributes();
     if (element.hasChildNodes())
     {
-        actual_element = element.firstChildElement();
-        if (actual_element.tagName() == "metadata")
+        active_element = element.firstChildElement();
+        if (active_element.tagName() == "metadata")
             doMetaData();
         setPlaylist();
         iterator       = ar_playlist.begin();
-        actual_element = *iterator;
+        active_element = *iterator;
     }
     return true;
 }
@@ -47,12 +47,12 @@ void TSeq::beginPlay()
     return;
 }
 
-void TSeq::play()
+void TSeq::checkBeforePlay()
 {
     if (setTimedEnd() || ar_playlist.length() > 0)
     {
-        status = _playing;
-        restart();
+        resetInternalRepeatCount();
+        play();
         emit startedPlaylist(parent_playlist, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
@@ -60,14 +60,26 @@ void TSeq::play()
     return;
 }
 
-void TSeq::restart()
+void TSeq::play()
 {
     iterator       = ar_playlist.begin();
-    actual_element = *iterator;
+    active_element = *iterator;
     reactByTag();
+    status = _playing;
     return;
 }
 
+void TSeq::stop()
+{
+    status = _stopped;
+    return;
+}
+
+void TSeq::pause()
+{
+    status = _paused;
+    return;
+}
 
 void TSeq::doMetaData()
 {
@@ -96,7 +108,7 @@ bool TSeq::next()
     iterator++; // inc iterator first only when inc result smaller than  .end()
     if (iterator < ar_playlist.end())  // cause .end() pointing to the imaginary item after the last item in the vector
     {
-        actual_element = *iterator;
+        active_element = *iterator;
         ret            = true;
         reactByTag();
     }
@@ -104,7 +116,7 @@ bool TSeq::next()
     {
         if (checkRepeatCountStatus())
         {
-            restart();
+            play();
             ret            = true;
         }
         else

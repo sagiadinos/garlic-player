@@ -41,12 +41,16 @@ public:
     TFoundTag  getFoundTag();
     QString    getType(){ return "base_playlist";}
     void       beginPlay(){}
+    void       insertPlaylistObject(QString id, QObject *obj_element);
+    QHash<QString, QObject *> getPlaylistObject();
+    QString    getIdOfActiveElement();
 public slots:
         void   emitfinished();
 protected:
     QList<QDomElement>            ar_playlist;
     QList<QDomElement>::iterator  iterator;
-    QDomElement actual_element;
+    QHash<QString, QObject *> ar_elements;
+    QDomElement active_element;
     TFoundTag   found_tag;
     QObject    *parent_playlist;
     void        reactByTag();
@@ -59,8 +63,10 @@ protected:
     void        doSeq();
     void        doPar();
     void        doExcl();
-protected slots:
     void        play(){}
+    void        stop(){}
+protected slots:
+    void        checkBeforePlay(){}
 signals:
     void       foundElement(QObject *, TFoundTag found_tag);
     void       startedPlaylist(QObject * , QObject *);

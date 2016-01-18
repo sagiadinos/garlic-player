@@ -45,10 +45,13 @@ public:
     QString  getType() {return "web";}
     void     beginPlay();
 public slots:
-    void     play();
+    void     checkBeforePlay();
 protected:
     showWeb  show_web;
     void     setAttributes();
+    void     play();
+    void     pause();
+    void     stop();
 };
 
 

@@ -20,8 +20,12 @@ public:
     QString     getHigher(){return higher;}
     QString     getLower(){return lower;}
     bool        findElement(QDomElement element);
+protected:
+    void     play();
+    void     pause();
+    void     stop();
 public slots:
-    void      play();
+    void      checkBeforePlay();
 private:
     QDomElement           active_element, tmp_active_element;
     QQueue<QDomElement>   pause_queue;

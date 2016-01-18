@@ -30,7 +30,11 @@ public:
     QString   getType(){return "test base playlist";}
     bool      parse(QDomElement element){Q_UNUSED(element);return true;}
     void      test_reactByTag(){reactByTag();}
-    void      setActiveElement(QDomElement element){actual_element = element;}
+    void      setActiveElement(QDomElement element){active_element = element;}
+protected:
+    void       play(){}
+    void       pause(){}
+    void       stop(){}
 };
 
 

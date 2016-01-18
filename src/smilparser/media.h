@@ -44,6 +44,8 @@ protected:
     QString filename, cache_control, log_content_id  = "";
     void   setBaseMediaAttributes();
     void   setBaseParameters();
+    void   play(){}
+    void   stop(){}
 signals:
 signals:
     void        startedMedia(QObject * , QObject *);

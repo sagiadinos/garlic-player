@@ -42,7 +42,7 @@ class TSmil : public QObject
 {
     Q_OBJECT
 public:
-    TSmil(QObject * parent = 0);
+    TSmil(QObject *parent = 0);
     ~TSmil();
     void      init(QString smil_index = "");
     THead     getHeader();
@@ -63,14 +63,10 @@ protected:
     TFile           MyFile;
     THead           MyHead;
     TBody          *MyBody;
-    TSeq           *MySeq;
-    TPar           *MyPar;
-    TExcl          *MyExcl;
-    QHash<QString, QObject *> ar_playlists;
-    QHash<QString, QObject *>::iterator ar_playlists_iterator;
-    QHash<QString, QObject *> ar_media;
-    QHash<QString, QObject *>::iterator ar_media_iterator;
+    QHash<QString, QObject *> ar_elements;
+    QHash<QString, QObject *>::iterator ar_elements_iterator;
     showImg         ImgAttr;
+    void            insertIntoObjectContainer(QString id, QObject *parent, QObject *child);
 private:
 
 signals:

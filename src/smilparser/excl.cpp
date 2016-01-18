@@ -44,7 +44,7 @@ void TExcl::beginPlay()
     return;
 }
 
-void TExcl::play()
+void TExcl::checkBeforePlay()
 {
     if (setTimedEnd() || ar_playlist.length() > 0)
     {
@@ -65,7 +65,7 @@ void TExcl::play()
 void TExcl::changeActiveChild(QDomElement element)
 {
     // Element can be a media or a playlist.
-    actual_element = element;
+    active_element = element;
     // found the priorityClass this element is grouped and mark this priorityClass as active put them in a queue etc...
     for (ar_priorities_iterator =  ar_priorities.begin(); ar_priorities_iterator != ar_priorities.end(); ar_priorities_iterator++)
     {
@@ -87,8 +87,6 @@ void TExcl::changeActiveChild(QDomElement element)
 }
 
 
-
-
 /**
  * @brief TExcl::next means to stop, pause, defer the active element
  *        and set another element to active.
@@ -99,6 +97,26 @@ bool TExcl::next()
 {
     return false;
 }
+
+void TExcl::play()
+{
+    status = _playing;
+    return;
+}
+
+void TExcl::stop()
+{
+    status = _stopped;
+    return;
+}
+
+void TExcl::pause()
+{
+    status = _paused;
+    return;
+}
+
+
 
 void TExcl::setPlaylist()
 {

@@ -33,13 +33,13 @@ bool TPriorityClass::findElement(QDomElement element)
     return false;
 }
 
-void TPriorityClass::play()
+void TPriorityClass::checkBeforePlay()
 {
     if (setTimedEnd() || ar_playlist.length() > 0)
     {
         for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
         {
-            actual_element = *iterator;
+            active_element = *iterator;
             reactByTag();
         }
         status   = _playing;
@@ -51,10 +51,28 @@ void TPriorityClass::play()
 
 }
 
+void TPriorityClass::play()
+{
+    status = _playing;
+    return;
+}
+
+void TPriorityClass::stop()
+{
+    status = _stopped;
+    return;
+}
+
+void TPriorityClass::pause()
+{
+    status = _paused;
+    return;
+}
+
 
 void TPriorityClass::setPlaylist()
 {
-    QDomNodeList childs = actual_element.childNodes();
+    QDomNodeList childs = active_element.childNodes();
     count_childs        = childs.length();
     QDomElement  element;
     for (int i = 0; i < count_childs; i++)
@@ -68,11 +86,11 @@ void TPriorityClass::setPlaylist()
 
 void TPriorityClass::setAttributes()
 {
-    if (actual_element.hasAttribute("peers"))
-        peers = actual_element.attribute("peers");
-    if (actual_element.hasAttribute("higher"))
-        higher = actual_element.attribute("higher");
-    if (actual_element.hasAttribute("lower"))
-        lower = actual_element.attribute("lower");
+    if (active_element.hasAttribute("peers"))
+        peers = active_element.attribute("peers");
+    if (active_element.hasAttribute("higher"))
+        higher = active_element.attribute("higher");
+    if (active_element.hasAttribute("lower"))
+        lower = active_element.attribute("lower");
     return;
 }

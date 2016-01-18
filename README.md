@@ -1,27 +1,52 @@
-# garlic-player
+# garlic-player - SMIL Player for Digital Signage
 
-SMIL Player for Digital Signage
+The goal is to create an as most as neccessary SMIL 3.0 compatible and as most as possible platform independent multimedia player for Digital Signage proposes.
 
-The goal is to create an as most SMIL 3.0 compatible as needed multimedia player for Digital Signage proposes to run primary under Linux, Windows, OSX. Maybe Android and iOS for later.
+## OS targets:
 
-Compiled whith Qt 5.5. and QtAV 1.8.0
+Primary: Linux, Windows
+Secondary: Android, OSX and iOS
 
-At the moment we have an early alpha version which is able to player local SMIL-Files via command line under Linux.
+Compiled whith Qt 5.5. and QtAV 1.8.0 for video and audio media under Kubuntu 14.04
 
+At the moment there is an early alpha version which is able to player local SMIL-Files via command line under Linux.
 garlic-player -f path_to_smil_file
 
-#Actual supported SMIL-Features
-Playlist Elements:
-seq, par
+## actual supported SMIL-Features
 
-Media-Elements
-video, audio, images, text (websites)
+###Playlist Elements
+- seq
+- par
+- excl (is heavily @work)
 
-Attributes:
-xml:id, region, fill, dur, begin, end
+###Media-Elements
+- video
+- audio
+- images
+- text (websites)
 
-Layered multizone layouts:
-root-layout, layout
+###Attributes for media
+- region
+- fit          fill, scale, meetbest, none
 
-Multizone attributes
-regionName, top, left, width, height, z-index, backgroundColor
+###Attributes for media and playlists:
+- xml:id       Fallback for SMIL 2.0 id
+- dur          indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
+- begin        Clock values (like dur) and wallcock with periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W at the moment.
+- end          same as begin
+- repeatCount  only integer values (later for floats)
+
+###Layered multizone layouts:
+- root-layout
+- layout
+
+###Multizone attributes
+- regionName
+- top
+- left
+- width
+- height
+- z-index
+- backgroundColor (compatible with CSS)
+
+Contact: Nikolaos Sagiadinos ns@smil-control.com

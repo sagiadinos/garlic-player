@@ -49,17 +49,34 @@ void TAudio::beginPlay()
     return;
 }
 
-void TAudio::play()
+void TAudio::checkBeforePlay()
 {
     if (!setTimedEnd()) // when end or duration is not specified end on video duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished()));
-    media_player->play();
-    status = _playing;
+    play();
     emit startedMedia(parent_playlist, this);
     return;
 }
 
 // ====================  protected methods =================================
+void TAudio::play()
+{
+    media_player->play();
+    status = _playing;
+}
+
+void TAudio::stop()
+{
+    media_player->stop();
+    status = _playing;
+}
+
+void TAudio::pause()
+{
+    media_player->pause();
+    status = _playing;
+}
+
 
 void TAudio::setAttributes()
 {

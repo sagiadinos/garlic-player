@@ -33,11 +33,13 @@ public:
     void         decActiveChilds();
     void         beginPlay();
 protected slots:
-    void         play();
+    void         checkBeforePlay();
 private:
     QString      endsync            = "last";
     QDomNodeList childs;
-    void         restart();
+    void         play();
+    void         pause();
+    void         stop();
     void         setPlaylist();
     int          active_childs      = 0;
     int          count_childs       = 0;

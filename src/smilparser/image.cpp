@@ -51,11 +51,11 @@ void TImage::beginPlay()
     return;
 }
 
-void TImage::play()
+void TImage::checkBeforePlay()
 {
     if (setTimedEnd())
     {
-        status = _playing;
+        play();
         emit startedMedia(parent_playlist, this);
     }
     else // when end or duration is not specified stop imediately
@@ -69,6 +69,25 @@ QString TImage::getFit()
 }
 
 // ====================  protected methods =================================
+
+void TImage::play()
+{
+    status = _playing;
+    return;
+}
+
+void TImage::pause()
+{
+    status = _paused;
+    return;
+}
+
+void TImage::stop()
+{
+    status = _stopped;
+    return;
+}
+
 
 void TImage::setAttributes()
 {

@@ -44,10 +44,13 @@ public:
     QString  getType() {return "image";}
     void     beginPlay();
 public slots:
-    void     play();
+    void     checkBeforePlay();
 protected:
     showImg show_img;
     void    setAttributes();
+    void    play();
+    void    pause();
+    void    stop();
 };
 
 #endif // IMAGE_H

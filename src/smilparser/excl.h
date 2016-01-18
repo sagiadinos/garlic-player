@@ -30,9 +30,13 @@ public:
     bool      next();
     QString   getType(){return "excl";}
     void      beginPlay();
-    void      changeActiveChild(QDomElement element);
+    void      changeActiveChild(QDomElement element);    
 public slots:
-    void      play();
+    void      checkBeforePlay();
+protected:
+    void     play();
+    void     pause();
+    void     stop();
 private:
     TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
     QQueue<QDomElement>                   pause_queue;

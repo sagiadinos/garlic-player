@@ -43,11 +43,14 @@ public:
     QString   getType() {return "video";}
     void      beginPlay();
 public slots:
-    void      play();
+    void      checkBeforePlay();
 protected:
     QtAV::AVPlayer *media_player;
     showVideo       show_video;
     void            setAttributes();
+    void            play();
+    void            pause();
+    void            stop();
 };
 
 #endif // TVIDEO_H

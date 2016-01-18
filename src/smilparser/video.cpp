@@ -49,13 +49,33 @@ void TVideo::beginPlay()
     return;
 }
 
-void TVideo::play()
+void TVideo::checkBeforePlay()
 {
     if (!setTimedEnd()) // when end or duration is not specified end on video duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished()));
+    play();
+    emit startedMedia(parent_playlist, this);
+    return;
+}
+
+void TVideo::play()
+{
     media_player->play();
     status = _playing;
-    emit startedMedia(parent_playlist, this);
+    return;
+}
+
+void TVideo::stop()
+{
+    media_player->stop();
+    status = _stopped;
+    return;
+}
+
+void TVideo::pause()
+{
+    media_player->pause();
+    status = _paused;
     return;
 }
 

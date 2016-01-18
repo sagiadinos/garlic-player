@@ -36,14 +36,16 @@ public:
     QString  getType(){return "seq";}
     void     beginPlay();
 public slots:
-    void     play();
+    void     checkBeforePlay();
 private:
     bool     random            = false;
     int      pickNumber        = 0;
     int      internal_pick     = 0;
     QString  pickingAlgorithm  = "";
     QString  pickingBehavior   = "";
-    void     restart();
+    void     play();
+    void     pause();
+    void     stop();
     void     setPlaylist();
     void     randomizePlaylist();
     void     doMetaData();

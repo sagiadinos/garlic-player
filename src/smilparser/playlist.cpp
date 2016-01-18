@@ -28,25 +28,41 @@ TFoundTag TPlaylist::getFoundTag()
     return found_tag;
 }
 
+void TPlaylist::insertPlaylistObject(QString id, QObject *obj_element)
+{
+    ar_elements.insert(id, obj_element);
+    return;
+}
+
+QString TPlaylist::getIdOfActiveElement()
+{
+    return parseID(active_element);
+}
+
+QHash<QString, QObject *> TPlaylist::getPlaylistObject()
+{
+    return ar_elements;
+}
+
 void TPlaylist::reactByTag()
 {
-    if(actual_element.tagName() == "img")
+    if(active_element.tagName() == "img")
         doImage();
-    else if(actual_element.tagName() == "video")
+    else if(active_element.tagName() == "video")
         doVideo();
-    else if(actual_element.tagName() == "audio")
+    else if(active_element.tagName() == "audio")
         doAudio();
-    else if(actual_element.tagName() == "text")
+    else if(active_element.tagName() == "text")
         doWeb();
-    else if(actual_element.tagName() == "ref")
+    else if(active_element.tagName() == "ref")
         doRef();
-    else if(actual_element.tagName() == "prefetch")
+    else if(active_element.tagName() == "prefetch")
         doPrefetch();
-    else if(actual_element.tagName() == "seq")
+    else if(active_element.tagName() == "seq")
         doSeq();
-    else if(actual_element.tagName() == "par")
+    else if(active_element.tagName() == "par")
         doPar();
-    else if(actual_element.tagName() == "excl")
+    else if(active_element.tagName() == "excl")
         doExcl();
 }
 
@@ -58,15 +74,15 @@ void TPlaylist::emitfinished()
 
 void TPlaylist::doRef()
 {
-    if (actual_element.hasAttribute("type"))
+    if (active_element.hasAttribute("type"))
     {
-        if(actual_element.attribute("type").contains("image"))
+        if(active_element.attribute("type").contains("image"))
             doImage();
-        else if(actual_element.attribute("type").contains("video"))
+        else if(active_element.attribute("type").contains("video"))
             doVideo();
-        else if(actual_element.attribute("type").contains("audio"))
+        else if(active_element.attribute("type").contains("audio"))
             doAudio();
-        else if(actual_element.attribute("type").contains("text"))
+        else if(active_element.attribute("type").contains("text"))
             doWeb();
     }
 }
@@ -74,7 +90,7 @@ void TPlaylist::doRef()
 void TPlaylist::doImage()
 {
     found_tag.name         = "img";
-    found_tag.dom_element  = actual_element;
+    found_tag.dom_element  = active_element;
     emit foundElement(this, found_tag);
     return;
 }
@@ -82,7 +98,7 @@ void TPlaylist::doImage()
 void TPlaylist::doVideo()
 {
     found_tag.name         = "video";
-    found_tag.dom_element  = actual_element;
+    found_tag.dom_element  = active_element;
     emit foundElement(this, found_tag);
     return;
 }
@@ -90,7 +106,7 @@ void TPlaylist::doVideo()
 void TPlaylist::doAudio()
 {
     found_tag.name         = "audio";
-    found_tag.dom_element  = actual_element;
+    found_tag.dom_element  = active_element;
     emit foundElement(this, found_tag);
     return;
 }
@@ -98,7 +114,7 @@ void TPlaylist::doAudio()
 void TPlaylist::doWeb()
 {
     found_tag.name         = "web";
-    found_tag.dom_element  = actual_element;
+    found_tag.dom_element  = active_element;
     emit foundElement(this, found_tag);
     return;
 }
@@ -106,7 +122,7 @@ void TPlaylist::doWeb()
 void TPlaylist::doSeq()
 {
     found_tag.name         = "seq";
-    found_tag.dom_element  = actual_element;
+    found_tag.dom_element  = active_element;
     emit foundElement(this, found_tag);
     return;
 }
@@ -114,7 +130,7 @@ void TPlaylist::doSeq()
 void TPlaylist::doPar()
 {
     found_tag.name         = "par";
-    found_tag.dom_element  = actual_element;
+    found_tag.dom_element  = active_element;
     emit foundElement(this, found_tag);
     return;
 }
@@ -122,7 +138,7 @@ void TPlaylist::doPar()
 void TPlaylist::doExcl()
 {
     found_tag.name         = "excl";
-    found_tag.dom_element  = actual_element;
+    found_tag.dom_element  = active_element;
     emit foundElement(this, found_tag);
     return;
 }
@@ -130,7 +146,7 @@ void TPlaylist::doExcl()
 void TPlaylist::doPrefetch()
 {
     found_tag.name         = "prefetch";
-    found_tag.dom_element  = actual_element;
+    found_tag.dom_element  = active_element;
     emit foundElement(this, found_tag);
     return;
 }

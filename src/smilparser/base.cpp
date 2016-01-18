@@ -23,30 +23,29 @@ TBase::TBase(QObject * parent)
     parent_playlist = parent;
 }
 
-void TBase::pause()
+void TBase::beginPause()
 {
-    if (begin_timer.isActive())
-    {
-        begin_remaining = begin_timer.remainingTime();
-        begin_timer.stop();
-    }
-    if (dur_timer.isActive())
-    {
-        dur_remaining = dur_timer.remainingTime();
-        dur_timer.stop();
-    }
-
-    if (end_timer.isActive())
-    {
-        begin_remaining = begin_timer.remainingTime();
-        end_timer.stop();
-    }
-    status = _paused;
+//    if (begin_timer.isActive())
+//    {
+//        begin_remaining = begin_timer.remainingTime();
+//        begin_timer.stop();
+//    }
+//    if (dur_timer.isActive())
+//    {
+//        dur_remaining = dur_timer.remainingTime();
+//        dur_timer.stop();
+//    }
+//    if (end_timer.isActive())
+//    {
+//        begin_remaining = begin_timer.remainingTime();
+//        end_timer.stop();
+//    }
+//    status = _paused;
     return;
 }
 
 
-void TBase::stop()
+void TBase::beginStop()
 {
     if (begin_timer.isActive())
         begin_timer.stop();
@@ -56,16 +55,26 @@ void TBase::stop()
         dur_timer.stop();
     begin_remaining = 0;
     end_remaining   = 0;
+    dur_remaining   = 0;
     status = _stopped;
 }
 
-void TBase::resume()
+void TBase::beginResume()
 {
-    begin_remaining = 0;
-    end_remaining   = 0;
-    status          = _playing;
+//    if (begin_remaining > 0 && begin.getStatus() == "ms")
+//    {
+//        begin_timer.start(begin_remaining);
+//        status          = _waiting;
+//        begin_remaining = 0;
+//    }
+//    else if(begin.getStatus() == "wallclock")
+//    {
+//        begin_timer.start(begin.getNextTrigger(QDateTime::currentDateTime()));
+//        status          = _waiting;
+//        begin_remaining = 0;
+//    }
+    return;
 }
-
 
 // ========================= protected methods ======================================================
 
@@ -76,18 +85,24 @@ void TBase::finishedImplicitDuration()
     return;
 }
 
-void TBase::setTimedStart()
+void TBase::setTimedStart() // for resume
 {
     if (begin.getStatus() == "ms") // look if begin should be delayed
     {
         begin_timer.start(begin.getMilliseconds());
+        status = _waiting;
     }
     else if (begin.getStatus() == "wallclock") // look if begin should be delayed
     {
         begin_timer.start(begin.getNextTrigger(QDateTime::currentDateTime()));
+        status = _waiting;
     }
     else // play imediately
-        play();
+        checkBeforePlay();
+    begin_remaining = 0;
+    end_remaining   = 0;
+    dur_remaining   = 0;
+    return;
 }
 
 
@@ -169,6 +184,11 @@ bool TBase::checkRepeatCountStatus()
     return ret;
 }
 
+void TBase::resetInternalRepeatCount()
+{
+    internal_count = 1;
+}
+
 // ========================= private methods ======================================================
 
 void TBase::setRepeatCount(QString rC)
@@ -183,7 +203,7 @@ void TBase::setRepeatCount(QString rC)
 
 void TBase::initTimer()
 {
-    connect(&begin_timer, SIGNAL(timeout()), this, SLOT(play()));
+    connect(&begin_timer, SIGNAL(timeout()), this, SLOT(checkBeforePlay()));
     begin_timer.setSingleShot(true);
 
     connect(&end_timer, SIGNAL(timeout()), this, SLOT(emitfinished()));

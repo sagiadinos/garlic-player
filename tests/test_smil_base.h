@@ -33,15 +33,20 @@ public:
     void      test_setBaseAttributes(){setBaseAttributes();}
     bool      test_checkRepeatCountStatus(){return checkRepeatCountStatus();}
 
-    void      setActiveElement(QDomElement element){actual_element = element;}
+    void      setActiveElement(QDomElement element){root_element = element;}
 
     void      setForRepeatCountCheck(int rC, int r_c, bool in){repeatCount=rC;internal_count=r_c;indefinite=in;}
     int       getRepeatCount(){return repeatCount;}
     bool      getIndefinite(){return indefinite;}
 public slots:
-    void        emitfinished(){}
+    void       emitfinished(){}
+protected:
+    void       play(){}
+    void       pause(){}
+    void       stop(){}
+
 protected slots:
-    void play(){}
+    void       checkBeforePlay(){}
 };
 
 

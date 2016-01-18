@@ -45,7 +45,7 @@ void TWeb::beginPlay()
     return;
 }
 
-void TWeb::play()
+void TWeb::checkBeforePlay()
 {
     if (setTimedEnd())
     {
@@ -66,6 +66,25 @@ showWeb TWeb::getMediaForShow()
 {
    return show_web;
 }
+
+void TWeb::play()
+{
+    status = _playing;
+    return;
+}
+
+void TWeb::pause()
+{
+    status = _paused;
+    return;
+}
+
+void TWeb::stop()
+{
+    status = _stopped;
+    return;
+}
+
 
 
 void TWeb::setAttributes()

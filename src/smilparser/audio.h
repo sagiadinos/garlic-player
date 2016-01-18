@@ -40,12 +40,15 @@ public:
     QString   getType() {return "audio";}
     void     beginPlay();
 public slots:
-    void     play();
+    void     checkBeforePlay();
 protected:
     QObject *parent_object;
     QtAV::VideoOutput *output;
     QtAV::AVPlayer    *media_player;
     showAudio show_audio;
+    void      play();
+    void      pause();
+    void      stop();
     void      setAttributes();
 };
 
