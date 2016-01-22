@@ -42,7 +42,7 @@ At the moment there is an early alpha version which is able to player local SMIL
 - **layout**
 
 ###Multizone attributes
-- **regionName** values in px or %
+- **regionName**
 - **top** values in px or %
 - **left** values in px or %
 - **width** values in px or %
