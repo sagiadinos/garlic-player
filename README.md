@@ -16,23 +16,23 @@ At the moment there is an early alpha version which is able to player local SMIL
 ## actual supported SMIL-Features
 
 ###Playlist Elements
-- seq
-- par
-- excl (is heavily @work)
+- **seq**
+- **par**
+- **excl** (is heavily @work)
 
 ###Media-Elements
-- video
-- audio
-- images
-- text (websites)
+- **video**
+- **audio**
+- **images**
+- **text** websites only
 
 ###Attributes for media
 - **region**
 - **fit** and the values fill, scale, meetbest, none
 
 ###Attributes for media and playlists:
-- ** xml:id**   with Fallback for SMIL 2.0 id
-- **dur**  with values indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
+- **xml:id** with Fallback for SMIL 2.0 id
+- **dur** with values indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
 - **begin** with Clock values (like dur) and wallcock with periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W at the moment.
 - **end** has same features as begin
 - **repeatCount** only integer values (float support comes later)
