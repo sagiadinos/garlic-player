@@ -2,95 +2,112 @@
 
 TPriorityClass::TPriorityClass(QObject *parent)
 {
-    parent_playlist = parent;
+    Q_UNUSED(parent);
     setObjectName("TExcl"); // priorityClass elements may only appear as immediate children of excl elements
 }
 
-bool TPriorityClass::parse(QDomElement element)
+bool TPriorityClass::parse(QDomElement dom_element)
 {
-    root_element   = element;
+    root_element   = dom_element;
     setAttributes();
-    if (element.hasChildNodes())
-        setPlaylist();
-    else
-        return false;
+    setPlaylist();
     return true;
 }
 
-void TPriorityClass::beginPlay()
+void TPriorityClass::stopPlayingChild(QDomElement new_dom_element)
 {
-    setTimedStart();
     return;
 }
 
-bool TPriorityClass::findElement(QDomElement element)
+void TPriorityClass::pausePlayingChild(QDomElement new_dom_element)
+{
+    return;
+}
+
+void TPriorityClass::pauseElement(QObject *element)
+{
+    return;
+}
+
+void TPriorityClass::enqueueElement(QObject *element)
+{
+    queue.enqueue(element);
+    return;
+}
+
+bool TPriorityClass::findElement(QDomElement dom_element)
 {
     for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
     {
-        if (element == *iterator)
+        if (dom_element == *iterator)
             return true;
     }
     return false;
 }
 
-void TPriorityClass::checkBeforePlay()
+
+bool TPriorityClass::play()
 {
-    if (setTimedEnd() || ar_playlist.length() > 0)
+    if (ar_playlist.length() > 0)
     {
-        for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
-        {
-            active_element = *iterator;
-            reactByTag();
-        }
-        status   = _playing;
-        emit startedPlaylist(parent_playlist, parent_playlist); // priorityClass elements may only appear as immediate children of excl elements
+        iterator =  ar_playlist.begin();
+        active_element = *iterator;
+        return true;
     }
-    else // when end or duration is not specified or no child elements stop imediately
-        emitfinished();
-    return;
-
+   return false;
 }
 
-void TPriorityClass::play()
+bool TPriorityClass::next()
 {
-    status = _playing;
-    return;
+    iterator++;
+    if (iterator != ar_playlist.end())
+    {
+        active_element = *iterator;
+        return true;
+    }
+    return false;
 }
 
-void TPriorityClass::stop()
+
+void TPriorityClass::setActiveChilds(bool active)
 {
-    status = _stopped;
+    is_child_active = active;
     return;
 }
 
-void TPriorityClass::pause()
+int TPriorityClass::decPlayableChilds()
 {
-    status = _paused;
-    return;
+    playable_childs--;
+    return playable_childs;
 }
 
+QList<QDomElement> TPriorityClass::getChilds()
+{
+    return ar_playlist;
+}
+
+
+void TPriorityClass::setAttributes()
+{
+    if (root_element.hasAttribute("peers"))
+        peers = root_element.attribute("peers");
+    if (root_element.hasAttribute("higher"))
+        higher = root_element.attribute("higher");
+    if (root_element.hasAttribute("lower"))
+        lower = root_element.attribute("lower");
+    return;
+}
 
 void TPriorityClass::setPlaylist()
 {
-    QDomNodeList childs = active_element.childNodes();
+    QDomNodeList childs = root_element.childNodes();
     count_childs        = childs.length();
     QDomElement  element;
     for (int i = 0; i < count_childs; i++)
     {
         element = childs.item(i).toElement();
-        if (element.tagName() != "priorityClass") // nesting of priorityClass not allowed
-            ar_playlist.append(childs.item(i).toElement());
-
+        if (element.tagName() != "priorityClass")
+            ar_playlist.append(element);
     }
-}
-
-void TPriorityClass::setAttributes()
-{
-    if (active_element.hasAttribute("peers"))
-        peers = active_element.attribute("peers");
-    if (active_element.hasAttribute("higher"))
-        higher = active_element.attribute("higher");
-    if (active_element.hasAttribute("lower"))
-        lower = active_element.attribute("lower");
     return;
 }

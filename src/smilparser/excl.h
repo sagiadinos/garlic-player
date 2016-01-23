@@ -25,26 +25,36 @@ class TExcl : public TPlaylist
 {
     Q_OBJECT
 public:
+    const     int        _no_interrupting  = 0;
+    const     int        _interrupt_active   = 1;
+    const     int        _play_this          = 2;
     TExcl(QObject * parent = 0);
     bool      parse(QDomElement element);
-    bool      next();
-    QString   getType(){return "excl";}
+    void      next();
     void      beginPlay();
-    void      changeActiveChild(QDomElement element);    
+    QObject*  getPlayedObject();
+    int       interruptActualPlaying(QDomElement started_element, QObject *element);
+    void      decActivatableChilds();
+    void      setChildActive(bool active);
+    void      pause();
+    void      stop();
 public slots:
-    void      checkBeforePlay();
+    void      setDurationTimerBeforePlay();
 protected:
     void     play();
-    void     pause();
-    void     stop();
 private:
+    QObject                              *played_element;
+    QDomElement                           played_dom_element;
     TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
-    QQueue<QDomElement>                   pause_queue;
-    QSet<TPriorityClass *>                ar_priorities;
-    QSet<TPriorityClass *>::iterator      ar_priorities_iterator;
-    int       count_childs       = 0;
+    QQueue<TPriorityClass *>              queue;
+    QHash<int, TPriorityClass *>                ar_priorities;
+    QHash<int, TPriorityClass *>::iterator      ar_priorities_iterator;
+    int       activatable_childs  = 0;
     void      setPlaylist();
     void      setPriorityClass(QDomElement element);
+signals:
+    void doStop(QObject *element);
+    void doPause(QObject *element);
 };
 
 #endif // TEXCL_H

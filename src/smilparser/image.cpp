@@ -51,7 +51,7 @@ void TImage::beginPlay()
     return;
 }
 
-void TImage::checkBeforePlay()
+void TImage::setDurationTimerBeforePlay()
 {
     if (setTimedEnd())
     {
@@ -85,6 +85,7 @@ void TImage::pause()
 void TImage::stop()
 {
     status = _stopped;
+    emit finishedMedia(parent_playlist, this);
     return;
 }
 

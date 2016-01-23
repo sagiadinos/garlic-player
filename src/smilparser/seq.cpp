@@ -47,7 +47,7 @@ void TSeq::beginPlay()
     return;
 }
 
-void TSeq::checkBeforePlay()
+void TSeq::setDurationTimerBeforePlay()
 {
     if (setTimedEnd() || ar_playlist.length() > 0)
     {
@@ -102,14 +102,12 @@ void TSeq::doMetaData()
     return;
 }
 
-bool TSeq::next()
+void TSeq::next()
 {
-    bool ret = false;
     iterator++; // inc iterator first only when inc result smaller than  .end()
     if (iterator < ar_playlist.end())  // cause .end() pointing to the imaginary item after the last item in the vector
     {
         active_element = *iterator;
-        ret            = true;
         reactByTag();
     }
     else // end check if repeat value is indefined or Limnit not reached
@@ -117,14 +115,13 @@ bool TSeq::next()
         if (checkRepeatCountStatus())
         {
             play();
-            ret            = true;
         }
         else
         {
             emitfinished();
         }
     }
-    return ret;
+    return;
 }
 
 bool TSeq::previous()
@@ -149,6 +146,7 @@ void TSeq::setPlaylist()
         random = true;
         internal_pick = pickNumber;
     }
+    return;
 }
 
 void TSeq::randomizePlaylist()
@@ -163,4 +161,5 @@ void TSeq::randomizePlaylist()
     // Let only pickNumber items in List
     for (int i = 0; i < (length-pickNumber); i++)
         ar_playlist.removeLast();
+    return;
 }

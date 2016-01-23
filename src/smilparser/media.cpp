@@ -74,9 +74,7 @@ void TMedia::setBaseMediaAttributes()
 
 void TMedia::emitfinished()
 {
-    status = _stopped;
-    if (!checkRepeatCountStatus())
-        emit finishedMedia(parent_playlist, this);
+   stop();
 }
 
 

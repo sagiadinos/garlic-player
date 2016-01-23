@@ -21,6 +21,7 @@
 TWeb::TWeb(QObject *parent)
 {
     parent_playlist = parent;
+    initTimer();
     setObjectName("TWeb");
 }
 
@@ -45,7 +46,7 @@ void TWeb::beginPlay()
     return;
 }
 
-void TWeb::checkBeforePlay()
+void TWeb::setDurationTimerBeforePlay()
 {
     if (setTimedEnd())
     {
@@ -82,6 +83,7 @@ void TWeb::pause()
 void TWeb::stop()
 {
     status = _stopped;
+    emit finishedMedia(parent_playlist, this);
     return;
 }
 

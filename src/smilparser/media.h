@@ -36,7 +36,8 @@ public:
             QString     getFileName();
             QString     getCacheControl();
             QString     getLogContentId();
-    virtual QString     getType() = 0;
+            void        pause(){}
+            void        stop(){}
 public slots:
         void emitfinished();
 protected:
@@ -45,7 +46,6 @@ protected:
     void   setBaseMediaAttributes();
     void   setBaseParameters();
     void   play(){}
-    void   stop(){}
 signals:
 signals:
     void        startedMedia(QObject * , QObject *);

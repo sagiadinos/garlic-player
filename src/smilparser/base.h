@@ -56,7 +56,6 @@ public:
     const     int        _paused   = 3;
 
     explicit             TBase(QObject * parent = 0);
-    virtual  QString     getType() = 0;
     virtual  bool        parse(QDomElement element) = 0; // prepare for begin
     virtual  void        beginPlay() = 0;      // what to do when parent sends an order to begin executions
              void        beginPause();
@@ -68,8 +67,10 @@ public:
              QString     getID(){return id;}
              QString     getTitle(){return title;}
     static   QString     parseID(QDomElement element);
+    virtual  void        pause()    = 0;
+    virtual  void        stop()     = 0;
 public slots:
-        virtual void emitfinished() = 0;
+    virtual  void        emitfinished() = 0;
 protected:
             QTimer       begin_timer, end_timer, dur_timer;
             int          begin_remaining, end_remaining, dur_remaining;
@@ -90,11 +91,9 @@ protected:
             bool         checkRepeatCountStatus();
             void         initTimer();
    virtual  void         play()     = 0;
-   virtual  void         pause()    = 0;
-   virtual  void         stop()     = 0;
 protected slots:
-    virtual void         checkBeforePlay() = 0;
-            void         finishedImplicitDuration();
+    virtual void         setDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
+            void         finishedSimpleDuration();
 private:
             void         setRepeatCount(QString rC);
 };

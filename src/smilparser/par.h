@@ -27,19 +27,18 @@ class TPar : public TPlaylist
 public:
     TPar(QObject * parent = 0);
     bool         parse(QDomElement element);
-    bool         next();
-    QString      getType(){return "par";}
+    void         next();
     void         incActiveChilds();
     void         decActiveChilds();
     void         beginPlay();
+    void         pause();
+    void         stop();
 protected slots:
-    void         checkBeforePlay();
+    void         setDurationTimerBeforePlay();
 private:
     QString      endsync            = "last";
     QDomNodeList childs;
     void         play();
-    void         pause();
-    void         stop();
     void         setPlaylist();
     int          active_childs      = 0;
     int          count_childs       = 0;

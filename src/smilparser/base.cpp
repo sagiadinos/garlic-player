@@ -56,7 +56,8 @@ void TBase::beginStop()
     begin_remaining = 0;
     end_remaining   = 0;
     dur_remaining   = 0;
-    status = _stopped;
+    stop();
+    return;
 }
 
 void TBase::beginResume()
@@ -78,16 +79,23 @@ void TBase::beginResume()
 
 // ========================= protected methods ======================================================
 
-void TBase::finishedImplicitDuration()
+void TBase::finishedSimpleDuration()
 {
-    if (!end_timer.isActive())
+    if (!checkRepeatCountStatus() && !end_timer.isActive())
         emitfinished();
     return;
 }
 
-void TBase::setTimedStart() // for resume
+void TBase::setTimedStart()
 {
-    if (begin.getStatus() == "ms") // look if begin should be delayed
+    // set end here cause begin and end depending on start of the par/excl parent. With seq it depends on last element
+    if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
+        end_timer.start(end.getMilliseconds());
+    else if (end.getStatus() == "wallclock")
+        end_timer.start(end.getNextTrigger(QDateTime::currentDateTime()));
+
+    // set if begin should be delayed
+    if (begin.getStatus() == "ms")
     {
         begin_timer.start(begin.getMilliseconds());
         status = _waiting;
@@ -98,7 +106,8 @@ void TBase::setTimedStart() // for resume
         status = _waiting;
     }
     else // play imediately
-        checkBeforePlay();
+        setDurationTimerBeforePlay();
+
     begin_remaining = 0;
     end_remaining   = 0;
     dur_remaining   = 0;
@@ -111,28 +120,11 @@ bool TBase::setTimedEnd()
     bool ret = false;
     if (dur.getStatus() == "ms") // set end of simple duration
     {
-        if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
-            end_timer.start(end.getMilliseconds());
-
         dur_timer.start(dur.getMilliseconds());
         ret = true;
     }
     else if (dur.getStatus() == "indefinite" || end.getStatus() == "indefinite")
-        ret = true;  // end time is set so no media end can be used
-    else if (end.getStatus() == "wallclock")
-    {
-        end_timer.start(end.getNextTrigger(QDateTime::currentDateTime()));
-    }
-    else
-    {
-        //  if end specified simple duration is indefinited
-        if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
-        {
-            end_timer.start(end.getMilliseconds());
-            ret = true;
-        }
-
-    }
+        ret = true; // no timer
     return ret;
 }
 
@@ -203,13 +195,13 @@ void TBase::setRepeatCount(QString rC)
 
 void TBase::initTimer()
 {
-    connect(&begin_timer, SIGNAL(timeout()), this, SLOT(checkBeforePlay()));
+    connect(&begin_timer, SIGNAL(timeout()), this, SLOT(setDurationTimerBeforePlay()));
     begin_timer.setSingleShot(true);
 
     connect(&end_timer, SIGNAL(timeout()), this, SLOT(emitfinished()));
     end_timer.setSingleShot(true);
 
-    connect(&dur_timer, SIGNAL(timeout()), this, SLOT(finishedImplicitDuration()));
+    connect(&dur_timer, SIGNAL(timeout()), this, SLOT(finishedSimpleDuration()));
     dur_timer.setSingleShot(true);
 
     begin_remaining = 0;

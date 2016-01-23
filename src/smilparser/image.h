@@ -41,16 +41,15 @@ public:
     bool     parse(QDomElement element);
     showImg  getMediaForShow();
     QString  getFit();
-    QString  getType() {return "image";}
     void     beginPlay();
+    void     pause();
+    void     stop();
 public slots:
-    void     checkBeforePlay();
+    void     setDurationTimerBeforePlay();
 protected:
     showImg show_img;
     void    setAttributes();
     void    play();
-    void    pause();
-    void    stop();
 };
 
 #endif // IMAGE_H

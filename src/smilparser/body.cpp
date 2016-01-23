@@ -51,11 +51,11 @@ bool TBody::parse(QDomElement element)
 
 void TBody::beginPlay()
 {
-   checkBeforePlay();
+   setDurationTimerBeforePlay();
    return;
 }
 
-void TBody::checkBeforePlay()
+void TBody::setDurationTimerBeforePlay()
 {
     reactByTag();
     emit startedPlaylist(parent_playlist, this);
@@ -63,19 +63,17 @@ void TBody::checkBeforePlay()
 }
 
 
-bool TBody::next()
+void TBody::next()
 {
-    bool ret = false;
     iterator++; // inc iterator first only when inc result smaller than  .end()
     if (iterator < ar_playlist.end())  // cause .end() pointing to the imaginary item after the last item in the vector
     {
         active_element = *iterator;
-        ret            = true;
         reactByTag();
     }
     else
         emitfinished();
-    return ret;
+    return;
 }
 
 bool TBody::previous()

@@ -56,6 +56,7 @@ public slots:
     void  handleFoundElement(QObject *parent, TFoundTag found_tag);
     void  emitstartedElement(QObject *, QObject *);
     void  emitfinishedElement(QObject *, QObject *);
+    void  handlePause(QObject *element);
 protected:
     QDomElement     parser;
     QString         index_path;
@@ -67,6 +68,7 @@ protected:
     QHash<QString, QObject *>::iterator ar_elements_iterator;
     showImg         ImgAttr;
     void            insertIntoObjectContainer(QString id, QObject *parent, QObject *child);
+    void  handleStop(QObject *parent, QObject *element);
 private:
 
 signals:

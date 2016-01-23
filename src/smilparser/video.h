@@ -40,17 +40,17 @@ public:
     bool      parse(QDomElement element);
     showVideo getMediaForShow();
     QString   getFit();
-    QString   getType() {return "video";}
     void      beginPlay();
+    void      pause();
+    void      stop();
 public slots:
-    void      checkBeforePlay();
+    void      setDurationTimerBeforePlay();
+    void      emitfinished();
 protected:
     QtAV::AVPlayer *media_player;
     showVideo       show_video;
     void            setAttributes();
     void            play();
-    void            pause();
-    void            stop();
 };
 
 #endif // TVIDEO_H

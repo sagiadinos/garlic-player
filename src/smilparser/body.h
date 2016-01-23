@@ -27,20 +27,19 @@ class TBody : public TPlaylist
 public:
     TBody(QObject * parent = 0);
     ~TBody();
-    bool        parse(QDomElement element);
-    void        beginPlay();
-    void        endPlay(){}
-    bool        next();
-    bool        previous();
-    QString     getType(){return "seq";}
+    bool      parse(QDomElement element);
+    void      beginPlay();
+    void      endPlay(){}
+    void      next();
+    bool      previous();
+    void      pause(){}
+    void      stop(){}
 protected:
-    void     play(){}
-    void     pause(){}
-    void     stop(){}
+    void      play(){}
 public slots:
-    void     checkBeforePlay();
+    void      setDurationTimerBeforePlay();
 private:
-    void    setPlaylist();
+    void      setPlaylist();
 };
 
 #endif // TBODY_H

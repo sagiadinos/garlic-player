@@ -21,6 +21,7 @@
 TVideo::TVideo(QObject *parent)
 {
     parent_playlist = parent;
+    initTimer();
     setObjectName("TVideo");
 }
 
@@ -49,14 +50,20 @@ void TVideo::beginPlay()
     return;
 }
 
-void TVideo::checkBeforePlay()
+void TVideo::setDurationTimerBeforePlay()
 {
     if (!setTimedEnd()) // when end or duration is not specified end on video duration
-        connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished()));
+        connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
     play();
     emit startedMedia(parent_playlist, this);
     return;
 }
+
+void TVideo::emitfinished()
+{
+   stop();
+}
+
 
 void TVideo::play()
 {
@@ -69,6 +76,7 @@ void TVideo::stop()
 {
     media_player->stop();
     status = _stopped;
+    emit finishedMedia(parent_playlist, this);
     return;
 }
 

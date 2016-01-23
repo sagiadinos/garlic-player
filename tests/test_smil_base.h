@@ -46,7 +46,7 @@ protected:
     void       stop(){}
 
 protected slots:
-    void       checkBeforePlay(){}
+    void       setDurationTimerBeforePlay(){}
 };
 
 

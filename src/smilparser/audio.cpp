@@ -21,6 +21,7 @@
 TAudio::TAudio(QObject *parent)
 {
     parent_playlist = parent;
+    initTimer();
     setObjectName("TAudio");
 }
 
@@ -49,10 +50,10 @@ void TAudio::beginPlay()
     return;
 }
 
-void TAudio::checkBeforePlay()
+void TAudio::setDurationTimerBeforePlay()
 {
     if (!setTimedEnd()) // when end or duration is not specified end on video duration
-        connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished()));
+        connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
     play();
     emit startedMedia(parent_playlist, this);
     return;
@@ -69,6 +70,7 @@ void TAudio::stop()
 {
     media_player->stop();
     status = _playing;
+    emit finishedMedia(parent_playlist, this);
 }
 
 void TAudio::pause()

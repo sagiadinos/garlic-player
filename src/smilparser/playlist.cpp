@@ -39,7 +39,14 @@ QString TPlaylist::getIdOfActiveElement()
     return parseID(active_element);
 }
 
-QHash<QString, QObject *> TPlaylist::getPlaylistObject()
+QObject* TPlaylist::getActiveObject()
+{
+    QHash<QString, QObject *>::iterator i = ar_elements.find(getIdOfActiveElement());
+    return *i;
+}
+
+
+QHash<QString, QObject *> TPlaylist::getPlaylistObjects()
 {
     return ar_elements;
 }
@@ -64,12 +71,14 @@ void TPlaylist::reactByTag()
         doPar();
     else if(active_element.tagName() == "excl")
         doExcl();
+    return;
 }
 
 void TPlaylist::emitfinished()
 {
     status = _stopped;
     emit finishedPlaylist(parent_playlist, this);
+    return;
 }
 
 void TPlaylist::doRef()
@@ -85,6 +94,7 @@ void TPlaylist::doRef()
         else if(active_element.attribute("type").contains("text"))
             doWeb();
     }
+    return;
 }
 
 void TPlaylist::doImage()

@@ -42,7 +42,7 @@ void TPar::beginPlay()
     return;
 }
 
-void TPar::checkBeforePlay()
+void TPar::setDurationTimerBeforePlay()
 {
     if (setTimedEnd() || ar_playlist.length() > 0)
     {
@@ -62,7 +62,7 @@ void TPar::checkBeforePlay()
  *        then the finished signal will emitted;
  * @return
  */
-bool TPar::next()
+void TPar::next()
 {
     if (active_childs == 0)
     {
@@ -75,7 +75,7 @@ bool TPar::next()
             emitfinished();
         }
     }
-    return false;
+    return;
 }
 
 void TPar::play()
