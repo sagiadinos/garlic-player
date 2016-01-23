@@ -1,17 +1,26 @@
 # garlic-player - SMIL Player for Digital Signage
 
-The goal is to create an as most as neccessary SMIL 3.0 compatible and as most as possible platform independent multimedia player for Digital Signage proposes.
+The goal is to create an as most as neccessary SMIL 3.0 compatible and as most as possible platform independent multimedia player for Digital Signage proposes. Garlic should be used online with web-based content managment systems like [SmilControl](http://smil-control.com) or other.
+Also poassible is offline via command-line.
 
 ## OS targets:
 
 Primary: Linux, Windows
 Secondary: Android, OSX and iOS
 
-Compiled whith Qt 5.5. and QtAV 1.8.0 for video and audio media under Kubuntu 14.04
+Developing with Qt 5.5 and QtAV 1.8.0 under Kubuntu 14.04
 
-At the moment there is an early alpha version which is able to player local SMIL-Files via command line under Linux.
+At the moment there is an early alpha version which is able to play local SMIL-Files with actual supported features via command-line.
 
-*garlic-player -f path_to_smil_file*
+*garlic.sh [options] SMIL_INDEX*
+Options:
+  -h, --help        Displays this help.
+  -v, --version     Displays version information.
+  -f, --fullscreen  Starts in fullscreen mode
+  -w, --window      Starts in windows mode
+
+Arguments:
+  SMIL_INDEX        Path to SMIL index
 
 ## actual supported SMIL-Features
 
