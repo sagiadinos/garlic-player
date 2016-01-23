@@ -14,7 +14,7 @@ SOURCES += main.cpp \
     test_smil_base.cpp \
     test_smil_playlist.cpp \
     test_smil_timings.cpp \
-    test_smil_image.cpp
+    test_smil_timings_element.cpp
 
 HEADERS += \
     AutoTest.h \
@@ -23,4 +23,4 @@ HEADERS += \
     test_smil_base.h \
     test_smil_playlist.h \
     test_smil_timings.h \
-    test_smil_image.h
+    test_smil_timings_element.h

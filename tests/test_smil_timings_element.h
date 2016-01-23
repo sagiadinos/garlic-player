@@ -15,54 +15,56 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-
-#ifndef TESTSMILBASEPLAYLIST_H
-#define TESTSMILBASEPLAYLIST_H
+#ifndef TEST_SMIL_IMAGE_H
+#define TEST_SMIL_IMAGE_H
 
 #include "AutoTest.h"
 #include "smilparser/base.h"
 
-class testBase : public TBase
+class testTimingsElement : public TBase
 {
     Q_OBJECT
 public:
-    testBase(QObject * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
-    QString   getType(){return "test base";}
-    bool      parse(QDomElement element){Q_UNUSED(element);return true;}
-    void      beginPlay(){}
-    void      test_setBaseAttributes(){setBaseAttributes();}
-    bool      test_checkRepeatCountStatus(){return checkRepeatCountStatus();}
-
-    void      setActiveElement(QDomElement element){root_element = element;}
-
-    void      setForRepeatCountCheck(int rC, int r_c, bool in){repeatCount=rC;internal_count=r_c;indefinite=in;}
-    int       getRepeatCount(){return repeatCount;}
-    bool      getIndefinite(){return indefinite;}
+    testTimingsElement(QObject * parent = 0){Q_UNUSED(parent);initTimer();setObjectName("testtestTimingsElement");}
+    QString   getType(){return "test timings for elements";}
+    bool      parse(QDomElement element) {root_element = element;setBaseAttributes();return true;}
+    void      beginPlay(){setTimedStart();}
+    int       getRemainingBegin(){return begin_remaining;}
+    int       getRemainingEnd(){return end_remaining;}
+    int       getRemainingDur(){return dur_remaining;}
 public slots:
-    void       emitfinished(){}
+    void       emitfinished(){emit signal_end();}
 protected:
-    void       play(){status = _playing;}
+    void       play() {status = _playing;}
     void       pause(){status = _paused;}
     void       stop(){status = _stopped;}
 
 protected slots:
-    void       setDurationTimerBeforePlay(){}
+    void       setDurationTimerBeforePlay() // like TImage and TWeb
+    {
+        if (setTimedEnd())
+        {
+            play();
+            emit signal_begin();
+        }
+        else
+            emitfinished();
+    }
+signals:
+    void signal_begin();
+    void signal_end();
 };
 
 
-class Test_SmilBase : public QObject
+class Test_SmilTimingsElement : public QObject
 {
     Q_OBJECT
 private slots:
     void initTestCase(){}
-    void test_setBaseAttributes();
-    void test_checkRepeatCountStatus();
+    void test_TimingsOnly();
     void cleanupTestCase(){}
 };
-
-DECLARE_TEST(Test_SmilBase)
-
-#endif // TESTSMILBASEPLAYLIST_H
+DECLARE_TEST(Test_SmilTimingsElement);
 
 
-
+#endif // TEST_SMIL_IMAGE_H
