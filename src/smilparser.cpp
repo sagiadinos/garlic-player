@@ -83,6 +83,7 @@ void TSmil::next(TPar *MyPar)
 
 void TSmil::next(TExcl *MyExcl)
 {
+    MyExcl->setChildActive(false); // gibt Probleme bei peers never wenn
     MyExcl->decActivatableChilds();
     MyExcl->next();
     return;
@@ -252,12 +253,10 @@ void TSmil::emitstartedElement(QObject *parent, QObject *element)
     QString type        = element->objectName();
     QString parent_type = parent->objectName();
     QDomElement root_domelement;
-    QString id;
     if (type == "TImage")
     {
         TImage *MyImage = qobject_cast<TImage *> (element);
         root_domelement = MyImage->getRootElement();
-        id= MyImage->getID();
     }
     else if (type == "TVideo")
     {
@@ -285,7 +284,7 @@ void TSmil::emitstartedElement(QObject *parent, QObject *element)
         TExcl *MyExclParent   = qobject_cast<TExcl *> (parent);
         QObject *played_object = MyExclParent->getPlayedObject(); // must set before interrupting
         int interrupt = MyExclParent->interruptActualPlaying(root_domelement, element);
-        if (interrupt == MyExclParent->_interrupt_active)
+        if (interrupt == MyExclParent->_interrupt_active) // stop active
         {
             handleStop(parent, played_object);
             emit playMedia(element);
@@ -296,7 +295,7 @@ void TSmil::emitstartedElement(QObject *parent, QObject *element)
             MyExclParent->setChildActive(true);
             emit playMedia(element);
         }
-        else if (interrupt == MyExclParent->_no_interrupting)
+        else if (interrupt == MyExclParent->_no_interrupting) // stop caller
         {
             handleStop(parent, element);
         }
@@ -304,7 +303,10 @@ void TSmil::emitstartedElement(QObject *parent, QObject *element)
         // _interrupt_new => let it flow
     }
     else
+    {
         emit playMedia(element);
+
+    }
     return;
 }
 
@@ -316,19 +318,7 @@ void TSmil::emitfinishedElement(QObject *parent, QObject *element)
         return;
 
     QString parent_type = parent->objectName();
-    if (type == "TImage")
-    {
-        emit finishedMedia(element);
-    }
-    else if (type == "TVideo")
-    {
-        emit finishedMedia(element);
-    }
-    else if (type == "TAudio")
-    {
-        emit finishedMedia(element);
-    }
-    else if (type == "TWeb")
+    if (type == "TImage" || type == "TVideo" ||type == "TAudio" || type == "TWeb")
     {
         emit finishedMedia(element);
     }
@@ -337,7 +327,6 @@ void TSmil::emitfinishedElement(QObject *parent, QObject *element)
         delete MyBody;
         ar_elements.clear();
     }
-
 
     if (parent_type == "TSeq")
         next(qobject_cast<TSeq *> (parent));
@@ -358,9 +347,12 @@ void TSmil::handleStop(QObject *parent, QObject *element)
     if (parent_type == "TExcl")
     {
         TExcl *MyExclParent   = qobject_cast<TExcl *> (parent);
-        // set false only when an active element ends, cause peers="never" gets upset
-        if (element == MyExclParent->getActiveObject())
+
+         if (MyExclParent->getPeers() == "stop")
             MyExclParent->setChildActive(false);
+        else if(MyExclParent->getPeers() == "never" && MyExclParent->getPlayedObject() == element)
+            MyExclParent->setChildActive(false);
+        MyExclParent->decActivatableChilds();
     }
 
     if (type == "TImage")
@@ -369,6 +361,7 @@ void TSmil::handleStop(QObject *parent, QObject *element)
         if (MyImage->getStatus() == MyImage->_playing)
         {
             MyImage->beginStop();
+            emit finishedMedia(element);
         }
     }
     else if (type == "TVideo")
@@ -377,6 +370,7 @@ void TSmil::handleStop(QObject *parent, QObject *element)
         if (MyVideo->getStatus() == MyVideo->_playing)
         {
             MyVideo->beginStop();
+            emit finishedMedia(element);
         }
     }
     else if (type == "TAudio")
@@ -385,6 +379,7 @@ void TSmil::handleStop(QObject *parent, QObject *element)
         if (MyAudio->getStatus() == MyAudio->_playing)
         {
             MyAudio->beginStop();
+            emit finishedMedia(element);
         }
     }
     else if (type == "TWeb")
@@ -393,6 +388,7 @@ void TSmil::handleStop(QObject *parent, QObject *element)
         if (MyWeb->getStatus() == MyWeb->_playing)
         {
             MyWeb->beginStop();
+            emit finishedMedia(element);
         }
     }
     else if (type == "TSeq")

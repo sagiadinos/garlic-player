@@ -43,13 +43,13 @@ bool TSeq::parse(QDomElement element)
 
 void TSeq::beginPlay()
 {
-    setTimedStart();
+    setBeginEndTimer();
     return;
 }
 
 void TSeq::setDurationTimerBeforePlay()
 {
-    if (setTimedEnd() || ar_playlist.length() > 0)
+    if (hasDurAttribute() || end_timer->isActive() || ar_playlist.size() > 0)
     {
         resetInternalRepeatCount();
         play();
@@ -137,7 +137,7 @@ void TSeq::setPlaylist()
     for (int i = 0; i < length; i++)
     {
         element = childs.item(i).toElement();
-        if (element.tagName() != "metadata")
+        if (element.tagName() != "metadata" && element.tagName() != "") // e.g. comments
             ar_playlist.append(element);
     }
     if (pickingAlgorithm == "shuffle" && pickingBehavior == "pickN" && pickNumber > 0)

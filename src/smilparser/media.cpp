@@ -75,6 +75,9 @@ void TMedia::setBaseMediaAttributes()
 void TMedia::emitfinished()
 {
    stop();
+   qDebug() << getID() << "finishedMedia";
+   emit finishedMedia(parent_playlist, this);
+   return;
 }
 
 

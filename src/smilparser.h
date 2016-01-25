@@ -29,7 +29,7 @@
 #include <smilparser/audio.h>
 #include <smilparser/video.h>
 #include <smilparser/web.h>
-#include <QHash>
+#include <QSet>
 
 /**
  * @brief   The TSmil class is the interface between playlists,  medias and
@@ -61,6 +61,8 @@ protected:
     QDomElement     parser;
     QString         index_path;
     QList<Region>   region_list;
+    QSet<QObject *>  ar_played_media;
+
     TFile           MyFile;
     THead           MyHead;
     TBody          *MyBody;

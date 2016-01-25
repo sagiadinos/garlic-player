@@ -69,10 +69,11 @@ public:
     static   QString     parseID(QDomElement element);
     virtual  void        pause()    = 0;
     virtual  void        stop()     = 0;
+
 public slots:
     virtual  void        emitfinished() = 0;
 protected:
-            QTimer       begin_timer, end_timer, dur_timer;
+            QTimer       *begin_timer, *end_timer, *dur_timer;
             int          begin_remaining, end_remaining, dur_remaining;
             QDomElement  root_element;
             QString      id                   = "";
@@ -85,8 +86,8 @@ protected:
             bool         indefinite     = false;     // protected for testing
             int          internal_count = 1;         // protected for testing
             void         resetInternalRepeatCount();
-            void         setTimedStart();
-            bool         setTimedEnd();
+            void         setBeginEndTimer();
+            bool         hasDurAttribute();
             void         setBaseAttributes();
             bool         checkRepeatCountStatus();
             void         initTimer();

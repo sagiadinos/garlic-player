@@ -42,18 +42,18 @@ bool TWeb::parse(QDomElement element)
 
 void TWeb::beginPlay()
 {
-    setTimedStart();
+    setBeginEndTimer();
     return;
 }
 
 void TWeb::setDurationTimerBeforePlay()
 {
-    if (setTimedEnd())
+    if (hasDurAttribute() || end_timer->isActive()) // if dur or end is not specified end, cause images don't have an implicit duration like audio/video
     {
         status = _playing;
         emit startedMedia(parent_playlist, this);
     }
-    else // when end or duration is not specified stop imediately
+    else // when end or dur is not specified stop imediately
         emitfinished();
     return;
 }
@@ -83,7 +83,6 @@ void TWeb::pause()
 void TWeb::stop()
 {
     status = _stopped;
-    emit finishedMedia(parent_playlist, this);
     return;
 }
 

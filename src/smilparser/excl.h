@@ -35,6 +35,7 @@ public:
     QObject*  getPlayedObject();
     int       interruptActualPlaying(QDomElement started_element, QObject *element);
     void      decActivatableChilds();
+    QString   getPeers();
     void      setChildActive(bool active);
     void      pause();
     void      stop();

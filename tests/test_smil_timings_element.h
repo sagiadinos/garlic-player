@@ -28,7 +28,7 @@ public:
     testTimingsElement(QObject * parent = 0){Q_UNUSED(parent);initTimer();setObjectName("testtestTimingsElement");}
     QString   getType(){return "test timings for elements";}
     bool      parse(QDomElement element) {root_element = element;setBaseAttributes();return true;}
-    void      beginPlay(){setTimedStart();}
+    void      beginPlay(){setBeginEndTimer();}
     int       getRemainingBegin(){return begin_remaining;}
     int       getRemainingEnd(){return end_remaining;}
     int       getRemainingDur(){return dur_remaining;}
@@ -42,7 +42,7 @@ protected:
 protected slots:
     void       setDurationTimerBeforePlay() // like TImage and TWeb
     {
-        if (setTimedEnd())
+        if (hasDurAttribute())
         {
             play();
             emit signal_begin();

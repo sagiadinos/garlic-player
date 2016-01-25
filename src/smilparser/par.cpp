@@ -38,13 +38,13 @@ bool TPar::parse(QDomElement element)
 
 void TPar::beginPlay()
 {
-    setTimedStart();
+    setBeginEndTimer();
     return;
 }
 
 void TPar::setDurationTimerBeforePlay()
 {
-    if (setTimedEnd() || ar_playlist.length() > 0)
+    if (hasDurAttribute() || end_timer->isActive() || ar_playlist.size() > 0)
     {
         resetInternalRepeatCount();
         play();
@@ -109,7 +109,8 @@ void TPar::setPlaylist()
     count_childs        = childs.length();
     for (int i = 0; i < count_childs; i++)
     {
-        ar_playlist.append(childs.item(i).toElement());
+        if (childs.item(i).toElement().tagName() != "") // e.g. comments
+            ar_playlist.append(childs.item(i).toElement());
     }
 }
 

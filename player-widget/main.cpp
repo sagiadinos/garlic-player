@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
 {
 
     QApplication app(argc, argv);
+
     QApplication::setApplicationName(TConfiguration::getAppName());
     QApplication::setApplicationVersion(TConfiguration::getVersion());
     QApplication::setApplicationDisplayName(TConfiguration::getAppName());

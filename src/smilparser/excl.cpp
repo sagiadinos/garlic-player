@@ -43,7 +43,7 @@ bool TExcl::parse(QDomElement element)
 
 void TExcl::beginPlay()
 {
-    setTimedStart();
+    setBeginEndTimer();
     return;
 }
 
@@ -54,7 +54,7 @@ QObject *TExcl::getPlayedObject()
 
 void TExcl::setDurationTimerBeforePlay()
 {
-    if (setTimedEnd() || ar_priorities.size() > 0)
+    if (hasDurAttribute() || end_timer->isActive() || ar_priorities.size() > 0)
     {
         emit startedPlaylist(parent_playlist, this);
         play();
@@ -103,14 +103,14 @@ int TExcl::interruptActualPlaying(QDomElement dom_element, QObject *element)
 
     if (ActivePriorityClass == NewActivePriorityClass) // same priorityClass is currently active => look at peers attribute:
     {
-        QString peers = ActivePriorityClass->getPeers();
+        QString peers = getPeers();
         if (peers == "stop") // stop current active element
         {
             if (ActivePriorityClass->isChildActive())
                 ret = _interrupt_active;
             else
                 ret = _play_this;
-            played_element = element;
+            played_element     = element;
             played_dom_element = dom_element;
         }
         else if (peers == "pause") // pause current active element
@@ -122,16 +122,19 @@ int TExcl::interruptActualPlaying(QDomElement dom_element, QObject *element)
         else if (peers == "defer") // pause new element
         {
             ActivePriorityClass->enqueueElement(element);
-            ret = false;
+            ret = _no_interrupting;
         }
         else if (peers == "never") // ignore new element when there is another element played
         {
+            QString id = parseID(dom_element);
             if (ActivePriorityClass->isChildActive())
+            {
                 ret = _no_interrupting;
+            }
             else
             {
-                ret = _play_this;
-                played_element = element;
+                ret                = _play_this;
+                played_element     = element;
                 played_dom_element = dom_element;
             }
         }
@@ -172,6 +175,11 @@ int TExcl::interruptActualPlaying(QDomElement dom_element, QObject *element)
     return ret;
 }
 
+QString TExcl::getPeers()
+{
+    return ActivePriorityClass->getPeers();
+}
+
 void TExcl::decActivatableChilds()
 {
     QString id = parseID(played_dom_element);
@@ -196,7 +204,6 @@ void TExcl::next()
 {
     if (activatable_childs == 0)
     {
-        setChildActive(false);
         if(checkRepeatCountStatus())
             play();
         else
@@ -220,9 +227,12 @@ void TExcl::play()
             childs                    = ActivePriorityClass->getChilds();
             for (i = childs.begin(); i != childs.end();i++)
             {
-                activatable_childs++;
                 active_element = *i;
-                reactByTag();
+                if (active_element.tagName() != "") // e.g. comments
+                {
+                    activatable_childs++;
+                    reactByTag();
+                }
             }
         }
 

@@ -46,13 +46,13 @@ showAudio TAudio::getMediaForShow()
 
 void TAudio::beginPlay()
 {
-    setTimedStart();
+    setBeginEndTimer();
     return;
 }
 
 void TAudio::setDurationTimerBeforePlay()
 {
-    if (!setTimedEnd()) // when end or duration is not specified end on video duration
+    if (!hasDurAttribute()  && !end_timer->isActive()) // when end or dur is not specified use audio duration for simple duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
     play();
     emit startedMedia(parent_playlist, this);
@@ -70,8 +70,9 @@ void TAudio::stop()
 {
     media_player->stop();
     status = _playing;
-    emit finishedMedia(parent_playlist, this);
+    return;
 }
+
 
 void TAudio::pause()
 {

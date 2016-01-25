@@ -47,18 +47,20 @@ showImg TImage::getMediaForShow()
 
 void TImage::beginPlay()
 {
-    setTimedStart();
+    setBeginEndTimer();
     return;
 }
 
 void TImage::setDurationTimerBeforePlay()
 {
-    if (setTimedEnd())
+    qDebug() << getID() << "setDurationTimerBeforePlay";
+    if (hasDurAttribute() || end_timer->isActive()) // if dur or end is not specified end, cause images don't have an implicit duration like audio/video
     {
+        qDebug() << getID() << "played";
         play();
         emit startedMedia(parent_playlist, this);
     }
-    else // when end or duration is not specified stop imediately
+    else // when end or dur is not specified stop imediately
         emitfinished();
     return;
 }
@@ -66,9 +68,8 @@ void TImage::setDurationTimerBeforePlay()
 QString TImage::getFit()
 {
     return show_img.fit;
-}
 
-// ====================  protected methods =================================
+}
 
 void TImage::play()
 {
@@ -84,11 +85,12 @@ void TImage::pause()
 
 void TImage::stop()
 {
+    qDebug() << getID() << "stopped";
     status = _stopped;
-    emit finishedMedia(parent_playlist, this);
     return;
 }
 
+// ====================  protected methods =================================
 
 void TImage::setAttributes()
 {

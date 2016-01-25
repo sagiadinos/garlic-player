@@ -46,24 +46,18 @@ showVideo TVideo::getMediaForShow()
 
 void TVideo::beginPlay()
 {
-    setTimedStart();
+    setBeginEndTimer();
     return;
 }
 
 void TVideo::setDurationTimerBeforePlay()
 {
-    if (!setTimedEnd()) // when end or duration is not specified end on video duration
+    if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
     play();
     emit startedMedia(parent_playlist, this);
     return;
 }
-
-void TVideo::emitfinished()
-{
-   stop();
-}
-
 
 void TVideo::play()
 {
@@ -76,7 +70,6 @@ void TVideo::stop()
 {
     media_player->stop();
     status = _stopped;
-    emit finishedMedia(parent_playlist, this);
     return;
 }
 

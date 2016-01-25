@@ -45,7 +45,6 @@ public:
     void      stop();
 public slots:
     void      setDurationTimerBeforePlay();
-    void      emitfinished();
 protected:
     QtAV::AVPlayer *media_player;
     showVideo       show_video;
