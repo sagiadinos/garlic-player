@@ -13,14 +13,16 @@ Developing with Qt 5.5 and QtAV 1.8.0 under Kubuntu 14.04
 At the moment there is an early alpha version which is able to play local SMIL-Files with actual supported features via command-line.
 
 *garlic.sh [options] SMIL_INDEX*
+```sh
 Options:
-  -h, --help        Displays this help.
-  -v, --version     Displays version information.
-  -f, --fullscreen  Starts in fullscreen mode
-  -w, --window      Starts in windows mode
+-h, --help        Displays this help.
+-v, --version     Displays version information.
+-f, --fullscreen  Starts in fullscreen mode
+-w, --window      Starts in windows mode
 
 Arguments:
-  SMIL_INDEX        Path to SMIL index
+SMIL_INDEX        Path to SMIL index
+```
 
 ## actual supported SMIL-Features
 
