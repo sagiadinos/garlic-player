@@ -29,11 +29,15 @@ Only sources are public. First binaries will deployed, when excl-element will su
 
 ## actual supported SMIL-Features
 
-###Playlist Elements
+###Time container elements
 - **seq**
 - **par**
 - **excl** (is heavily @work)
-- **priorityClass** partially peers=(stop, never) supported
+- **priorityClass** partially supported
+
+####Attributes for time container
+peers stop|never
+
 
 ###Media-Elements
 - **video**
@@ -41,16 +45,16 @@ Only sources are public. First binaries will deployed, when excl-element will su
 - **images**
 - **text** websites only
 
-###Attributes for media
+####Attributes for media
 - **region**
 - **fit** and the values fill, scale, meetbest, none
 
-###Attributes for media and playlists:
+###Attributes for media and time container:
 - **xml:id** with Fallback for SMIL 2.0 id
 - **dur** with values indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
 - **begin** with Clock values (like dur) and wallcock with periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W at the moment.
 - **end** has same features as begin
-- **repeatCount** only integer values (float support comes later)
+- **repeatCount** only integer values (float support maybe implemented later)
 
 ###Layered multizone layouts elements:
 - **root-layout**
