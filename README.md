@@ -24,7 +24,6 @@ Options:
 Arguments:
 SMIL_INDEX        Path to SMIL index
 ```
-
 Only sources are public. First binaries will deployed, when excl-element will supported and a downloader is implemented.
 
 ## actual supported SMIL-Features
@@ -37,7 +36,6 @@ Only sources are public. First binaries will deployed, when excl-element will su
 
 ####Attributes for time container
 peers stop|never
-
 
 ###Media-Elements
 - **video**
@@ -68,5 +66,7 @@ peers stop|never
 - **height** values in px or %
 - **z-index** integer values
 - **backgroundColor** values are compatible with CSS
+
+<!-- --> - HTML-like comments in SMIL-File are supported and content insite will ignored
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)
