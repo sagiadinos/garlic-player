@@ -1,7 +1,8 @@
 # garlic-player - SMIL Player for Digital Signage
 
-The goal is to create an as most as neccessary SMIL 3.0 compatible and as most as possible platform independent multimedia player for Digital Signage proposes. Garlic should be used online with web-based content managment systems like [SmilControl](http://smil-control.com) or other.
-Also poassible is offline via command-line.
+The goal is to create an as most as neccessary SMIL 3.0 compatible and as most as possible platform independent multimedia player to meet Digital Signage needs.
+Garlic should be used online with web-based content managment systems like [SmilControl](http://smil-control.com) or other.
+Offline usage via command-line will also possible.
 
 ## OS targets:
 
@@ -24,12 +25,15 @@ Arguments:
 SMIL_INDEX        Path to SMIL index
 ```
 
+Only sources are public. First binaries will deployed, when excl-element will supported and a downloader is implemented.
+
 ## actual supported SMIL-Features
 
 ###Playlist Elements
 - **seq**
 - **par**
 - **excl** (is heavily @work)
+- **priorityClass** partially peers=(stop, never) supported
 
 ###Media-Elements
 - **video**
