@@ -36,20 +36,19 @@ class TImage : public TMedia
 {
     Q_OBJECT
 public:
-    TImage(QObject * parent = 0);
+    TImage(TBase * parent = 0);
     ~TImage();
     bool     parse(QDomElement element);
     showImg  getMediaForShow();
     QString  getFit();
-    void     beginPlay();
     void     pause();
     void     stop();
+    void     play();
 public slots:
     void     setDurationTimerBeforePlay();
 protected:
     showImg show_img;
     void    setAttributes();
-    void    play();
 };
 
 #endif // IMAGE_H

@@ -35,21 +35,19 @@ class TVideo : public TMedia
 {
     Q_OBJECT
 public:
-    TVideo(QObject * parent = 0);
+    TVideo(TBase *parent = 0);
     ~TVideo();
-    bool      parse(QDomElement element);
-    showVideo getMediaForShow();
-    QString   getFit();
-    void      beginPlay();
-    void      pause();
-    void      stop();
-public slots:
-    void      setDurationTimerBeforePlay();
+    bool            parse(QDomElement element);
+    showVideo       getMediaForShow();
+    QString         getFit();
+    void            pause();
+    void            stop();
+    void            play();
 protected:
+    void            setDurationTimerBeforePlay();
     QtAV::AVPlayer *media_player;
     showVideo       show_video;
     void            setAttributes();
-    void            play();
 };
 
 #endif // TVIDEO_H

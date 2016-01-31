@@ -37,40 +37,39 @@ class TPlaylist : public TBase
 {
     Q_OBJECT
 public:
-               TPlaylist(QObject * parent = 0);
-    TFoundTag  getFoundTag();
-    void       beginPlay(){}
-    void       insertPlaylistObject(QString id, QObject *obj_element);
-    QHash<QString, QObject *> getPlaylistObjects();
-    QString    getIdOfActiveElement();
-    QObject*   getActiveObject();
+    TPlaylist(TBase * parent = 0);
+    TFoundTag                     getFoundTag();
+    void                          insertPlaylistObject(QString id, TBase *obj_element);
+    QHash<QString, TBase *>       getPlaylistObjects();
+    QString                       getIdOfActiveElement();
+    TBase*                        getActiveObject();
+    void                          play(){}
+    void                          stop(){}
 public slots:
-        void   emitfinished();
+        void                      emitfinished();
 protected:
     QList<QDomElement>            ar_playlist;
     QList<QDomElement>::iterator  iterator;
-    QHash<QString, QObject *>     ar_elements;
-    QDomElement active_element;
-    TFoundTag   found_tag;
-    QObject    *parent_playlist;
-    void        reactByTag();
-    void        doRef();
-    void        doImage();
-    void        doVideo();
-    void        doAudio();
-    void        doWeb();
-    void        doPrefetch();
-    void        doSeq();
-    void        doPar();
-    void        doExcl();
-    void        play(){}
-    void        stop(){}
+    QHash<QString, TBase *>       ar_elements;
+    QDomElement                   active_element;
+    TFoundTag                     found_tag;
+    TBase                        *parent_playlist;
+    void                          reactByTag();
+    void                          doRef();
+    void                          doImage();
+    void                          doVideo();
+    void                          doAudio();
+    void                          doWeb();
+    void                          doPrefetch();
+    void                          doSeq();
+    void                          doPar();
+    void                          doExcl();
 protected slots:
-    void        setDurationTimerBeforePlay(){}
+    void                          setDurationTimerBeforePlay(){}
 signals:
-    void       foundElement(QObject *, TFoundTag found_tag);
-    void       startedPlaylist(QObject * , QObject *);
-    void       finishedPlaylist(QObject * , QObject *);
+    void                          foundElement(TBase *, TFoundTag found_tag);
+    void                          startedPlaylist(TBase * , TBase *);
+    void                          finishedPlaylist(TBase * , TBase *);
 
 };
 

@@ -18,7 +18,7 @@
 
 #include "playlist.h"
 
-TPlaylist::TPlaylist(QObject * parent)
+TPlaylist::TPlaylist(TBase * parent)
 {
     Q_UNUSED(parent);
 }
@@ -28,7 +28,7 @@ TFoundTag TPlaylist::getFoundTag()
     return found_tag;
 }
 
-void TPlaylist::insertPlaylistObject(QString id, QObject *obj_element)
+void TPlaylist::insertPlaylistObject(QString id, TBase *obj_element)
 {
     ar_elements.insert(id, obj_element);
     return;
@@ -39,14 +39,14 @@ QString TPlaylist::getIdOfActiveElement()
     return parseID(active_element);
 }
 
-QObject* TPlaylist::getActiveObject()
+TBase* TPlaylist::getActiveObject()
 {
-    QHash<QString, QObject *>::iterator i = ar_elements.find(getIdOfActiveElement());
+    QHash<QString, TBase *>::iterator i = ar_elements.find(getIdOfActiveElement());
     return *i;
 }
 
 
-QHash<QString, QObject *> TPlaylist::getPlaylistObjects()
+QHash<QString, TBase *> TPlaylist::getPlaylistObjects()
 {
     return ar_elements;
 }
@@ -76,7 +76,8 @@ void TPlaylist::reactByTag()
 
 void TPlaylist::emitfinished()
 {
-    status = _stopped;
+    stop();
+    qDebug() << getID() << "finished Playlist";
     emit finishedPlaylist(parent_playlist, this);
     return;
 }

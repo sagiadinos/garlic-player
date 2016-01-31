@@ -33,22 +33,21 @@ class TAudio :public TMedia
 {
     Q_OBJECT
 public:
-    TAudio(QObject * parent = 0);
+    TAudio(TBase * parent = 0);
     ~TAudio();
     bool               parse(QDomElement element);
     showAudio          getMediaForShow();
-    void               beginPlay();
     void               pause();
     void               stop();
-public slots:
-    void               setDurationTimerBeforePlay();
+    void               play();
 protected:
-    QObject           *parent_object;
+    TBase             *parent_object;
     QtAV::VideoOutput *output;
     QtAV::AVPlayer    *media_player;
     showAudio          show_audio;
-    void               play();
     void               setAttributes();
+protected slots:
+    void               setDurationTimerBeforePlay();
 };
 
 #endif // TAUDIO_H

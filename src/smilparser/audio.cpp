@@ -18,7 +18,7 @@
 
 #include "audio.h"
 
-TAudio::TAudio(QObject *parent)
+TAudio::TAudio(TBase *parent)
 {
     parent_playlist = parent;
     initTimer();
@@ -44,18 +44,12 @@ showAudio TAudio::getMediaForShow()
     return show_audio;
 }
 
-void TAudio::beginPlay()
-{
-    setBeginEndTimer();
-    return;
-}
-
 void TAudio::setDurationTimerBeforePlay()
 {
     if (!hasDurAttribute()  && !end_timer->isActive()) // when end or dur is not specified use audio duration for simple duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
-    play();
-    emit startedMedia(parent_playlist, this);
+    if (!resume)
+        emit startedMedia(parent_playlist, this);
     return;
 }
 

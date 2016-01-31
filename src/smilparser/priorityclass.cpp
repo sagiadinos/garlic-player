@@ -14,26 +14,6 @@ bool TPriorityClass::parse(QDomElement dom_element)
     return true;
 }
 
-void TPriorityClass::stopPlayingChild(QDomElement new_dom_element)
-{
-    return;
-}
-
-void TPriorityClass::pausePlayingChild(QDomElement new_dom_element)
-{
-    return;
-}
-
-void TPriorityClass::pauseElement(QObject *element)
-{
-    return;
-}
-
-void TPriorityClass::enqueueElement(QObject *element)
-{
-    queue.enqueue(element);
-    return;
-}
 
 bool TPriorityClass::findElement(QDomElement dom_element)
 {
@@ -45,41 +25,39 @@ bool TPriorityClass::findElement(QDomElement dom_element)
     return false;
 }
 
-
-bool TPriorityClass::play()
+void TPriorityClass::insertQueue(TBase *element)
 {
-    if (ar_playlist.length() > 0)
-    {
-        iterator =  ar_playlist.begin();
-        active_element = *iterator;
-        return true;
-    }
-   return false;
-}
-
-bool TPriorityClass::next()
-{
-    iterator++;
-    if (iterator != ar_playlist.end())
-    {
-        active_element = *iterator;
-        return true;
-    }
-    return false;
-}
-
-
-void TPriorityClass::setActiveChilds(bool active)
-{
-    is_child_active = active;
+    if (peers == "defer" || lower == "defer")
+        return ar_defer.push(element);
+    if (peers == "pause" || lower == "pause")
+        ar_pause.enqueue(element);
     return;
 }
 
-int TPriorityClass::decPlayableChilds()
+int TPriorityClass::countQueue()
 {
-    playable_childs--;
-    return playable_childs;
+    if (peers == "defer" || lower == "defer")
+        return ar_defer.size();
+    if (peers == "pause" || lower == "pause")
+        return ar_pause.size();
+    return 0;
 }
+
+TBase *TPriorityClass::getFromQueue()
+{
+    if (peers == "defer" || lower == "defer")
+    {
+        if (ar_defer.size() > 0)
+            return ar_defer.pop();
+    }
+    if (peers == "pause" || lower == "pause")
+    {
+        if (ar_pause.size() > 0)
+            return ar_pause.dequeue();
+    }
+    return NULL;
+}
+
 
 QList<QDomElement> TPriorityClass::getChilds()
 {

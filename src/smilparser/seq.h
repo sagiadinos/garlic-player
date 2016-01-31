@@ -29,13 +29,13 @@ class TSeq : public TPlaylist
 {
     Q_OBJECT
 public:
-    TSeq(QObject * parent = 0);
+    TSeq(TBase * parent = 0);
     bool     parse(QDomElement element);
     void     next();
     bool     previous();
-    void     beginPlay();
     void     pause();
     void     stop();
+    void     play();
 public slots:
     void     setDurationTimerBeforePlay();
 private:
@@ -44,7 +44,6 @@ private:
     int      internal_pick     = 0;
     QString  pickingAlgorithm  = "";
     QString  pickingBehavior   = "";
-    void     play();
     void     setPlaylist();
     void     randomizePlaylist();
     void     doMetaData();

@@ -18,7 +18,7 @@
 
 #include "par.h"
 
-TPar::TPar(QObject *parent)
+TPar::TPar(TBase *parent)
 {
     initTimer();
     parent_playlist = parent;
@@ -36,12 +36,6 @@ bool TPar::parse(QDomElement element)
     return false;
 }
 
-void TPar::beginPlay()
-{
-    setBeginEndTimer();
-    return;
-}
-
 void TPar::setDurationTimerBeforePlay()
 {
     if (hasDurAttribute() || end_timer->isActive() || ar_playlist.size() > 0)
@@ -49,7 +43,8 @@ void TPar::setDurationTimerBeforePlay()
         resetInternalRepeatCount();
         play();
         status = _playing;
-        emit startedPlaylist(parent_playlist, this);
+        if (!resume)
+            emit startedPlaylist(parent_playlist, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
         emitfinished();

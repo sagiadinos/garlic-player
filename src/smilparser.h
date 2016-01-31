@@ -44,38 +44,37 @@ class TSmil : public QObject
 public:
     TSmil(QObject *parent = 0);
     ~TSmil();
-    void      init(QString smil_index = "");
-    THead     getHeader();
-    QString   getMediaType();
-    void      beginSmilParsing();
-    void  next();
-    void  next(TSeq *MySeq);
-    void  next(TPar *MyPar);
-    void  next(TExcl *MyExcl);
-public slots:
-    void  handleFoundElement(QObject *parent, TFoundTag found_tag);
-    void  emitstartedElement(QObject *, QObject *);
-    void  emitfinishedElement(QObject *, QObject *);
-    void  handlePause(QObject *element);
+    void                       init(QString smil_index = "");
+    THead                      getHeader();
+    void                       beginSmilParsing();
 protected:
-    QDomElement     parser;
-    QString         index_path;
-    QList<Region>   region_list;
-    QSet<QObject *>  ar_played_media;
-
-    TFile           MyFile;
-    THead           MyHead;
-    TBody          *MyBody;
-    QHash<QString, QObject *> ar_elements;
-    QHash<QString, QObject *>::iterator ar_elements_iterator;
-    showImg         ImgAttr;
-    void            insertIntoObjectContainer(QString id, QObject *parent, QObject *child);
-    void  handleStop(QObject *parent, QObject *element);
+    QDomElement                parser;
+    QString                    index_path;
+    QList<Region>              region_list;
+    TFile                      MyFile;
+    THead                      MyHead;
+    TBody                     *MyBody;
+    QHash<QString, TBase *>    ar_elements;
+    showImg                    ImgAttr;
+    void                       next();
+    void                       next(TSeq *MySeq);
+    void                       next(TPar *MyPar);
+    void                       next(TExcl *MyExcl);
+    void                       handleStop(TBase *element);
+    void                       handlePause(TBase *element);
+protected slots:
+    void                       foundElement(TBase *parent, TFoundTag found_tag);
+    void                       startElement(TBase *, TBase *);
+    void                       finishElement(TBase *, TBase *);
+    void                       handleResumeElement(TBase *element);
 private:
-
+    QSet<TBase *>              ar_played_media;
+    void                       insertIntoObjectContainer(QString id, TBase *parent, TBase *child);
+    void                       emitStartShowMedia(TBase *media);
+    void                       emitStopShowMedia(TBase *media);
 signals:
-    void            playMedia(QObject *media);
-    void            finishedMedia(QObject *media);
+    void                       startShowMedia(TBase *media);
+    void                       stopShowMedia(TBase *media);
 };
 
 #endif // SMILPARSER_H

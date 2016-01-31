@@ -55,48 +55,47 @@ public:
     const     int        _playing  = 2;
     const     int        _paused   = 3;
 
-    explicit             TBase(QObject * parent = 0);
-    virtual  bool        parse(QDomElement element) = 0; // prepare for begin
-    virtual  void        beginPlay() = 0;      // what to do when parent sends an order to begin executions
-             void        beginPause();
-             void        beginStop();      // what to do when parent sends an order to begin executions
-             void        beginResume();      // what to do when parent sends an order to begin executions
-//    virtual  void        resume()    = 0;
-             QDomElement getRootElement(){return root_element;}
-             int         getStatus(){return status;}
-             QString     getID(){return id;}
-             QString     getTitle(){return title;}
-    static   QString     parseID(QDomElement element);
-    virtual  void        pause()    = 0;
-    virtual  void        stop()     = 0;
+    explicit               TBase(QObject * parent = 0);
+    virtual bool          parse(QDomElement element) = 0; // prepare for begin
+            void          preparePlay();      // what to do when parent sends an order to begin executions
+            void          preparePause();
+            void          prepareStop();      // what to do when parent sends an order to begin executions
+            void          prepareResume();      // what to do when parent sends an order to begin executions
+            QDomElement   getRootElement(){return root_element;}
+            int           getStatus(){return status;}
+            QString       getID(){return id;}
+            QString       getTitle(){return title;}
+    static  QString       parseID(QDomElement element);
+    virtual void          pause()    = 0;
+    virtual void          stop()     = 0;
+    virtual void          play()     = 0;
 
 public slots:
-    virtual  void        emitfinished() = 0;
+    virtual void          emitfinished() = 0;
 protected:
             QTimer       *begin_timer, *end_timer, *dur_timer;
-            int          begin_remaining, end_remaining, dur_remaining;
-            QDomElement  root_element;
-            QString      id                   = "";
-            TClockValue  dur, min, max;
-            TTiming      begin, end;
-            QObject     *parent_playlist;
-            int          status         = 0;
-            QString      title          = "";
-            int          repeatCount    = 0;         // protected for testing
-            bool         indefinite     = false;     // protected for testing
-            int          internal_count = 1;         // protected for testing
-            void         resetInternalRepeatCount();
-            void         setBeginEndTimer();
-            bool         hasDurAttribute();
-            void         setBaseAttributes();
-            bool         checkRepeatCountStatus();
-            void         initTimer();
-   virtual  void         play()     = 0;
+            qint64        pause_start;
+            int           begin_remaining, end_remaining, dur_remaining;
+            QDomElement   root_element;
+            QString       id                   = "";
+            TClockValue   dur, min, max;
+            TTiming       begin, end;
+            int           status         = 0;
+            QString       title          = "";
+            int           repeatCount    = 0;
+            bool          indefinite     = false;
+            bool          resume         = false;
+            int           internal_count = 1;
+            void          resetInternalRepeatCount();
+            bool          hasDurAttribute();
+            void          setBaseAttributes();
+            bool          checkRepeatCountStatus();
+            void          initTimer();
 protected slots:
-    virtual void         setDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
-            void         finishedSimpleDuration();
+    virtual  void         setDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
+             void         finishedSimpleDuration();
 private:
-            void         setRepeatCount(QString rC);
+             void         setRepeatCount(QString rC);
 };
 
 #endif // TBASE_H

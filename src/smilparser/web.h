@@ -37,20 +37,19 @@ class TWeb : public TMedia
 {
     Q_OBJECT
 public:
-    explicit TWeb(QObject * parent = 0);
+    explicit TWeb(TBase *parent = 0);
     ~TWeb();
     bool     parse(QDomElement element);
     showWeb  getMediaForShow();
     QString  getFit();
-    void     beginPlay();
     void     pause();
     void     stop();
+    void     play();
 public slots:
     void     setDurationTimerBeforePlay();
 protected:
     showWeb  show_web;
     void     setAttributes();
-    void     play();
 };
 
 

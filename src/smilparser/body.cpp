@@ -18,7 +18,7 @@
 
 #include "body.h"
 
-TBody::TBody(QObject * parent)
+TBody::TBody(TBase * parent)
 {
     Q_UNUSED(parent);
     setObjectName("TBody");
@@ -49,7 +49,7 @@ bool TBody::parse(QDomElement element)
     return ret;
 }
 
-void TBody::beginPlay()
+void TBody::preparePlay()
 {
    setDurationTimerBeforePlay();
    return;

@@ -35,7 +35,7 @@ Only sources are public. First binaries will deployed, when excl-element will su
 - **priorityClass** partially supported
 
 ####Attributes for time container
-peers stop|never
+peers stop|never|pause|defer
 
 ###Media-Elements
 - **video**

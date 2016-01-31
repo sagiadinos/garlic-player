@@ -18,7 +18,7 @@
 
 #include "media.h"
 
-TMedia::TMedia(QObject * parent)
+TMedia::TMedia(TBase * parent)
 {
     Q_UNUSED(parent);
 }

@@ -25,37 +25,39 @@ class TExcl : public TPlaylist
 {
     Q_OBJECT
 public:
-    const     int        _no_interrupting  = 0;
-    const     int        _interrupt_active   = 1;
-    const     int        _play_this          = 2;
-    TExcl(QObject * parent = 0);
-    bool      parse(QDomElement element);
-    void      next();
-    void      beginPlay();
-    QObject*  getPlayedObject();
-    int       interruptActualPlaying(QDomElement started_element, QObject *element);
-    void      decActivatableChilds();
-    QString   getPeers();
+    TExcl(TBase * parent = 0);
+
+    const     int        _stop_new          = 0; // never
+    const     int        _stop_active       = 1;
+    const     int        _play_this         = 2;
+    const     int        _pause_active      = 3;
+    const     int        _pause_new         = 4; // defer
+
+    bool                 parse(QDomElement element);
+    void                 next();
+    TBase*               getPlayedObject();
+    int                  interruptActualPlaying(QDomElement started_element, TBase *element);
+    void                 decActivatableChilds();
+    QString              getPeers();
     void      setChildActive(bool active);
     void      pause();
     void      stop();
+    void      play();
 public slots:
     void      setDurationTimerBeforePlay();
 protected:
-    void     play();
 private:
-    QObject                              *played_element;
+    TBase                                *played_element;
     QDomElement                           played_dom_element;
     TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
     QQueue<TPriorityClass *>              queue;
-    QHash<int, TPriorityClass *>                ar_priorities;
-    QHash<int, TPriorityClass *>::iterator      ar_priorities_iterator;
-    int       activatable_childs  = 0;
+    QHash<int, TPriorityClass *>          ar_priorities;
+    int                                   activatable_childs  = 0;
     void      setPlaylist();
     void      setPriorityClass(QDomElement element);
+    bool                               is_child_active    = false;
 signals:
-    void doStop(QObject *element);
-    void doPause(QObject *element);
+    void resumeElement(TBase *element);
 };
 
 #endif // TEXCL_H

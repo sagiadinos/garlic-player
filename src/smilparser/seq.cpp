@@ -18,7 +18,7 @@
 
 #include "seq.h"
 
-TSeq::TSeq(QObject * parent)
+TSeq::TSeq(TBase * parent)
 {
     parent_playlist = parent;
     initTimer();
@@ -41,11 +41,6 @@ bool TSeq::parse(QDomElement element)
     return true;
 }
 
-void TSeq::beginPlay()
-{
-    setBeginEndTimer();
-    return;
-}
 
 void TSeq::setDurationTimerBeforePlay()
 {
@@ -53,7 +48,8 @@ void TSeq::setDurationTimerBeforePlay()
     {
         resetInternalRepeatCount();
         play();
-        emit startedPlaylist(parent_playlist, this);
+        if (!resume)
+           emit startedPlaylist(parent_playlist, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
         emitfinished();

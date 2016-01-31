@@ -34,8 +34,8 @@ public:
     ~MainWindow();
     void setSmilIndex(QString smil_path = "");
 public slots:
-    void playContent(QObject *media);
-    void finishedMedia(QObject *media);
+    void startShowMedia(TBase *media);
+    void stopShowMedia(TBase *media);
 private:
     TConfiguration  MyConfig;
     QMap<QString, TRegion *> ar_regions;

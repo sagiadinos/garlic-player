@@ -26,30 +26,30 @@ class TMedia : public TBase
 {
     Q_OBJECT
 public:
-            explicit    TMedia(QObject * parent = 0);
-            void        setIndexPath(QString path);
-            QString     getRegion();
-            QString     getSrc();
-            QString     getFit();
-            QString     getTitle();
-            QString     getExec();
-            QString     getFileName();
-            QString     getCacheControl();
-            QString     getLogContentId();
-            void        pause(){}
-            void        stop(){}
+    TMedia(TBase * parent = 0);
+    void        setIndexPath(QString path);
+    QString     getRegion();
+    QString     getSrc();
+    QString     getFit();
+    QString     getTitle();
+    QString     getExec();
+    QString     getFileName();
+    QString     getCacheControl();
+    QString     getLogContentId();
+    void        pause(){}
+    void        stop(){}
+    void        play(){}
 public slots:
-        void emitfinished();
+    void        emitfinished();
 protected:
-    QString region, src, exec, index_path  = "";
-    QString filename, cache_control, log_content_id  = "";
-    void   setBaseMediaAttributes();
-    void   setBaseParameters();
-    void   play(){}
+    TBase      *parent_playlist;
+    QString     region, src, exec, index_path  = "";
+    QString     filename, cache_control, log_content_id  = "";
+    void        setBaseMediaAttributes();
+    void        setBaseParameters();
 signals:
-signals:
-    void        startedMedia(QObject * , QObject *);
-    void        finishedMedia(QObject * , QObject *);
+    void        startedMedia(TBase * , TBase *);
+    void        finishedMedia(TBase * , TBase *);
 
 };
 

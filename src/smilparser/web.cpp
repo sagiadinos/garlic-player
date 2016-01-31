@@ -18,7 +18,7 @@
 
 #include "web.h"
 
-TWeb::TWeb(QObject *parent)
+TWeb::TWeb(TBase *parent)
 {
     parent_playlist = parent;
     initTimer();
@@ -40,18 +40,12 @@ bool TWeb::parse(QDomElement element)
     return true;
 }
 
-void TWeb::beginPlay()
-{
-    setBeginEndTimer();
-    return;
-}
-
 void TWeb::setDurationTimerBeforePlay()
 {
     if (hasDurAttribute() || end_timer->isActive()) // if dur or end is not specified end, cause images don't have an implicit duration like audio/video
     {
-        status = _playing;
-        emit startedMedia(parent_playlist, this);
+        if (!resume)
+           emit startedMedia(parent_playlist, this);
     }
     else // when end or dur is not specified stop imediately
         emitfinished();

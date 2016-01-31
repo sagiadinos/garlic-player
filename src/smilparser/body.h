@@ -25,17 +25,17 @@ class TBody : public TPlaylist
 {
     Q_OBJECT
 public:
-    TBody(QObject * parent = 0);
+    TBody(TBase * parent = 0);
     ~TBody();
     bool      parse(QDomElement element);
-    void      beginPlay();
+    void      preparePlay();
     void      endPlay(){}
     void      next();
     bool      previous();
     void      pause(){}
     void      stop(){}
-protected:
     void      play(){}
+protected:
 public slots:
     void      setDurationTimerBeforePlay();
 private:

@@ -20,10 +20,43 @@
 
 TBase::TBase(QObject * parent)
 {
-    parent_playlist = parent;
+    Q_UNUSED(parent);
 }
 
-void TBase::beginPause()
+void TBase::preparePlay()
+{
+    resume = false;
+    // set end here cause begin and end depending on start of the par/excl parent. With seq it depends on last element
+    if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
+        end_timer->start(end.getMilliseconds());
+    else if (end.getStatus() == "wallclock")
+        end_timer->start(end.getNextTrigger(QDateTime::currentDateTime()));
+
+    // set if begin should be delayed
+    QString begin_status = begin.getStatus();
+    if (begin_status == "ms")
+    {
+        begin_timer->start(begin.getMilliseconds());
+        status = _waiting;
+    }
+    else if (begin_status == "wallclock") // look if begin should be delayed
+    {
+        begin_timer->start(begin.getNextTrigger(QDateTime::currentDateTime()));
+        status = _waiting;
+    }
+    else if (begin_status== "indefinite")
+        status = _waiting;
+    else // play imediately
+        setDurationTimerBeforePlay();
+
+    begin_remaining = 0;
+    end_remaining   = 0;
+    dur_remaining   = 0;
+    pause_start     = 0;
+    return;
+}
+
+void TBase::preparePause()
 {
     if (begin_timer->isActive())
     {
@@ -40,12 +73,11 @@ void TBase::beginPause()
         end_remaining = end_timer->remainingTime();
         end_timer->stop();
     }
-    pause();
+    pause_start = QDateTime::currentMSecsSinceEpoch();
     return;
 }
 
-
-void TBase::beginStop()
+void TBase::prepareStop()
 {
     if (begin_timer->isActive())
         begin_timer->stop();
@@ -56,43 +88,57 @@ void TBase::beginStop()
     begin_remaining = 0;
     end_remaining   = 0;
     dur_remaining   = 0;
-    stop(); // important! emit no finished!
     return;
 }
 
-void TBase::beginResume()
+void TBase::prepareResume()
 {
-    if (begin_remaining > 0)
-    {
-        if (begin.getStatus() == "ms")
-        {
-            begin_timer->start(begin_remaining);
-            status          = _waiting;
-        }
-        else if(begin.getStatus() == "wallclock")
-        {
-            begin_timer->start(begin.getNextTrigger(QDateTime::currentDateTime()));
-            status          = _waiting;
-        }
-        begin_remaining = 0;
-    }
+    resume = true;
+    qint64 elapsed     = QDateTime::currentMSecsSinceEpoch() - pause_start;
+    bool   ended       = false; // set true if there is a trigger and it is had ended
     if (end_remaining > 0)
     {
+        qint64 end_trigger = 0;
         if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
-            end_timer->start(end_remaining);
+            end_trigger = end_remaining - elapsed;
         else if (end.getStatus() == "wallclock")
-            end_timer->start(end.getNextTrigger(QDateTime::currentDateTime()));
-        end_remaining = 0;
-    }
-    if (status != _waiting && dur_remaining > 0)
-    {
-        if (dur.getStatus() == "ms") // set end of simple duration
+            end_trigger = end.getNextTrigger(QDateTime::currentDateTime());
+        if (end_trigger > 0)
+            end_timer->start(end_trigger);
+        else
         {
-            dur_timer->start(dur_remaining);
+            ended = true;
+            emitfinished();
         }
-        else if (dur.getStatus() == "indefinite" || end.getStatus() == "indefinite")
-            play(); // resume!
     }
+    if (!ended && begin_remaining > 0)
+    {
+        qint64 begin_trigger = 0;
+        QString begin_status = begin.getStatus();
+        if (begin_status == "ms")
+        {
+            begin_trigger   = begin_remaining - elapsed;
+            status          = _waiting;
+        }
+        else if(begin_status == "wallclock")
+        {
+            begin_trigger = begin.getNextTrigger(QDateTime::currentDateTime()) - elapsed;
+        }
+        if (begin_trigger > 0)
+        {
+            begin_timer->start(begin_trigger);
+            status          = _waiting;
+        }
+        else if (begin_status == "indefinite")
+            status = _waiting;
+        else // play imediately when begin_trigger become negative and begin_status is not indefinite
+            setDurationTimerBeforePlay();
+    }
+    else // play imediately
+        setDurationTimerBeforePlay();
+
+    begin_remaining = 0;
+    end_remaining   = 0;
     return;
 }
 
@@ -105,44 +151,30 @@ void TBase::finishedSimpleDuration()
     return;
 }
 
-void TBase::setBeginEndTimer()
-{
-    // set end here cause begin and end depending on start of the par/excl parent. With seq it depends on last element
-    if (end.getStatus() == "ms") // end attribute has priority over dur (simple duration
-        end_timer->start(end.getMilliseconds());
-    else if (end.getStatus() == "wallclock")
-        end_timer->start(end.getNextTrigger(QDateTime::currentDateTime()));
-
-    // set if begin should be delayed
-    if (begin.getStatus() == "ms")
-    {
-        begin_timer->start(begin.getMilliseconds());
-        status = _waiting;
-    }
-    else if (begin.getStatus() == "wallclock") // look if begin should be delayed
-    {
-        begin_timer->start(begin.getNextTrigger(QDateTime::currentDateTime()));
-        status = _waiting;
-    }
-    else // play imediately
-        setDurationTimerBeforePlay();
-
-    begin_remaining = 0;
-    end_remaining   = 0;
-    dur_remaining   = 0;
-    return;
-}
-
 bool TBase::hasDurAttribute()
 {
     bool ret = false;
     if (dur.getStatus() == "ms") // set end of simple duration
     {
-        dur_timer->start(dur.getMilliseconds());
+        if (dur_remaining > 0)
+        {
+            dur_timer->start(dur_remaining);
+            qDebug() << getID() << " dur remaining" << dur_remaining;
+        }
+        else
+        {
+            dur_timer->start(dur.getMilliseconds());
+                qDebug() << getID() << "get milliseconds" << dur.getMilliseconds();
+        }
+
+        if (dur_timer->isActive())
+            qDebug() << getID() << "durTimer active";
+
         ret = true;
     }
     else if (dur.getStatus() == "indefinite" || end.getStatus() == "indefinite")
         ret = true; // no timer
+    dur_remaining = 0;
     return ret;
 }
 
@@ -223,12 +255,14 @@ void TBase::initTimer()
     end_timer->setTimerType(Qt::PreciseTimer);
 
     dur_timer = new QTimer;
+    qDebug() << getID() << "set duration slot";
     connect(dur_timer, SIGNAL(timeout()), this, SLOT(finishedSimpleDuration()));
     dur_timer->setSingleShot(true);
     dur_timer->setTimerType(Qt::PreciseTimer);
 
     begin_remaining = 0;
     end_remaining   = 0;
+    dur_remaining   = 0;
     return;
 }
 

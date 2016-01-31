@@ -18,7 +18,7 @@
 
 #include "video.h"
 
-TVideo::TVideo(QObject *parent)
+TVideo::TVideo(TBase *parent)
 {
     parent_playlist = parent;
     initTimer();
@@ -44,18 +44,12 @@ showVideo TVideo::getMediaForShow()
     return show_video;
 }
 
-void TVideo::beginPlay()
-{
-    setBeginEndTimer();
-    return;
-}
-
 void TVideo::setDurationTimerBeforePlay()
 {
     if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
-    play();
-    emit startedMedia(parent_playlist, this);
+    if (!resume)
+        emit startedMedia(parent_playlist, this);
     return;
 }
 

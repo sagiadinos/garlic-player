@@ -18,7 +18,7 @@
 
 #include "image.h"
 
-TImage::TImage(QObject *parent)
+TImage::TImage(TBase *parent)
 {
     parent_playlist = parent;
     initTimer();
@@ -45,20 +45,13 @@ showImg TImage::getMediaForShow()
     return show_img;
 }
 
-void TImage::beginPlay()
-{
-    setBeginEndTimer();
-    return;
-}
-
 void TImage::setDurationTimerBeforePlay()
 {
-    qDebug() << getID() << "setDurationTimerBeforePlay";
     if (hasDurAttribute() || end_timer->isActive()) // if dur or end is not specified end, cause images don't have an implicit duration like audio/video
     {
-        qDebug() << getID() << "played";
-        play();
-        emit startedMedia(parent_playlist, this);
+        qDebug() << getID() << "startedMedia";
+        if (!resume)
+            emit startedMedia(parent_playlist, this);
     }
     else // when end or dur is not specified stop imediately
         emitfinished();
@@ -73,12 +66,14 @@ QString TImage::getFit()
 
 void TImage::play()
 {
+    qDebug() << getID() << "play";
     status = _playing;
     return;
 }
 
 void TImage::pause()
 {
+    qDebug() << getID() << "paused " << dur_remaining;
     status = _paused;
     return;
 }

@@ -29,7 +29,7 @@ public:
     testBase(QObject * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
     QString   getType(){return "test base";}
     bool      parse(QDomElement element){Q_UNUSED(element);return true;}
-    void      beginPlay(){}
+    void      preparePlay(){}
     void      test_setBaseAttributes(){setBaseAttributes();}
     bool      test_checkRepeatCountStatus(){return checkRepeatCountStatus();}
 
