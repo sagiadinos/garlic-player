@@ -40,14 +40,14 @@ void TPar::setDurationTimerBeforePlay()
 {
     if (hasDurAttribute() || end_timer->isActive() || ar_playlist.size() > 0)
     {
-        resetInternalRepeatCount();
-        play();
-        status = _playing;
-        if (!resume)
+        if (!is_resumed)
+        {
+            resetInternalRepeatCount();
             emit startedPlaylist(parent_playlist, this);
+        }
     }
     else // when end or duration is not specified or no child elements stop imediately
-        emitfinished();
+        finishedActiveDuration();
     return;
 }
 
@@ -80,6 +80,12 @@ void TPar::play()
         active_element = *iterator;
         reactByTag();
     }
+    status = _playing;
+    return;
+}
+
+void TPar::resume()
+{
     status = _playing;
     return;
 }

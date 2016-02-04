@@ -24,18 +24,20 @@ Options:
 Arguments:
 SMIL_INDEX        Path to SMIL index
 ```
-Only sources are public. First binaries will deployed, when excl-element will supported and a downloader is implemented.
+Only sources! First binaries will deployed, when a downloader is implemented.
 
 ## actual supported SMIL-Features
 
 ###Time container elements
 - **seq**
 - **par**
-- **excl** (is heavily @work)
-- **priorityClass** partially supported
+- **excl**
+- **priorityClass**
 
-####Attributes for time container
-peers stop|never|pause|defer
+####Attributes for excl/prioritySlass time container
+- **peers** stop|never|pause|defer
+- **higher** stop|pause
+- **lower** never|defer
 
 ###Media-Elements
 - **video**
@@ -50,7 +52,7 @@ peers stop|never|pause|defer
 ###Attributes for media and time container:
 - **xml:id** with Fallback for SMIL 2.0 id
 - **dur** with values indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
-- **begin** with Clock values (like dur) and wallcock with periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W at the moment.
+- **begin** with Clock values (like dur) and wallcock with periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W.
 - **end** has same features as begin
 - **repeatCount** only integer values (float support maybe implemented later)
 

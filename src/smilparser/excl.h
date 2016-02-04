@@ -37,12 +37,14 @@ public:
     void                 next();
     TBase*               getPlayedObject();
     int                  interruptActualPlaying(QDomElement started_element, TBase *element);
-    void                 decActivatableChilds();
+    void                 decActivatableChilds(TBase *element);
+    void                 incActivatableChilds(TBase *element);
     QString              getPeers();
     void      setChildActive(bool active);
     void      pause();
     void      stop();
     void      play();
+    void      resume();
 public slots:
     void      setDurationTimerBeforePlay();
 protected:
@@ -52,7 +54,7 @@ private:
     TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
     QQueue<TPriorityClass *>              queue;
     QHash<int, TPriorityClass *>          ar_priorities;
-    int                                   activatable_childs  = 0;
+    QSet<TBase *>                         activatable_childs;
     void      setPlaylist();
     void      setPriorityClass(QDomElement element);
     bool                               is_child_active    = false;

@@ -48,7 +48,7 @@ void TAudio::setDurationTimerBeforePlay()
 {
     if (!hasDurAttribute()  && !end_timer->isActive()) // when end or dur is not specified use audio duration for simple duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
-    if (!resume)
+    if (!is_resumed)
         emit startedMedia(parent_playlist, this);
     return;
 }
@@ -81,7 +81,7 @@ void TAudio::setAttributes()
     show_audio.region      = region;
     output           = new QtAV::VideoOutput();
     media_player     = new QtAV::AVPlayer();
-    connect(media_player, SIGNAL(stopped()), this, SLOT(emitfinished())); // 10s
+    connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration())); // 10s
     media_player->setRenderer(output);
 
     if (src.mid(0, 4) == "http")

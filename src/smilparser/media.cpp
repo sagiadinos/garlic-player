@@ -72,10 +72,9 @@ void TMedia::setBaseMediaAttributes()
     return;
 }
 
-void TMedia::emitfinished()
+void TMedia::emitfinished() // called from finishedActiveDuration() in TBase
 {
-   stop();
-   qDebug() << getID() << "finishedMedia";
+    qDebug() << getID() << "finished Media";
    emit finishedMedia(parent_playlist, this);
    return;
 }

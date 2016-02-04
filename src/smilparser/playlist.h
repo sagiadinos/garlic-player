@@ -21,12 +21,6 @@
 
 #include "smilparser/base.h"
 
-struct TFoundTag
-{
-    QString     name;
-    QDomElement dom_element;
-};
-
 /**
  * @brief The TBasePlaylist is an abstract class for Smil Playlists which is inherited by seq, par and excl.
  *        This class has functions for handling and media content. In case of media or playlist it returns the type and
@@ -38,7 +32,6 @@ class TPlaylist : public TBase
     Q_OBJECT
 public:
     TPlaylist(TBase * parent = 0);
-    TFoundTag                     getFoundTag();
     void                          insertPlaylistObject(QString id, TBase *obj_element);
     QHash<QString, TBase *>       getPlaylistObjects();
     QString                       getIdOfActiveElement();
@@ -52,7 +45,6 @@ protected:
     QList<QDomElement>::iterator  iterator;
     QHash<QString, TBase *>       ar_elements;
     QDomElement                   active_element;
-    TFoundTag                     found_tag;
     TBase                        *parent_playlist;
     void                          reactByTag();
     void                          doRef();
@@ -67,7 +59,7 @@ protected:
 protected slots:
     void                          setDurationTimerBeforePlay(){}
 signals:
-    void                          foundElement(TBase *, TFoundTag found_tag);
+    void                          foundElement(TBase *, QDomElement element);
     void                          startedPlaylist(TBase * , TBase *);
     void                          finishedPlaylist(TBase * , TBase *);
 

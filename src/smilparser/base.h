@@ -55,9 +55,10 @@ public:
     const     int        _playing  = 2;
     const     int        _paused   = 3;
 
-    explicit               TBase(QObject * parent = 0);
+    explicit              TBase(QObject * parent = 0);
     virtual bool          parse(QDomElement element) = 0; // prepare for begin
-            void          preparePlay();      // what to do when parent sends an order to begin executions
+            bool          checkifPlayable();
+            bool          preparePlay();      // what to do when parent sends an order to begin executions
             void          preparePause();
             void          prepareStop();      // what to do when parent sends an order to begin executions
             void          prepareResume();      // what to do when parent sends an order to begin executions
@@ -84,18 +85,21 @@ protected:
             QString       title          = "";
             int           repeatCount    = 0;
             bool          indefinite     = false;
-            bool          resume         = false;
+            bool          is_resumed     = false;
             int           internal_count = 1;
             void          resetInternalRepeatCount();
             bool          hasDurAttribute();
             void          setBaseAttributes();
             bool          checkRepeatCountStatus();
             void          initTimer();
+   virtual  void          setDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
 protected slots:
-    virtual  void         setDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
-             void         finishedSimpleDuration();
+            void          checkBeginRepeat();
+            void          finishedSimpleDuration();
+            void          finishedActiveDuration();
 private:
-             void         setRepeatCount(QString rC);
+            bool          playable;
+            void          setRepeatCount(QString rC);
 };
 
 #endif // TBASE_H

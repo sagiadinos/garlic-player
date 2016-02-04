@@ -45,7 +45,7 @@ bool TBody::parse(QDomElement element)
         ret = true;
     }
     else
-       emitfinished();
+       finishedActiveDuration();
     return ret;
 }
 
@@ -72,7 +72,7 @@ void TBody::next()
         reactByTag();
     }
     else
-        emitfinished();
+        finishedActiveDuration();
     return;
 }
 

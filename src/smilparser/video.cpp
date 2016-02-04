@@ -48,7 +48,7 @@ void TVideo::setDurationTimerBeforePlay()
 {
     if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
-    if (!resume)
+    if (!is_resumed)
         emit startedMedia(parent_playlist, this);
     return;
 }

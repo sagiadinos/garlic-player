@@ -60,14 +60,15 @@ class TTiming : public TClockValue
 public:
     TTiming(QObject *parent = 0);
     ~TTiming();
-    void      calculate();
-    void      parse(QString svalue);
-    WallClock getWallClock();
-    qint64    getNextTrigger(QDateTime actual);
+    void       calculate();
+    void       parse(QString svalue);
+    WallClock  getWallClock();
+    qint64     getNextTrigger(QDateTime actual);
+    int        checkRepeats(){return wall_clock.repeats;}
 protected:
-    WallClock parseWallclock(QString iso_date);
+    WallClock  parseWallclock(QString iso_date);
 private:
-    WallClock wall_clock;
+    WallClock  wall_clock;
     qint64     period     = 0;
     IsoPeriod  analysePeriods(QString p_value);
     int        analyseRepeats(QString r_value);

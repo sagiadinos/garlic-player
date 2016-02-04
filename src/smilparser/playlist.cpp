@@ -23,11 +23,6 @@ TPlaylist::TPlaylist(TBase * parent)
     Q_UNUSED(parent);
 }
 
-TFoundTag TPlaylist::getFoundTag()
-{
-    return found_tag;
-}
-
 void TPlaylist::insertPlaylistObject(QString id, TBase *obj_element)
 {
     ar_elements.insert(id, obj_element);
@@ -74,9 +69,8 @@ void TPlaylist::reactByTag()
     return;
 }
 
-void TPlaylist::emitfinished()
+void TPlaylist::emitfinished() // called from finishedActiveDuration() TBase
 {
-    stop();
     qDebug() << getID() << "finished Playlist";
     emit finishedPlaylist(parent_playlist, this);
     return;
@@ -100,65 +94,49 @@ void TPlaylist::doRef()
 
 void TPlaylist::doImage()
 {
-    found_tag.name         = "img";
-    found_tag.dom_element  = active_element;
-    emit foundElement(this, found_tag);
+    emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doVideo()
 {
-    found_tag.name         = "video";
-    found_tag.dom_element  = active_element;
-    emit foundElement(this, found_tag);
+    emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doAudio()
 {
-    found_tag.name         = "audio";
-    found_tag.dom_element  = active_element;
-    emit foundElement(this, found_tag);
+    emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doWeb()
 {
-    found_tag.name         = "web";
-    found_tag.dom_element  = active_element;
-    emit foundElement(this, found_tag);
+    emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doSeq()
 {
-    found_tag.name         = "seq";
-    found_tag.dom_element  = active_element;
-    emit foundElement(this, found_tag);
+    emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doPar()
 {
-    found_tag.name         = "par";
-    found_tag.dom_element  = active_element;
-    emit foundElement(this, found_tag);
+    emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doExcl()
 {
-    found_tag.name         = "excl";
-    found_tag.dom_element  = active_element;
-    emit foundElement(this, found_tag);
+    emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doPrefetch()
 {
-    found_tag.name         = "prefetch";
-    found_tag.dom_element  = active_element;
-    emit foundElement(this, found_tag);
+    emit foundElement(this, active_element);
     return;
 }
 

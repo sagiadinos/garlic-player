@@ -49,12 +49,11 @@ void TImage::setDurationTimerBeforePlay()
 {
     if (hasDurAttribute() || end_timer->isActive()) // if dur or end is not specified end, cause images don't have an implicit duration like audio/video
     {
-        qDebug() << getID() << "startedMedia";
-        if (!resume)
+        if (!is_resumed)
             emit startedMedia(parent_playlist, this);
     }
     else // when end or dur is not specified stop imediately
-        emitfinished();
+        finishedActiveDuration();
     return;
 }
 
@@ -73,7 +72,7 @@ void TImage::play()
 
 void TImage::pause()
 {
-    qDebug() << getID() << "paused " << dur_remaining;
+    qDebug() << getID() << "paused " << end_remaining;
     status = _paused;
     return;
 }

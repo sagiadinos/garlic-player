@@ -47,12 +47,11 @@ void TSeq::setDurationTimerBeforePlay()
     if (hasDurAttribute() || end_timer->isActive() || ar_playlist.size() > 0)
     {
         resetInternalRepeatCount();
-        play();
-        if (!resume)
-           emit startedPlaylist(parent_playlist, this);
+        if (!is_resumed)
+            emit startedPlaylist(parent_playlist, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
-        emitfinished();
+        finishedActiveDuration();
     return;
 }
 
@@ -64,6 +63,13 @@ void TSeq::play()
     status = _playing;
     return;
 }
+
+void TSeq::resume()
+{
+    status = _playing;
+    return;
+}
+
 
 void TSeq::stop()
 {
@@ -113,9 +119,7 @@ void TSeq::next()
             play();
         }
         else
-        {
-            emitfinished();
-        }
+            finishedActiveDuration();
     }
     return;
 }

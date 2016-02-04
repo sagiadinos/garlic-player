@@ -33,6 +33,7 @@ public:
     void         pause();
     void         stop();
     void         play();
+    void         resume();
 protected slots:
     void         setDurationTimerBeforePlay();
 private:

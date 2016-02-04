@@ -1,0 +1,36 @@
+ <configuration xmlns="http://schemas.adfotain.org/config-1.0">
+  <security>
+    <user>admin</user>
+    <password>your_pwd</password>
+  </security>
+  <userPref>
+    <prop name="net.wifi.enabled" value="true"/>
+    <prop name="net.wifi.ssid" value="your ssid"/>
+    <prop name="net.wifi.authentication" value="OPEN|WEP|WPAPSK|WPA2PSK"/>
+    <prop name="net.wifi.password" value="your ap password"/>
+ 
+    <prop name="net.ethernet.dhcp.enabled" value="true|false"/>
+    <prop name="net.ethernet.ip" value="ip"/>
+    <prop name="net.ethernet.netmask" value="ip"/>
+    <prop name="net.ethernet.gateway" value="ip"/>
+    <prop name="net.ethernet.dnsServers" value="ip"/>
+ 
+    <prop name="time.tzDescription" value="string"/>
+    <!-- Timezone string list - http://www.a-smil.org/index.php/Timezone_List -->
+ 
+    <prop name="hardware.videoOut.0.format" value="CEA_720p60 "/>
+    <!--XMP-2200 : PANEL|NTSC|NTSC_M|PAL|PAL_BG|CEA_720p50|CEA_720p60|CEA_1080i50|CEA_1080i60|CEA_1080p50|CEA_1080p60-->
+    <!--XMP-6200 : auto|CEA_720p50|CEA_720p60|CEA_1080p50|CEA_1080p60-->   
+ 
+    <prop name="hardware.videoOut.0.rotation" value="0|90|180|270|auto"/>
+ 
+    <prop name="hardware.audioOut.0.masterSoundLevel" value="0~100%"/>
+ 
+    <prop name="content.bootFromServer" value="true"/>
+    <prop name="content.serverUrl" value="http://indexes.of-a-smil-server.com"/>
+ 
+    <prop name="schedule.reboot.days" value="Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday"/>
+    <prop name="schedule.reboot.time" value="HH:MM in 24-hr format"/>
+ 
+  </userPref>
+</configuration>

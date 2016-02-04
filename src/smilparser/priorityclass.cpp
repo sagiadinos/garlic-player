@@ -84,7 +84,7 @@ void TPriorityClass::setPlaylist()
     for (int i = 0; i < count_childs; i++)
     {
         element = childs.item(i).toElement();
-        if (element.tagName() != "priorityClass")
+        if (element.tagName() != "priorityClass" && element.tagName() != "")
             ar_playlist.append(element);
     }
     return;

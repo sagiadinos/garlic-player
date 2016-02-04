@@ -42,6 +42,8 @@ void TTiming::parse(QString s_val)
             parseWallclock(s_val.mid(10, s_val.length()-11)); // wallclock(the_interesting stuff)
             status    = "wallclock";
         }
+        else if (s_val.contains(';'))
+            status = "ignore";
         else
         {
             ms = calculateMilliseconds(s_val);
@@ -189,7 +191,7 @@ QDateTime TTiming::addWallClockIntervalOptimized(QDateTime actual, QDateTime cal
         calculated = calculated.addMonths(wall_clock.period.months);
 
     if (wall_clock.period.days == 0)
-        calculated = calculated.addMonths(actual.date().day()-calculated.date().day());
+        calculated = calculated.addDays(actual.date().day()-calculated.date().day());
     else
         calculated = calculated.addDays(wall_clock.period.days);
     if (wall_clock.period.hours == 0)

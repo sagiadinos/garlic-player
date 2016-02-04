@@ -29,7 +29,7 @@ void MainWindow::setSmilIndex(QString smil_path)
 //    qDebug() << MyConfig.getPaths("var");
     MySmil = new TSmil();
     if (smil_path == "")
-        MySmil->init(MyConfig.getPaths("var")+"simple_excl.smil");
+        MySmil->init(MyConfig.getPaths("var")+"complex_excl.smil");
     else
         MySmil->init(smil_path);
     MyHead = MySmil->getHeader();

@@ -22,7 +22,7 @@
 #include "smilparser/playlist.h"
 
 /**
- * @brief   The TSeq class parses Seq-Tag
+ * @brief   The TSeq class parses seq-Tag
  *
  */
 class TSeq : public TPlaylist
@@ -36,6 +36,7 @@ public:
     void     pause();
     void     stop();
     void     play();
+    void     resume();
 public slots:
     void     setDurationTimerBeforePlay();
 private:
