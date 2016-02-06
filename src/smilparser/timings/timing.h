@@ -64,14 +64,16 @@ public:
     void       parse(QString svalue);
     WallClock  getWallClock();
     qint64     getNextTrigger(QDateTime actual);
-    int        checkRepeats(){return wall_clock.repeats;}
+    bool       remainingRepeats();
 protected:
     WallClock  parseWallclock(QString iso_date);
 private:
     WallClock  wall_clock;
     qint64     period     = 0;
+    int        remaining_repeats;
     IsoPeriod  analysePeriods(QString p_value);
     int        analyseRepeats(QString r_value);
+    qint64     analyseRemainingRepeats(QDateTime actual);
     QDateTime  analyseDate(QString date);
     QDateTime  addWallClockInterval(QDateTime calculated);
     QDateTime  addWallClockIntervalOptimized(QDateTime actual, QDateTime calculated);

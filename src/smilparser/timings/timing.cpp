@@ -26,9 +26,10 @@ TTiming::TTiming(QObject *parent)
 TTiming::~TTiming()
 {
     WallClock wall_clock1;
-    wall_clock = wall_clock1;
-    period     = 0;
-    status     = "";
+    wall_clock        = wall_clock1;
+    period            = 0;
+    status            = "";
+    remaining_repeats = 0;
 }
 
 void TTiming::parse(QString s_val)
@@ -64,34 +65,34 @@ qint64 TTiming::getNextTrigger(QDateTime actual)
         if (wall_clock.repeats == -1)
         {
             // find out the next possible trigger based on the datetime of the wallclock
-            int i = 0;
             do
             {
                 calculate = addWallClockIntervalOptimized(actual, calculate); // do some shortcuts cause addWallClockInterval is extremly slow on long times
-                i++;
             }
             while (actual > calculate);
             ret = actual.msecsTo(calculate);
         }
         // if wallclock date is in past and repeats > 0 calculate elapsed time since init and look if there is be another event possible
         else if (wall_clock.repeats > 0)
-        {
-            int i = 0;
-            do
-            {
-                calculate = addWallClockInterval(calculate);
-                i++;
-            }
-            while (actual > calculate && i < wall_clock.repeats+1);
-            if (actual < calculate)
-                ret = actual.msecsTo(calculate);
-        }
+            ret = analyseRemainingRepeats(actual);
         // repeat 0 return 0 ms
     }
     else // datetime of wallclock is in future
         ret = actual.msecsTo(wall_clock.datetime);
     return ret;
 }
+
+bool TTiming::remainingRepeats()
+{
+    if (wall_clock.repeats == -1)
+        return true;
+    if (remaining_repeats > 0)
+        return true;
+    return false;
+}
+
+// ================================ proteced methods ===============================================
+
 
 WallClock TTiming::parseWallclock(QString iso_date)
 {
@@ -118,8 +119,13 @@ WallClock TTiming::parseWallclock(QString iso_date)
     else
         wall_clock.datetime = analyseDate(iso_date);
     wall_clock.active = true;
+    if (wall_clock.repeats > 0)
+        analyseRemainingRepeats(QDateTime::currentDateTime());
     return wall_clock;
 }
+
+
+// ================================ private methods ===============================================
 
 int TTiming::analyseRepeats(QString r_value)
 {
@@ -131,7 +137,25 @@ int TTiming::analyseRepeats(QString r_value)
     return repeats;
 }
 
-// ================================ private methods ===============================================
+qint64 TTiming::analyseRemainingRepeats(QDateTime actual)
+{
+    QDateTime calculate = wall_clock.datetime;
+    qint64    ret       = 0;
+    int       i         = 0;
+    remaining_repeats   = 0;
+    do
+    {
+        calculate = addWallClockInterval(calculate);
+        i++;
+    }
+    while (actual > calculate && i < wall_clock.repeats+1);
+    if (actual < calculate)
+    {
+        ret = actual.msecsTo(calculate);
+        remaining_repeats = wall_clock.repeats - i;
+    }
+    return ret;
+}
 
 IsoPeriod TTiming::analysePeriods(QString p_value)
 {

@@ -47,7 +47,7 @@ Only sources! First binaries will deployed, when a downloader is implemented.
 
 ####Attributes for media
 - **region**
-- **fit** and the values fill, scale, meetbest, none
+- **fit** fill|scale|meetbest
 
 ###Attributes for media and time container:
 - **xml:id** with Fallback for SMIL 2.0 id
