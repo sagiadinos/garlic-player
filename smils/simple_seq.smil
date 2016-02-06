@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<smil>
+	<head>
+		<meta name="title" content="Simple SMIL for testing media in body" />
+		<meta http-equiv="Refresh" content="60" />
+		<layout>
+			<root-layout id="display:0" width="1920" height="1080" />
+			<region regionName="test_screen" top="0" left="0" width="1920" height="1080" z-index="1" backgroundColor="#000" />
+		</layout>
+	</head>
+	<body>
+		<seq xml:id="simple seq">
+			<img xml:id="img 0001" src="../tests/data/images/0001.jpg" dur="1s" fit="fill" />
+			<img xml:id="img 0002" src="../tests/data/images/0002.jpg" dur="1s" fit="fill" />
+			<img xml:id="img 0003" src="../tests/data/images/0003.jpg" dur="1s" fit="fill" />
+			<img xml:id="img 0004" src="../tests/data/images/0004.jpg" dur="1s" fit="fill" />
+			<img xml:id="img 0005" src="../tests/data/images/0005.jpg" dur="1s" fit="fill" />
+		</seq>	
+		<seq xml:id="simple seq repeat 2" repeatCount="2">
+			<img xml:id="img 0006" src="../tests/data/images/0006.jpg" dur="1s" fit="meetbest" />
+			<img xml:id="img 0007" src="../tests/data/images/0007.jpg" dur="1s" fit="meetbest" />
+			<img xml:id="img 0008" src="../tests/data/images/0008.jpg" dur="1s" fit="meetbest" />
+			<img xml:id="img 0009" src="../tests/data/images/0009.jpg" dur="1s" fit="meetbest" />
+			<img xml:id="img 0010" src="../tests/data/images/0010.jpg" dur="1s" fit="meetbest" />
+		</seq>	
+	</body>
+</smil>

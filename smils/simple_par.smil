@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<smil>
+	<head>
+		<meta name="title" content="Simple SMIL for testing media in body" />
+		<meta http-equiv="Refresh" content="60" />
+		<layout>
+			<root-layout id="display:0" width="1920" height="1080" />
+			<region regionName="screen1" top="0" left="0" width="960" height="540" z-index="1" backgroundColor="#f00" />
+			<region regionName="screen2" top="0" left="960" width="960" height="540" z-index="1" backgroundColor="#0f0" />
+			<region regionName="screen3" top="540" left="0" width="960" height="540" z-index="1" backgroundColor="#00f" />
+			<region regionName="screen4" top="540" left="960" width="960" height="540" z-index="1" backgroundColor="#0ff" />
+		</layout>
+	</head>
+	<body>
+		<img region="screen1" xml:id="img 0001" src="../tests/data/images/0001.jpg" dur="1s" fit="meetbest" />
+		<par xml:id="simple par">
+			<img region="screen1" xml:id="img 0002" src="../tests/data/images/0002.jpg" dur="4s" fit="meetbest" />
+			<img region="screen2" xml:id="img 0003" src="../tests/data/images/0003.jpg" dur="3s" fit="meetbest" />
+			<img region="screen3" xml:id="img 0004" src="../tests/data/images/0004.jpg" dur="2s" fit="meetbest" />
+			<img region="screen4" xml:id="img 0005" src="../tests/data/images/0005.jpg" dur="1s" fit="meetbest" />
+		</par>	
+		<img region="screen4" xml:id="img 0010" src="../tests/data/images/0010.jpg" dur="1s" fit="meetbest" />
+	</body>
+</smil>

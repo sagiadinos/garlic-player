@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<smil>
+	<head>
+		<meta name="title" content="Simple SMIL for testing excl with peers stop" />
+		<meta http-equiv="Refresh" content="60" />
+		<layout>
+			<root-layout id="display:0" width="1920" height="1080" />
+			<region regionName="test_screen" top="0" left="0" width="1920" height="1080" z-index="1" backgroundColor="#000" />
+		</layout>
+	</head>
+	<body>
+		<img xml:id="img 0001" src="../tests/data/images/0001.jpg" fit="fill" dur="2s" />
+		<excl xml:id="excl">
+			<priorityClass peers="stop">
+				<img xml:id="img 0002" src="../tests/data/images/0002.jpg" begin="0s" dur="2s" fit="fill" />
+				<img xml:id="img 0003" src="../tests/data/images/0003.jpg" begin="0s" dur="2s" fit="fill" />
+				<img xml:id="img 0004" src="../tests/data/images/0004.jpg" begin="0s" dur="2s" fit="fill" />
+				<img xml:id="img 0005" src="../tests/data/images/0005.jpg" begin="0s" dur="2s" fit="fill" />
+			</priorityClass>	
+		</excl>	
+		<img  xml:id="img 0010" src="../tests/data/images/0010.jpg" fit="fill" dur="2s" />
+	</body>
+</smil>

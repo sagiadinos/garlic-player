@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<smil>
+	<head>
+		<meta name="title" content="Simple SMIL for testing different media in body" />
+		<meta http-equiv="Refresh" content="60" />
+		<layout>
+			<root-layout id="display:0" width="1920" height="1080" />
+			<region regionName="test_screen" top="0" left="0" width="1920" height="1080" z-index="1" backgroundColor="#000" />
+		</layout>
+	</head>
+	<body>
+		<img xml:id="img 0001" src="../tests/data/images/0001.jpg" dur="2s" fit="meetbest" />
+		<video xml:id="video prodigy" src="../examples/breathe.avi" dur="10s" fit="meetbest" />
+		<img xml:id="img 0004" src="../tests/data/images/0004.jpg" dur="2s" fit="fill" />
+		<text xml:id="website" src="http://google.com" dur="5s" fit="meetbest" />
+		<img xml:id="img 0005" src="../tests/data/images/0005.jpg" dur="2s" fit="meetbest" />
+		<audio xml:id="audio donde" src="../examples/donde.mp3" dur="10s" fit="meetbest" />
+		<img xml:id="img 0006" src="../tests/data/images/0006.jpg" dur="2s" fit="meetbest" />
+	</body>
+</smil>
