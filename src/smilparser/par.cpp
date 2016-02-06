@@ -59,7 +59,7 @@ void TPar::setDurationTimerBeforePlay()
  */
 void TPar::next()
 {
-    if (active_childs == 0)
+    if (activatable_childs.size() < 1)
     {
         if(checkRepeatCountStatus())
         {
@@ -116,14 +116,16 @@ void TPar::setPlaylist()
 }
 
 
-void TPar::incActiveChilds()
+void TPar::childStarted(TBase *element)
 {
-    active_childs++;
+    activatable_childs.insert(element);
+    return;
 }
 
-void TPar::decActiveChilds()
+void TPar::childEnded(TBase *element)
 {
-    active_childs--;
+    if (activatable_childs.find(element) != activatable_childs.end())
+        activatable_childs.remove(element);
     return;
 }
 

@@ -66,10 +66,12 @@ public:
             int           getStatus(){return status;}
             QString       getID(){return id;}
             QString       getTitle(){return title;}
+            bool          isRepeatable(){return repeatable;}
     static  QString       parseID(QDomElement element);
-    virtual void          pause()    = 0;
-    virtual void          stop()     = 0;
-    virtual void          play()     = 0;
+    virtual void          play()        = 0;
+    virtual void          pause()       = 0;
+    virtual void          stop()        = 0;
+    virtual QString       getBaseType() = 0;
 
 public slots:
     virtual void          emitfinished() = 0;
@@ -98,6 +100,7 @@ protected slots:
             void          finishedSimpleDuration();
             void          finishedActiveDuration();
 private:
+            bool          repeatable;
             bool          playable;
             void          setRepeatCount(QString rC);
 };

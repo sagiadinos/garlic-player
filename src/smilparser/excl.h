@@ -27,21 +27,20 @@ class TExcl : public TPlaylist
 public:
     TExcl(TBase * parent = 0);
 
-    const     int        _stop_new          = 0; // never
-    const     int        _stop_active       = 1;
-    const     int        _play_this         = 2;
-    const     int        _pause_active      = 3;
-    const     int        _pause_new         = 4; // defer
+    const       int         _stop_new          = 0; // never
+    const       int         _stop_active       = 1;
+    const       int         _play_this         = 2;
+    const       int         _pause_active      = 3;
+    const       int         _pause_new         = 4; // defer
 
     bool                 parse(QDomElement element);
     void                 next();
-    TBase*               getPlayedObject();
     int                  interruptActualPlaying(QDomElement started_element, TBase *element);
-    void                 decActivatableChilds(TBase *element);
-    void                 incActivatableChilds(TBase *element);
     QString              getPeers();
-    void      setChildActive(bool active);
-    void      pause();
+    void                 childStarted(TBase *element);
+    void                 childEnded(TBase *element);
+    void                 setChildActive(bool active);
+    void                 pause();
     void      stop();
     void      play();
     void      resume();
@@ -55,9 +54,14 @@ private:
     QQueue<TPriorityClass *>              queue;
     QHash<int, TPriorityClass *>          ar_priorities;
     QSet<TBase *>                         activatable_childs;
-    void      setPlaylist();
-    void      setPriorityClass(QDomElement element);
-    bool                               is_child_active    = false;
+    bool                                  is_child_active    = false;
+    void                                  setPlaylist();
+    void                                  setPriorityClass(QDomElement element);
+    bool                                  priorityStop(QDomElement dom_element, TBase *element);
+    bool                                  priorityPause(QDomElement dom_element, TBase *element);
+    bool                                  priorityNever(QDomElement dom_element, TBase *element);
+    bool                                  priorityDefer(QDomElement dom_element, TBase *element);
+
 signals:
     void resumeElement(TBase *element);
 };

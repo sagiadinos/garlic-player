@@ -28,6 +28,7 @@ void Test_SmilTimingsElement::test_TimingsOnly()
     // start, then pause and look on the remaining times
     testTimingsElement *MyTest1 = new testTimingsElement(NULL);
     MyTest1->parse(element);
+    QCOMPARE(MyTest1->checkifPlayable(), true);
     MyTest1->preparePlay();
     QCOMPARE(MyTest1->getStatus(),  MyTest1->_stopped);
     MyTest1->preparePause();
@@ -42,10 +43,11 @@ void Test_SmilTimingsElement::test_TimingsOnly()
     // start, then pause and look on the remaining times
     testTimingsElement *MyTest2 = new testTimingsElement(NULL);
     MyTest2->parse(element);
+    QCOMPARE(MyTest2->checkifPlayable(), true);
     MyTest2->preparePlay();
-    QCOMPARE(MyTest2->getStatus(),  MyTest2->_waiting);
     MyTest2->preparePause();
     QCOMPARE(MyTest2->getID(), QString("test2"));
+    qDebug() << MyTest2->getRemainingBegin();
     QVERIFY(MyTest2->getRemainingBegin() > 900); // Test with tolerances
     QVERIFY(MyTest2->getRemainingBegin() < 1100); // Test with tolerances
     QVERIFY(MyTest2->getRemainingEnd() > 2800);
@@ -58,6 +60,7 @@ void Test_SmilTimingsElement::test_TimingsOnly()
     // start, then pause and look on the remaining times
     testTimingsElement *MyTest3 = new testTimingsElement(NULL);
     MyTest3->parse(element);
+    QCOMPARE(MyTest3->checkifPlayable(), true);
     MyTest3->preparePlay();
     QCOMPARE(MyTest3->getID(), QString("test3"));
     QCOMPARE(MyTest3->getRemainingBegin(), int(0));

@@ -15,41 +15,25 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
+#ifndef TFACTORY_H
+#define TFACTORY_H
+#include <smilparser/image.h>
+#include <smilparser/audio.h>
+#include <smilparser/video.h>
+#include <smilparser/web.h>
 
-#ifndef SEQ_H
-#define SEQ_H
-#include <QList>
-#include "smilparser/playlist.h"
+#include <smilparser/body.h>
+#include <smilparser/seq.h>
+#include <smilparser/par.h>
+#include <smilparser/excl.h>
 
-/**
- * @brief   The TSeq class parses seq-Tag
- *
- */
-class TSeq : public TPlaylist
+class TFactory : public QObject
 {
     Q_OBJECT
 public:
-    TSeq(TBase * parent = 0);
-    bool     parse(QDomElement element);
-    void     next();
-    bool     previous();
-    void     childStarted(TBase *element){Q_UNUSED(element);}
-    void     childEnded(TBase *element){Q_UNUSED(element);}
-    void     pause();
-    void     stop();
-    void     play();
-    void     resume();
-public slots:
-    void     setDurationTimerBeforePlay();
-private:
-    bool     random            = false;
-    int      pickNumber        = 0;
-    int      internal_pick     = 0;
-    QString  pickingAlgorithm  = "";
-    QString  pickingBehavior   = "";
-    void     setPlaylist();
-    void     randomizePlaylist();
-    void     doMetaData();
+    TFactory(TBase * parent = 0);
+    static TMedia    *createMedia(QString media_type, TBase *parent);
+    static TPlaylist *createPlaylist(QString playlist_type, TBase *parent);
 };
 
-#endif // SEQ_H
+#endif // TFACTORY_H

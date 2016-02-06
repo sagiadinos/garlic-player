@@ -31,10 +31,11 @@ public:
     void      preparePlay();
     void      endPlay(){}
     void      next();
-    bool      previous();
+    void      childStarted(TBase *element){Q_UNUSED(element);}
+    void      childEnded(TBase *element){Q_UNUSED(element);}
+    void      play(){}
     void      pause(){}
     void      stop(){}
-    void      play(){}
 protected:
 public slots:
     void      setDurationTimerBeforePlay();

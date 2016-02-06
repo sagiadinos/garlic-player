@@ -291,10 +291,12 @@ void TBase::initTimer()
 
 void TBase::checkBeginRepeat()
 {
-    if (begin.checkRepeats() != 0)
+    if (begin.remainingRepeats())
     {
         begin_timer->start(begin.getNextTrigger(QDateTime::currentDateTime()));
         qDebug() << "check begin repeats " << getID() << begin.getNextTrigger(QDateTime::currentDateTime());
+        if (end.remainingRepeats()) // this make sense only when begin timer is repeated
+            end_timer->start(end.getNextTrigger(QDateTime::currentDateTime()));
     }
     setDurationTimerBeforePlay();
     return;

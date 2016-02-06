@@ -31,37 +31,37 @@ class TPlaylist : public TBase
 {
     Q_OBJECT
 public:
-    TPlaylist(TBase * parent = 0);
-    void                          insertPlaylistObject(QString id, TBase *obj_element);
-    QHash<QString, TBase *>       getPlaylistObjects();
-    QString                       getIdOfActiveElement();
-    TBase*                        getActiveObject();
-    void                          play(){}
-    void                          stop(){}
+            TPlaylist(TBase * parent = 0);
+            void                          insertPlaylistObject(QString id, TBase *obj_element);
+            QHash<QString, TBase *>       getPlaylistObjects();
+            QString                       getIdOfActiveElement();
+            TBase                        *getPlayedObject();
+    virtual void                          childStarted(TBase *element) = 0;
+    virtual void                          childEnded(TBase *element) = 0;
+            QString                       getBaseType() {return "playlist";}
 public slots:
-        void                      emitfinished();
+            void                          emitfinished();
 protected:
-    QList<QDomElement>            ar_playlist;
-    QList<QDomElement>::iterator  iterator;
-    QHash<QString, TBase *>       ar_elements;
-    QDomElement                   active_element;
-    TBase                        *parent_playlist;
-    void                          reactByTag();
-    void                          doRef();
-    void                          doImage();
-    void                          doVideo();
-    void                          doAudio();
-    void                          doWeb();
-    void                          doPrefetch();
-    void                          doSeq();
-    void                          doPar();
-    void                          doExcl();
-protected slots:
-    void                          setDurationTimerBeforePlay(){}
+            QList<QDomElement>            ar_playlist;
+            QList<QDomElement>::iterator  iterator;
+            QHash<QString, TBase *>       ar_elements;
+            QDomElement                   active_element;
+            TBase                        *parent_playlist;
+            QString                       found_tag;
+            void                          reactByTag();
+            void                          doRef();
+            void                          doImage();
+            void                          doVideo();
+            void                          doAudio();
+            void                          doWeb();
+            void                          doPrefetch();
+            void                          doSeq();
+            void                          doPar();
+            void                          doExcl();
 signals:
-    void                          foundElement(TBase *, QDomElement element);
-    void                          startedPlaylist(TBase * , TBase *);
-    void                          finishedPlaylist(TBase * , TBase *);
+            void                          foundElement(TBase *, QDomElement element);
+            void                          startedPlaylist(TBase * , TBase *);
+            void                          finishedPlaylist(TBase * , TBase *);
 
 };
 

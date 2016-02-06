@@ -39,11 +39,6 @@ QString TMedia::getSrc()
     return src;
 }
 
-QString TMedia::getTitle()
-{
-    return title;
-}
-
 QString TMedia::getExec()
 {
     return exec;

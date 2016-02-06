@@ -28,7 +28,7 @@ class testBase : public TBase
 public:
     testBase(TBase * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
     QString   getType(){return "test base";}
-    bool      parse(QDomElement element){Q_UNUSED(element);return true;}
+    bool      parse(QDomElement element){Q_UNUSED(element);return true;} // virtual
     void      preparePlay(){}
     void      test_setBaseAttributes(){setBaseAttributes();}
     bool      test_checkRepeatCountStatus(){return checkRepeatCountStatus();}
@@ -38,15 +38,15 @@ public:
     void      setForRepeatCountCheck(int rC, int r_c, bool in){repeatCount=rC;internal_count=r_c;indefinite=in;}
     int       getRepeatCount(){return repeatCount;}
     bool      getIndefinite(){return indefinite;}
-public slots:
-    void       emitfinished(){}
-protected:
-    void       play(){status = _playing;}
-    void       pause(){status = _paused;}
-    void       stop(){status = _stopped;}
 
-protected slots:
-    void       setDurationTimerBeforePlay(){}
+    void      play(){status = _playing;}            // virtual
+    void      pause(){status = _paused;}            // virtual
+    void      stop(){status = _stopped;}            // virtual
+    QString   getBaseType(){return  "test base";}   // virtual
+public slots:
+    void       emitfinished(){}                     // virtual
+protected:
+    void       setDurationTimerBeforePlay(){}       // virtual
 };
 
 

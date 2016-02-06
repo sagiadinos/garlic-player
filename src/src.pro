@@ -25,7 +25,8 @@ SOURCES += downloader.cpp \
     smilparser/playlist.cpp \
     smilparser/timings/timing.cpp \
     smilparser/timings/clock_value.cpp \
-    smilparser/priorityclass.cpp
+    smilparser/priorityclass.cpp \
+    smilparser/factory.cpp
 HEADERS += downloader.h \
     configuration.h \
     smilparser.h \
@@ -44,6 +45,7 @@ HEADERS += downloader.h \
     smilparser/playlist.h \
     smilparser/timings/timing.h \
     smilparser/timings/clock_value.h \
-    smilparser/priorityclass.h
+    smilparser/priorityclass.h \
+    smilparser/factory.h
 
 DISTFILES +=

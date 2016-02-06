@@ -26,22 +26,22 @@ class TPar : public TPlaylist
     Q_OBJECT
 public:
     TPar(TBase * parent = 0);
-    bool         parse(QDomElement element);
-    void         next();
-    void         incActiveChilds();
-    void         decActiveChilds();
-    void         pause();
-    void         stop();
-    void         play();
-    void         resume();
+    bool          parse(QDomElement element);
+    void          next();
+    void          childStarted(TBase *element);
+    void          childEnded(TBase *element);
+    void          pause();
+    void          stop();
+    void          play();
+    void          resume();
 protected slots:
-    void         setDurationTimerBeforePlay();
+    void          setDurationTimerBeforePlay();
 private:
-    QString      endsync            = "last";
-    QDomNodeList childs;
-    void         setPlaylist();
-    int          active_childs      = 0;
-    int          count_childs       = 0;
+    QSet<TBase *> activatable_childs;
+    QString       endsync            = "last";
+    QDomNodeList  childs;
+    void          setPlaylist();
+    int           count_childs       = 0;
 
 };
 

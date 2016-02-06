@@ -15,41 +15,36 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
+#include "factory.h"
 
-#ifndef SEQ_H
-#define SEQ_H
-#include <QList>
-#include "smilparser/playlist.h"
-
-/**
- * @brief   The TSeq class parses seq-Tag
- *
- */
-class TSeq : public TPlaylist
+TFactory::TFactory(TBase *parent)
 {
-    Q_OBJECT
-public:
-    TSeq(TBase * parent = 0);
-    bool     parse(QDomElement element);
-    void     next();
-    bool     previous();
-    void     childStarted(TBase *element){Q_UNUSED(element);}
-    void     childEnded(TBase *element){Q_UNUSED(element);}
-    void     pause();
-    void     stop();
-    void     play();
-    void     resume();
-public slots:
-    void     setDurationTimerBeforePlay();
-private:
-    bool     random            = false;
-    int      pickNumber        = 0;
-    int      internal_pick     = 0;
-    QString  pickingAlgorithm  = "";
-    QString  pickingBehavior   = "";
-    void     setPlaylist();
-    void     randomizePlaylist();
-    void     doMetaData();
-};
+    Q_UNUSED(parent);
+}
 
-#endif // SEQ_H
+TMedia* TFactory::createMedia(QString media_type, TBase *parent)
+{
+    if (media_type == "img")
+        return new TImage(parent);
+    else if (media_type == "video")
+        return new TVideo(parent);
+    else if (media_type == "audio")
+        return new TAudio(parent);
+    else if (media_type == "web")
+        return new TWeb(parent);
+    return NULL;
+}
+
+
+TPlaylist* TFactory::createPlaylist(QString playlist_type, TBase *parent)
+{
+    if (playlist_type == "seq")
+        return new TSeq(parent);
+    else if (playlist_type == "par")
+        return new TPar(parent);
+    else if (playlist_type == "excl")
+        return new TExcl(parent);
+    else if (playlist_type == "body")
+        return new TBody();
+    return NULL;
+}

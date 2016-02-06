@@ -23,48 +23,40 @@ void Test_SmilPlaylist::test_reactByTag()
     testPlaylist MyPlaylist;
     QDomDocument document;
     QDomElement  element = document.createElement(QString("img"));
-    QDomElement  found_tag;
 
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.tagName(), QString("img"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("img"));
 
     element.setTagName("video");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.tagName(), QString("video"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("video"));
 
     element.setTagName("audio");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.tagName(), QString("audio"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("audio"));
 
     element.setTagName("text");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.tagName(), QString("web"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("web"));
 
     element.setTagName("seq");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.tagName(), QString("seq"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("seq"));
 
     element.setTagName("par");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.tagName(), QString("par"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("par"));
 
     element.setTagName("excl");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.tagName(), QString("excl"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("excl"));
     return;
 }
 
@@ -73,31 +65,26 @@ void Test_SmilPlaylist::test_reactByTagForRef()
     testPlaylist MyPlaylist;
     QDomDocument document;
     QDomElement element = document.createElement(QString("ref"));
-    TFoundTag   found_tag;
     QCOMPARE(element.tagName(), QString("ref"));
 
     element.setAttribute("type", "image/png");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.name, QString("img"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("img"));
 
     element.setAttribute("type", "video/mp4");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.name, QString("video"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("video"));
 
     element.setAttribute("type", "audio/wav");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.name, QString("audio"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("audio"));
 
     element.setAttribute("type", "text/html");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    found_tag = MyPlaylist.getFoundElement();
-    QCOMPARE(found_tag.name, QString("web"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("web"));
     return;
 }

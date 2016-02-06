@@ -33,12 +33,11 @@ public:
     int       getRemainingDur(){return dur_remaining;}
 public slots:
     void       emitfinished(){emit signal_end();}
+    void       play(){status = _playing;}            // virtual
+    void       pause(){status = _paused;}            // virtual
+    void       stop(){status = _stopped;}            // virtual
+    QString    getBaseType(){return  "test base";}   // virtual
 protected:
-    void       play() {status = _playing;}
-    void       pause(){status = _paused;}
-    void       stop(){status = _stopped;}
-
-protected slots:
     void       setDurationTimerBeforePlay() // like TImage and TWeb
     {
         if (hasDurAttribute())

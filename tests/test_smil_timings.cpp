@@ -171,7 +171,7 @@ void test_SmilTimings::test_getNextTrigger()
 
     MyTiming = new testTiming();
     MyTiming->parse("wallclock(R/2001-01-13T01:01:01/PT10S)");
-    QCOMPARE(MyTiming->getNextTrigger(QDateTime::fromString("2016-01-31 19:20:41", "yyyy-MM-dd HH:mm:ss")), qint64(9000));
+    QCOMPARE(MyTiming->getNextTrigger(QDateTime::fromString("2016-01-31 19:20:42", "yyyy-MM-dd HH:mm:ss")), qint64(9000));
     delete MyTiming;
 
 

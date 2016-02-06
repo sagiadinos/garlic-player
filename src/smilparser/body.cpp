@@ -76,11 +76,6 @@ void TBody::next()
     return;
 }
 
-bool TBody::previous()
-{
-     return true;
-}
-
 void TBody::setPlaylist()
 {
     QDomNodeList childs = active_element.parentNode().childNodes();

@@ -41,11 +41,6 @@ bool TExcl::parse(QDomElement element)
     return true;
 }
 
-TBase *TExcl::getPlayedObject()
-{
-    return played_element;
-}
-
 void TExcl::setDurationTimerBeforePlay()
 {
     if (hasDurAttribute() || end_timer->isActive() || ar_priorities.size() > 0)
@@ -96,119 +91,37 @@ int TExcl::interruptActualPlaying(QDomElement dom_element, TBase *element)
         }
     }
 
-    if (ActivePriorityClass == NewActivePriorityClass) // same priorityClass is currently active => look at peers attribute:
+    if (ActivePriorityClass == NewActivePriorityClass)      // same priorityClass is currently active => look at peers attribute:
     {
         QString peers = getPeers();
-        if (peers == "stop") // stop current active element
-        {
-            if (is_child_active)
-                ret = _stop_active;
-            else
-                ret = _play_this;
-            played_element     = element;
-            played_dom_element = dom_element;
-        }
-        else if (peers == "pause") // pause current active element
-        {
-            if (is_child_active)
-            {
-                ActivePriorityClass->insertQueue(played_element);
-                ret = _pause_active;
-            }
-            else
-                ret = _play_this;
-            played_element     = element;
-            played_dom_element = dom_element;
-        }
-        else if (peers == "defer") // delay new element and enqueue it
-        {
-            if (is_child_active)
-            {
-                ActivePriorityClass->insertQueue(element);
-                ret = _pause_new;
-            }
-            else
-            {
-                ret                = _play_this;
-                played_element     = element;
-                played_dom_element = dom_element;
-            }
-        }
-        else if (peers == "never") // ignore new element when there is another element played
-        {
-            if (is_child_active)
-                ret = _stop_new;
-            else
-            {
-                ret                = _play_this;
-                played_element     = element;
-                played_dom_element = dom_element;
-            }
-        }
-        else // peers == "stop" is default => stop current active element
-        {
-            if (is_child_active)
-                ret = _stop_active;
-            else
-                ret = _play_this;
-            played_element     = element;
-            played_dom_element = dom_element;
-        }
+        if (peers == "stop")                                // stop current active element
+            ret = priorityStop(dom_element, element);
+        else if (peers == "pause")                          // pause current active element
+            ret = priorityPause(dom_element, element);
+        else if (peers == "defer")                          // delay new element and enqueue it
+            ret = priorityDefer(dom_element, element);
+        else if (peers == "never")                          // ignore new element when there is another element played
+            ret = priorityNever(dom_element, element);
+        else                                                // peers == "stop" is default => stop current active element
+            ret = priorityStop(dom_element, element);
     }
     else if (ar_priorities.key(ActivePriorityClass) > ar_priorities.key(NewActivePriorityClass)) // new priority Class is higher then current active
     {
         QString higher = ActivePriorityClass->getHigher();
         if (higher == "stop")
-        {
-            if (is_child_active)
-                ret = _stop_active;
-            else
-                ret = _play_this;
-            played_element     = element;
-            played_dom_element = dom_element;
-        }
+            ret = priorityStop(dom_element, element);
         else // higher == "pause" is default
-        {
-            if (is_child_active)
-            {
-                ActivePriorityClass->insertQueue(played_element);
-                ret = _pause_active;
-            }
-            else
-                ret = _play_this;
-            played_element     = element;
-            played_dom_element = dom_element;
-        }
+            ret = priorityPause(dom_element, element);
+
         ActivePriorityClass = NewActivePriorityClass;
     }
     else if (ar_priorities.key(ActivePriorityClass) < ar_priorities.key(NewActivePriorityClass)) // new priority Class is lover then current active
     {
         QString lower = ActivePriorityClass->getLower();
-        if (lower == "never") // ignore new element
-        {
-            if (is_child_active)
-                ret = _stop_new;
-            else
-            {
-                ret                = _play_this;
-                played_element     = element;
-                played_dom_element = dom_element;
-            }
-        }
-        else // lower == "defer" is default
-        {
-            if (is_child_active)
-            {
-                NewActivePriorityClass->insertQueue(element);
-                ret = _pause_new;
-            }
-            else
-            {
-                ret                = _play_this;
-                played_element     = element;
-                played_dom_element = dom_element;
-            }
-        }
+        if (lower == "never")
+            ret = priorityNever(dom_element, element);
+        else
+            ret = priorityDefer(dom_element, element);
     }
     return ret;
 }
@@ -218,17 +131,17 @@ QString TExcl::getPeers()
     return ActivePriorityClass->getPeers();
 }
 
-void TExcl::decActivatableChilds(TBase *element)
+void TExcl::childStarted(TBase *element)
 {
-    QString id = element->getID();
-    if (activatable_childs.find(element) != activatable_childs.end())
-        activatable_childs.remove(element);
+    activatable_childs.insert(element);
     return;
 }
 
-void TExcl::incActivatableChilds(TBase *element)
+void TExcl::childEnded(TBase *element)
 {
-    activatable_childs.insert(element);
+    setChildActive(false);
+    if (activatable_childs.find(element) != activatable_childs.end())
+        activatable_childs.remove(element);
     return;
 }
 
@@ -247,6 +160,7 @@ void TExcl::setChildActive(bool active)
  */
 void TExcl::next()
 {
+
     // if elements are in queues starts resume or starts them
     QHash<int, TPriorityClass *>::iterator      ar_priorities_iterator;
     TPriorityClass                             *MyPriorityClass;
@@ -308,7 +222,6 @@ void TExcl::resume()
     return;
 }
 
-
 void TExcl::stop()
 {
     status = _stopped;
@@ -346,5 +259,63 @@ void TExcl::setPriorityClass(QDomElement element)
     if (MyPriorityClass->parse(element))
         ar_priorities.insert(ar_priorities.size(), MyPriorityClass);
     return;
+}
+
+bool TExcl::priorityStop(QDomElement dom_element, TBase *element)
+{
+    bool ret;
+    if (is_child_active)
+        ret = _stop_active;
+    else
+        ret = _play_this;
+    played_element     = element;
+    played_dom_element = dom_element;
+    return ret;
+}
+
+bool TExcl::priorityPause(QDomElement dom_element, TBase *element)
+{
+    bool ret;
+    if (is_child_active)
+    {
+        ActivePriorityClass->insertQueue(played_element);
+        ret = _pause_active;
+    }
+    else
+        ret = _play_this;
+    played_element     = element;
+    played_dom_element = dom_element;
+    return ret;
+}
+
+bool TExcl::priorityNever(QDomElement dom_element, TBase *element)
+{
+    bool ret;
+    if (is_child_active)
+        ret = _stop_new;
+    else
+    {
+        ret                = _play_this;
+        played_element     = element;
+        played_dom_element = dom_element;
+    }
+    return ret;
+}
+
+bool TExcl::priorityDefer(QDomElement dom_element, TBase *element)
+{
+    bool ret;
+    if (is_child_active)
+    {
+        ActivePriorityClass->insertQueue(element);
+        ret = _pause_new;
+    }
+    else
+    {
+        ret                = _play_this;
+        played_element     = element;
+        played_dom_element = dom_element;
+    }
+    return ret;
 }
 

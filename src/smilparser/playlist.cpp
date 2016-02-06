@@ -34,7 +34,7 @@ QString TPlaylist::getIdOfActiveElement()
     return parseID(active_element);
 }
 
-TBase* TPlaylist::getActiveObject()
+TBase *TPlaylist::getPlayedObject()
 {
     QHash<QString, TBase *>::iterator i = ar_elements.find(getIdOfActiveElement());
     return *i;
@@ -94,48 +94,56 @@ void TPlaylist::doRef()
 
 void TPlaylist::doImage()
 {
+    found_tag = "img";
     emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doVideo()
 {
+    found_tag = "video";
     emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doAudio()
 {
+    found_tag = "audio";
     emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doWeb()
 {
+    found_tag = "web";
     emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doSeq()
 {
+    found_tag = "seq";
     emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doPar()
 {
+    found_tag = "par";
     emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doExcl()
 {
+    found_tag = "excl";
     emit foundElement(this, active_element);
     return;
 }
 
 void TPlaylist::doPrefetch()
 {
+    found_tag = "prefetch";
     emit foundElement(this, active_element);
     return;
 }

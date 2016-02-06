@@ -31,7 +31,6 @@ public:
     QString     getRegion();
     QString     getSrc();
     QString     getFit();
-    QString     getTitle();
     QString     getExec();
     QString     getFileName();
     QString     getCacheControl();
@@ -39,6 +38,7 @@ public:
     void        pause(){}
     void        stop(){}
     void        play(){}
+    QString     getBaseType() {return "media";}
 public slots:
     void        emitfinished();
 protected:

@@ -28,13 +28,19 @@ class testPlaylist : public TPlaylist
 public:
     testPlaylist(TBase * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
     QString   getType(){return "test base playlist";}
-    bool      parse(QDomElement element){Q_UNUSED(element);return true;}
+    bool      parse(QDomElement element){Q_UNUSED(element);return true;}    // virtual
     void      test_reactByTag(){reactByTag();}
     void      setActiveElement(QDomElement element){active_element = element;}
+    QString   test_getFoundActiveTagName(){return found_tag;}
+    void      childStarted(TBase *element){ Q_UNUSED(element);}             // virtual
+    void      childEnded(TBase *element){ Q_UNUSED(element);}               // virtual
+    void      play(){}                                                      // virtual
+    void      pause(){}                                                     // virtual
+    void      stop(){}                                                      // virtual
+public slots:
+    void      emitfinished(){}                                              // virtual
 protected:
-    void       play(){}
-    void       pause(){}
-    void       stop(){}
+    void      setDurationTimerBeforePlay(){}                                // virtual
 };
 
 
