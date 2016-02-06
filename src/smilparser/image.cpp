@@ -63,6 +63,18 @@ QString TImage::getFit()
 
 }
 
+bool TImage::load(QString index_path)
+{
+    if (src.mid(0, 4) == "http")
+        show_img.pixmap.load(src);
+    else // get relative paths
+        show_img.pixmap.load(index_path+src);
+
+    show_img.image_item = new QGraphicsPixmapItem();
+    show_img.image_item->setPixmap(show_img.pixmap);
+    return true;
+}
+
 void TImage::play()
 {
     qDebug() << getID() << "play";
@@ -93,13 +105,6 @@ void TImage::setAttributes()
     setBaseMediaAttributes();
 
     show_img.region = region;
-    if (src.mid(0, 4) == "http")
-        show_img.pixmap.load(src);
-    else // get relative paths
-        show_img.pixmap.load(index_path+src);
-
-    show_img.image_item = new QGraphicsPixmapItem();
-    show_img.image_item->setPixmap(show_img.pixmap);
     if (root_element.hasAttribute("fit"))
         show_img.fit = root_element.attribute("fit");
     return;

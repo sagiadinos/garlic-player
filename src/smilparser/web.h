@@ -42,6 +42,7 @@ public:
     bool     parse(QDomElement element);
     showWeb  getMediaForShow();
     QString  getFit();
+    bool     load(QString index_path);
     void     pause();
     void     stop();
     void     play();

@@ -41,6 +41,7 @@ public:
     bool     parse(QDomElement element);
     showImg  getMediaForShow();
     QString  getFit();
+    bool     load(QString index_path);
     void     pause();
     void     stop();
     void     play();

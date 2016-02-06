@@ -44,6 +44,18 @@ showAudio TAudio::getMediaForShow()
     return show_audio;
 }
 
+bool TAudio::load(QString index_path)
+{
+    output           = new QtAV::VideoOutput();
+    media_player     = new QtAV::AVPlayer();
+    media_player->setRenderer(output);
+    if (src.mid(0, 4) == "http")
+        media_player->setFile(src);
+    else // get relative paths
+        media_player->setFile(index_path+src);
+    return true;
+}
+
 void TAudio::setDurationTimerBeforePlay()
 {
     if (!hasDurAttribute()  && !end_timer->isActive()) // when end or dur is not specified use audio duration for simple duration
@@ -79,16 +91,6 @@ void TAudio::setAttributes()
 {
     setBaseMediaAttributes();
     show_audio.region      = region;
-    output           = new QtAV::VideoOutput();
-    media_player     = new QtAV::AVPlayer();
-    connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration())); // 10s
-    media_player->setRenderer(output);
-
-    if (src.mid(0, 4) == "http")
-        media_player->setFile(src);
-    else // get relative paths
-        media_player->setFile(index_path+src);
-
     return;
 }
 

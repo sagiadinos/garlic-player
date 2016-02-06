@@ -80,14 +80,8 @@ QString TVideo::getFit()
     return show_video.fit;
 }
 
-// ====================  protected methods =================================
-
-void TVideo::setAttributes()
+bool TVideo::load(QString index_path)
 {
-    show_video.fit  = "";
-    setBaseMediaAttributes();
-
-    show_video.region      = region;
     show_video.video_item  = new QtAV::GraphicsItemRenderer;
     media_player           = new QtAV::AVPlayer;
     media_player->setRenderer(show_video.video_item);
@@ -96,6 +90,17 @@ void TVideo::setAttributes()
         media_player->setFile(src);
     else // get relative paths
         media_player->setFile(index_path+src);
+    return true;
+}
+
+// ====================  protected methods =================================
+
+void TVideo::setAttributes()
+{
+    show_video.fit  = "";
+    setBaseMediaAttributes();
+
+    show_video.region      = region;
 
     if (root_element.hasAttribute("fit"))
         show_video.fit = root_element.attribute("fit");

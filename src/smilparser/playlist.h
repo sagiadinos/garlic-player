@@ -35,7 +35,8 @@ public:
             void                          insertPlaylistObject(QString id, TBase *obj_element);
             QHash<QString, TBase *>       getPlaylistObjects();
             QString                       getIdOfActiveElement();
-            TBase                        *getPlayedObject();
+            TBase                        *getPlayedElement();
+            void                          setPlayedElement(TBase *element);
     virtual void                          childStarted(TBase *element) = 0;
     virtual void                          childEnded(TBase *element) = 0;
             QString                       getBaseType() {return "playlist";}
@@ -47,6 +48,7 @@ protected:
             QHash<QString, TBase *>       ar_elements;
             QDomElement                   active_element;
             TBase                        *parent_playlist;
+            TBase                        *played_element;
             QString                       found_tag;
             void                          reactByTag();
             void                          doRef();

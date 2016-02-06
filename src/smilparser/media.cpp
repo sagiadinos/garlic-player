@@ -23,11 +23,6 @@ TMedia::TMedia(TBase * parent)
     Q_UNUSED(parent);
 }
 
-void TMedia::setIndexPath(QString path)
-{
-    index_path = path;
-}
-
 
 QString TMedia::getRegion()
 {

@@ -36,7 +36,6 @@ public:
     bool                 parse(QDomElement element);
     void                 next();
     int                  interruptActualPlaying(QDomElement started_element, TBase *element);
-    QString              getPeers();
     void                 childStarted(TBase *element);
     void                 childEnded(TBase *element);
     void                 setChildActive(bool active);

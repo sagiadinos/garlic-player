@@ -34,10 +34,15 @@ QString TPlaylist::getIdOfActiveElement()
     return parseID(active_element);
 }
 
-TBase *TPlaylist::getPlayedObject()
+TBase *TPlaylist::getPlayedElement()
 {
-    QHash<QString, TBase *>::iterator i = ar_elements.find(getIdOfActiveElement());
-    return *i;
+    return played_element;
+}
+
+void TPlaylist::setPlayedElement(TBase *element)
+{
+    played_element = element;
+    return;
 }
 
 
@@ -115,7 +120,7 @@ void TPlaylist::doAudio()
 
 void TPlaylist::doWeb()
 {
-    found_tag = "web";
+    found_tag = "text";
     emit foundElement(this, active_element);
     return;
 }

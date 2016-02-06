@@ -35,6 +35,7 @@ public:
     QString     getFileName();
     QString     getCacheControl();
     QString     getLogContentId();
+    virtual bool load(QString index_path) = 0;
     void        pause(){}
     void        stop(){}
     void        play(){}
@@ -43,7 +44,7 @@ public slots:
     void        emitfinished();
 protected:
     TBase      *parent_playlist;
-    QString     region, src, exec, index_path  = "";
+    QString     region, src, exec;
     QString     filename, cache_control, log_content_id  = "";
     void        setBaseMediaAttributes();
     void        setBaseParameters();

@@ -57,6 +57,21 @@ QString TWeb::getFit()
     return show_web.fit;
 }
 
+bool TWeb::load(QString index_path)
+{
+    if (src.mid(0, 4) == "http")
+        show_web.url = src;
+    else // get relative paths
+        show_web.url = index_path+src;
+
+    show_web.browser_proxy = new QGraphicsProxyWidget();
+    show_web.browser       = new QWebView();
+    show_web.browser->setUrl(QUrl(show_web.url));
+    show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
+    show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
+    return true;
+}
+
 showWeb TWeb::getMediaForShow()
 {
    return show_web;
@@ -88,12 +103,6 @@ void TWeb::setAttributes()
     setBaseMediaAttributes();
 
     show_web.region        = region;
-    show_web.url           = src;
-    show_web.browser_proxy = new QGraphicsProxyWidget();
-    show_web.browser       = new QWebView();
-    show_web.browser->setUrl(QUrl(show_web.url));
-    show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
-    show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
     if (root_element.hasAttribute("fit"))
         show_web.fit = root_element.attribute("fit");
     return;

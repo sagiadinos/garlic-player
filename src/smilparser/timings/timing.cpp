@@ -21,6 +21,9 @@
 TTiming::TTiming(QObject *parent)
 {
     Q_UNUSED(parent);
+    period            = 0;
+    status            = "";
+    remaining_repeats = 0;
 }
 
 TTiming::~TTiming()

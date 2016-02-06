@@ -22,6 +22,28 @@ TFactory::TFactory(TBase *parent)
     Q_UNUSED(parent);
 }
 
+TBase* TFactory::createBase(QString type, TBase *parent)
+{
+    if (type == "img")
+        return new TImage(parent);
+    else if (type == "video")
+        return new TVideo(parent);
+    else if (type == "audio")
+        return new TAudio(parent);
+    else if (type == "text")
+        return new TWeb(parent);
+    else if (type == "seq")
+        return new TSeq(parent);
+    else if (type == "par")
+        return new TPar(parent);
+    else if (type == "excl")
+        return new TExcl(parent);
+    else if (type == "body")
+        return new TBody();
+    return NULL;
+}
+
+
 TMedia* TFactory::createMedia(QString media_type, TBase *parent)
 {
     if (media_type == "img")
@@ -30,11 +52,10 @@ TMedia* TFactory::createMedia(QString media_type, TBase *parent)
         return new TVideo(parent);
     else if (media_type == "audio")
         return new TAudio(parent);
-    else if (media_type == "web")
+    else if (media_type == "text")
         return new TWeb(parent);
     return NULL;
 }
-
 
 TPlaylist* TFactory::createPlaylist(QString playlist_type, TBase *parent)
 {

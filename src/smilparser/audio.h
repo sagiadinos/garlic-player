@@ -37,6 +37,7 @@ public:
     ~TAudio();
     bool               parse(QDomElement element);
     showAudio          getMediaForShow();
+    bool               load(QString index_path);
     void               pause();
     void               stop();
     void               play();

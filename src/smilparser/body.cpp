@@ -36,6 +36,7 @@ bool TBody::parse(QDomElement element)
     root_element   = element;
     active_element = element;
     setBaseAttributes();
+    id = "body";  // useful for debug
     if (element.hasChildNodes())
     {
         active_element = element.firstChildElement();
