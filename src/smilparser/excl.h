@@ -33,6 +33,8 @@ public:
     const       int         _pause_active      = 3;
     const       int         _pause_new         = 4; // defer
 
+    TBase               *getPlayedElement();
+    void                 setPlayedElement(TBase *element);
     bool                 parse(QDomElement element);
     void                 next();
     int                  interruptActualPlaying(QDomElement started_element, TBase *element);
@@ -56,10 +58,10 @@ private:
     bool                                  is_child_active    = false;
     void                                  setPlaylist();
     void                                  setPriorityClass(QDomElement element);
-    bool                                  priorityStop(QDomElement dom_element, TBase *element);
-    bool                                  priorityPause(QDomElement dom_element, TBase *element);
-    bool                                  priorityNever(QDomElement dom_element, TBase *element);
-    bool                                  priorityDefer(QDomElement dom_element, TBase *element);
+    int                                   priorityStop(QDomElement dom_element, TBase *element);
+    int                                   priorityPause(QDomElement dom_element, TBase *element);
+    int                                   priorityNever(QDomElement dom_element, TBase *element);
+    int                                   priorityDefer(QDomElement dom_element, TBase *element);
 
 signals:
     void resumeElement(TBase *element);

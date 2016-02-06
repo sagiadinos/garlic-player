@@ -28,6 +28,8 @@ public:
     TPar(TBase * parent = 0);
     bool          parse(QDomElement element);
     void          next();
+    TBase        *getPlayedElement();
+    void          setPlayedElement(TBase *element);
     void          childStarted(TBase *element);
     void          childEnded(TBase *element);
     void          pause();

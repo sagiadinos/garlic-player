@@ -73,6 +73,17 @@ void TPar::next()
     return;
 }
 
+TBase *TPar::getPlayedElement()
+{
+    return played_element;
+}
+
+void TPar::setPlayedElement(TBase *element)
+{
+    played_element = element;
+    return;
+}
+
 void TPar::play()
 {
     for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)

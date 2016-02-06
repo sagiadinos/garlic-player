@@ -164,33 +164,32 @@ void TSmil::startElement(TBase *parent, TBase *element)
     else if (parent_type == "TExcl")
     {
         TExcl   *MyExclParent   = qobject_cast<TExcl *> (parent);
-        TBase   *played_object  = MyExclParent->getPlayedElement(); // must set before interrupting
+        TBase   *played_element = MyExclParent->getPlayedElement(); // must set before interrupting
         int      interrupt      = MyExclParent->interruptActualPlaying(root_domelement, element);
-
+        QString id = TExcl::parseID(root_domelement);
         if (interrupt == MyExclParent->_stop_active) // stop active
         {
-            MyExclParent->childEnded(played_object);
-            stopElement(played_object);
+            MyExclParent->childEnded(played_element);
+            stopElement(played_element);
             display_media  = true;
             MyExclParent->setChildActive(true);
         }
         if (interrupt == MyExclParent->_pause_active) // stop active
         {
-            pauseElement(played_object);
+            pauseElement(played_element);
             display_media  = true;
             MyExclParent->setChildActive(true);
         }
         else if (interrupt == MyExclParent->_play_this)
         {
             MyExclParent->setChildActive(true);
-//            MyExclParent->setPlayedElement(element);
             display_media  = true;
         }
         else if (interrupt == MyExclParent->_stop_new) // stop caller when peers = never
         {
             MyExclParent->childEnded(element);
             stopElement(element);
-            if(played_object == element)
+            if(played_element == element)
                 MyExclParent->setChildActive(false);
         }
         else if (interrupt == MyExclParent->_pause_new)
@@ -223,7 +222,6 @@ void TSmil::finishElement(TBase *parent, TBase *element)
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
     {
         stopElement(element);
-
         QString parent_type = parent->objectName();
         if (parent_type == "TSeq")
             next(qobject_cast<TSeq *> (parent));

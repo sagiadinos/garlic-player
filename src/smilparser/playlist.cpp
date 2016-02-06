@@ -34,18 +34,6 @@ QString TPlaylist::getIdOfActiveElement()
     return parseID(active_element);
 }
 
-TBase *TPlaylist::getPlayedElement()
-{
-    return played_element;
-}
-
-void TPlaylist::setPlayedElement(TBase *element)
-{
-    played_element = element;
-    return;
-}
-
-
 QHash<QString, TBase *> TPlaylist::getPlaylistObjects()
 {
     return ar_elements;

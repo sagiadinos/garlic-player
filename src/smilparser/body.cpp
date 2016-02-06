@@ -85,7 +85,8 @@ void TBody::setPlaylist()
     for (int i = 0; i < length; i++)
     {
         element = childs.item(i).toElement();
-        ar_playlist.append(element);
+        if (element.tagName() != "")
+            ar_playlist.append(element);
     }
     return;
 }

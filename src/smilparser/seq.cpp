@@ -70,6 +70,17 @@ void TSeq::resume()
     return;
 }
 
+TBase *TSeq::getPlayedElement()
+{
+    return played_element;
+}
+
+void TSeq::setPlayedElement(TBase *element)
+{
+    played_element = element;
+    return;
+}
+
 
 void TSeq::stop()
 {

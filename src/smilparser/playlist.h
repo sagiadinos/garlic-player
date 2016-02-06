@@ -35,8 +35,6 @@ public:
             void                          insertPlaylistObject(QString id, TBase *obj_element);
             QHash<QString, TBase *>       getPlaylistObjects();
             QString                       getIdOfActiveElement();
-            TBase                        *getPlayedElement();
-            void                          setPlayedElement(TBase *element);
     virtual void                          childStarted(TBase *element) = 0;
     virtual void                          childEnded(TBase *element) = 0;
             QString                       getBaseType() {return "playlist";}

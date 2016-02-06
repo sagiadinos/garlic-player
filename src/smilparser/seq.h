@@ -33,6 +33,8 @@ public:
     bool     parse(QDomElement element);
     void     next();
     bool     previous();
+    TBase   *getPlayedElement();
+    void     setPlayedElement(TBase *element);
     void     childStarted(TBase *element){Q_UNUSED(element);}
     void     childEnded(TBase *element){Q_UNUSED(element);}
     void     pause();

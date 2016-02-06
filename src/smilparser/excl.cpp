@@ -55,6 +55,17 @@ void TExcl::setDurationTimerBeforePlay()
     return;
 }
 
+TBase *TExcl::getPlayedElement()
+{
+    return played_element;
+}
+
+void TExcl::setPlayedElement(TBase *element)
+{
+    played_element = element;
+    return;
+}
+
 
 int TExcl::interruptActualPlaying(QDomElement dom_element, TBase *element)
 {
@@ -237,7 +248,7 @@ void TExcl::setPriorityClass(QDomElement element)
     return;
 }
 
-bool TExcl::priorityStop(QDomElement dom_element, TBase *element)
+int TExcl::priorityStop(QDomElement dom_element, TBase *element)
 {
     int ret;
     if (is_child_active)
@@ -249,7 +260,7 @@ bool TExcl::priorityStop(QDomElement dom_element, TBase *element)
     return ret;
 }
 
-bool TExcl::priorityPause(QDomElement dom_element, TBase *element)
+int TExcl::priorityPause(QDomElement dom_element, TBase *element)
 {
     int ret;
     if (is_child_active)
@@ -264,7 +275,7 @@ bool TExcl::priorityPause(QDomElement dom_element, TBase *element)
     return ret;
 }
 
-bool TExcl::priorityNever(QDomElement dom_element, TBase *element)
+int TExcl::priorityNever(QDomElement dom_element, TBase *element)
 {
     int ret;
     if (is_child_active)
@@ -278,7 +289,7 @@ bool TExcl::priorityNever(QDomElement dom_element, TBase *element)
     return ret;
 }
 
-bool TExcl::priorityDefer(QDomElement dom_element, TBase *element)
+int TExcl::priorityDefer(QDomElement dom_element, TBase *element)
 {
     int ret;
     if (is_child_active)

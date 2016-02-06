@@ -9,15 +9,41 @@
 		</layout>
 	</head>
 	<body>
-		<img xml:id="img 0001" src="../tests/data/images/0001.jpg" fit="fill" dur="2s" />
-		<excl xml:id="excl">
+		<img xml:id="img 0001" src="../tests/data/images/0001.jpg" fit="meetbest" dur="2s" />
+		<excl xml:id="excl1">
 			<priorityClass peers="stop">
-				<img xml:id="img 0002" src="../tests/data/images/0002.jpg" begin="0s" dur="2s" fit="fill" />
-				<img xml:id="img 0003" src="../tests/data/images/0003.jpg" begin="0s" dur="2s" fit="fill" />
-				<img xml:id="img 0004" src="../tests/data/images/0004.jpg" begin="0s" dur="2s" fit="fill" />
-				<img xml:id="img 0005" src="../tests/data/images/0005.jpg" begin="0s" dur="2s" fit="fill" />
+				<img xml:id="img 0002" src="../tests/data/images/0002.jpg" begin="0s" dur="2s" fit="meetbest" />
+				<img xml:id="img 0003" src="../tests/data/images/0003.jpg" begin="0s" dur="2s" fit="meetbest" />
+				<img xml:id="img 0004" src="../tests/data/images/0004.jpg" begin="0s" dur="2s" fit="meetbest" />
+				<img xml:id="img 0005" src="../tests/data/images/0005.jpg" begin="0s" dur="2s" fit="meetbest" />
 			</priorityClass>	
 		</excl>	
-		<img  xml:id="img 0010" src="../tests/data/images/0010.jpg" fit="fill" dur="2s" />
+<!--
+		<excl xml:id="excl2">
+			<priorityClass peers="stop">
+				<img xml:id="img 0006" src="../tests/data/images/0006.jpg" begin="0s" dur="2s" fit="meetbest" />
+				<img xml:id="img 0007" src="../tests/data/images/0007.jpg" begin="4s" dur="2s" fit="meetbest" />
+				<img xml:id="img 0008" src="../tests/data/images/0008.jpg" begin="6s" dur="2s" fit="meetbest" />
+				<img xml:id="img 0009" src="../tests/data/images/0005.jpg" begin="8s" dur="2s" fit="meetbest" />
+			</priorityClass>	
+		</excl>	
+		<excl xml:id="excl3">
+			<priorityClass peers="stop">
+				<img xml:id="img 0002" src="../tests/data/images/0002.jpg" begin="0s" end="2s" fit="meetbest" />
+				<img xml:id="img 0003" src="../tests/data/images/0003.jpg" begin="0s" end="2s" fit="meetbest" />
+				<img xml:id="img 0004" src="../tests/data/images/0004.jpg" begin="0s" end="2s" fit="meetbest" />
+				<img xml:id="img 0005" src="../tests/data/images/0005.jpg" begin="0s" end="2s" fit="meetbest" />
+			</priorityClass>	
+		</excl>	
+		<excl xml:id="excl4">
+			<priorityClass peers="stop">
+				<img xml:id="img 0002" src="../tests/data/images/0006.jpg" begin="0s" end="2s" fit="meetbest" />
+				<img xml:id="img 0003" src="../tests/data/images/0007.jpg" begin="4s" end="6s" fit="meetbest" />
+				<img xml:id="img 0004" src="../tests/data/images/0008.jpg" begin="6s" end="8s" fit="meetbest" />
+				<img xml:id="img 0005" src="../tests/data/images/0009.jpg" begin="8s" end="10s" fit="meetbest" />
+			</priorityClass>	
+		</excl>	
+-->		
+		<img  xml:id="img 0010" src="../tests/data/images/0010.jpg" fit="meetbest" dur="2s" />
 	</body>
 </smil>
