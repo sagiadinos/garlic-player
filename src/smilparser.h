@@ -21,14 +21,7 @@
 
 #include <smilparser/file.h>
 #include <smilparser/head.h>
-#include <smilparser/body.h>
-#include <smilparser/seq.h>
-#include <smilparser/par.h>
-#include <smilparser/excl.h>
-#include <smilparser/image.h>
-#include <smilparser/audio.h>
-#include <smilparser/video.h>
-#include <smilparser/web.h>
+#include <smilparser/factory.h>
 #include <QSet>
 
 /**
@@ -58,20 +51,22 @@ protected:
     showImg                            ImgAttr;
     void                               next();
     void                               next(TSeq *MySeq);
-    void                               next(TPar *MyPar);
+    void                               next(TPar *MyPar, TBase *element);
     void                               next(TExcl *MyExcl, TBase *element);
-    void                               handleStop(TBase *element);
-    void                               handlePause(TBase *element);
+    void                               stopElement(TBase *element);
+    void                               pauseElement(TBase *element);
 protected slots:
     void                               foundElement(TBase *parent, QDomElement dom_element);
     void                               startElement(TBase *, TBase *);
     void                               finishElement(TBase *, TBase *);
-    void                               handleResumeElement(TBase *element);
+    void                               resumeElement(TBase *element);
 private:
     QSet<TBase *>                      ar_played_media;
     QHash<QString, TBase *>::iterator  insertIntoObjectContainer(TBase *parent, TBase *child);
     void                               emitStartShowMedia(TBase *media);
     void                               emitStopShowMedia(TBase *media);
+    void                               prepareMyMedia(TBase *element);
+    void                               prepareMyPlaylist(TBase *element);
 
 signals:
     void                               startShowMedia(TBase *media);
