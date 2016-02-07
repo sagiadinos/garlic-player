@@ -41,7 +41,7 @@ void Test_SmilPlaylist::test_reactByTag()
     element.setTagName("text");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("web"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("text"));
 
     element.setTagName("seq");
     MyPlaylist.setActiveElement(element);
@@ -85,6 +85,6 @@ void Test_SmilPlaylist::test_reactByTagForRef()
     element.setAttribute("type", "text/html");
     MyPlaylist.setActiveElement(element);
     MyPlaylist.test_reactByTag();
-    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("web"));
+    QCOMPARE(MyPlaylist.test_getFoundActiveTagName(), QString("text"));
     return;
 }
