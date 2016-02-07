@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <smil>
 	<head>
-		<meta name="title" content="Simple SMIL for testing media in body" />
+		<meta name="title" content="Simple SMIL for testing images in par and multizone" />
 		<layout>
 			<root-layout id="display:0" width="1920" height="1080" />
 			<region regionName="screen1" top="0" left="0" width="960" height="540" z-index="1" backgroundColor="#f00" />
