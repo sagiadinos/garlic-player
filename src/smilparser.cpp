@@ -122,11 +122,12 @@ void TSmil::foundElement(TBase *parent, QDomElement dom_element)
     else
         MyBase  = *ar_elements_iterator;
 
-    if (MyBase->checkifPlayable())
+    playable    = MyBase->checkifPlayable();
+    if (playable)
         MyBase->preparePlay();
 
-
-    if (parent->objectName() == "TExcl" && playable)  // increment active child to determine end of a excl
+    QString object_name = parent->objectName();
+    if (object_name == "TExcl" && playable)  // increment active child to determine end of a excl
     {
         TExcl   *MyExclParent   = qobject_cast<TExcl *> (parent);
         MyExclParent->childStarted(*ar_elements_iterator);

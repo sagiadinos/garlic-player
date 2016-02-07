@@ -221,6 +221,9 @@ void TExcl::pause()
     return;
 }
 
+// ============================ protected methods ================================================================
+// ============================ private methods ==================================================================
+
 void TExcl::setPlaylist()
 {
     QDomNodeList childs = root_element.childNodes();
