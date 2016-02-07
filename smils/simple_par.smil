@@ -2,7 +2,6 @@
 <smil>
 	<head>
 		<meta name="title" content="Simple SMIL for testing media in body" />
-		<meta http-equiv="Refresh" content="60" />
 		<layout>
 			<root-layout id="display:0" width="1920" height="1080" />
 			<region regionName="screen1" top="0" left="0" width="960" height="540" z-index="1" backgroundColor="#f00" />
@@ -12,13 +11,13 @@
 		</layout>
 	</head>
 	<body>
-		<img region="screen1" xml:id="img 0001" src="../tests/data/images/0001.jpg" dur="1s" fit="meetbest" />
+		<img region="screen1" xml:id="img_begin" src="../tests/data/images/begin.jpg" dur="2s" fit="meetbest" />
 		<par xml:id="simple par">
-			<img region="screen1" xml:id="img 0002" src="../tests/data/images/0002.jpg" dur="4s" fit="meetbest" />
-			<img region="screen2" xml:id="img 0003" src="../tests/data/images/0003.jpg" dur="3s" fit="meetbest" />
-			<img region="screen3" xml:id="img 0004" src="../tests/data/images/0004.jpg" dur="2s" fit="meetbest" />
-			<img region="screen4" xml:id="img 0005" src="../tests/data/images/0005.jpg" dur="1s" fit="meetbest" />
+			<img region="screen1" xml:id="img0001" src="../tests/data/images/0001.jpg" dur="4s" fit="meetbest" />
+			<img region="screen2" xml:id="img0002" src="../tests/data/images/0002.jpg" dur="3s" fit="meetbest" />
+			<img region="screen3" xml:id="img0003" src="../tests/data/images/0003.jpg" dur="2s" fit="meetbest" />
+			<img region="screen4" xml:id="img0004" src="../tests/data/images/0004.jpg" dur="1s" fit="meetbest" />
 		</par>	
-		<img region="screen4" xml:id="img 0010" src="../tests/data/images/0010.jpg" dur="1s" fit="meetbest" />
+		<img region="screen4" xml:id="img_end" src="../tests/data/images/end.jpg" dur="2s" fit="meetbest" />
 	</body>
 </smil>
