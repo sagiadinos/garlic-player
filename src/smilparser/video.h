@@ -37,7 +37,6 @@ class TVideo : public TMedia
 public:
     TVideo(TBase *parent = 0);
     ~TVideo();
-    bool            parse(QDomElement element);
     showVideo       getMediaForShow();
     QString         getFit();
     bool            load(QString index_path);

@@ -31,14 +31,6 @@ TAudio::~TAudio()
     delete output;
 }
 
-bool TAudio::parse(QDomElement element)
-{
-    root_element   = element;
-    setAttributes();
-    setBaseParameters();
-    return true;
-}
-
 showAudio TAudio::getMediaForShow()
 {
     return show_audio;

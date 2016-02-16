@@ -41,24 +41,20 @@ QHash<QString, TBase *> TPlaylist::getPlaylistObjects()
 
 void TPlaylist::reactByTag()
 {
-    if(active_element.tagName() == "img")
-        doImage();
-    else if(active_element.tagName() == "video")
-        doVideo();
-    else if(active_element.tagName() == "audio")
-        doAudio();
-    else if(active_element.tagName() == "text")
-        doWeb();
-    else if(active_element.tagName() == "ref")
-        doRef();
-    else if(active_element.tagName() == "prefetch")
-        doPrefetch();
-    else if(active_element.tagName() == "seq")
-        doSeq();
-    else if(active_element.tagName() == "par")
-        doPar();
-    else if(active_element.tagName() == "excl")
-        doExcl();
+    QString tag_name = active_element.tagName();
+    if(tag_name == "img" || tag_name == "video" || tag_name == "audio" || tag_name == "text" || tag_name == "prefetch" ||
+            tag_name == "seq"|| tag_name == "par" || tag_name == "excl")
+    {
+        emit foundElement(this, active_element);
+    }
+    else if(tag_name == "ref" && active_element.hasAttribute("type"))
+    {
+        if(active_element.attribute("type").contains("image") || active_element.attribute("type").contains("video") ||
+                active_element.attribute("type").contains("audio") || active_element.attribute("type").contains("text"))
+        {
+            emit foundElement(this, active_element);
+        }
+    }
     return;
 }
 
@@ -66,78 +62,6 @@ void TPlaylist::emitfinished() // called from finishedActiveDuration() TBase
 {
     qDebug() << getID() << "finished Playlist";
     emit finishedPlaylist(parent_playlist, this);
-    return;
-}
-
-void TPlaylist::doRef()
-{
-    if (active_element.hasAttribute("type"))
-    {
-        if(active_element.attribute("type").contains("image"))
-            doImage();
-        else if(active_element.attribute("type").contains("video"))
-            doVideo();
-        else if(active_element.attribute("type").contains("audio"))
-            doAudio();
-        else if(active_element.attribute("type").contains("text"))
-            doWeb();
-    }
-    return;
-}
-
-void TPlaylist::doImage()
-{
-    found_tag = "img";
-    emit foundElement(this, active_element);
-    return;
-}
-
-void TPlaylist::doVideo()
-{
-    found_tag = "video";
-    emit foundElement(this, active_element);
-    return;
-}
-
-void TPlaylist::doAudio()
-{
-    found_tag = "audio";
-    emit foundElement(this, active_element);
-    return;
-}
-
-void TPlaylist::doWeb()
-{
-    found_tag = "text";
-    emit foundElement(this, active_element);
-    return;
-}
-
-void TPlaylist::doSeq()
-{
-    found_tag = "seq";
-    emit foundElement(this, active_element);
-    return;
-}
-
-void TPlaylist::doPar()
-{
-    found_tag = "par";
-    emit foundElement(this, active_element);
-    return;
-}
-
-void TPlaylist::doExcl()
-{
-    found_tag = "excl";
-    emit foundElement(this, active_element);
-    return;
-}
-
-void TPlaylist::doPrefetch()
-{
-    found_tag = "prefetch";
-    emit foundElement(this, active_element);
     return;
 }
 

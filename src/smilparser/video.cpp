@@ -31,13 +31,6 @@ TVideo::~TVideo()
     delete show_video.video_item;
 }
 
-bool TVideo::parse(QDomElement element)
-{
-    root_element   = element;
-    setAttributes();
-    setBaseParameters();
-    return true;
-}
 
 showVideo TVideo::getMediaForShow()
 {

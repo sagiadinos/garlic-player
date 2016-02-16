@@ -35,7 +35,6 @@ class TAudio :public TMedia
 public:
     TAudio(TBase * parent = 0);
     ~TAudio();
-    bool               parse(QDomElement element);
     showAudio          getMediaForShow();
     bool               load(QString index_path);
     void               pause();

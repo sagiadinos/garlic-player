@@ -39,6 +39,7 @@ public:
     void                 next();
     int                  interruptActualPlaying(QDomElement started_element, TBase *element);
     void                 childStarted(TBase *element);
+    bool                 isChildPlayable(TBase *element);
     void                 childEnded(TBase *element);
     void                 setChildActive(bool active);
     void                 pause();
@@ -65,6 +66,8 @@ private:
 
 signals:
     void resumeElement(TBase *element);
+    void stopElement(TBase *element);
+    void pauseElement(TBase *element);
 };
 
 #endif // TEXCL_H

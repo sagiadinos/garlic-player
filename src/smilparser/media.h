@@ -35,6 +35,7 @@ public:
     QString     getFileName();
     QString     getCacheControl();
     QString     getLogContentId();
+    bool        parse(QDomElement element);
     virtual bool load(QString index_path) = 0;
     void        pause(){}
     void        stop(){}
@@ -48,6 +49,7 @@ protected:
     QString     filename, cache_control, log_content_id  = "";
     void        setBaseMediaAttributes();
     void        setBaseParameters();
+    virtual void setAttributes() = 0;
 signals:
     void        startedMedia(TBase * , TBase *);
     void        finishedMedia(TBase * , TBase *);

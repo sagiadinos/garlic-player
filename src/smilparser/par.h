@@ -30,6 +30,7 @@ public:
     void          next();
     TBase        *getPlayedElement();
     void          setPlayedElement(TBase *element);
+    bool          isChildPlayable(TBase *element);
     void          childStarted(TBase *element);
     void          childEnded(TBase *element);
     void          pause();

@@ -23,6 +23,13 @@ TMedia::TMedia(TBase * parent)
     Q_UNUSED(parent);
 }
 
+bool TMedia::parse(QDomElement element)
+{
+    root_element   = element;
+    setAttributes();     // special for every media type
+    setBaseParameters(); // in this class
+    return true;
+}
 
 QString TMedia::getRegion()
 {

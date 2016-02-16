@@ -35,6 +35,7 @@ public:
             void                          insertPlaylistObject(QString id, TBase *obj_element);
             QHash<QString, TBase *>       getPlaylistObjects();
             QString                       getIdOfActiveElement();
+    virtual bool                          isChildPlayable(TBase *element) = 0;
     virtual void                          childStarted(TBase *element) = 0;
     virtual void                          childEnded(TBase *element) = 0;
             QString                       getBaseType() {return "playlist";}
@@ -47,17 +48,7 @@ protected:
             QDomElement                   active_element;
             TBase                        *parent_playlist;
             TBase                        *played_element;
-            QString                       found_tag;
             void                          reactByTag();
-            void                          doRef();
-            void                          doImage();
-            void                          doVideo();
-            void                          doAudio();
-            void                          doWeb();
-            void                          doPrefetch();
-            void                          doSeq();
-            void                          doPar();
-            void                          doExcl();
 signals:
             void                          foundElement(TBase *, QDomElement element);
             void                          startedPlaylist(TBase * , TBase *);

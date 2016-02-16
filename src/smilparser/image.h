@@ -38,7 +38,6 @@ class TImage : public TMedia
 public:
     TImage(TBase * parent = 0);
     ~TImage();
-    bool     parse(QDomElement element);
     showImg  getMediaForShow();
     QString  getFit();
     bool     load(QString index_path);

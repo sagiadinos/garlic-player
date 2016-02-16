@@ -31,6 +31,7 @@ public:
     void      preparePlay();
     void      endPlay(){}
     void      next();
+    bool      isChildPlayable(TBase *element){Q_UNUSED(element);return true;}
     void      childStarted(TBase *element){Q_UNUSED(element);}
     void      childEnded(TBase *element){Q_UNUSED(element);}
     void      play(){}

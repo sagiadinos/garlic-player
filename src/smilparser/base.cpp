@@ -23,7 +23,7 @@ TBase::TBase(QObject * parent)
     Q_UNUSED(parent);
 }
 
-bool TBase::checkifPlayable()
+bool TBase::isPlayable()
 {
     playable = true;
     if (end.getStatus() == "ignore" || begin.getStatus() == "ignore")

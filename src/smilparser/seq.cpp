@@ -81,6 +81,18 @@ void TSeq::setPlayedElement(TBase *element)
     return;
 }
 
+bool TSeq::isChildPlayable(TBase *element)
+{
+    childStarted(element);
+    return true;
+}
+
+void TSeq::childStarted(TBase *element)
+{
+    setPlayedElement(element);
+    return;
+}
+
 
 void TSeq::stop()
 {

@@ -53,20 +53,21 @@ protected:
     void                               next(TSeq *MySeq);
     void                               next(TPar *MyPar, TBase *element);
     void                               next(TExcl *MyExcl, TBase *element);
-    void                               stopElement(TBase *element);
-    void                               pauseElement(TBase *element);
 protected slots:
     void                               foundElement(TBase *parent, QDomElement dom_element);
     void                               startElement(TBase *, TBase *);
     void                               finishElement(TBase *, TBase *);
+
     void                               resumeElement(TBase *element);
+    void                               pauseElement(TBase *element);
+    void                               stopElement(TBase *element);
 private:
     QSet<TBase *>                      ar_played_media;
     QHash<QString, TBase *>::iterator  insertIntoObjectContainer(TBase *parent, TBase *child);
     void                               emitStartShowMedia(TBase *media);
     void                               emitStopShowMedia(TBase *media);
-    void                               prepareMyMedia(TBase *element);
-    void                               prepareMyPlaylist(TBase *element);
+    void                               connectMediaSlots(TBase *element);
+    void                               connectPlaylistSlots(TBase *element);
 
 signals:
     void                               startShowMedia(TBase *media);

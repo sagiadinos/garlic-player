@@ -118,6 +118,41 @@ int TExcl::interruptActualPlaying(QDomElement dom_element, TBase *element)
     return ret;
 }
 
+bool TExcl::isChildPlayable(TBase *element)
+{
+    TBase   *played_element = getPlayedElement(); // must set before interrupting
+    int      interrupt      = interruptActualPlaying(element->getRootElement(), element);
+    bool     playable       = false;
+    if (interrupt == _stop_active) // stop active
+    {
+        childEnded(played_element);
+        emit stopElement(played_element);
+        playable  = true;
+        setChildActive(true);
+    }
+    if (interrupt == _pause_active) // stop active
+    {
+        emit pauseElement(played_element);
+        playable  = true;
+        setChildActive(true);
+    }
+    else if (interrupt == _play_this)
+    {
+        setChildActive(true);
+        playable = true;
+    }
+    else if (interrupt == _stop_new) // stop caller when peers = never
+    {
+        childEnded(element);
+        emit stopElement(element);
+        if(played_element == element)
+            setChildActive(false);
+    }
+    else if (interrupt == _pause_new)
+        emit pauseElement(element);
+    return playable;
+}
+
 void TExcl::childStarted(TBase *element)
 {
     activatable_childs.insert(element);

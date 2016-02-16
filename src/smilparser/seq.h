@@ -35,7 +35,8 @@ public:
     bool     previous();
     TBase   *getPlayedElement();
     void     setPlayedElement(TBase *element);
-    void     childStarted(TBase *element){Q_UNUSED(element);}
+    bool     isChildPlayable(TBase *element);
+    void     childStarted(TBase *element);
     void     childEnded(TBase *element){Q_UNUSED(element);}
     void     pause();
     void     stop();

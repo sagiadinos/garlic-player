@@ -39,7 +39,6 @@ class TWeb : public TMedia
 public:
     explicit TWeb(TBase *parent = 0);
     ~TWeb();
-    bool     parse(QDomElement element);
     showWeb  getMediaForShow();
     QString  getFit();
     bool     load(QString index_path);

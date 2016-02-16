@@ -56,8 +56,8 @@ public:
     const     int        _paused   = 3;
 
     explicit              TBase(QObject * parent = 0);
-    virtual bool          parse(QDomElement element) = 0; // prepare for begin
-            bool          checkifPlayable();
+    virtual bool          parse(QDomElement element) = 0;
+            bool          isPlayable();
             bool          preparePlay();      // what to do when parent sends an order to begin executions
             void          preparePause();
             void          prepareStop();      // what to do when parent sends an order to begin executions
@@ -72,7 +72,6 @@ public:
     virtual void          pause()       = 0;
     virtual void          stop()        = 0;
     virtual QString       getBaseType() = 0;
-
 public slots:
     virtual void          emitfinished() = 0;
 protected:

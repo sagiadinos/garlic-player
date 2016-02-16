@@ -32,14 +32,6 @@ TImage::~TImage()
 }
 
 
-bool TImage::parse(QDomElement element)
-{
-    root_element   = element;
-    setAttributes();
-    setBaseParameters();
-    return true;
-}
-
 showImg TImage::getMediaForShow()
 {
     return show_img;

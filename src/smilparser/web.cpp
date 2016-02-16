@@ -32,14 +32,6 @@ TWeb::~TWeb()
 }
 
 
-bool TWeb::parse(QDomElement element)
-{
-    root_element   = element;
-    setAttributes();
-    setBaseParameters();
-    return true;
-}
-
 void TWeb::setDurationTimerBeforePlay()
 {
     if (hasDurAttribute() || end_timer->isActive()) // if dur or end is not specified end, cause images don't have an implicit duration like audio/video

@@ -126,6 +126,12 @@ void TPar::setPlaylist()
     }
 }
 
+bool TPar::isChildPlayable(TBase *element)
+{
+    childStarted(element);
+    return true;
+}
+
 
 void TPar::childStarted(TBase *element)
 {
