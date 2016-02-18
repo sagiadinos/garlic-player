@@ -43,54 +43,10 @@ THead TSmil::getHeader()
 void TSmil::beginSmilParsing()
 {
     MyBody = new TBody();
-    connect(MyBody, SIGNAL(foundElement(TBase *, QDomElement )), this, SLOT(foundElement(TBase *, QDomElement)));
-    connect(MyBody, SIGNAL(finishedPlaylist(TBase *, TBase *)), this, SLOT(finishElement(TBase *, TBase *)));
+    connect(MyBody, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
+    connect(MyBody, SIGNAL(finishedPlaylist(TContainer *, TBase *)), this, SLOT(finishElement(TContainer *, TBase *)));
     if (MyBody->parse(MyFile.getBody()))
-        MyBody->preparePlay();
-    return;
-}
-
-/**
- * @brief Overloaded TSmil::next() when a media emit finished get the next action
- *        For root (body) which childs is handled similar to sequential playlists this
- *        could be a new media or a finished. (no repeat possible)
- * @param void
- */
-void TSmil::next()
-{
-    MyBody->next();
-    return;
-}
-
-/**
- * @brief Overloaded TSmil::next(TSeq *) when a media emit finished get the next action
- *        For sequential playlists this could be a new media, a playlist repeat or a finished
- * @param MySeq
- */
-void TSmil::next(TSeq *MySeq)
-{
-    MySeq->next();
-    return;
-}
-
-/**
- * @brief Overloaded TSmil::next(TPar *) when a media emit finished decrease the active elements and
- *        get the next action. For a parallel playlist his could be nothing, cause there
- *        are active elements, a repeat of all active media or a finish.
- * @param MyPar
- */
-void TSmil::next(TPar *MyPar, TBase *element)
-{
-    MyPar->childEnded(element);
-    MyPar->next();
-    return;
-}
-
-void TSmil::next(TExcl *MyExcl, TBase *element)
-{
-    MyExcl->setChildActive(false);
-    MyExcl->childEnded(element);
-    MyExcl->next();
+        MyBody->prepareTimerBeforPlaying();
     return;
 }
 
@@ -99,7 +55,7 @@ void TSmil::next(TExcl *MyExcl, TBase *element)
  * @param parent
  * @param found_tag
  */
-void TSmil::foundElement(TBase *parent, QDomElement dom_element)
+void TSmil::foundElement(TContainer *parent, QDomElement dom_element)
 {
     TBase                             *MyBase;
     QString                            tag_name             = dom_element.tagName();
@@ -114,7 +70,7 @@ void TSmil::foundElement(TBase *parent, QDomElement dom_element)
             ar_elements_iterator = insertIntoObjectContainer(parent, MyBase);
             QString base_type    = MyBase->getBaseType();
             if (base_type == "media")
-                connectMediaSlots(MyBase);
+                connectMediaSlots(qobject_cast<TMedia *> (MyBase));
             else if (base_type == "playlist")
                 connectPlaylistSlots(MyBase);
         }
@@ -124,7 +80,7 @@ void TSmil::foundElement(TBase *parent, QDomElement dom_element)
 
     playable    = MyBase->isPlayable();
     if (playable)
-        MyBase->preparePlay();
+        MyBase->prepareTimerBeforPlaying();
 
     QString object_name = parent->objectName();
     if (object_name == "TExcl" && playable)  // increment active child to determine end of a excl
@@ -142,13 +98,13 @@ void TSmil::foundElement(TBase *parent, QDomElement dom_element)
  * @param parent
  * @param element
  */
-void TSmil::startElement(TBase *parent, TBase *element)
+void TSmil::startElement(TContainer *parent, TBase *element)
 {
     bool         playable      = true;
 
     if (parent->getBaseType() == "playlist")
     {
-        TPlaylist *MyPlaylist  = qobject_cast<TPlaylist *> (parent);
+        TContainer *MyPlaylist  = qobject_cast<TContainer *> (parent);
         playable               = MyPlaylist->isChildPlayable(element);
     }
 
@@ -156,7 +112,7 @@ void TSmil::startElement(TBase *parent, TBase *element)
     {
         element->play();
         if (element->getBaseType() == "media")
-            emitStartShowMedia(element);
+            emitStartShowMedia(qobject_cast<TMedia *> (element));
     }
     return;
 }
@@ -166,20 +122,17 @@ void TSmil::startElement(TBase *parent, TBase *element)
  * @param parent
  * @param element
  */
-void TSmil::finishElement(TBase *parent, TBase *element)
+void TSmil::finishElement(TContainer *parent, TBase *element)
 {
+    /*
+    ToDo:Problem:
+    finishElement should only kill the timer (stopElement) of the child elements
+    */
+
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
     {
         stopElement(element);
-        QString parent_type = parent->objectName();
-        if (parent_type == "TSeq")
-            next(qobject_cast<TSeq *> (parent));
-        else if (parent_type == "TPar")
-            next(qobject_cast<TPar *> (parent), element);
-        else if (parent_type == "TExcl")
-            next(qobject_cast<TExcl *> (parent), element);
-        else if (parent_type == "TBody")
-            next();
+        parent->next(element);
     }
     else
     {
@@ -189,14 +142,7 @@ void TSmil::finishElement(TBase *parent, TBase *element)
     return;
 }
 
-/*
-ToDo:Problem:
-finishElement sollte direkte Kinder von excl-Tags nicht so ohne weiteres stoppen,
-da hierbei Zeitintervalle verloren gehen könnten.
 
-LÖsung:
-stop nur beim absoluten Ende von Playlisten für alle Kindelemente
-*/
 
 /**
  * @brief TSmil::handleStop checks when an element stopped or finished and recurses to stop all active child elements e.g. timers, too.
@@ -206,43 +152,14 @@ stop nur beim absoluten Ende von Playlisten für alle Kindelemente
  */
 void TSmil::stopElement(TBase *element)
 {
-    QString base_type   = element->getBaseType();
-    element->prepareStop();
-    if (base_type == "media")
+    element->prepareTimerBeforeStop();
+    if (element->getStatus() != element->_stopped)
     {
-        TMedia *MyMedia = qobject_cast<TMedia *> (element);
-        if (element->getStatus() != element->_stopped)
-        {
-            MyMedia->stop();
-            emitStopShowMedia(element);
-        }
-    }
-    else if (base_type == "playlist")
-    {
-        QString type = element->objectName();
-        if (type == "TSeq")
-        {
-            TSeq *MySeq = qobject_cast<TSeq *> (element);
-            stopElement(MySeq->getPlayedElement());
-            MySeq->stop();
-        }
-        else if (type == "TPar")
-        {
-            TPar *MyPar = qobject_cast<TPar *> (element);
-            QHash<QString, TBase *>           list = MyPar->getPlaylistObjects();
-            QHash<QString, TBase *>::iterator i;
-            for (i = list.begin(); i != list.end(); i++)
-            {
-                stopElement(*i);
-            }
-            MyPar->stop();
-        }
-        else if (type == "TExcl")
-        {
-            TExcl *MyExcl = qobject_cast<TExcl *> (element);
-            stopElement(MyExcl->getPlayedElement());
-            MyExcl->stop();
-        }
+        if (element->hasPlayingChilds())
+            stopElement(element->getPlayedElement());
+        element->stop();
+        if (element->getBaseType() == "media")
+            emitStopShowMedia(qobject_cast<TMedia *> (element));
     }
     return;
 }
@@ -254,85 +171,27 @@ void TSmil::stopElement(TBase *element)
  */
 void TSmil::pauseElement(TBase *element)
 {
-    QString base_type   = element->getBaseType();
-    element->preparePause();
-    if (base_type == "media")
-    {
-        TMedia *MyMedia = qobject_cast<TMedia *> (element);
-        MyMedia->pause();
-        emitStopShowMedia(element);
-    }
-    else if (base_type == "playlist")
-    {
-        QString type        = element->objectName();
-        if (type == "TSeq")
-        {
-            TSeq *MySeq = qobject_cast<TSeq *> (element);
-            pauseElement(MySeq->getPlayedElement());
-            MySeq->pause();
-        }
-        else if (type == "TPar")
-        {
-            TPar *MyPar = qobject_cast<TPar *> (element);
-            QHash<QString, TBase *>           list = MyPar->getPlaylistObjects();
-            QHash<QString, TBase *>::iterator i;
-            for (i = list.begin(); i != list.end(); i++)
-            {
-                pauseElement(*i);
-            }
-            MyPar->pause();
-        }
-        else if (type == "TExcl")
-        {
-            TExcl *MyExcl = qobject_cast<TExcl *> (element);
-            pauseElement(MyExcl->getPlayedElement());
-            MyExcl->pause();
-        }
-    }
+    element->prepareTimerBeforePausing();
+    if (element->hasPlayingChilds())
+        pauseElement(element->getPlayedElement());
+    element->pause();
+    if (element->getBaseType() == "media")
+        emitStopShowMedia(qobject_cast<TMedia *> (element));
     return;
 }
 
 void TSmil::resumeElement(TBase *element)
 {
-    QString base_type   = element->getBaseType();
-    element->prepareResume();
-    if (base_type == "media")
+    element->prepareTimerBeforeResume();
+    if (element->getStatus() == element->_paused)
     {
-        TMedia *MyMedia = qobject_cast<TMedia *> (element);
-        if (MyMedia->getStatus() == element->_paused)
-        {
-            MyMedia->play();
-            emitStartShowMedia(element);
-        }
+        if (element->hasPlayingChilds())
+            resumeElement(element->getPlayedElement());
+        element->resume();
+        if (element->getBaseType() == "media")
+            emitStartShowMedia(qobject_cast<TMedia *> (element));
     }
-    else if (base_type == "playlist")
-    {
-        QString type        = element->objectName();
-        if (type == "TSeq")
-        {
-            TSeq *MySeq = qobject_cast<TSeq *> (element);
-            resumeElement(MySeq->getPlayedElement());
-            MySeq->resume();
-        }
-        else if (type == "TPar")
-        {
-            TPar *MyPar = qobject_cast<TPar *> (element);
-            QHash<QString, TBase *>           list = MyPar->getPlaylistObjects();
-            QHash<QString, TBase *>::iterator i;
-            for (i = list.begin(); i != list.end(); i++)
-            {
-                resumeElement(*i);
-            }
-            MyPar->resume();
-        }
-        else if (type == "TExcl")
-        {
-            TExcl *MyExcl = qobject_cast<TExcl *> (element);
-            resumeElement(MyExcl->getPlayedElement());
-            MyExcl->resume();
-        }
-     }
-     return;
+    return;
 }
 
 
@@ -344,7 +203,7 @@ QHash<QString, TBase *>::iterator TSmil::insertIntoObjectContainer(TBase *parent
     QString id   = child->getID();
     if (parent->getBaseType() == "playlist")
     {
-        TPlaylist *MyPlaylist  = qobject_cast<TPlaylist *> (parent);
+        TContainer *MyPlaylist  = qobject_cast<TContainer *> (parent);
         MyPlaylist->insertPlaylistObject(id, child);
     }
     return ar_elements.insert(id, child);;
@@ -352,12 +211,12 @@ QHash<QString, TBase *>::iterator TSmil::insertIntoObjectContainer(TBase *parent
 
 void TSmil::connectPlaylistSlots(TBase *element)
 {
-    TPlaylist *MyPlaylist = qobject_cast<TPlaylist *> (element);
+    TContainer *MyPlaylist = qobject_cast<TContainer *> (element);
     if (MyPlaylist->isPlayable())
     {
-        connect(MyPlaylist, SIGNAL(foundElement(TBase *, QDomElement )), this, SLOT(foundElement(TBase *, QDomElement)));
-        connect(MyPlaylist, SIGNAL(startedPlaylist(TBase *, TBase *)), this, SLOT(startElement(TBase *, TBase *)));
-        connect(MyPlaylist, SIGNAL(finishedPlaylist(TBase *, TBase *)), this, SLOT(finishElement(TBase *, TBase *)));
+        connect(MyPlaylist, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
+        connect(MyPlaylist, SIGNAL(startedPlaylist(TContainer *, TBase *)), this, SLOT(startElement(TContainer *, TBase *)));
+        connect(MyPlaylist, SIGNAL(finishedPlaylist(TContainer *, TBase *)), this, SLOT(finishElement(TContainer *, TBase *)));
         if (element->objectName() == "TExcl")
         {
             connect(MyPlaylist, SIGNAL(resumeElement(TBase *)), this, SLOT(resumeElement(TBase *)));
@@ -368,19 +227,18 @@ void TSmil::connectPlaylistSlots(TBase *element)
     return;
 }
 
-void TSmil::connectMediaSlots(TBase *element)
+void TSmil::connectMediaSlots(TMedia *MyMedia)
 {
-    TMedia *MyMedia = qobject_cast<TMedia *> (element);
     if (MyMedia->isPlayable())
     {
         MyMedia->load(index_path);
-        connect(MyMedia, SIGNAL(startedMedia(TBase *, TBase *)), this, SLOT(startElement(TBase *, TBase *)));
-        connect(MyMedia, SIGNAL(finishedMedia(TBase *, TBase *)), this, SLOT(finishElement(TBase *, TBase *)));
+        connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBase *)), this, SLOT(startElement(TContainer *, TBase *)));
+        connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBase *)), this, SLOT(finishElement(TContainer *, TBase *)));
     }
     return;
 }
 
-void TSmil::emitStartShowMedia(TBase *media)
+void TSmil::emitStartShowMedia(TMedia *media)
 {
     qDebug() << media->getID() << "startShowMedia";
     ar_played_media.insert(media);
@@ -388,7 +246,7 @@ void TSmil::emitStartShowMedia(TBase *media)
     return;
 }
 
-void TSmil::emitStopShowMedia(TBase *media)
+void TSmil::emitStopShowMedia(TMedia *media)
 {
     qDebug() << media->getID() << "try stopShowMedia";
     if (ar_played_media.find(media) != ar_played_media.end())

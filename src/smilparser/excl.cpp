@@ -18,9 +18,9 @@
 
 #include "excl.h"
 
-TExcl::TExcl(TBase *parent)
+TExcl::TExcl(TContainer *parent)
 {
-    parent_playlist        = parent;
+    parent_container        = parent;
     ActivePriorityClass    = NULL;
     NewActivePriorityClass = NULL;
     initTimer();
@@ -44,7 +44,7 @@ void TExcl::setDurationTimerBeforePlay()
     if (hasDurAttribute() || end_timer->isActive() || ar_priorities.size() > 0)
     {
         if (!is_resumed)
-            emit startedPlaylist(parent_playlist, this);
+            emit startedPlaylist(parent_container, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
     {
@@ -52,17 +52,6 @@ void TExcl::setDurationTimerBeforePlay()
         NewActivePriorityClass = NULL;
         finishedActiveDuration();
     }
-    return;
-}
-
-TBase *TExcl::getPlayedElement()
-{
-    return played_element;
-}
-
-void TExcl::setPlayedElement(TBase *element)
-{
-    played_element = element;
     return;
 }
 
@@ -132,9 +121,9 @@ bool TExcl::isChildPlayable(TBase *element)
     }
     if (interrupt == _pause_active) // stop active
     {
-        emit pauseElement(played_element);
         playable  = true;
         setChildActive(true);
+        emit pauseElement(played_element);
     }
     else if (interrupt == _play_this)
     {
@@ -153,25 +142,6 @@ bool TExcl::isChildPlayable(TBase *element)
     return playable;
 }
 
-void TExcl::childStarted(TBase *element)
-{
-    activatable_childs.insert(element);
-    return;
-}
-
-void TExcl::childEnded(TBase *element)
-{
-    if (activatable_childs.find(element) != activatable_childs.end())
-        activatable_childs.remove(element);
-    return;
-}
-
-void TExcl::setChildActive(bool active)
-{
-    is_child_active = active;
-    return;
-}
-
 
 /**
  * @brief TExcl::next means to stop, pause, defer the active element
@@ -179,9 +149,10 @@ void TExcl::setChildActive(bool active)
  *
  * @return
  */
-void TExcl::next()
+void TExcl::next(TBase *ended_element)
 {
-
+    setChildActive(false);
+    childEnded(ended_element);
     // if elements are in queues starts resume or starts them
     QHash<int, TPriorityClass *>::iterator      ar_priorities_iterator;
     TPriorityClass                             *MyPriorityClass;
@@ -194,7 +165,7 @@ void TExcl::next()
             return; // make sure do not move, until queue is not epty
         }
     }
-    if (activatable_childs.size() < 1)
+    if (!hasPlayingChilds())
     {
         if(checkRepeatCountStatus())
         {

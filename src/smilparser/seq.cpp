@@ -18,9 +18,9 @@
 
 #include "seq.h"
 
-TSeq::TSeq(TBase * parent)
+TSeq::TSeq(TContainer * parent)
 {
-    parent_playlist = parent;
+    parent_container = parent;
     initTimer();
     setObjectName("TSeq");
 }
@@ -48,7 +48,7 @@ void TSeq::setDurationTimerBeforePlay()
     {
         resetInternalRepeatCount();
         if (!is_resumed)
-            emit startedPlaylist(parent_playlist, this);
+            emit startedPlaylist(parent_container, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
         finishedActiveDuration();
@@ -67,29 +67,6 @@ void TSeq::play()
 void TSeq::resume()
 {
     status = _playing;
-    return;
-}
-
-TBase *TSeq::getPlayedElement()
-{
-    return played_element;
-}
-
-void TSeq::setPlayedElement(TBase *element)
-{
-    played_element = element;
-    return;
-}
-
-bool TSeq::isChildPlayable(TBase *element)
-{
-    childStarted(element);
-    return true;
-}
-
-void TSeq::childStarted(TBase *element)
-{
-    setPlayedElement(element);
     return;
 }
 
@@ -127,8 +104,9 @@ void TSeq::doMetaData()
     return;
 }
 
-void TSeq::next()
+void TSeq::next(TBase *ended_element)
 {
+    childEnded(ended_element);
     iterator++; // inc iterator first only when inc result smaller than  .end()
     if (iterator < ar_playlist.end())  // cause .end() pointing to the imaginary item after the last item in the vector
     {

@@ -19,25 +19,20 @@
 #ifndef SEQ_H
 #define SEQ_H
 #include <QList>
-#include "smilparser/playlist.h"
+#include "smilparser/container.h"
 
 /**
  * @brief   The TSeq class parses seq-Tag
  *
  */
-class TSeq : public TPlaylist
+class TSeq : public TContainer
 {
     Q_OBJECT
 public:
-    TSeq(TBase * parent = 0);
+    TSeq(TContainer *parent = 0);
     bool     parse(QDomElement element);
-    void     next();
+    void     next(TBase *ended_element);
     bool     previous();
-    TBase   *getPlayedElement();
-    void     setPlayedElement(TBase *element);
-    bool     isChildPlayable(TBase *element);
-    void     childStarted(TBase *element);
-    void     childEnded(TBase *element){Q_UNUSED(element);}
     void     pause();
     void     stop();
     void     play();

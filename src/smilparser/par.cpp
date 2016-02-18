@@ -18,10 +18,10 @@
 
 #include "par.h"
 
-TPar::TPar(TBase *parent)
+TPar::TPar(TContainer *parent)
 {
     initTimer();
-    parent_playlist = parent;
+    parent_container = parent;
     setObjectName("TPar");
 }
 
@@ -43,7 +43,7 @@ void TPar::setDurationTimerBeforePlay()
         if (!is_resumed)
         {
             resetInternalRepeatCount();
-            emit startedPlaylist(parent_playlist, this);
+            emit startedPlaylist(parent_container, this);
         }
     }
     else // when end or duration is not specified or no child elements stop imediately
@@ -57,9 +57,10 @@ void TPar::setDurationTimerBeforePlay()
  *        then the finished signal will emitted;
  * @return
  */
-void TPar::next()
+void TPar::next(TBase *ended_element)
 {
-    if (activatable_childs.size() < 1)
+    childEnded(ended_element);
+    if (!hasPlayingChilds())
     {
         if(checkRepeatCountStatus())
         {
@@ -75,13 +76,8 @@ void TPar::next()
 
 TBase *TPar::getPlayedElement()
 {
-    return played_element;
-}
-
-void TPar::setPlayedElement(TBase *element)
-{
-    played_element = element;
-    return;
+    QSet<TBase *>::iterator i = activatable_childs.begin();
+    return *i;
 }
 
 void TPar::play()
@@ -125,26 +121,5 @@ void TPar::setPlaylist()
             ar_playlist.append(childs.item(i).toElement());
     }
 }
-
-bool TPar::isChildPlayable(TBase *element)
-{
-    childStarted(element);
-    return true;
-}
-
-
-void TPar::childStarted(TBase *element)
-{
-    activatable_childs.insert(element);
-    return;
-}
-
-void TPar::childEnded(TBase *element)
-{
-    if (activatable_childs.find(element) != activatable_childs.end())
-        activatable_childs.remove(element);
-    return;
-}
-
 
 // next means here that it should be check only if playliste can be started from begin

@@ -18,7 +18,7 @@
 
 #include "body.h"
 
-TBody::TBody(TBase * parent)
+TBody::TBody(TContainer * parent)
 {
     Q_UNUSED(parent);
     setObjectName("TBody");
@@ -50,7 +50,7 @@ bool TBody::parse(QDomElement element)
     return ret;
 }
 
-void TBody::preparePlay()
+void TBody::prepareTimerBeforPlaying()
 {
    setDurationTimerBeforePlay();
    return;
@@ -59,13 +59,14 @@ void TBody::preparePlay()
 void TBody::setDurationTimerBeforePlay()
 {
     reactByTag();
-    emit startedPlaylist(parent_playlist, this);
+    emit startedPlaylist(parent_container, this);
     return;
 }
 
 
-void TBody::next()
+void TBody::next(TBase *ended_element)
 {
+    Q_UNUSED(ended_element);
     iterator++; // inc iterator first only when inc result smaller than  .end()
     if (iterator < ar_playlist.end())  // cause .end() pointing to the imaginary item after the last item in the vector
     {

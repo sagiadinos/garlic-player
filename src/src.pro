@@ -22,11 +22,11 @@ SOURCES += downloader.cpp \
     smilparser/par.cpp \
     smilparser/excl.cpp \
     smilparser/base.cpp \
-    smilparser/playlist.cpp \
     smilparser/timings/timing.cpp \
     smilparser/timings/clock_value.cpp \
     smilparser/priorityclass.cpp \
-    smilparser/factory.cpp
+    smilparser/factory.cpp \
+    smilparser/container.cpp
 HEADERS += downloader.h \
     configuration.h \
     smilparser.h \
@@ -42,10 +42,10 @@ HEADERS += downloader.h \
     smilparser/par.h \
     smilparser/excl.h \
     smilparser/base.h \
-    smilparser/playlist.h \
     smilparser/timings/timing.h \
     smilparser/timings/clock_value.h \
     smilparser/priorityclass.h \
-    smilparser/factory.h
+    smilparser/factory.h \
+    smilparser/container.h
 
 DISTFILES +=

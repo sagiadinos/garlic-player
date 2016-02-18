@@ -18,9 +18,9 @@
 
 #include "video.h"
 
-TVideo::TVideo(TBase *parent)
+TVideo::TVideo(TContainer *parent)
 {
-    parent_playlist = parent;
+    parent_container = parent;
     initTimer();
     setObjectName("TVideo");
 }
@@ -42,7 +42,7 @@ void TVideo::setDurationTimerBeforePlay()
     if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
     if (!is_resumed)
-        emit startedMedia(parent_playlist, this);
+        emit startedMedia(parent_container, this);
     return;
 }
 

@@ -27,32 +27,39 @@
  *        the actual DomElement, so that the caller can handle it
  *
  */
-class TPlaylist : public TBase
+class TContainer : public TBase
 {
     Q_OBJECT
 public:
-            TPlaylist(TBase * parent = 0);
+            TContainer(TBase * parent = 0);
+    virtual void                          next(TBase *ended_element) = 0;
             void                          insertPlaylistObject(QString id, TBase *obj_element);
             QHash<QString, TBase *>       getPlaylistObjects();
             QString                       getIdOfActiveElement();
-    virtual bool                          isChildPlayable(TBase *element) = 0;
-    virtual void                          childStarted(TBase *element) = 0;
-    virtual void                          childEnded(TBase *element) = 0;
+            bool                          isChildPlayable(TBase *element);
+            bool                          hasPlayingChilds();
+            void                          childStarted(TBase *element);
+            void                          childEnded(TBase *element);
             QString                       getBaseType() {return "playlist";}
+            TBase                        *getPlayedElement();
+            void                          setPlayedElement(TBase *element);
+            void                          setChildActive(bool active);
 public slots:
             void                          emitfinished();
 protected:
+            TContainer                   *parent_container;
+            QSet<TBase *>                 activatable_childs;
+            bool                          is_child_active    = false;
+            TBase                        *played_element;
             QList<QDomElement>            ar_playlist;
             QList<QDomElement>::iterator  iterator;
             QHash<QString, TBase *>       ar_elements;
             QDomElement                   active_element;
-            TBase                        *parent_playlist;
-            TBase                        *played_element;
             void                          reactByTag();
 signals:
-            void                          foundElement(TBase *, QDomElement element);
-            void                          startedPlaylist(TBase * , TBase *);
-            void                          finishedPlaylist(TBase * , TBase *);
+            void                          foundElement(TContainer *, QDomElement );
+            void                          startedPlaylist(TContainer * , TBase *);
+            void                          finishedPlaylist(TContainer * , TBase *);
 
 };
 

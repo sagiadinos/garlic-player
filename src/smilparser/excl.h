@@ -21,11 +21,11 @@
 
 #include "smilparser/priorityclass.h"
 
-class TExcl : public TPlaylist
+class TExcl : public TContainer
 {
     Q_OBJECT
 public:
-    TExcl(TBase * parent = 0);
+    TExcl(TContainer * parent = 0);
 
     const       int         _stop_new          = 0; // never
     const       int         _stop_active       = 1;
@@ -33,30 +33,22 @@ public:
     const       int         _pause_active      = 3;
     const       int         _pause_new         = 4; // defer
 
-    TBase               *getPlayedElement();
-    void                 setPlayedElement(TBase *element);
     bool                 parse(QDomElement element);
-    void                 next();
+    void                 next(TBase *ended_element);
     int                  interruptActualPlaying(QDomElement started_element, TBase *element);
-    void                 childStarted(TBase *element);
     bool                 isChildPlayable(TBase *element);
-    void                 childEnded(TBase *element);
-    void                 setChildActive(bool active);
     void                 pause();
-    void      stop();
-    void      play();
-    void      resume();
+    void                 stop();
+    void                 play();
+    void                 resume();
 public slots:
     void      setDurationTimerBeforePlay();
 protected:
 private:
-    TBase                                *played_element;
     QDomElement                           played_dom_element;
     TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
     QQueue<TPriorityClass *>              queue;
     QHash<int, TPriorityClass *>          ar_priorities;
-    QSet<TBase *>                         activatable_childs;
-    bool                                  is_child_active    = false;
     void                                  setPlaylist();
     void                                  setPriorityClass(QDomElement element);
     int                                   priorityStop(QDomElement dom_element, TBase *element);

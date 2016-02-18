@@ -19,20 +19,16 @@
 #ifndef TPAR_H
 #define TPAR_H
 
-#include "smilparser/playlist.h"
+#include "smilparser/container.h"
 
-class TPar : public TPlaylist
+class TPar : public TContainer
 {
     Q_OBJECT
 public:
-    TPar(TBase * parent = 0);
+    TPar(TContainer *parent = 0);
     bool          parse(QDomElement element);
-    void          next();
+    void          next(TBase *ended_element);
     TBase        *getPlayedElement();
-    void          setPlayedElement(TBase *element);
-    bool          isChildPlayable(TBase *element);
-    void          childStarted(TBase *element);
-    void          childEnded(TBase *element);
     void          pause();
     void          stop();
     void          play();

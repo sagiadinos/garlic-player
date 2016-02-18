@@ -22,7 +22,6 @@
 #include <QWidget>
 #include <QMap>
 #include <QLayout>
-#include "smilparser.h"
 #include "region.h"
 
 class MainWindow : public QWidget
@@ -34,8 +33,8 @@ public:
     ~MainWindow();
     void setSmilIndex(QString smil_path = "");
 public slots:
-    void startShowMedia(TBase *media);
-    void stopShowMedia(TBase *media);
+    void startShowMedia(TMedia *media);
+    void stopShowMedia(TMedia *media);
 private:
     TConfiguration  MyConfig;
     QMap<QString, TRegion *> ar_regions;

@@ -18,22 +18,20 @@
 
 #ifndef TBODY_H
 #define TBODY_H
-#include "playlist.h"
+#include "container.h"
 #include "seq.h"
 
-class TBody : public TPlaylist
+class TBody : public TContainer
 {
     Q_OBJECT
 public:
-    TBody(TBase * parent = 0);
+    TBody(TContainer * parent = 0);
     ~TBody();
     bool      parse(QDomElement element);
-    void      preparePlay();
+    void      prepareTimerBeforPlaying();
     void      endPlay(){}
-    void      next();
-    bool      isChildPlayable(TBase *element){Q_UNUSED(element);return true;}
-    void      childStarted(TBase *element){Q_UNUSED(element);}
-    void      childEnded(TBase *element){Q_UNUSED(element);}
+    void      next(TBase *ended_element);
+    void      resume(){}
     void      play(){}
     void      pause(){}
     void      stop(){}

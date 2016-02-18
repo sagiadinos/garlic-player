@@ -16,30 +16,73 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#include "playlist.h"
+#include "container.h"
 
-TPlaylist::TPlaylist(TBase * parent)
+TContainer::TContainer(TBase *parent)
 {
     Q_UNUSED(parent);
 }
 
-void TPlaylist::insertPlaylistObject(QString id, TBase *obj_element)
+void TContainer::insertPlaylistObject(QString id, TBase *obj_element)
 {
     ar_elements.insert(id, obj_element);
     return;
 }
 
-QString TPlaylist::getIdOfActiveElement()
+QString TContainer::getIdOfActiveElement()
 {
     return parseID(active_element);
 }
 
-QHash<QString, TBase *> TPlaylist::getPlaylistObjects()
+QHash<QString, TBase *> TContainer::getPlaylistObjects()
 {
     return ar_elements;
 }
 
-void TPlaylist::reactByTag()
+TBase *TContainer::getPlayedElement()
+{
+    return played_element;
+}
+
+void TContainer::setPlayedElement(TBase *element)
+{
+    played_element = element;
+    return;
+}
+
+void TContainer::childStarted(TBase *element)
+{
+    activatable_childs.insert(element);
+    return;
+}
+
+void TContainer::childEnded(TBase *element)
+{
+    if (activatable_childs.find(element) != activatable_childs.end())
+        activatable_childs.remove(element);
+    return;
+}
+
+void TContainer::setChildActive(bool active)
+{
+    is_child_active = active;
+    return;
+}
+
+bool TContainer::hasPlayingChilds()
+{
+    if (activatable_childs.size() > 0)
+        return true;
+    return false;
+}
+
+bool TContainer::isChildPlayable(TBase *element)
+{
+    childStarted(element);
+    return true;
+}
+
+void TContainer::reactByTag()
 {
     QString tag_name = active_element.tagName();
     if(tag_name == "img" || tag_name == "video" || tag_name == "audio" || tag_name == "text" || tag_name == "prefetch" ||
@@ -58,10 +101,10 @@ void TPlaylist::reactByTag()
     return;
 }
 
-void TPlaylist::emitfinished() // called from finishedActiveDuration() TBase
+void TContainer::emitfinished() // called from finishedActiveDuration() TBase
 {
     qDebug() << getID() << "finished Playlist";
-    emit finishedPlaylist(parent_playlist, this);
+    emit finishedPlaylist(parent_container, this);
     return;
 }
 

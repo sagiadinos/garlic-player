@@ -18,9 +18,9 @@
 
 #include "audio.h"
 
-TAudio::TAudio(TBase *parent)
+TAudio::TAudio(TContainer *parent)
 {
-    parent_playlist = parent;
+    parent_container = parent;
     initTimer();
     setObjectName("TAudio");
 }
@@ -53,7 +53,7 @@ void TAudio::setDurationTimerBeforePlay()
     if (!hasDurAttribute()  && !end_timer->isActive()) // when end or dur is not specified use audio duration for simple duration
         connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
     if (!is_resumed)
-        emit startedMedia(parent_playlist, this);
+        emit startedMedia(parent_container, this);
     return;
 }
 

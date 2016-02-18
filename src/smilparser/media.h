@@ -20,7 +20,7 @@
 #define MEDIA_H
 
 #include <QFile>
-#include "smilparser/base.h"
+#include "smilparser/container.h"
 
 class TMedia : public TBase
 {
@@ -37,22 +37,22 @@ public:
     QString     getLogContentId();
     bool        parse(QDomElement element);
     virtual bool load(QString index_path) = 0;
-    void        pause(){}
-    void        stop(){}
-    void        play(){}
+    void        resume(){play();}
     QString     getBaseType() {return "media";}
+    bool        hasPlayingChilds(){return false;}
+    TBase      *getPlayedElement(){return this;}
 public slots:
     void        emitfinished();
 protected:
-    TBase      *parent_playlist;
+    TContainer *parent_container;
     QString     region, src, exec;
     QString     filename, cache_control, log_content_id  = "";
     void        setBaseMediaAttributes();
     void        setBaseParameters();
     virtual void setAttributes() = 0;
 signals:
-    void        startedMedia(TBase * , TBase *);
-    void        finishedMedia(TBase * , TBase *);
+    void        startedMedia(TContainer *parent , TBase *element);
+    void        finishedMedia(TContainer *parent , TBase *element);
 
 };
 

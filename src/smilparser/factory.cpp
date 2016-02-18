@@ -22,7 +22,7 @@ TFactory::TFactory(TBase *parent)
     Q_UNUSED(parent);
 }
 
-TBase* TFactory::createBase(QString type, TBase *parent)
+TBase* TFactory::createBase(QString type, TContainer *parent)
 {
     if (type == "img")
         return new TImage(parent);
@@ -44,7 +44,7 @@ TBase* TFactory::createBase(QString type, TBase *parent)
 }
 
 
-TMedia* TFactory::createMedia(QString media_type, TBase *parent)
+TMedia* TFactory::createMedia(QString media_type, TContainer *parent)
 {
     if (media_type == "img")
         return new TImage(parent);
@@ -57,7 +57,7 @@ TMedia* TFactory::createMedia(QString media_type, TBase *parent)
     return NULL;
 }
 
-TPlaylist* TFactory::createPlaylist(QString playlist_type, TBase *parent)
+TContainer* TFactory::createPlaylist(QString playlist_type, TContainer *parent)
 {
     if (playlist_type == "seq")
         return new TSeq(parent);

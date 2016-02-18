@@ -31,7 +31,7 @@ bool TBase::isPlayable()
     return playable;
 }
 
-bool TBase::preparePlay()
+bool TBase::prepareTimerBeforPlaying()
 {
     if (!playable)
         return false;
@@ -74,7 +74,7 @@ bool TBase::preparePlay()
     return ret;
 }
 
-void TBase::preparePause()
+void TBase::prepareTimerBeforePausing()
 {
     if (begin_timer->isActive())
     {
@@ -95,7 +95,7 @@ void TBase::preparePause()
     return;
 }
 
-void TBase::prepareStop()
+void TBase::prepareTimerBeforeStop()
 {
     if (begin_timer->isActive())
         begin_timer->stop();
@@ -109,7 +109,7 @@ void TBase::prepareStop()
     return;
 }
 
-void TBase::prepareResume()
+void TBase::prepareTimerBeforeResume()
 {
     is_resumed = true;
     qint64 elapsed     = QDateTime::currentMSecsSinceEpoch() - pause_start;

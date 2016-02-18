@@ -18,9 +18,9 @@
 
 #include "image.h"
 
-TImage::TImage(TBase *parent)
+TImage::TImage(TContainer *parent)
 {
-    parent_playlist = parent;
+    parent_container = parent;
     initTimer();
     setObjectName("TImage");
 }
@@ -42,7 +42,7 @@ void TImage::setDurationTimerBeforePlay()
     if (hasDurAttribute() || end_timer->isActive()) // if dur or end is not specified end, cause images don't have an implicit duration like audio/video
     {
         if (!is_resumed)
-            emit startedMedia(parent_playlist, this);
+            emit startedMedia(parent_container, this);
     }
     else // when end or dur is not specified stop imediately
         finishedActiveDuration();

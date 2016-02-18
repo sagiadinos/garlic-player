@@ -35,7 +35,7 @@ class TVideo : public TMedia
 {
     Q_OBJECT
 public:
-    TVideo(TBase *parent = 0);
+    TVideo(TContainer *parent = 0);
     ~TVideo();
     showVideo       getMediaForShow();
     QString         getFit();

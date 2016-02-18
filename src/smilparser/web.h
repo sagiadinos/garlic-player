@@ -37,7 +37,7 @@ class TWeb : public TMedia
 {
     Q_OBJECT
 public:
-    explicit TWeb(TBase *parent = 0);
+    explicit TWeb(TContainer *parent = 0);
     ~TWeb();
     showWeb  getMediaForShow();
     QString  getFit();

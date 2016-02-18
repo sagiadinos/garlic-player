@@ -58,10 +58,10 @@ public:
     explicit              TBase(QObject * parent = 0);
     virtual bool          parse(QDomElement element) = 0;
             bool          isPlayable();
-            bool          preparePlay();      // what to do when parent sends an order to begin executions
-            void          preparePause();
-            void          prepareStop();      // what to do when parent sends an order to begin executions
-            void          prepareResume();      // what to do when parent sends an order to begin executions
+            bool          prepareTimerBeforPlaying();      // what to do when parent sends an order to begin executions
+            void          prepareTimerBeforePausing();
+            void          prepareTimerBeforeStop();      // what to do when parent sends an order to begin executions
+            void          prepareTimerBeforeResume();      // what to do when parent sends an order to begin executions
             QDomElement   getRootElement(){return root_element;}
             int           getStatus(){return status;}
             QString       getID(){return id;}
@@ -71,7 +71,10 @@ public:
     virtual void          play()        = 0;
     virtual void          pause()       = 0;
     virtual void          stop()        = 0;
+    virtual void          resume()      = 0;
     virtual QString       getBaseType() = 0;
+    virtual TBase        *getPlayedElement() = 0;
+    virtual bool          hasPlayingChilds() = 0;
 public slots:
     virtual void          emitfinished() = 0;
 protected:

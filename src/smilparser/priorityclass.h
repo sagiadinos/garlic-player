@@ -3,7 +3,7 @@
 #include <QQueue>
 #include <QList>
 #include <QStack>
-#include "smilparser/playlist.h"
+#include "smilparser/container.h"
 
 class TPriorityClass : public QObject
 {

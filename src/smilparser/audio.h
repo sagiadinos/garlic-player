@@ -33,7 +33,7 @@ class TAudio :public TMedia
 {
     Q_OBJECT
 public:
-    TAudio(TBase * parent = 0);
+    TAudio(TContainer * parent = 0);
     ~TAudio();
     showAudio          getMediaForShow();
     bool               load(QString index_path);

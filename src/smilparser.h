@@ -49,14 +49,10 @@ protected:
     TBody                             *MyBody;
     QHash<QString, TBase *>            ar_elements;
     showImg                            ImgAttr;
-    void                               next();
-    void                               next(TSeq *MySeq);
-    void                               next(TPar *MyPar, TBase *element);
-    void                               next(TExcl *MyExcl, TBase *element);
 protected slots:
-    void                               foundElement(TBase *parent, QDomElement dom_element);
-    void                               startElement(TBase *, TBase *);
-    void                               finishElement(TBase *, TBase *);
+    void                               foundElement(TContainer *parent, QDomElement dom_element);
+    void                               startElement(TContainer *parent, TBase *element);
+    void                               finishElement(TContainer *parent, TBase *element);
 
     void                               resumeElement(TBase *element);
     void                               pauseElement(TBase *element);
@@ -64,14 +60,14 @@ protected slots:
 private:
     QSet<TBase *>                      ar_played_media;
     QHash<QString, TBase *>::iterator  insertIntoObjectContainer(TBase *parent, TBase *child);
-    void                               emitStartShowMedia(TBase *media);
-    void                               emitStopShowMedia(TBase *media);
-    void                               connectMediaSlots(TBase *element);
+    void                               emitStartShowMedia(TMedia *media);
+    void                               emitStopShowMedia(TMedia *media);
+    void                               connectMediaSlots(TMedia *MyMedia);
     void                               connectPlaylistSlots(TBase *element);
 
 signals:
-    void                               startShowMedia(TBase *media);
-    void                               stopShowMedia(TBase *media);
+    void                               startShowMedia(TMedia *media);
+    void                               stopShowMedia(TMedia *media);
 };
 
 #endif // SMILPARSER_H

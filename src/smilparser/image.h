@@ -36,7 +36,7 @@ class TImage : public TMedia
 {
     Q_OBJECT
 public:
-    TImage(TBase * parent = 0);
+    TImage(TContainer *parent = 0);
     ~TImage();
     showImg  getMediaForShow();
     QString  getFit();

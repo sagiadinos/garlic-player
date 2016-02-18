@@ -29,14 +29,14 @@ void MainWindow::setSmilIndex(QString smil_path)
 //    qDebug() << MyConfig.getPaths("var");
     MySmil = new TSmil();
     if (smil_path == "")
-        MySmil->init(MyConfig.getPaths("var")+"complex_excl.smil");
+        MySmil->init("../smils/simple_seq.smil");
     else
         MySmil->init(smil_path);
     MyHead = MySmil->getHeader();
     setStyleSheet("background-color:"+MyHead.getRootBackgroundColor()+";");
     setRegions();
-    connect(MySmil, SIGNAL(startShowMedia(TBase *)), this, SLOT(startShowMedia(TBase *)));
-    connect(MySmil, SIGNAL(stopShowMedia(TBase *)), this, SLOT(stopShowMedia(TBase *)));
+    connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
+    connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     setGeometry(0,0, width(), height());
     MySmil->beginSmilParsing();
 
@@ -65,7 +65,7 @@ QString MainWindow::selectRegion(QString region_name)
     return i.key();
 }
 
-void MainWindow::startShowMedia(TBase *media)
+void MainWindow::startShowMedia(TMedia *media)
 {
     QString type   = media->objectName();
 
@@ -79,7 +79,7 @@ void MainWindow::startShowMedia(TBase *media)
         playWeb(qobject_cast<TWeb *>(media));
 }
 
-void MainWindow::stopShowMedia(TBase *media)
+void MainWindow::stopShowMedia(TMedia *media)
 {
     QString type        = media->objectName();
     if (type == "TImage")
