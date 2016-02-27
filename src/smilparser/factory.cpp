@@ -42,30 +42,3 @@ TBase* TFactory::createBase(QString type, TContainer *parent)
         return new TBody();
     return NULL;
 }
-
-
-TMedia* TFactory::createMedia(QString media_type, TContainer *parent)
-{
-    if (media_type == "img")
-        return new TImage(parent);
-    else if (media_type == "video")
-        return new TVideo(parent);
-    else if (media_type == "audio")
-        return new TAudio(parent);
-    else if (media_type == "text")
-        return new TWeb(parent);
-    return NULL;
-}
-
-TContainer* TFactory::createPlaylist(QString playlist_type, TContainer *parent)
-{
-    if (playlist_type == "seq")
-        return new TSeq(parent);
-    else if (playlist_type == "par")
-        return new TPar(parent);
-    else if (playlist_type == "excl")
-        return new TExcl(parent);
-    else if (playlist_type == "body")
-        return new TBody();
-    return NULL;
-}

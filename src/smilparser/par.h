@@ -28,11 +28,12 @@ public:
     TPar(TContainer *parent = 0);
     bool          parse(QDomElement element);
     void          next(TBase *ended_element);
-    TBase        *getPlayedElement();
+    TBase        *getChildElementFromList();
     void          pause();
     void          stop();
     void          play();
     void          resume();
+    bool          isChildPlayable(TBase *element);
 protected slots:
     void          setDurationTimerBeforePlay();
 private:

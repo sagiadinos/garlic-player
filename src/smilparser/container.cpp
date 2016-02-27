@@ -39,9 +39,19 @@ QHash<QString, TBase *> TContainer::getPlaylistObjects()
     return ar_elements;
 }
 
-TBase *TContainer::getPlayedElement()
+TBase *TContainer::getChildElementFromList()
 {
-    return played_element;
+    TBase *ret = NULL;
+    if (childs_iterator != activatable_childs.end())
+    {
+        childs_iterator = activatable_childs.begin();
+    }
+    else
+    {
+        ret = *childs_iterator;
+        childs_iterator++;
+    }
+    return ret;
 }
 
 void TContainer::setPlayedElement(TBase *element)
@@ -50,9 +60,16 @@ void TContainer::setPlayedElement(TBase *element)
     return;
 }
 
+TBase *TContainer::getPlayedElement()
+{
+    return played_element;
+}
+
+
 void TContainer::childStarted(TBase *element)
 {
     activatable_childs.insert(element);
+    childs_iterator = activatable_childs.begin();
     return;
 }
 
@@ -76,12 +93,6 @@ bool TContainer::hasPlayingChilds()
     return false;
 }
 
-bool TContainer::isChildPlayable(TBase *element)
-{
-    childStarted(element);
-    return true;
-}
-
 void TContainer::reactByTag()
 {
     QString tag_name = active_element.tagName();
@@ -103,7 +114,7 @@ void TContainer::reactByTag()
 
 void TContainer::emitfinished() // called from finishedActiveDuration() TBase
 {
-    qDebug() << getID() << "finished Playlist";
+    qDebug() << getID() <<QTime::currentTime().toString() << "finished Playlist";
     emit finishedPlaylist(parent_container, this);
     return;
 }

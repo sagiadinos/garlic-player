@@ -26,7 +26,7 @@ TBody::TBody(TContainer * parent)
 
 TBody::~TBody()
 {
-    ar_playlist.clear();
+    dom_list.clear();
 }
 
 
@@ -41,7 +41,7 @@ bool TBody::parse(QDomElement element)
     {
         active_element = element.firstChildElement();
         setPlaylist();
-        iterator       = ar_playlist.begin();
+        iterator       = dom_list.begin();
         active_element = *iterator;
         ret = true;
     }
@@ -56,6 +56,15 @@ void TBody::prepareTimerBeforPlaying()
    return;
 }
 
+bool TBody::isChildPlayable(TBase *element)
+{
+    qDebug() << element->getID() <<QTime::currentTime().toString() << "is ChildPlayable in body";
+    childStarted(element);
+    return true;
+}
+
+
+
 void TBody::setDurationTimerBeforePlay()
 {
     reactByTag();
@@ -68,7 +77,7 @@ void TBody::next(TBase *ended_element)
 {
     Q_UNUSED(ended_element);
     iterator++; // inc iterator first only when inc result smaller than  .end()
-    if (iterator < ar_playlist.end())  // cause .end() pointing to the imaginary item after the last item in the vector
+    if (iterator < dom_list.end())  // cause .end() pointing to the imaginary item after the last item in the vector
     {
         active_element = *iterator;
         reactByTag();
@@ -87,7 +96,7 @@ void TBody::setPlaylist()
     {
         element = childs.item(i).toElement();
         if (element.tagName() != "")
-            ar_playlist.append(element);
+            dom_list.append(element);
     }
     return;
 }

@@ -40,7 +40,7 @@ public:
     void        resume(){play();}
     QString     getBaseType() {return "media";}
     bool        hasPlayingChilds(){return false;}
-    TBase      *getPlayedElement(){return this;}
+    TBase      *getChildElementFromList(){return this;}
 public slots:
     void        emitfinished();
 protected:

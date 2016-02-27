@@ -109,13 +109,14 @@ int TExcl::interruptActualPlaying(QDomElement dom_element, TBase *element)
 
 bool TExcl::isChildPlayable(TBase *element)
 {
+    qDebug() << element->getID() << QTime::currentTime().toString() << "is ChildPlayable in excl";
     TBase   *played_element = getPlayedElement(); // must set before interrupting
     int      interrupt      = interruptActualPlaying(element->getRootElement(), element);
     bool     playable       = false;
     if (interrupt == _stop_active) // stop active
     {
         childEnded(played_element);
-        emit stopElement(played_element);
+        emit stopElement(played_element, true);
         playable  = true;
         setChildActive(true);
     }
@@ -133,7 +134,7 @@ bool TExcl::isChildPlayable(TBase *element)
     else if (interrupt == _stop_new) // stop caller when peers = never
     {
         childEnded(element);
-        emit stopElement(element);
+        emit stopElement(element, true);
         if(played_element == element)
             setChildActive(false);
     }
@@ -141,7 +142,6 @@ bool TExcl::isChildPlayable(TBase *element)
         emit pauseElement(element);
     return playable;
 }
-
 
 /**
  * @brief TExcl::next means to stop, pause, defer the active element

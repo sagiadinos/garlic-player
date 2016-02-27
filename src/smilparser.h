@@ -56,7 +56,7 @@ protected slots:
 
     void                               resumeElement(TBase *element);
     void                               pauseElement(TBase *element);
-    void                               stopElement(TBase *element);
+    void                               stopElement(TBase *element, bool kill_timer);
 private:
     QSet<TBase *>                      ar_played_media;
     QHash<QString, TBase *>::iterator  insertIntoObjectContainer(TBase *parent, TBase *child);

@@ -59,7 +59,7 @@ bool TBase::prepareTimerBeforPlaying()
         else if (begin_status == "wallclock") // look if begin should be delayed
         {
             begin_timer->start(begin.getNextTrigger(QDateTime::currentDateTime()));
-            qDebug() << "begin " << getID() << begin.getNextTrigger(QDateTime::currentDateTime());
+            qDebug() << getID() <<QTime::currentTime().toString() << "begin " << begin.getNextTrigger(QDateTime::currentDateTime());
             status = _waiting;
         }
         else if (begin_status == "indefinite")
@@ -122,7 +122,7 @@ void TBase::prepareTimerBeforeResume()
         else if (end.getStatus() == "wallclock")
             end_trigger = end.getNextTrigger(QDateTime::currentDateTime());
 
-        qDebug() << getID() << " end remaining: " << end_remaining << "elapsed: " << elapsed << "trigger" << end_trigger;
+        qDebug() << getID() <<QTime::currentTime().toString() << " end remaining: " << end_remaining << "elapsed: " << elapsed << "trigger" << end_trigger;
         if (end_trigger > 0)
             end_timer->start(end_trigger);
         else
@@ -294,7 +294,7 @@ void TBase::checkBeginRepeat()
     if (begin.remainingRepeats())
     {
         begin_timer->start(begin.getNextTrigger(QDateTime::currentDateTime()));
-        qDebug() << "check begin repeats " << getID() << begin.getNextTrigger(QDateTime::currentDateTime());
+        qDebug() << getID() << QTime::currentTime().toString() << "check begin repeats "  << begin.getNextTrigger(QDateTime::currentDateTime());
         if (end.remainingRepeats()) // this make sense only when begin timer is repeated
             end_timer->start(end.getNextTrigger(QDateTime::currentDateTime()));
     }

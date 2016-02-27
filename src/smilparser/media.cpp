@@ -71,7 +71,7 @@ void TMedia::setBaseMediaAttributes()
 
 void TMedia::emitfinished() // called from finishedActiveDuration() in TBase
 {
-    qDebug() << getID() << "finished Media";
+   qDebug() << getID() << QTime::currentTime().toString() << "finished Media";
    emit finishedMedia(parent_container, this);
    return;
 }

@@ -73,7 +73,7 @@ public:
     virtual void          stop()        = 0;
     virtual void          resume()      = 0;
     virtual QString       getBaseType() = 0;
-    virtual TBase        *getPlayedElement() = 0;
+    virtual TBase        *getChildElementFromList() = 0;
     virtual bool          hasPlayingChilds() = 0;
 public slots:
     virtual void          emitfinished() = 0;

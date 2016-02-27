@@ -33,8 +33,6 @@ class TFactory : public QObject
 public:
     TFactory(TBase *parent = 0);
     static TBase    *createBase(QString type, TContainer *parent);
-    static TMedia    *createMedia(QString media_type, TContainer *parent);
-    static TContainer *createPlaylist(QString playlist_type, TContainer *parent);
 };
 
 #endif // TFACTORY_H

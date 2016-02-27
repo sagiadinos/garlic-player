@@ -38,7 +38,7 @@ bool TPar::parse(QDomElement element)
 
 void TPar::setDurationTimerBeforePlay()
 {
-    if (hasDurAttribute() || end_timer->isActive() || ar_playlist.size() > 0)
+    if (hasDurAttribute() || end_timer->isActive() || dom_list.size() > 0)
     {
         if (!is_resumed)
         {
@@ -50,6 +50,15 @@ void TPar::setDurationTimerBeforePlay()
         finishedActiveDuration();
     return;
 }
+
+bool TPar::isChildPlayable(TBase *element)
+{
+    qDebug() << element->getID() <<QTime::currentTime().toString() << "is ChildPlayable in par";
+    childStarted(element);
+    return true;
+}
+
+
 
 /**
  * @brief TPar::next means that it looks if there are no active elements
@@ -74,7 +83,7 @@ void TPar::next(TBase *ended_element)
     return;
 }
 
-TBase *TPar::getPlayedElement()
+TBase *TPar::getChildElementFromList()
 {
     QSet<TBase *>::iterator i = activatable_childs.begin();
     return *i;
@@ -82,7 +91,7 @@ TBase *TPar::getPlayedElement()
 
 void TPar::play()
 {
-    for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
+    for (iterator =  dom_list.begin(); iterator < dom_list.end(); iterator++)
     {
         active_element = *iterator;
         reactByTag();
@@ -118,7 +127,7 @@ void TPar::setPlaylist()
     for (int i = 0; i < count_childs; i++)
     {
         if (childs.item(i).toElement().tagName() != "") // e.g. comments
-            ar_playlist.append(childs.item(i).toElement());
+            dom_list.append(childs.item(i).toElement());
     }
 }
 

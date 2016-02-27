@@ -36,22 +36,24 @@ public:
             void                          insertPlaylistObject(QString id, TBase *obj_element);
             QHash<QString, TBase *>       getPlaylistObjects();
             QString                       getIdOfActiveElement();
-            bool                          isChildPlayable(TBase *element);
+    virtual bool                          isChildPlayable(TBase *element) = 0;
             bool                          hasPlayingChilds();
             void                          childStarted(TBase *element);
             void                          childEnded(TBase *element);
             QString                       getBaseType() {return "playlist";}
-            TBase                        *getPlayedElement();
+            TBase                        *getChildElementFromList();
             void                          setPlayedElement(TBase *element);
+            TBase                        *getPlayedElement();
             void                          setChildActive(bool active);
 public slots:
             void                          emitfinished();
 protected:
             TContainer                   *parent_container;
             QSet<TBase *>                 activatable_childs;
+            QSet<TBase *>::iterator       childs_iterator;
             bool                          is_child_active    = false;
             TBase                        *played_element;
-            QList<QDomElement>            ar_playlist;
+            QList<QDomElement>            dom_list;
             QList<QDomElement>::iterator  iterator;
             QHash<QString, TBase *>       ar_elements;
             QDomElement                   active_element;

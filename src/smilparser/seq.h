@@ -37,6 +37,7 @@ public:
     void     stop();
     void     play();
     void     resume();
+    bool     isChildPlayable(TBase *element);
 public slots:
     void     setDurationTimerBeforePlay();
 private:

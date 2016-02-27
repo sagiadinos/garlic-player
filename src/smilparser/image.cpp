@@ -69,21 +69,21 @@ bool TImage::load(QString index_path)
 
 void TImage::play()
 {
-    qDebug() << getID() << "play";
+    qDebug() << getID() << QTime::currentTime().toString()  << "play";
     status = _playing;
     return;
 }
 
 void TImage::pause()
 {
-    qDebug() << getID() << "paused " << end_remaining;
+    qDebug() << getID() << QTime::currentTime().toString() << "paused " << end_remaining;
     status = _paused;
     return;
 }
 
 void TImage::stop()
 {
-    qDebug() << getID() << "stopped";
+    qDebug() << getID() << QTime::currentTime().toString() << "stopped";
     status = _stopped;
     return;
 }

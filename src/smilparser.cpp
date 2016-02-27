@@ -104,8 +104,10 @@ void TSmil::startElement(TContainer *parent, TBase *element)
 
     if (parent->getBaseType() == "playlist")
     {
-        TContainer *MyPlaylist  = qobject_cast<TContainer *> (parent);
-        playable               = MyPlaylist->isChildPlayable(element);
+        TContainer *MyContainer = qobject_cast<TContainer *> (parent);
+        playable                = MyContainer->isChildPlayable(element);
+        if (playable)
+            MyContainer->setPlayedElement(element);
     }
 
     if (playable)
@@ -119,19 +121,18 @@ void TSmil::startElement(TContainer *parent, TBase *element)
 
 /**
  * @brief TSmil::finishedElement slot get called when emit finishedMedia finishedPlaylist active duration (finish playing)
+ *        finishElement should kill the timer (TSmil::stopElement(TBase *element)) of his child elements not his own
+ *        except in the case is in an excl container and stpped by a peer
  * @param parent
  * @param element
  */
 void TSmil::finishElement(TContainer *parent, TBase *element)
 {
-    /*
-    ToDo:Problem:
-    finishElement should only kill the timer (stopElement) of the child elements
-    */
-
+    //   finishElement should kill the timer (TSmil::stopElement(TBase *element)) of his child elements not his own
+    //   except the case that the element itself is child in an excl container and stopped by a peer
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
     {
-        stopElement(element);
+        stopElement(element, false);
         parent->next(element);
     }
     else
@@ -143,20 +144,31 @@ void TSmil::finishElement(TContainer *parent, TBase *element)
 }
 
 
-
 /**
  * @brief TSmil::handleStop checks when an element stopped or finished and recurses to stop all active child elements e.g. timers, too.
  *        If the element is a media a signal will emitted to an output interface which can stop the show the media e.g. player-widget
  * @param parent
  * @param element
  */
-void TSmil::stopElement(TBase *element)
+void TSmil::stopElement(TBase *element, bool kill_timer)
 {
-    element->prepareTimerBeforeStop();
+    if (kill_timer)
+    {
+        qDebug() << element->getID() << QTime::currentTime().toString() << "kill Timer";
+        element->prepareTimerBeforeStop();
+    }
+    else
+    {
+        qDebug()<< element->getID() << QTime::currentTime().toString() << "Not kill Timer";
+    }
+
     if (element->getStatus() != element->_stopped)
     {
         if (element->hasPlayingChilds())
-            stopElement(element->getPlayedElement());
+        {
+            qDebug()<< element->getID() << QTime::currentTime().toString() << "has Childs";
+            stopElement(element->getChildElementFromList(), true);
+        }
         element->stop();
         if (element->getBaseType() == "media")
             emitStopShowMedia(qobject_cast<TMedia *> (element));
@@ -171,9 +183,15 @@ void TSmil::stopElement(TBase *element)
  */
 void TSmil::pauseElement(TBase *element)
 {
+    qDebug() << element->getID() << QTime::currentTime().toString() << "pause Element";
     element->prepareTimerBeforePausing();
     if (element->hasPlayingChilds())
-        pauseElement(element->getPlayedElement());
+    {
+        TContainer *MyContainer      = qobject_cast<TContainer *> (element);
+        TBase      *element_to_pause = MyContainer->getChildElementFromList();
+        if (element_to_pause != NULL)
+            pauseElement(element_to_pause);
+    }
     element->pause();
     if (element->getBaseType() == "media")
         emitStopShowMedia(qobject_cast<TMedia *> (element));
@@ -186,7 +204,7 @@ void TSmil::resumeElement(TBase *element)
     if (element->getStatus() == element->_paused)
     {
         if (element->hasPlayingChilds())
-            resumeElement(element->getPlayedElement());
+            resumeElement(element->getChildElementFromList());
         element->resume();
         if (element->getBaseType() == "media")
             emitStartShowMedia(qobject_cast<TMedia *> (element));
@@ -221,7 +239,7 @@ void TSmil::connectPlaylistSlots(TBase *element)
         {
             connect(MyPlaylist, SIGNAL(resumeElement(TBase *)), this, SLOT(resumeElement(TBase *)));
             connect(MyPlaylist, SIGNAL(pauseElement(TBase *)), this, SLOT(pauseElement(TBase *)));
-            connect(MyPlaylist, SIGNAL(stopElement(TBase *)), this, SLOT(stopElement(TBase *)));
+            connect(MyPlaylist, SIGNAL(stopElement(TBase *, bool)), this, SLOT(stopElement(TBase *, bool)));
         }
     }
     return;
@@ -240,7 +258,7 @@ void TSmil::connectMediaSlots(TMedia *MyMedia)
 
 void TSmil::emitStartShowMedia(TMedia *media)
 {
-    qDebug() << media->getID() << "startShowMedia";
+    qDebug() << media->getID() <<QTime::currentTime().toString() << "startShowMedia";
     ar_played_media.insert(media);
     emit startShowMedia(media);
     return;
@@ -248,11 +266,11 @@ void TSmil::emitStartShowMedia(TMedia *media)
 
 void TSmil::emitStopShowMedia(TMedia *media)
 {
-    qDebug() << media->getID() << "try stopShowMedia";
+    qDebug() << media->getID() <<QTime::currentTime().toString() << "try stopShowMedia";
     if (ar_played_media.find(media) != ar_played_media.end())
     {
         ar_played_media.remove(media);
-        qDebug() << media->getID() << "stopShowMedia";
+        qDebug() << media->getID() <<QTime::currentTime().toString() << "stopShowMedia";
         emit stopShowMedia(media);
     }
     return;

@@ -35,16 +35,23 @@ bool TSeq::parse(QDomElement element)
         if (active_element.tagName() == "metadata")
             doMetaData();
         setPlaylist();
-        iterator       = ar_playlist.begin();
+        iterator       = dom_list.begin();
         active_element = *iterator;
     }
+    return true;
+}
+
+bool TSeq::isChildPlayable(TBase *element)
+{
+    qDebug() << element->getID() <<QTime::currentTime().toString() << "is ChildPlayable in seq";
+    childStarted(element);
     return true;
 }
 
 
 void TSeq::setDurationTimerBeforePlay()
 {
-    if (hasDurAttribute() || end_timer->isActive() || ar_playlist.size() > 0)
+    if (hasDurAttribute() || end_timer->isActive() || dom_list.size() > 0)
     {
         resetInternalRepeatCount();
         if (!is_resumed)
@@ -57,7 +64,7 @@ void TSeq::setDurationTimerBeforePlay()
 
 void TSeq::play()
 {
-    iterator       = ar_playlist.begin();
+    iterator       = dom_list.begin();
     active_element = *iterator;
     reactByTag();
     status = _playing;
@@ -108,7 +115,7 @@ void TSeq::next(TBase *ended_element)
 {
     childEnded(ended_element);
     iterator++; // inc iterator first only when inc result smaller than  .end()
-    if (iterator < ar_playlist.end())  // cause .end() pointing to the imaginary item after the last item in the vector
+    if (iterator < dom_list.end())  // cause .end() pointing to the imaginary item after the last item in the vector
     {
         active_element = *iterator;
         reactByTag();
@@ -139,7 +146,7 @@ void TSeq::setPlaylist()
     {
         element = childs.item(i).toElement();
         if (element.tagName() != "metadata" && element.tagName() != "") // e.g. comments
-            ar_playlist.append(element);
+            dom_list.append(element);
     }
     if (pickingAlgorithm == "shuffle" && pickingBehavior == "pickN" && pickNumber > 0)
     {
@@ -153,14 +160,14 @@ void TSeq::setPlaylist()
 void TSeq::randomizePlaylist()
 {
     // Knuth shuffle
-    int length = ar_playlist.length();
+    int length = dom_list.length();
     for (int i = length - 1; i > 0; --i)
     {
         int i2 = qrand() % (i + 1);
-        std::swap(ar_playlist[i], ar_playlist[i2]);
+        std::swap(dom_list[i], dom_list[i2]);
     }
     // Let only pickNumber items in List
     for (int i = 0; i < (length-pickNumber); i++)
-        ar_playlist.removeLast();
+        dom_list.removeLast();
     return;
 }

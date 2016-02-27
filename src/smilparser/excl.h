@@ -58,7 +58,7 @@ private:
 
 signals:
     void resumeElement(TBase *element);
-    void stopElement(TBase *element);
+    void stopElement(TBase *element, bool kill_timer);
     void pauseElement(TBase *element);
 };
 
