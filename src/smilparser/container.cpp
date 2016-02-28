@@ -18,12 +18,12 @@
 
 #include "container.h"
 
-TContainer::TContainer(TBase *parent)
+TContainer::TContainer(TBaseTiming *parent)
 {
     Q_UNUSED(parent);
 }
 
-void TContainer::insertPlaylistObject(QString id, TBase *obj_element)
+void TContainer::insertPlaylistObject(QString id, TBaseTiming *obj_element)
 {
     ar_elements.insert(id, obj_element);
     return;
@@ -34,46 +34,47 @@ QString TContainer::getIdOfActiveElement()
     return parseID(active_element);
 }
 
-QHash<QString, TBase *> TContainer::getPlaylistObjects()
+QHash<QString, TBaseTiming *> TContainer::getPlaylistObjects()
 {
     return ar_elements;
 }
 
-TBase *TContainer::getChildElementFromList()
+TBaseTiming *TContainer::getChildElementFromList()
 {
-    TBase *ret = NULL;
+    TBaseTiming *ret = NULL;
     if (childs_iterator != activatable_childs.end())
-    {
-        childs_iterator = activatable_childs.begin();
-    }
-    else
     {
         ret = *childs_iterator;
         childs_iterator++;
     }
+    else
+    {
+        childs_iterator = activatable_childs.begin();
+        ret             = *childs_iterator;
+    }
     return ret;
 }
 
-void TContainer::setPlayedElement(TBase *element)
+void TContainer::setPlayedElement(TBaseTiming *element)
 {
     played_element = element;
     return;
 }
 
-TBase *TContainer::getPlayedElement()
+TBaseTiming *TContainer::getPlayedElement()
 {
     return played_element;
 }
 
 
-void TContainer::childStarted(TBase *element)
+void TContainer::childStarted(TBaseTiming *element)
 {
     activatable_childs.insert(element);
     childs_iterator = activatable_childs.begin();
     return;
 }
 
-void TContainer::childEnded(TBase *element)
+void TContainer::childEnded(TBaseTiming *element)
 {
     if (activatable_childs.find(element) != activatable_childs.end())
         activatable_childs.remove(element);

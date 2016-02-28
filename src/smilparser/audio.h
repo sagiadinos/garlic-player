@@ -29,7 +29,7 @@ struct showAudio
     QString region;
 };
 
-class TAudio :public TMedia
+class TAudio : public TMedia
 {
     Q_OBJECT
 public:
@@ -41,7 +41,7 @@ public:
     void               stop();
     void               play();
 protected:
-    TBase             *parent_object;
+    TBaseTiming             *parent_object;
     QtAV::VideoOutput *output;
     QtAV::AVPlayer    *media_player;
     showAudio          show_audio;

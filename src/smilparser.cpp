@@ -44,7 +44,7 @@ void TSmil::beginSmilParsing()
 {
     MyBody = new TBody();
     connect(MyBody, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
-    connect(MyBody, SIGNAL(finishedPlaylist(TContainer *, TBase *)), this, SLOT(finishElement(TContainer *, TBase *)));
+    connect(MyBody, SIGNAL(finishedPlaylist(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     if (MyBody->parse(MyFile.getBody()))
         MyBody->prepareTimerBeforPlaying();
     return;
@@ -57,10 +57,10 @@ void TSmil::beginSmilParsing()
  */
 void TSmil::foundElement(TContainer *parent, QDomElement dom_element)
 {
-    TBase                             *MyBase;
+    TBaseTiming                             *MyBase;
     QString                            tag_name             = dom_element.tagName();
     bool                               playable             = false;
-    QHash<QString, TBase *>::iterator  ar_elements_iterator = ar_elements.find(TBase::parseID(dom_element));
+    QHash<QString, TBaseTiming *>::iterator  ar_elements_iterator = ar_elements.find(TBase::parseID(dom_element));
     if (ar_elements_iterator == ar_elements.end())
     {
         MyBase = TFactory::createBase(tag_name, parent);
@@ -98,7 +98,7 @@ void TSmil::foundElement(TContainer *parent, QDomElement dom_element)
  * @param parent
  * @param element
  */
-void TSmil::startElement(TContainer *parent, TBase *element)
+void TSmil::startElement(TContainer *parent, TBaseTiming *element)
 {
     bool         playable      = true;
 
@@ -126,13 +126,14 @@ void TSmil::startElement(TContainer *parent, TBase *element)
  * @param parent
  * @param element
  */
-void TSmil::finishElement(TContainer *parent, TBase *element)
+void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
 {
     //   finishElement should kill the timer (TSmil::stopElement(TBase *element)) of his child elements not his own
     //   except the case that the element itself is child in an excl container and stopped by a peer
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
     {
-        stopElement(element, false);
+        qDebug()<< element->getID() << QTime::currentTime().toString() << "Not kill Timer";
+        stopElement(element);
         parent->next(element);
     }
     else
@@ -145,29 +146,64 @@ void TSmil::finishElement(TContainer *parent, TBase *element)
 
 
 /**
+ * @brief TSmil::handlePause prepares elements for pause, pause them and recurses their childs
+ * @param parent
+ * @param element
+ */
+void TSmil::pausePlaylingElement(TBaseTiming *element)
+{
+    qDebug() << element->getID() << QTime::currentTime().toString() << "pause Element";
+    element->prepareTimerBeforePausing();
+    if (element->hasPlayingChilds())
+    {
+        TContainer  *MyContainer      = qobject_cast<TContainer *> (element);
+        pausePlaylingElement(MyContainer->getChildElementFromList());
+    }
+    element->pause();
+    if (element->getBaseType() == "media")
+        emitStopShowMedia(qobject_cast<TMedia *> (element));
+    return;
+}
+
+void TSmil::resumeQueuedElement(TBaseTiming *element)
+{
+    qDebug() << element->getID() << QTime::currentTime().toString() << "resume Element";
+    element->prepareTimerBeforeResume();
+    if (element->getStatus() == element->_paused)
+    {
+        if (element->hasPlayingChilds())
+            resumeQueuedElement(element->getChildElementFromList());
+        element->resume();
+        if (element->getBaseType() == "media")
+            emitStartShowMedia(qobject_cast<TMedia *> (element));
+    }
+    return;
+}
+
+/**
  * @brief TSmil::handleStop checks when an element stopped or finished and recurses to stop all active child elements e.g. timers, too.
  *        If the element is a media a signal will emitted to an output interface which can stop the show the media e.g. player-widget
  * @param parent
  * @param element
  */
-void TSmil::stopElement(TBase *element, bool kill_timer)
+void TSmil::stopPlaylingElement(TBaseTiming *element)
 {
-    if (kill_timer)
-    {
-        qDebug() << element->getID() << QTime::currentTime().toString() << "kill Timer";
-        element->prepareTimerBeforeStop();
-    }
-    else
-    {
-        qDebug()<< element->getID() << QTime::currentTime().toString() << "Not kill Timer";
-    }
+    qDebug()<< element->getID() << QTime::currentTime().toString() << "Kill Timer";
+    killTimer(element);
+    stopElement(element);
+    return;
+}
 
+// ============================== private methods =======================================
+
+void TSmil::stopElement(TBaseTiming *element)
+{
     if (element->getStatus() != element->_stopped)
     {
         if (element->hasPlayingChilds())
         {
             qDebug()<< element->getID() << QTime::currentTime().toString() << "has Childs";
-            stopElement(element->getChildElementFromList(), true);
+            stopPlaylingElement(element->getChildElementFromList()); // recurse with stopPlaylingElement to kill timer of childs
         }
         element->stop();
         if (element->getBaseType() == "media")
@@ -176,46 +212,15 @@ void TSmil::stopElement(TBase *element, bool kill_timer)
     return;
 }
 
-/**
- * @brief TSmil::handlePause prepares elements for pause, pause them and recurses their childs
- * @param parent
- * @param element
- */
-void TSmil::pauseElement(TBase *element)
+void TSmil::killTimer(TBaseTiming *element)
 {
-    qDebug() << element->getID() << QTime::currentTime().toString() << "pause Element";
-    element->prepareTimerBeforePausing();
-    if (element->hasPlayingChilds())
-    {
-        TContainer *MyContainer      = qobject_cast<TContainer *> (element);
-        TBase      *element_to_pause = MyContainer->getChildElementFromList();
-        if (element_to_pause != NULL)
-            pauseElement(element_to_pause);
-    }
-    element->pause();
-    if (element->getBaseType() == "media")
-        emitStopShowMedia(qobject_cast<TMedia *> (element));
-    return;
-}
-
-void TSmil::resumeElement(TBase *element)
-{
-    element->prepareTimerBeforeResume();
-    if (element->getStatus() == element->_paused)
-    {
-        if (element->hasPlayingChilds())
-            resumeElement(element->getChildElementFromList());
-        element->resume();
-        if (element->getBaseType() == "media")
-            emitStartShowMedia(qobject_cast<TMedia *> (element));
-    }
+    qDebug() << element->getID() << QTime::currentTime().toString() << "kill Timer";
+    element->prepareTimerBeforeStop();
     return;
 }
 
 
-// ============================== private methods =======================================
-
-QHash<QString, TBase *>::iterator TSmil::insertIntoObjectContainer(TBase *parent, TBase *child)
+QHash<QString, TBaseTiming *>::iterator TSmil::insertIntoObjectContainer(TBaseTiming *parent, TBaseTiming *child)
 {
     QString type = parent->objectName();
     QString id   = child->getID();
@@ -227,19 +232,19 @@ QHash<QString, TBase *>::iterator TSmil::insertIntoObjectContainer(TBase *parent
     return ar_elements.insert(id, child);;
 }
 
-void TSmil::connectPlaylistSlots(TBase *element)
+void TSmil::connectPlaylistSlots(TBaseTiming *element)
 {
     TContainer *MyPlaylist = qobject_cast<TContainer *> (element);
     if (MyPlaylist->isPlayable())
     {
         connect(MyPlaylist, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
-        connect(MyPlaylist, SIGNAL(startedPlaylist(TContainer *, TBase *)), this, SLOT(startElement(TContainer *, TBase *)));
-        connect(MyPlaylist, SIGNAL(finishedPlaylist(TContainer *, TBase *)), this, SLOT(finishElement(TContainer *, TBase *)));
+        connect(MyPlaylist, SIGNAL(startedPlaylist(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
+        connect(MyPlaylist, SIGNAL(finishedPlaylist(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
         if (element->objectName() == "TExcl")
         {
-            connect(MyPlaylist, SIGNAL(resumeElement(TBase *)), this, SLOT(resumeElement(TBase *)));
-            connect(MyPlaylist, SIGNAL(pauseElement(TBase *)), this, SLOT(pauseElement(TBase *)));
-            connect(MyPlaylist, SIGNAL(stopElement(TBase *, bool)), this, SLOT(stopElement(TBase *, bool)));
+            connect(MyPlaylist, SIGNAL(resumeElement(TBaseTiming *)), this, SLOT(resumeQueuedElement(TBaseTiming *)));
+            connect(MyPlaylist, SIGNAL(pauseElement(TBaseTiming *)), this, SLOT(pausePlaylingElement(TBaseTiming *)));
+            connect(MyPlaylist, SIGNAL(stopElement(TBaseTiming *)), this, SLOT(stopPlaylingElement(TBaseTiming *)));
         }
     }
     return;
@@ -250,8 +255,8 @@ void TSmil::connectMediaSlots(TMedia *MyMedia)
     if (MyMedia->isPlayable())
     {
         MyMedia->load(index_path);
-        connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBase *)), this, SLOT(startElement(TContainer *, TBase *)));
-        connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBase *)), this, SLOT(finishElement(TContainer *, TBase *)));
+        connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
+        connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     }
     return;
 }
@@ -266,7 +271,6 @@ void TSmil::emitStartShowMedia(TMedia *media)
 
 void TSmil::emitStopShowMedia(TMedia *media)
 {
-    qDebug() << media->getID() <<QTime::currentTime().toString() << "try stopShowMedia";
     if (ar_played_media.find(media) != ar_played_media.end())
     {
         ar_played_media.remove(media);

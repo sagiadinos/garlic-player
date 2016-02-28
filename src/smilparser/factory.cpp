@@ -17,12 +17,12 @@
 *************************************************************************************/
 #include "factory.h"
 
-TFactory::TFactory(TBase *parent)
+TFactory::TFactory(TBaseTiming *parent)
 {
     Q_UNUSED(parent);
 }
 
-TBase* TFactory::createBase(QString type, TContainer *parent)
+TBaseTiming* TFactory::createBase(QString type, TContainer *parent)
 {
     if (type == "img")
         return new TImage(parent);

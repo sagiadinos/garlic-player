@@ -31,8 +31,8 @@ class TFactory : public QObject
 {
     Q_OBJECT
 public:
-    TFactory(TBase *parent = 0);
-    static TBase    *createBase(QString type, TContainer *parent);
+    TFactory(TBaseTiming *parent = 0);
+    static TBaseTiming    *createBase(QString type, TContainer *parent);
 };
 
 #endif // TFACTORY_H

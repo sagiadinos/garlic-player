@@ -22,11 +22,11 @@
 #include <QFile>
 #include "smilparser/container.h"
 
-class TMedia : public TBase
+class TMedia : public TBaseTiming
 {
     Q_OBJECT
 public:
-    TMedia(TBase * parent = 0);
+    TMedia(TBaseTiming * parent = 0);
     void        setIndexPath(QString path);
     QString     getRegion();
     QString     getSrc();
@@ -40,7 +40,7 @@ public:
     void        resume(){play();}
     QString     getBaseType() {return "media";}
     bool        hasPlayingChilds(){return false;}
-    TBase      *getChildElementFromList(){return this;}
+    TBaseTiming      *getChildElementFromList(){return this;}
 public slots:
     void        emitfinished();
 protected:
@@ -51,8 +51,8 @@ protected:
     void        setBaseParameters();
     virtual void setAttributes() = 0;
 signals:
-    void        startedMedia(TContainer *parent , TBase *element);
-    void        finishedMedia(TContainer *parent , TBase *element);
+    void        startedMedia(TContainer *parent , TBaseTiming *element);
+    void        finishedMedia(TContainer *parent , TBaseTiming *element);
 
 };
 

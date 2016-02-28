@@ -24,87 +24,32 @@
 #include <QStringList>
 #include <QtXml>
 #include <QDebug>
-#include <QTimer>
-#include <configuration.h>
-#include "smilparser/timings/timing.h"
 
 /**
  * @brief The abstract TBase class should inherited for all smil elements in body section
  *        Here comes is the init of all common attributes:
- *        id/xml:id, begin, end, title, repeatCount and dur
- *
- *        Full support as in http://www.w3.org/TR/SMIL3/ described for:
- *        dur          Clock Value in ms, media indefinite
- *        repeatCount  indefinite, numeric value)
- *        fallback for id with is superseted by SMIL3.0 xml:id
- *
- *        actual no support/functionality beside of reading for:
- *        begin, end, id/xml:id and title
- *
- *        Signals
- *        started: should be emitted when elements starts play
- *        finshed: should be emitted when element ends
+ *        id/xml:id, title, class and xml:lang
  *
  */
 class TBase : public QObject
 {
     Q_OBJECT
 public:
-    const     int        _stopped  = 0;
-    const     int        _waiting  = 1;
-    const     int        _playing  = 2;
-    const     int        _paused   = 3;
-
-    explicit              TBase(QObject * parent = 0);
+            TBase(QObject *parent = 0);
     virtual bool          parse(QDomElement element) = 0;
-            bool          isPlayable();
-            bool          prepareTimerBeforPlaying();      // what to do when parent sends an order to begin executions
-            void          prepareTimerBeforePausing();
-            void          prepareTimerBeforeStop();      // what to do when parent sends an order to begin executions
-            void          prepareTimerBeforeResume();      // what to do when parent sends an order to begin executions
-            QDomElement   getRootElement(){return root_element;}
-            int           getStatus(){return status;}
             QString       getID(){return id;}
             QString       getTitle(){return title;}
-            bool          isRepeatable(){return repeatable;}
+            QString       getLang(){return lang;}
+            QString       getClass(){return a_class;}
+            QDomElement   getRootElement(){return root_element;}
     static  QString       parseID(QDomElement element);
-    virtual void          play()        = 0;
-    virtual void          pause()       = 0;
-    virtual void          stop()        = 0;
-    virtual void          resume()      = 0;
-    virtual QString       getBaseType() = 0;
-    virtual TBase        *getChildElementFromList() = 0;
-    virtual bool          hasPlayingChilds() = 0;
-public slots:
-    virtual void          emitfinished() = 0;
 protected:
-            QTimer       *begin_timer, *end_timer, *dur_timer;
-            qint64        pause_start;
-            int           begin_remaining, end_remaining, dur_remaining;
-            QDomElement   root_element;
-            QString       id                   = "";
-            TClockValue   dur, min, max;
-            TTiming       begin, end;
-            int           status         = 0;
+            QString       id             = "";
             QString       title          = "";
-            int           repeatCount    = 0;
-            bool          indefinite     = false;
-            bool          is_resumed     = false;
-            int           internal_count = 1;
-            void          resetInternalRepeatCount();
-            bool          hasDurAttribute();
+            QString       lang           = "";
+            QString       a_class        = ""; // cause class is reserved word. a_class means attribut_class
             void          setBaseAttributes();
-            bool          checkRepeatCountStatus();
-            void          initTimer();
-   virtual  void          setDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
-protected slots:
-            void          checkBeginRepeat();
-            void          finishedSimpleDuration();
-            void          finishedActiveDuration();
-private:
-            bool          repeatable;
-            bool          playable;
-            void          setRepeatCount(QString rC);
+            QDomElement   root_element;
 };
 
 #endif // TBASE_H

@@ -28,7 +28,7 @@ TPar::TPar(TContainer *parent)
 bool TPar::parse(QDomElement element)
 {
     root_element   = element;
-    setBaseAttributes();
+    setTimingAttributes();
     if (element.hasChildNodes())
     {
         setPlaylist();
@@ -51,7 +51,7 @@ void TPar::setDurationTimerBeforePlay()
     return;
 }
 
-bool TPar::isChildPlayable(TBase *element)
+bool TPar::isChildPlayable(TBaseTiming *element)
 {
     qDebug() << element->getID() <<QTime::currentTime().toString() << "is ChildPlayable in par";
     childStarted(element);
@@ -66,7 +66,7 @@ bool TPar::isChildPlayable(TBase *element)
  *        then the finished signal will emitted;
  * @return
  */
-void TPar::next(TBase *ended_element)
+void TPar::next(TBaseTiming *ended_element)
 {
     childEnded(ended_element);
     if (!hasPlayingChilds())
@@ -83,9 +83,9 @@ void TPar::next(TBase *ended_element)
     return;
 }
 
-TBase *TPar::getChildElementFromList()
+TBaseTiming *TPar::getChildElementFromList()
 {
-    QSet<TBase *>::iterator i = activatable_childs.begin();
+    QSet<TBaseTiming *>::iterator i = activatable_childs.begin();
     return *i;
 }
 

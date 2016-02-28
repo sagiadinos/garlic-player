@@ -35,7 +35,7 @@ bool TBody::parse(QDomElement element)
     bool ret = false;
     root_element   = element;
     active_element = element;
-    setBaseAttributes();
+    setTimingAttributes();
     id = "body";  // useful for debug
     if (element.hasChildNodes())
     {
@@ -56,7 +56,7 @@ void TBody::prepareTimerBeforPlaying()
    return;
 }
 
-bool TBody::isChildPlayable(TBase *element)
+bool TBody::isChildPlayable(TBaseTiming *element)
 {
     qDebug() << element->getID() <<QTime::currentTime().toString() << "is ChildPlayable in body";
     childStarted(element);
@@ -73,7 +73,7 @@ void TBody::setDurationTimerBeforePlay()
 }
 
 
-void TBody::next(TBase *ended_element)
+void TBody::next(TBaseTiming *ended_element)
 {
     Q_UNUSED(ended_element);
     iterator++; // inc iterator first only when inc result smaller than  .end()

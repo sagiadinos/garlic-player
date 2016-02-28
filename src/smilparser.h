@@ -47,23 +47,25 @@ protected:
     TFile                              MyFile;
     THead                              MyHead;
     TBody                             *MyBody;
-    QHash<QString, TBase *>            ar_elements;
+    QHash<QString, TBaseTiming *>            ar_elements;
     showImg                            ImgAttr;
 protected slots:
     void                               foundElement(TContainer *parent, QDomElement dom_element);
-    void                               startElement(TContainer *parent, TBase *element);
-    void                               finishElement(TContainer *parent, TBase *element);
+    void                               startElement(TContainer *parent, TBaseTiming *element);
+    void                               finishElement(TContainer *parent, TBaseTiming *element);
 
-    void                               resumeElement(TBase *element);
-    void                               pauseElement(TBase *element);
-    void                               stopElement(TBase *element, bool kill_timer);
+    void                               resumeQueuedElement(TBaseTiming *element);
+    void                               pausePlaylingElement(TBaseTiming *element);
+    void                               stopPlaylingElement(TBaseTiming *element);
 private:
-    QSet<TBase *>                      ar_played_media;
-    QHash<QString, TBase *>::iterator  insertIntoObjectContainer(TBase *parent, TBase *child);
+    QSet<TBaseTiming *>                ar_played_media;
+    QHash<QString, TBaseTiming *>::iterator  insertIntoObjectContainer(TBaseTiming *parent, TBaseTiming *child);
     void                               emitStartShowMedia(TMedia *media);
+    void                               stopElement(TBaseTiming *element);
+    void                               killTimer(TBaseTiming *element);
     void                               emitStopShowMedia(TMedia *media);
     void                               connectMediaSlots(TMedia *MyMedia);
-    void                               connectPlaylistSlots(TBase *element);
+    void                               connectPlaylistSlots(TBaseTiming *element);
 
 signals:
     void                               startShowMedia(TMedia *media);

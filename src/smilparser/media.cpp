@@ -18,7 +18,7 @@
 
 #include "media.h"
 
-TMedia::TMedia(TBase * parent)
+TMedia::TMedia(TBaseTiming * parent)
 {
     Q_UNUSED(parent);
 }
@@ -65,7 +65,7 @@ void TMedia::setBaseMediaAttributes()
         src = root_element.attribute("src");
     if (root_element.hasAttribute("exec"))
         exec = root_element.attribute("exec");
-    setBaseAttributes();
+    setTimingAttributes();
     return;
 }
 

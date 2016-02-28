@@ -30,12 +30,12 @@ public:
     bool      parse(QDomElement element);
     void      prepareTimerBeforPlaying();
     void      endPlay(){}
-    void      next(TBase *ended_element);
+    void      next(TBaseTiming *ended_element);
     void      resume(){}
     void      play(){}
     void      pause(){}
     void      stop(){}
-    bool      isChildPlayable(TBase *element);
+    bool      isChildPlayable(TBaseTiming *element);
 protected:
 public slots:
     void      setDurationTimerBeforePlay();

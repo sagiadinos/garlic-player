@@ -19,7 +19,7 @@
 #ifndef TPLAYLIST_H
 #define TPLAYLIST_H
 
-#include "smilparser/base.h"
+#include "smilparser/base_timing.h"
 
 /**
  * @brief The TBasePlaylist is an abstract class for Smil Playlists which is inherited by seq, par and excl.
@@ -27,41 +27,41 @@
  *        the actual DomElement, so that the caller can handle it
  *
  */
-class TContainer : public TBase
+class TContainer : public TBaseTiming
 {
     Q_OBJECT
 public:
-            TContainer(TBase * parent = 0);
-    virtual void                          next(TBase *ended_element) = 0;
-            void                          insertPlaylistObject(QString id, TBase *obj_element);
-            QHash<QString, TBase *>       getPlaylistObjects();
+            TContainer(TBaseTiming * parent = 0);
+    virtual void                          next(TBaseTiming *ended_element) = 0;
+            void                          insertPlaylistObject(QString id, TBaseTiming *obj_element);
+            QHash<QString, TBaseTiming *>       getPlaylistObjects();
             QString                       getIdOfActiveElement();
-    virtual bool                          isChildPlayable(TBase *element) = 0;
+    virtual bool                          isChildPlayable(TBaseTiming *element) = 0;
             bool                          hasPlayingChilds();
-            void                          childStarted(TBase *element);
-            void                          childEnded(TBase *element);
+            void                          childStarted(TBaseTiming *element);
+            void                          childEnded(TBaseTiming *element);
             QString                       getBaseType() {return "playlist";}
-            TBase                        *getChildElementFromList();
-            void                          setPlayedElement(TBase *element);
-            TBase                        *getPlayedElement();
+            TBaseTiming                        *getChildElementFromList();
+            void                          setPlayedElement(TBaseTiming *element);
+            TBaseTiming                        *getPlayedElement();
             void                          setChildActive(bool active);
 public slots:
             void                          emitfinished();
 protected:
             TContainer                   *parent_container;
-            QSet<TBase *>                 activatable_childs;
-            QSet<TBase *>::iterator       childs_iterator;
+            QSet<TBaseTiming *>           activatable_childs;
+            QSet<TBaseTiming *>::iterator childs_iterator;
             bool                          is_child_active    = false;
-            TBase                        *played_element;
+            TBaseTiming                  *played_element;
             QList<QDomElement>            dom_list;
             QList<QDomElement>::iterator  iterator;
-            QHash<QString, TBase *>       ar_elements;
+            QHash<QString, TBaseTiming *> ar_elements;
             QDomElement                   active_element;
             void                          reactByTag();
 signals:
             void                          foundElement(TContainer *, QDomElement );
-            void                          startedPlaylist(TContainer * , TBase *);
-            void                          finishedPlaylist(TContainer * , TBase *);
+            void                          startedPlaylist(TContainer * , TBaseTiming *);
+            void                          finishedPlaylist(TContainer * , TBaseTiming *);
 
 };
 

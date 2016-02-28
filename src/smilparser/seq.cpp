@@ -28,7 +28,7 @@ TSeq::TSeq(TContainer * parent)
 bool TSeq::parse(QDomElement element)
 {
     root_element   = element;
-    setBaseAttributes();
+    setTimingAttributes();
     if (element.hasChildNodes())
     {
         active_element = element.firstChildElement();
@@ -41,7 +41,7 @@ bool TSeq::parse(QDomElement element)
     return true;
 }
 
-bool TSeq::isChildPlayable(TBase *element)
+bool TSeq::isChildPlayable(TBaseTiming *element)
 {
     qDebug() << element->getID() <<QTime::currentTime().toString() << "is ChildPlayable in seq";
     childStarted(element);
@@ -111,7 +111,7 @@ void TSeq::doMetaData()
     return;
 }
 
-void TSeq::next(TBase *ended_element)
+void TSeq::next(TBaseTiming *ended_element)
 {
     childEnded(ended_element);
     iterator++; // inc iterator first only when inc result smaller than  .end()

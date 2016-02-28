@@ -3,21 +3,21 @@
 TPriorityClass::TPriorityClass(QObject *parent)
 {
     Q_UNUSED(parent);
-    setObjectName("TExcl"); // priorityClass elements may only appear as immediate children of excl elements
+    setObjectName("TPriorityClass");
 }
 
 bool TPriorityClass::parse(QDomElement dom_element)
 {
     root_element   = dom_element;
     setAttributes();
-    setPlaylist();
+    setChildList();
     return true;
 }
 
 
 bool TPriorityClass::findElement(QDomElement dom_element)
 {
-    for (iterator =  ar_playlist.begin(); iterator < ar_playlist.end(); iterator++)
+    for (iterator =  ar_dom_childs.begin(); iterator < ar_dom_childs.end(); iterator++)
     {
         if (dom_element == *iterator)
             return true;
@@ -25,7 +25,7 @@ bool TPriorityClass::findElement(QDomElement dom_element)
     return false;
 }
 
-void TPriorityClass::insertQueue(TBase *element)
+void TPriorityClass::insertQueue(TBaseTiming *element)
 {
     if (peers == "defer" || lower == "defer")
         return ar_defer.push(element);
@@ -43,7 +43,7 @@ int TPriorityClass::countQueue()
     return 0;
 }
 
-TBase *TPriorityClass::getFromQueue()
+TBaseTiming *TPriorityClass::getFromQueue()
 {
     if (peers == "defer" || lower == "defer")
     {
@@ -59,14 +59,15 @@ TBase *TPriorityClass::getFromQueue()
 }
 
 
-QList<QDomElement> TPriorityClass::getChilds()
+QList<QDomElement> TPriorityClass::getChildList()
 {
-    return ar_playlist;
+    return ar_dom_childs;
 }
 
 
 void TPriorityClass::setAttributes()
 {
+    setBaseAttributes();
     if (root_element.hasAttribute("peers"))
         peers = root_element.attribute("peers");
     if (root_element.hasAttribute("higher"))
@@ -76,7 +77,7 @@ void TPriorityClass::setAttributes()
     return;
 }
 
-void TPriorityClass::setPlaylist()
+void TPriorityClass::setChildList()
 {
     QDomNodeList childs = root_element.childNodes();
     count_childs        = childs.length();
@@ -85,7 +86,7 @@ void TPriorityClass::setPlaylist()
     {
         element = childs.item(i).toElement();
         if (element.tagName() != "priorityClass" && element.tagName() != "")
-            ar_playlist.append(element);
+            ar_dom_childs.append(element);
     }
     return;
 }

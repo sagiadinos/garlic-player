@@ -31,13 +31,13 @@ class TSeq : public TContainer
 public:
     TSeq(TContainer *parent = 0);
     bool     parse(QDomElement element);
-    void     next(TBase *ended_element);
+    void     next(TBaseTiming *ended_element);
     bool     previous();
     void     pause();
     void     stop();
     void     play();
     void     resume();
-    bool     isChildPlayable(TBase *element);
+    bool     isChildPlayable(TBaseTiming *element);
 public slots:
     void     setDurationTimerBeforePlay();
 private:
