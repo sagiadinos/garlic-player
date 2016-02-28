@@ -11,7 +11,7 @@ Secondary: Android, OSX and iOS
 
 Developing with Qt 5.5 and QtAV 1.8.0 under Kubuntu 14.04
 
-At the moment there is an early alpha version which is able to play local SMIL-Files with actual supported features via command-line.
+At the moment there is an early alpha which is able to play local SMIL-Files with actual supported features via command-line.
 
 *garlic.sh [options] SMIL_INDEX*
 ```sh
@@ -51,6 +51,9 @@ Only sources! First binaries will deployed, when a downloader is implemented.
 
 ###Attributes for media and time container:
 - **xml:id** with Fallback for SMIL 2.0 id
+- **title** stub
+- **class** stub
+- **xml:lang** stub
 - **dur** with values indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
 - **begin** with Clock values (like dur) and wallcock with periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W.
 - **end** has same features as begin
