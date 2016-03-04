@@ -43,10 +43,10 @@ THead TSmil::getHeader()
 void TSmil::beginSmilParsing()
 {
     MyBody = new TBody();
-    connect(MyBody, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
-    connect(MyBody, SIGNAL(finishedPlaylist(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
+    connect(MyBody, SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));
+    connect(MyBody, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     if (MyBody->parse(MyFile.getBody()))
-        MyBody->prepareTimerBeforPlaying();
+        MyBody->prepareTimerBeforePlaying();
     return;
 }
 
@@ -55,15 +55,14 @@ void TSmil::beginSmilParsing()
  * @param parent
  * @param found_tag
  */
-void TSmil::foundElement(TContainer *parent, QDomElement dom_element)
+void TSmil::foundElement(TContainer *parent, QString type, QDomElement dom_element)
 {
-    TBaseTiming                             *MyBase;
-    QString                            tag_name             = dom_element.tagName();
-    bool                               playable             = false;
+    TBaseTiming                              *MyBase;
+    bool                                     playable             = false;
     QHash<QString, TBaseTiming *>::iterator  ar_elements_iterator = ar_elements.find(TBase::parseID(dom_element));
     if (ar_elements_iterator == ar_elements.end())
     {
-        MyBase = TFactory::createBase(tag_name, parent);
+        MyBase = TFactory::createBase(type, parent);
         MyBase->parse(dom_element);
         if (MyBase != NULL)
         {
@@ -71,8 +70,8 @@ void TSmil::foundElement(TContainer *parent, QDomElement dom_element)
             QString base_type    = MyBase->getBaseType();
             if (base_type == "media")
                 connectMediaSlots(qobject_cast<TMedia *> (MyBase));
-            else if (base_type == "playlist")
-                connectPlaylistSlots(MyBase);
+            else if (base_type == "container")
+                connectContainerSlots(MyBase);
         }
     }
     else
@@ -80,7 +79,7 @@ void TSmil::foundElement(TContainer *parent, QDomElement dom_element)
 
     playable    = MyBase->isPlayable();
     if (playable)
-        MyBase->prepareTimerBeforPlaying();
+        MyBase->prepareTimerBeforePlaying();
 
     QString object_name = parent->objectName();
     if (object_name == "TExcl" && playable)  // increment active child to determine end of a excl
@@ -102,7 +101,7 @@ void TSmil::startElement(TContainer *parent, TBaseTiming *element)
 {
     bool         playable      = true;
 
-    if (parent->getBaseType() == "playlist")
+    if (parent->getBaseType() == "container")
     {
         TContainer *MyContainer = qobject_cast<TContainer *> (parent);
         playable                = MyContainer->isChildPlayable(element);
@@ -120,7 +119,7 @@ void TSmil::startElement(TContainer *parent, TBaseTiming *element)
 }
 
 /**
- * @brief TSmil::finishedElement slot get called when emit finishedMedia finishedPlaylist active duration (finish playing)
+ * @brief TSmil::finishedElement slot get called when emit finishedMedia finishedContainer active duration (finish playing)
  *        finishElement should kill the timer (TSmil::stopElement(TBase *element)) of his child elements not his own
  *        except in the case is in an excl container and stpped by a peer
  * @param parent
@@ -224,22 +223,22 @@ QHash<QString, TBaseTiming *>::iterator TSmil::insertIntoObjectContainer(TBaseTi
 {
     QString type = parent->objectName();
     QString id   = child->getID();
-    if (parent->getBaseType() == "playlist")
+    if (parent->getBaseType() == "container")
     {
         TContainer *MyPlaylist  = qobject_cast<TContainer *> (parent);
-        MyPlaylist->insertPlaylistObject(id, child);
+        MyPlaylist->insertContainerObject(id, child);
     }
     return ar_elements.insert(id, child);;
 }
 
-void TSmil::connectPlaylistSlots(TBaseTiming *element)
+void TSmil::connectContainerSlots(TBaseTiming *element)
 {
     TContainer *MyPlaylist = qobject_cast<TContainer *> (element);
     if (MyPlaylist->isPlayable())
     {
-        connect(MyPlaylist, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
-        connect(MyPlaylist, SIGNAL(startedPlaylist(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
-        connect(MyPlaylist, SIGNAL(finishedPlaylist(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
+        connect(MyPlaylist, SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));
+        connect(MyPlaylist, SIGNAL(startedContainer(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
+        connect(MyPlaylist, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
         if (element->objectName() == "TExcl")
         {
             connect(MyPlaylist, SIGNAL(resumeElement(TBaseTiming *)), this, SLOT(resumeQueuedElement(TBaseTiming *)));

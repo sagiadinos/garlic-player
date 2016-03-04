@@ -25,7 +25,7 @@
 #include <QSet>
 
 /**
- * @brief   The TSmil class is the interface between playlists,  medias and
+ * @brief   The TSmil class is the interface between container, media and
  *          the communication with the graphical output in mainwindow
  *          It is emits a signal which informs about region and media
  *          has to be played.
@@ -47,10 +47,10 @@ protected:
     TFile                              MyFile;
     THead                              MyHead;
     TBody                             *MyBody;
-    QHash<QString, TBaseTiming *>            ar_elements;
+    QHash<QString, TBaseTiming *>      ar_elements;
     showImg                            ImgAttr;
 protected slots:
-    void                               foundElement(TContainer *parent, QDomElement dom_element);
+    void                               foundElement(TContainer *parent, QString type, QDomElement dom_element);
     void                               startElement(TContainer *parent, TBaseTiming *element);
     void                               finishElement(TContainer *parent, TBaseTiming *element);
 
@@ -65,7 +65,7 @@ private:
     void                               killTimer(TBaseTiming *element);
     void                               emitStopShowMedia(TMedia *media);
     void                               connectMediaSlots(TMedia *MyMedia);
-    void                               connectPlaylistSlots(TBaseTiming *element);
+    void                               connectContainerSlots(TBaseTiming *element);
 
 signals:
     void                               startShowMedia(TMedia *media);

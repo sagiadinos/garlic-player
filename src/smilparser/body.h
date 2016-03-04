@@ -28,7 +28,7 @@ public:
     TBody(TContainer * parent = 0);
     ~TBody();
     bool      parse(QDomElement element);
-    void      prepareTimerBeforPlaying();
+    void      prepareTimerBeforePlaying();
     void      endPlay(){}
     void      next(TBaseTiming *ended_element);
     void      resume(){}

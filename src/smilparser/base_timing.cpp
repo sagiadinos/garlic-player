@@ -31,7 +31,7 @@ bool TBaseTiming::isPlayable()
     return playable;
 }
 
-bool TBaseTiming::prepareTimerBeforPlaying()
+bool TBaseTiming::prepareTimerBeforePlaying()
 {
     if (!playable)
         return false;

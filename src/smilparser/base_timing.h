@@ -45,7 +45,7 @@ public:
 
     explicit              TBaseTiming(QObject * parent = 0);
             bool          isPlayable();
-            bool          prepareTimerBeforPlaying();      // what to do when parent sends an order to begin executions
+            bool          prepareTimerBeforePlaying();      // what to do when parent sends an order to begin executions
             void          prepareTimerBeforePausing();
             void          prepareTimerBeforeStop();      // what to do when parent sends an order to begin executions
             void          prepareTimerBeforeResume();      // what to do when parent sends an order to begin executions

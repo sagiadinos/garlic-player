@@ -50,7 +50,7 @@ bool TBody::parse(QDomElement element)
     return ret;
 }
 
-void TBody::prepareTimerBeforPlaying()
+void TBody::prepareTimerBeforePlaying()
 {
    setDurationTimerBeforePlay();
    return;
@@ -68,7 +68,7 @@ bool TBody::isChildPlayable(TBaseTiming *element)
 void TBody::setDurationTimerBeforePlay()
 {
     reactByTag();
-    emit startedPlaylist(parent_container, this);
+    emit startedContainer(parent_container, this);
     return;
 }
 

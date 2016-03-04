@@ -43,7 +43,7 @@ void TPar::setDurationTimerBeforePlay()
         if (!is_resumed)
         {
             resetInternalRepeatCount();
-            emit startedPlaylist(parent_container, this);
+            emit startedContainer(parent_container, this);
         }
     }
     else // when end or duration is not specified or no child elements stop imediately

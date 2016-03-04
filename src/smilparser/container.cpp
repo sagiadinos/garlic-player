@@ -23,7 +23,7 @@ TContainer::TContainer(TBaseTiming *parent)
     Q_UNUSED(parent);
 }
 
-void TContainer::insertPlaylistObject(QString id, TBaseTiming *obj_element)
+void TContainer::insertContainerObject(QString id, TBaseTiming *obj_element)
 {
     ar_elements.insert(id, obj_element);
     return;
@@ -34,7 +34,7 @@ QString TContainer::getIdOfActiveElement()
     return parseID(active_element);
 }
 
-QHash<QString, TBaseTiming *> TContainer::getPlaylistObjects()
+QHash<QString, TBaseTiming *> TContainer::getContainerObjects()
 {
     return ar_elements;
 }
@@ -94,29 +94,35 @@ bool TContainer::hasPlayingChilds()
     return false;
 }
 
-void TContainer::reactByTag()
+QString TContainer::reactByTag()
 {
     QString tag_name = active_element.tagName();
+    QString type     = "";
     if(tag_name == "img" || tag_name == "video" || tag_name == "audio" || tag_name == "text" || tag_name == "prefetch" ||
             tag_name == "seq"|| tag_name == "par" || tag_name == "excl")
     {
-        emit foundElement(this, active_element);
+        type = tag_name;
     }
     else if(tag_name == "ref" && active_element.hasAttribute("type"))
     {
-        if(active_element.attribute("type").contains("image") || active_element.attribute("type").contains("video") ||
-                active_element.attribute("type").contains("audio") || active_element.attribute("type").contains("text"))
-        {
-            emit foundElement(this, active_element);
-        }
+        if(active_element.attribute("type").contains("image"))
+           type = "img";
+        else if (active_element.attribute("type").contains("video"))
+           type = "video";
+        else if (active_element.attribute("type").contains("audio"))
+           type = "audio";
+        else if (active_element.attribute("type").contains("text"))
+           type = "text";
     }
-    return;
+    if (type != "")
+        emit foundElement(this, type, active_element);
+    return type;
 }
 
 void TContainer::emitfinished() // called from finishedActiveDuration() TBase
 {
     qDebug() << getID() <<QTime::currentTime().toString() << "finished Playlist";
-    emit finishedPlaylist(parent_container, this);
+    emit finishedContainer(parent_container, this);
     return;
 }
 
