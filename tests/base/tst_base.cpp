@@ -3,11 +3,11 @@
 
 #include "smilparser/base.h"
 
-class testBase : public TBase
+class InhertitedTBase : public TBase
 {
     Q_OBJECT
 public:
-    testBase(TBase * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
+    InhertitedTBase(TBase * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
     QString   getType(){return "test base";}
     bool      parse(QDomElement element){Q_UNUSED(element);return true;} // virtual
     void      test_setBaseAttributes(){setBaseAttributes();}
@@ -32,7 +32,7 @@ private Q_SLOTS:
 void TestTBase::test_setBaseAttributes()
 {
     // test with default
-    testBase MyPlaylist;
+    InhertitedTBase MyPlaylist;
     QCOMPARE(MyPlaylist.getID(), QString(""));
     QCOMPARE(MyPlaylist.getTitle(), QString(""));
     QCOMPARE(MyPlaylist.getClass(), QString(""));

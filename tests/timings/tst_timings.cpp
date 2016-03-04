@@ -6,21 +6,21 @@
 /**
  * @brief To save a test file this will test TTiming and TClockvalue which is inherited from TTiming
  */
-class TestTTiming : public TTiming
+class InhertitedTTiming : public TTiming
 {
     Q_OBJECT
 public:
-    TestTTiming(QObject * parent = 0){Q_UNUSED(parent);}
+    InhertitedTTiming(QObject * parent = 0){Q_UNUSED(parent);}
     qint64    test_calculateDuration(QString dur){return calculateMilliseconds(dur);}
     WallClock test_parseWallclock(QString iso_date){return parseWallclock(iso_date);}
 };
 
 
-class TimingsTest : public QObject
+class TestTTiming : public QObject
 {
     Q_OBJECT
 public:
-    TimingsTest(){}
+    TestTTiming(){}
 
 private Q_SLOTS:
     void test_calculateDuration();
@@ -29,9 +29,9 @@ private Q_SLOTS:
     void test_getNextTrigger();
 };
 
-void TimingsTest::test_calculateDuration()
+void TestTTiming::test_calculateDuration()
 {
-    TestTTiming MyTiming;
+    InhertitedTTiming MyTiming;
     // Full clock
     QCOMPARE(MyTiming.test_calculateDuration("02:31:05.5"), qint64(9065500));
     QCOMPARE(MyTiming.test_calculateDuration("5.02s"), qint64(5020));
@@ -45,9 +45,9 @@ void TimingsTest::test_calculateDuration()
     return;
 }
 
-void TimingsTest::test_parseWallclock()
+void TestTTiming::test_parseWallclock()
 {
-    TestTTiming *MyTiming = new TestTTiming();
+    InhertitedTTiming *MyTiming = new InhertitedTTiming();
     WallClock wall_clock = MyTiming->test_parseWallclock("R/2001-04-05T12:13:01/P1D");
     QCOMPARE(wall_clock.active, true);
     QCOMPARE(wall_clock.repeats, int(-1));
@@ -60,7 +60,7 @@ void TimingsTest::test_parseWallclock()
     QCOMPARE(wall_clock.period.seconds, qint64(0));
 
     delete MyTiming;
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     WallClock wall_clock1 = MyTiming->test_parseWallclock("R31/2001-04-05/P1Y2W1DT6H2S");
     QCOMPARE(wall_clock1.active, true);
     QCOMPARE(wall_clock1.datetime, QDateTime::fromString("2001-04-05 00:00:00", "yyyy-MM-dd HH:mm:ss"));
@@ -73,7 +73,7 @@ void TimingsTest::test_parseWallclock()
     QCOMPARE(wall_clock1.period.seconds, qint64(2));
 
     delete MyTiming;
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     WallClock wall_clock2 = MyTiming->test_parseWallclock("/2001-04-05T12:13:01/guas");
     QCOMPARE(wall_clock2.active, true);
     QCOMPARE(wall_clock2.repeats, int(0));
@@ -85,7 +85,7 @@ void TimingsTest::test_parseWallclock()
     QCOMPARE(wall_clock2.period.seconds, qint64(0));
 
     delete MyTiming;
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     WallClock wall_clock3 = MyTiming->test_parseWallclock("RZZ/2001-04-05T12:13:01/");
     QCOMPARE(wall_clock3.active, true);
     QCOMPARE(wall_clock3.repeats, int(0));
@@ -98,7 +98,7 @@ void TimingsTest::test_parseWallclock()
     return;
 }
 
-void TimingsTest::test_checkStatus()
+void TestTTiming::test_checkStatus()
 {
     TClockValue *MyClock = new TClockValue;
     MyClock->parse("indefinite");
@@ -125,45 +125,45 @@ void TimingsTest::test_checkStatus()
     QCOMPARE(MyClock->getStatus(), QString("ms"));
     delete MyClock;
 
-    TestTTiming *MyTiming = new TestTTiming();
+    InhertitedTTiming *MyTiming = new InhertitedTTiming();
     MyTiming->parse("indefinite");
     QCOMPARE(MyTiming->getStatus(), QString("indefinite"));
     delete MyTiming;
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     MyTiming->parse("media"); // media shouild not be returned in TTiming cause there coudl only be begin or end attribute
     QCOMPARE(MyTiming->getStatus(), QString("ms"));
 
     delete MyTiming;
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     MyTiming->parse("tamtararara tam tam");
     QCOMPARE(MyTiming->getStatus(), QString("ms"));
 
     delete MyTiming;
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     MyTiming->parse("1.2min");
     QCOMPARE(MyTiming->getStatus(), QString("ms"));
 
     delete MyTiming;
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     MyTiming->parse("-10");
     QCOMPARE(MyTiming->getStatus(), QString("ms"));
 
     delete MyTiming;
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     MyTiming->parse("wallclock(zeneoidd)");
     QCOMPARE(MyTiming->getStatus(), QString("wallclock"));
 
     delete MyTiming;
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     MyTiming->parse("0;15");  // no support for value-list @moment
     QCOMPARE(MyTiming->getStatus(), QString("ignore"));
 
 
 }
 
-void TimingsTest::test_getNextTrigger()
+void TestTTiming::test_getNextTrigger()
 {
-    TestTTiming *MyTiming = new TestTTiming();
+    InhertitedTTiming *MyTiming = new InhertitedTTiming();
     MyTiming->parse("wallclock(R5/2016-01-13T01:01:01/P1D)");
     QCOMPARE(MyTiming->getNextTrigger(QDateTime::fromString("2016-01-13 00:00:00", "yyyy-MM-dd HH:mm:ss")), qint64(3661000));
     QCOMPARE(MyTiming->getNextTrigger(QDateTime::fromString("2016-01-14 00:00:02", "yyyy-MM-dd HH:mm:ss")), qint64(3659000));
@@ -173,14 +173,14 @@ void TimingsTest::test_getNextTrigger()
     QCOMPARE(MyTiming->getNextTrigger(QDateTime::fromString("2017-01-19 01:00:00", "yyyy-MM-dd HH:mm:ss")), qint64(0));
     delete MyTiming;
 
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     MyTiming->parse("wallclock(R/2001-01-13T01:01:01/PT1H)");
     QCOMPARE(MyTiming->getNextTrigger(QDateTime::fromString("2001-01-13 02:01:01", "yyyy-MM-dd HH:mm:ss")), qint64(0));
     QCOMPARE(MyTiming->getNextTrigger(QDateTime::fromString("2001-01-13 02:01:00", "yyyy-MM-dd HH:mm:ss")), qint64(1000));
     QCOMPARE(MyTiming->getNextTrigger(QDateTime::fromString("2017-01-13 02:01:00", "yyyy-MM-dd HH:mm:ss")), qint64(1000));
     delete MyTiming;
 
-    MyTiming = new TestTTiming();
+    MyTiming = new InhertitedTTiming();
     MyTiming->parse("wallclock(R/2001-01-13T01:01:01/PT10S)");
     QCOMPARE(MyTiming->getNextTrigger(QDateTime::fromString("2016-01-31 19:20:42", "yyyy-MM-dd HH:mm:ss")), qint64(9000));
     delete MyTiming;
@@ -192,4 +192,4 @@ void TimingsTest::test_getNextTrigger()
 
 QTEST_APPLESS_MAIN(TimingsTest)
 
-#include "tst_timingstest.moc"
+#include "tst_timings.moc"

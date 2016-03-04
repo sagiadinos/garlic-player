@@ -12,7 +12,7 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 LIBS += -L../../lib -lgarlic
 
-TARGET = tst_timingstest
+TARGET = tst_timings
 SOURCES += \
     tst_timings.cpp
 

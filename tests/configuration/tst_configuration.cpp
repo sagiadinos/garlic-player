@@ -72,4 +72,4 @@ void TestTConfiguration::test_getUserAgent()
 
 QTEST_APPLESS_MAIN(TestTConfiguration)
 
-#include "tst_testtconfiguration.moc"
+#include "tst_configuration.moc"
