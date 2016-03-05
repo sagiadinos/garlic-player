@@ -15,45 +15,50 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
+#ifndef TDOWNLOADER_H
+#define TDOWNLOADER_H
 
 #include <QFile>
 #include <QLocale>
 #include <QDir>
 #include <QFileInfo>
 #include <QList>
+#include <QByteArray>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QSslError>
 #include <QUrl>
 
-#ifndef DOWNLOADER_H
-#define DOWNLOADER_H
-
-
-class Downloader: public QObject
+/**
+ * @brief should get the "old" maybe local md5 named file in var and the path to the new file
+ *  should send an signal when a new file is downloaded
+ */
+class TDownloader: public QObject
 {
     Q_OBJECT
-    QNetworkAccessManager manager_head, manager_get;
+    QNetworkAccessManager *manager_head, *manager_get;
 
 public:
-    Downloader(QObject * parent = 0);
-public slots:
-    void getIndex(QString index_url);
-    void getMedia(QString media_url);
+    TDownloader(QObject * parent = 0);
+    void checkFiles(QString local, QString remote);
+    void setUserAgent(QString ua);
 
 private slots:
     void finishedGetRequest(QNetworkReply *reply);
     void finishedHeadRequest(QNetworkReply *reply);
-    void sslErrors(const QList<QSslError> &errors);
 
 private:
-    QUrl url;
-    QByteArray user_agent;
-    bool smil_index;
-    QString getFileNameFromUrl();
-    void doHttpGetRequest();
-    void doHttpHeadRequest();
-    bool saveToDisk(const QString &filename, QIODevice *data);
+    QUrl         remote_file;
+    QByteArray   user_agent;
+    bool         smil_index;
+    QFileInfo    local_file;
+    QString      getFileNameFromUrl();
+    void         doHttpGetRequest();
+    void         doHttpHeadRequest();
+    bool         saveToDisk(QIODevice *data);
+signals:
+    void downloadSucceed();
+    void downloadCanceled();
+
 };
-#endif // DOWNLOADER_H
+#endif // TDOWNLOADER_H
