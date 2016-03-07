@@ -7,29 +7,16 @@ class TestTDownloader : public QObject
     Q_OBJECT
 
 public:
-    TestTDownloader(){}
-    ~TestTDownloader();
+    TestTDownloader(){deleteFiles();}
+    ~TestTDownloader(){deleteFiles();}
 private Q_SLOTS:
     void testAgentString();
     void testWithoutAgentString();
     void testDownloadSmil();
     void testDownloadMedia();
+    void testDownloadMediaDirect();
+    void deleteFiles();
 };
-
-
-TestTDownloader::~TestTDownloader()
-{
-    // to secure all files will be deleted even after a failed test
-    QFile file1("./agent.txt");
-    if (file1.exists())
-        file1.remove();
-    QFile file2("./test.smil");
-    if (file2.exists())
-        file2.remove();
-    QFile file3("./test.jpg");
-    if (file3.exists())
-        file3.remove();
-}
 
 void TestTDownloader::testAgentString()
 {
@@ -38,7 +25,7 @@ void TestTDownloader::testAgentString()
     QString file_name  = "./agent.txt";
     MyDownloader->setUserAgent(user_agent);
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=show_agent_string");
-    QSignalSpy spy(MyDownloader, SIGNAL(downloadSucceed()));
+    QSignalSpy spy(MyDownloader, SIGNAL(downloadSucceed(QString)));
     while (spy.count() == 0)
         QTest::qWait(200);
 
@@ -70,7 +57,7 @@ void TestTDownloader::testDownloadSmil()
     QString file_name  = "./test.smil";
     MyDownloader->setUserAgent(user_agent);
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_smil_new");
-    QSignalSpy spy1(MyDownloader, SIGNAL(downloadSucceed()));
+    QSignalSpy spy1(MyDownloader, SIGNAL(downloadSucceed(QString)));
     while (spy1.count() == 0)
         QTest::qWait(200);
     QFile file(file_name);
@@ -95,7 +82,7 @@ void TestTDownloader::testDownloadSmil()
 
 
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_smil_updated");
-    QSignalSpy spy4(MyDownloader, SIGNAL(downloadSucceed()));
+    QSignalSpy spy4(MyDownloader, SIGNAL(downloadSucceed(QString)));
     while (spy4.count() == 0)
         QTest::qWait(200);
     QFileInfo fi4(file);
@@ -110,7 +97,7 @@ void TestTDownloader::testDownloadMedia()
     QString file_name  = "./test.jpg";
     MyDownloader->setUserAgent(user_agent);
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_media_new");
-    QSignalSpy spy1(MyDownloader, SIGNAL(downloadSucceed()));
+    QSignalSpy spy1(MyDownloader, SIGNAL(downloadSucceed(QString)));
     while (spy1.count() == 0)
         QTest::qWait(200);
     QFile file(file_name);
@@ -134,12 +121,46 @@ void TestTDownloader::testDownloadMedia()
     QCOMPARE(last_modified, fi3.lastModified());
 
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_media_updated");
-    QSignalSpy spy4(MyDownloader, SIGNAL(downloadSucceed()));
+    QSignalSpy spy4(MyDownloader, SIGNAL(downloadSucceed(QString)));
     while (spy4.count() == 0)
         QTest::qWait(200);
     QFileInfo fi4(file);
     QVERIFY(last_modified < fi4.lastModified());
     file.remove();
+}
+
+void TestTDownloader::testDownloadMediaDirect()
+{
+    TDownloader *MyDownloader = new TDownloader();
+    QString user_agent = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
+    QString file_name  = "./server.jpg";
+    MyDownloader->setUserAgent(user_agent);
+    MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/server.jpg");
+    QSignalSpy spy1(MyDownloader, SIGNAL(downloadSucceed(QString)));
+    while (spy1.count() == 0)
+        QTest::qWait(200);
+    QFile file(file_name);
+    QVERIFY(file.exists());
+}
+
+
+// ====================== tool methods ===========================
+
+void TestTDownloader::deleteFiles()
+{
+    // to secure all files will be deleted even after a failed test
+    QFile file1("./agent.txt");
+    if (file1.exists())
+        file1.remove();
+    QFile file2("./test.smil");
+    if (file2.exists())
+        file2.remove();
+    QFile file3("./test.jpg");
+    if (file3.exists())
+        file3.remove();
+    QFile file4("./server.jpg");
+    if (file4.exists())
+        file4.remove();
 }
 
 

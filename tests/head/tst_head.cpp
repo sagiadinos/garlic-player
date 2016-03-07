@@ -19,7 +19,7 @@ private Q_SLOTS:
 void TestTHead::test_getDefaultValues()
 {
     THead MySmilHead;
-    QCOMPARE(MySmilHead.getRefreshTime(), int(900));
+    QCOMPARE(MySmilHead.getRefreshTime(), int(0));
     QCOMPARE(MySmilHead.getRootWidth(), int(1366));
     QCOMPARE(MySmilHead.getRootHeight(), int(768));
     QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("transparent"));

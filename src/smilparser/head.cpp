@@ -18,9 +18,10 @@
 
 #include "head.h"
 
-THead::THead()
+THead::THead(QObject *parent)
 {
-    refresh         = 900;
+    Q_UNUSED(parent);
+    refresh         = 0; // means no looking for new index
     title           = "No Title";
     width           = 1366;
     height          = 768;

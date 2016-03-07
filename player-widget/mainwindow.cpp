@@ -22,28 +22,43 @@ MainWindow::MainWindow(QWidget *parent) :  QWidget(parent)
 {
     layout = new QHBoxLayout();
     setLayout(layout);
+    MyIndexFile = new TIndexFile();
+    connect(MyIndexFile, SIGNAL(isLoaded()), SLOT(setSmilIndex()));
+    MyConfiguration = new TConfiguration();
 }
 
-void MainWindow::setSmilIndex(QString smil_path)
+void MainWindow::setInitialSmilIndex(QString path)
 {
-//    qDebug() << MyConfig.getPaths("var");
-    MySmil = new TSmil();
-    if (smil_path == "")
-        MySmil->init("../smils/simple_seq.smil");
-    else
-        MySmil->init(smil_path);
-    MyHead = MySmil->getHeader();
-    setStyleSheet("background-color:"+MyHead.getRootBackgroundColor()+";");
-    setRegions();
+    smil_index_path = path;
+
+    // only for developing
+    if (smil_index_path == "")
+        smil_index_path = "http://smil-admin.com/resources/smil/test/index.smil";
+//        smil_index_path = "http://smil-admin.com/resources/smil/test/full_smil/simple_body.smil";
+
+    if (smil_index_path == "")
+        smil_index_path = MyConfiguration->getIndexServer();
+
+    MyIndexFile->load(smil_index_path, MyConfiguration);
+}
+
+void MainWindow::setSmilIndex()
+{
+    MySmil = new TSmil(MyConfiguration);
+    MySmil->init(smil_index_path);
+    setRegions(MyIndexFile->getHead());
     connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     setGeometry(0,0, width(), height());
-    MySmil->beginSmilParsing();
-
+    MySmil->beginSmilParsing(MyIndexFile->getBody());
+    return;
 }
 
-void MainWindow::setRegions()
+void MainWindow::setRegions(QDomElement head)
 {
+    THead MyHead;
+    MyHead.parse(head);
+    setStyleSheet("background-color:"+MyHead.getRootBackgroundColor()+";");
     QList<Region>  region_list = MyHead.getLayout();
     QMap<QString, TRegion *>::iterator j;
     for (int i = 0; i < region_list.length(); i++)

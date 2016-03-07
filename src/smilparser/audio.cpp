@@ -36,15 +36,12 @@ showAudio TAudio::getMediaForShow()
     return show_audio;
 }
 
-bool TAudio::load(QString index_path)
+bool TAudio::load(QString file_path)
 {
     output           = new QtAV::VideoOutput();
     media_player     = new QtAV::AVPlayer();
     media_player->setRenderer(output);
-    if (src.mid(0, 4) == "http")
-        media_player->setFile(src);
-    else // get relative paths
-        media_player->setFile(index_path+src);
+    media_player->setFile(file_path);
     return true;
 }
 

@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QList>
+#include "smilparser/head.h"
 #include <smilparser.h>
 
 class TRegion : public QGraphicsView

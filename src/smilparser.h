@@ -19,15 +19,13 @@
 #ifndef SMILPARSER_H
 #define SMILPARSER_H
 
-#include <smilparser/file.h>
-#include <smilparser/head.h>
 #include <smilparser/factory.h>
 #include <QSet>
 
 /**
  * @brief   The TSmil class is the interface between container, media and
  *          the communication with the graphical output in mainwindow
- *          It is emits a signal which informs about region and media
+ *          It is emits a signal which informs about media
  *          has to be played.
  *
  */
@@ -35,20 +33,16 @@ class TSmil : public QObject
 {
     Q_OBJECT
 public:
-    TSmil(QObject *parent = 0);
+    TSmil(TConfiguration *config, QObject *parent = 0);
     ~TSmil();
     void                               init(QString smil_index = "");
-    THead                              getHeader();
-    void                               beginSmilParsing();
+    void                               beginSmilParsing(QDomElement body);
 protected:
     QDomElement                        parser;
     QString                            index_path;
-    QList<Region>                      region_list;
-    TFile                              MyFile;
-    THead                              MyHead;
     TBody                             *MyBody;
     QHash<QString, TBaseTiming *>      ar_elements;
-    showImg                            ImgAttr;
+    TConfiguration                    *MyConfiguration;
 protected slots:
     void                               foundElement(TContainer *parent, QString type, QDomElement dom_element);
     void                               startElement(TContainer *parent, TBaseTiming *element);
@@ -60,7 +54,7 @@ protected slots:
 private:
     QSet<TBaseTiming *>                ar_played_media;
     QHash<QString, TBaseTiming *>::iterator  insertIntoObjectContainer(TBaseTiming *parent, TBaseTiming *child);
-    void                               emitStartShowMedia(TMedia *media);
+    void                               emitStartShowMedia(TMedia *MyMedia);
     void                               stopElement(TBaseTiming *element);
     void                               killTimer(TBaseTiming *element);
     void                               emitStopShowMedia(TMedia *media);

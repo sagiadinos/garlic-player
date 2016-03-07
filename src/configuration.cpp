@@ -35,6 +35,7 @@ TConfiguration::TConfiguration()
         base_path     = absolute_path.mid(0, absolute_path.length()-3); // "/" is set when xyz/bin
     else
         base_path     = absolute_path+"/";
+    createDirectories();
 }
 
 QString TConfiguration::getSetting(QString setting_name)
@@ -70,11 +71,12 @@ void TConfiguration::setBaseDirectory(QString directory)
 
 void TConfiguration::createDirectories()
 {
+    QDir            dir;
     dir.setPath(getPaths("media"));  // this means ./var and ./var/media
     if (!dir.exists() && !dir.mkpath("."))
         qDebug() << "Failed to create var/media"<< dir.path() << "\r";
 
-    dir.setPath(getPaths("config"));
+    dir.setPath(getPaths("configuration"));
     if (!dir.exists() && !dir.mkpath("."))
         qDebug() << "Failed to create " << dir.path() << "\r";
     return;

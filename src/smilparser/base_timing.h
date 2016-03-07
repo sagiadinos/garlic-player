@@ -20,7 +20,6 @@
 #define TBASETIMING_H
 
 #include <QTimer>
-#include <configuration.h>
 #include "smilparser/timings/timing.h"
 #include "smilparser/base.h"
 

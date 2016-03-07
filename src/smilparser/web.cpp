@@ -49,13 +49,9 @@ QString TWeb::getFit()
     return show_web.fit;
 }
 
-bool TWeb::load(QString index_path)
+bool TWeb::load(QString file_path)
 {
-    if (src.mid(0, 4) == "http")
-        show_web.url = src;
-    else // get relative paths
-        show_web.url = index_path+src;
-
+    show_web.url = file_path;
     show_web.browser_proxy = new QGraphicsProxyWidget();
     show_web.browser       = new QWebView();
     show_web.browser->setUrl(QUrl(show_web.url));

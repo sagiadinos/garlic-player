@@ -23,6 +23,9 @@
 #include <QMap>
 #include <QLayout>
 #include "region.h"
+#include "smilparser/index_file.h"
+#include "smilparser/head.h"
+#include "smilparser/tools/downloader.h"
 
 class MainWindow : public QWidget
 {
@@ -31,17 +34,19 @@ class MainWindow : public QWidget
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void setSmilIndex(QString smil_path = "");
+    void setInitialSmilIndex(QString path = "");
 public slots:
+    void setSmilIndex();
     void startShowMedia(TMedia *media);
     void stopShowMedia(TMedia *media);
 private:
-    TConfiguration  MyConfig;
     QMap<QString, TRegion *> ar_regions;
-    TSmil *MySmil;
-    THead MyHead;
-    QHBoxLayout *layout;
-    void setRegions();
+    TSmil          *MySmil;
+    TIndexFile     *MyIndexFile;
+    TConfiguration *MyConfiguration;
+    QHBoxLayout    *layout;
+    QString         smil_index_path;
+    void setRegions(QDomElement head);
     QString selectRegion(QString region_name);
     void resizeEvent(QResizeEvent * event);
     void playImage(TImage *MyImage);

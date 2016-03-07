@@ -11,7 +11,7 @@ Secondary: Android, OSX and iOS
 
 Developing with Qt 5.5 and QtAV 1.8.0 under Kubuntu 14.04
 
-At the moment there is an early alpha which is able to play local SMIL-Files with actual supported features via command-line.
+At the moment there is an alpha which is able to play local and remote (http) SMIL-Files with actual supported features via command-line.
 
 *garlic.sh [options] SMIL_INDEX*
 ```sh
@@ -24,7 +24,7 @@ Options:
 Arguments:
 SMIL_INDEX        Path to SMIL index
 ```
-Only sources! First binaries will deployed, when a downloader is implemented.
+Only sources! First binaries will deployed, when the downloader is implemented complete.
 
 ## actual supported SMIL-Features
 

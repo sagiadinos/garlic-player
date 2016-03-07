@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<smil>
+	<head>
+		<meta http-equiv="Refresh" content="15" />
+		<layout>
+			<root-layout id="display:0" width="1920" height="1080" />
+			<region regionName="screen1" top="0" left="0" width="1920" height="1080" z-index="0" />
+		</layout>
+    </head>
+	<body>
+		<excl xml:id="excl01">
+			<priorityClass xml:id="prioA">
+				<img xml:id="imgA0010" src="../images/0010.jpg" begin="wallclock(R/2001-01-01T00:00:00/PT8S)" fit="fill" dur="4s" />
+			</priorityClass>
+			<priorityClass xml:id="prioB" higher="pause">
+				<seq xml:id="seqA0001" repeatCount="indefinite" begin="0s">
+					<img xml:id="imgA0001" src="../images/0001.jpg" begin="0s" dur="2s" fit="meetbest" />
+					<img xml:id="imgA0002" src="../images/0002.jpg" begin="0s" dur="2s" fit="meetbest" />
+					<img xml:id="imgA0003" src="../images/0003.jpg" begin="0s" dur="2s" fit="meetbest" />
+					<img xml:id="imgA0004" src="../images/0004.jpg" begin="0s" dur="2s" fit="meetbest" />
+					<img xml:id="imgA0005" src="../images/0005.jpg" begin="0s" dur="2s" fit="meetbest" />
+					<img xml:id="imgA0006" src="../images/0007.jpg" begin="0s" dur="2s" fit="meetbest" />
+					<img xml:id="imgA0007" src="../images/0008.jpg" begin="0s" dur="2s" fit="meetbest" />
+				</seq>		
+			</priorityClass>	
+		</excl>	
+	</body>
+</smil>

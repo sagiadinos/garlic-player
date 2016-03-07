@@ -55,13 +55,9 @@ QString TImage::getFit()
 
 }
 
-bool TImage::load(QString index_path)
+bool TImage::load(QString file_path)
 {
-    if (src.mid(0, 4) == "http")
-        show_img.pixmap.load(src);
-    else // get relative paths
-        show_img.pixmap.load(index_path+src);
-
+    show_img.pixmap.load(file_path);
     show_img.image_item = new QGraphicsPixmapItem();
     show_img.image_item->setPixmap(show_img.pixmap);
     return true;

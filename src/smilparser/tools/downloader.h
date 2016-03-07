@@ -42,23 +42,26 @@ public:
     TDownloader(QObject * parent = 0);
     void checkFiles(QString local, QString remote);
     void setUserAgent(QString ua);
+    bool downloadInProgress();
 
 private slots:
     void finishedGetRequest(QNetworkReply *reply);
     void finishedHeadRequest(QNetworkReply *reply);
 
 private:
-    QUrl         remote_file;
-    QByteArray   user_agent;
-    bool         smil_index;
-    QFileInfo    local_file;
-    QString      getFileNameFromUrl();
-    void         doHttpGetRequest();
-    void         doHttpHeadRequest();
-    bool         saveToDisk(QIODevice *data);
+    QUrl           remote_file;
+    QByteArray     user_agent;
+    bool           smil_index;
+    QFileInfo      local_file;
+    QNetworkReply *get_reply;
+    QString        getFileNameFromUrl();
+    void           doHttpGetRequest();
+    void           doHttpHeadRequest();
+    bool           saveToDisk(QIODevice *data);
 signals:
-    void downloadSucceed();
-    void downloadCanceled();
+    void downloadSucceed(QString);
+    void downloadCanceled(QString); // when file is in cache cancel download
+    void downloadFailed();
 
 };
 #endif // TDOWNLOADER_H

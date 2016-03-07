@@ -36,7 +36,7 @@ public:
     TAudio(TContainer * parent = 0);
     ~TAudio();
     showAudio          getMediaForShow();
-    bool               load(QString index_path);
+    bool               load(QString file_path);
     void               pause();
     void               stop();
     void               play();

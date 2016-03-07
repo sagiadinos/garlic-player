@@ -18,9 +18,10 @@
 
 #include "smilparser.h"
 
-TSmil::TSmil(QObject *parent)
+TSmil::TSmil(TConfiguration *config, QObject *parent)
 {
     Q_UNUSED(parent)
+    MyConfiguration = config;
 }
 
 TSmil::~TSmil()
@@ -28,24 +29,29 @@ TSmil::~TSmil()
     ar_elements.clear();
 }
 
-void TSmil::init(QString smil_index)
+void TSmil::init(QString smil_index_path)
 {
-    index_path = MyFile.loadToDom(smil_index);
-    MyHead.parse(MyFile.getHead());
+    if (smil_index_path.mid(0, 4) == "http" || smil_index_path.mid(0, 3) == "ftp")
+    {
+        QUrl url(smil_index_path);
+        index_path = url.adjusted(QUrl::RemoveFilename).toString();
+    }
+    else
+    {
+        QFileInfo fi(smil_index_path);
+        index_path = fi.path();
+    }
+    if (index_path.mid(index_path.length()-1, 1) != "/")
+        index_path += "/";
     return;
 }
 
-THead TSmil::getHeader()
-{
-    return MyHead;
-}
-
-void TSmil::beginSmilParsing()
+void TSmil::beginSmilParsing(QDomElement body)
 {
     MyBody = new TBody();
     connect(MyBody, SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));
     connect(MyBody, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
-    if (MyBody->parse(MyFile.getBody()))
+    if (MyBody->parse(body))
         MyBody->prepareTimerBeforePlaying();
     return;
 }
@@ -78,8 +84,30 @@ void TSmil::foundElement(TContainer *parent, QString type, QDomElement dom_eleme
         MyBase  = *ar_elements_iterator;
 
     playable    = MyBase->isPlayable();
+
+/*    prüfe vor dem Abspielen ob das File vollständig auf der Festplatte ist,
+        wenn nicht, dann schau auf cacheControl-Parameter
+                wenn onlyIfCached dann lade (weiter) und überspringe den Abspielvorgang
+                wenn auto dann lade (weiter) und spiele vom Server
+                wenn nocache, dann spiele vom Server
+
+    bei prefetch
+        prüfe ob die Datei auf dem Server aktueller ist
+            wenn ja dann lade sie
+
+     Die Funktionen zum laden müssen umgeschrieben werden
+
+     Der Downloader muss in die medien basis classe
+     eund wir brauchen jetzt eine prefetch-Klasse
+
+     Es muss an dieser Stelle jedesmal überprüft werden ob sich an der Medfie was geädnert
+            Falls ja muss reloaded werden
+
+*/
     if (playable)
+    {
         MyBase->prepareTimerBeforePlaying();
+    }
 
     QString object_name = parent->objectName();
     if (object_name == "TExcl" && playable)  // increment active child to determine end of a excl
@@ -111,9 +139,11 @@ void TSmil::startElement(TContainer *parent, TBaseTiming *element)
 
     if (playable)
     {
-        element->play();
         if (element->getBaseType() == "media")
             emitStartShowMedia(qobject_cast<TMedia *> (element));
+        else
+            element->play();
+
     }
     return;
 }
@@ -253,18 +283,21 @@ void TSmil::connectMediaSlots(TMedia *MyMedia)
 {
     if (MyMedia->isPlayable())
     {
-        MyMedia->load(index_path);
         connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
         connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     }
     return;
 }
 
-void TSmil::emitStartShowMedia(TMedia *media)
+void TSmil::emitStartShowMedia(TMedia *MyMedia)
 {
-    qDebug() << media->getID() <<QTime::currentTime().toString() << "startShowMedia";
-    ar_played_media.insert(media);
-    emit startShowMedia(media);
+    qDebug() << MyMedia->getID() <<QTime::currentTime().toString() << "startShowMedia";
+    if (MyMedia->isLoaded(index_path, MyConfiguration))
+    {
+        MyMedia->play();
+        ar_played_media.insert(MyMedia);
+        emit startShowMedia(MyMedia);
+    }
     return;
 }
 

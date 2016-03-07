@@ -7,9 +7,7 @@ CONFIG   += warn_on avwidgets lib c++11
 TARGET = garlic
 DESTDIR = ../lib
 
-SOURCES += downloader.cpp \
-    configuration.cpp \
-    smilparser/file.cpp \
+SOURCES += configuration.cpp \
     smilparser/head.cpp \
     smilparser/media.cpp \
     smilparser/image.cpp \
@@ -21,17 +19,17 @@ SOURCES += downloader.cpp \
     smilparser/body.cpp \
     smilparser/par.cpp \
     smilparser/excl.cpp \
+    smilparser/tools/downloader.cpp \
     smilparser/timings/timing.cpp \
     smilparser/timings/clock_value.cpp \
     smilparser/priorityclass.cpp \
     smilparser/factory.cpp \
     smilparser/container.cpp \
     smilparser/base.cpp \
-    smilparser/base_timing.cpp
-HEADERS += downloader.h \
-    configuration.h \
+    smilparser/base_timing.cpp \
+    smilparser/index_file.cpp
+HEADERS += configuration.h \
     smilparser.h \
-    smilparser/file.h \
     smilparser/head.h \
     smilparser/image.h \
     smilparser/media.h \
@@ -42,12 +40,14 @@ HEADERS += downloader.h \
     smilparser/body.h \
     smilparser/par.h \
     smilparser/excl.h \
+    smilparser/tools/downloader.h \
     smilparser/timings/timing.h \
     smilparser/timings/clock_value.h \
     smilparser/priorityclass.h \
     smilparser/factory.h \
     smilparser/container.h \
     smilparser/base.h \
-    smilparser/base_timing.h
+    smilparser/base_timing.h \
+    smilparser/index_file.h
 
 DISTFILES +=

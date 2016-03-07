@@ -36,6 +36,18 @@ void TDownloader::setUserAgent(QString ua)
     return;
 }
 
+bool TDownloader::downloadInProgress()
+{
+    bool ret = false;
+    qDebug() << remote_file.toString() << "download in progress";
+    if (remote_file.toString() != "")
+    {
+        qDebug() << get_reply->errorString() ;
+        ret = get_reply->isRunning();
+    }
+    return ret;
+}
+
 void TDownloader::checkFiles(QString local, QString remote)
 {
     if (user_agent != "")
@@ -55,7 +67,7 @@ void TDownloader::doHttpGetRequest()
 {
     QNetworkRequest request(remote_file);
     request.setRawHeader(QByteArray("User-Agent"), user_agent);
-    manager_get->get(request);
+    get_reply = manager_get->get(request);
     return;
 }
 
@@ -81,39 +93,37 @@ bool TDownloader::saveToDisk(QIODevice *data)
 }
 
 
+
 void TDownloader::finishedHeadRequest(QNetworkReply *reply)
 {
+    qDebug() << reply->url().toString();
     if (reply->hasRawHeader("Last-Modified"))
     {
         QLocale   locale(QLocale::English, QLocale::UnitedStates);
-        QDateTime last_modified_remote = locale.toDateTime(reply->rawHeader("Last-Modified"), "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
-        QDateTime last_modified_local  = local_file.lastModified();
-        long      length_remote        = reply->rawHeader("Content-Length").toLong();
-        long      length_local         = local_file.size();
-
-        if (local_file.exists() && length_remote == length_local && last_modified_local > last_modified_remote)
-            emit downloadCanceled();
+        if (local_file.exists() &&
+                local_file.size() == reply->rawHeader("Content-Length").toLong() &&
+                local_file.lastModified() > locale.toDateTime(reply->rawHeader("Last-Modified"), "ddd, dd MMM yyyy hh:mm:ss 'GMT'"))
+            emit downloadCanceled(local_file.absoluteFilePath());
         else
             doHttpGetRequest();
     }
     else
-        emit downloadCanceled();
-
-    reply->deleteLater();
+        emit downloadFailed();
     return;
 }
 
 void TDownloader::finishedGetRequest(QNetworkReply *reply)
 {
-    QUrl url = reply->url();
     if (reply->error())
-        qDebug() << "Download of " << url.toString() << " failed: " << reply->errorString() << "\r";
+    {
+        qDebug() << "Download of " << reply->url().toString() << " failed: " << reply->errorString() << "\r";
+        emit downloadFailed();
+    }
     else
     {
         saveToDisk(reply);
     }
-    reply->deleteLater();
-    emit downloadSucceed();
+    emit downloadSucceed(local_file.absoluteFilePath());
     return;
 
 }

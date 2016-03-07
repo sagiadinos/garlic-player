@@ -46,9 +46,9 @@ int main(int argc, char *argv[])
 
     const QStringList args = parser.positionalArguments();
     if (args.size() > 0)
-        w.setSmilIndex(args.at(0));
+        w.setInitialSmilIndex(args.at(0));
     else
-        w.setSmilIndex("");
+        w.setInitialSmilIndex("");
 
     if (parser.isSet("f"))
         w.showFullScreen();

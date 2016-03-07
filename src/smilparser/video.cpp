@@ -73,16 +73,13 @@ QString TVideo::getFit()
     return show_video.fit;
 }
 
-bool TVideo::load(QString index_path)
+bool TVideo::load(QString file_path)
 {
     show_video.video_item  = new QtAV::GraphicsItemRenderer;
     media_player           = new QtAV::AVPlayer;
     media_player->setRenderer(show_video.video_item);
 
-    if (src.mid(0, 4) == "http")
-        media_player->setFile(src);
-    else // get relative paths
-        media_player->setFile(index_path+src);
+    media_player->setFile(file_path);
     return true;
 }
 

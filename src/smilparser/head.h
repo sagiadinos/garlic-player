@@ -43,7 +43,7 @@ struct Region
 class THead
 {
 public:
-    THead();
+    THead(QObject *parent = 0);
     void          parse(QDomElement head);
     int           getRefreshTime();
     QString       getRootBackgroundColor();
@@ -63,11 +63,11 @@ private:
     QString backgroundColor;
     QDomElement head;
     QList<Region> region_list;
-    void parseMeta(QDomElement element);
-    void parseLayout(QDomElement layout);
-    void parseRootLayout(QDomElement root_layout);
-    void parseRegions(QDomNodeList childs);
-    qreal calculatePercentBasedOnRoot(QString value, qreal root);
+    void          parseMeta(QDomElement element);
+    void          parseLayout(QDomElement layout);
+    void          parseRootLayout(QDomElement root_layout);
+    void          parseRegions(QDomNodeList childs);
+    qreal         calculatePercentBasedOnRoot(QString value, qreal root);
 };
 
 #endif // HEAD_H

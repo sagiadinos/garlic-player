@@ -16,41 +16,36 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#ifndef TWEB_H
-#define TWEB_H
-#include <QGraphicsProxyWidget>
-#include <QWebView>
-#include <QWebFrame>
-#include "smilparser/media.h"
+#ifndef FILE_H
+#define FILE_H
 
-struct showWeb
-{
-    QString               media_type;
-    QString               region;
-    QString               fit;
-    QString               url;
-    QWebView             *browser;
-    QGraphicsProxyWidget *browser_proxy;
-};
+#include <QFile>
+#include <QFileInfo>
+#include <QString>
+#include <QtXml>
+#include <QDebug>
+#include "tools/downloader.h"
+#include "configuration.h"
 
-class TWeb : public TMedia
+class TIndexFile: public QObject
 {
     Q_OBJECT
 public:
-    explicit TWeb(TContainer *parent = 0);
-    ~TWeb();
-    showWeb  getMediaForShow();
-    QString  getFit();
-    bool     load(QString file_path);
-    void     pause();
-    void     stop();
-    void     play();
-public slots:
-    void     setDurationTimerBeforePlay();
+    TIndexFile();
+    void            load(QString path, TConfiguration *config);
+    QDomElement     getHead();
+    QDomElement     getBody();
+    QString         getFilePath();
 protected:
-    showWeb  show_web;
-    void     setAttributes();
+    void            loadFromHttpToDom(QString uri);
+    TDownloader    *MyDownloader;
+    TConfiguration *MyConfiguration;
+    QDomDocument    document;
+    QDomElement     getTag(QString name);
+protected slots:
+    void            loadFromLocalToDom(QString filename);
+signals:
+    void isLoaded();
 };
 
-
-#endif // TWEB_H
+#endif // FILE_H

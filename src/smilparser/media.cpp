@@ -28,33 +28,60 @@ bool TMedia::parse(QDomElement element)
     root_element   = element;
     setAttributes();     // special for every media type
     setBaseParameters(); // in this class
+    MyDownloader = new TDownloader();
+    connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(downloadSucceed(QString)));
+    downloaded   = false;
+    loaded       = false;
     return true;
 }
+
 
 QString TMedia::getRegion()
 {
     return region;
 }
 
-QString TMedia::getSrc()
+bool TMedia::isLoaded(QString index_path, TConfiguration *config)
 {
-    return src;
+    if (loaded)
+        return true;
+
+    MyConfiguration = config;
+    MyDownloader->setUserAgent(MyConfiguration->getUserAgent());
+    QString file_path  = getFilePath(index_path);
+    if (index_path.mid(0, 4) == "http" || index_path.mid(0, 3) == "ftp") // if index-Smil is from Web-Service check if download
+    {
+        QFileInfo fi(file_path);
+        QString   cached_file_path = MyConfiguration->getPaths("var")+QString(QCryptographicHash::hash((file_path.toUtf8()),QCryptographicHash::Md5).toHex())+ "."+fi.suffix();
+        qDebug() << cached_file_path;
+        if (isDownloaded(cached_file_path, file_path))
+          loaded = load(cached_file_path);
+        else
+            return false;
+    }
+    else
+        loaded = load(file_path);
+
+    return loaded;
 }
 
-QString TMedia::getExec()
+bool TMedia::isDownloaded(QString cached_file_path, QString file_path)
 {
-    return exec;
+    if (downloaded)
+        return true;
+
+    if (!MyDownloader->downloadInProgress()) // start a download when it is not already in Progress
+        MyDownloader->checkFiles(cached_file_path, file_path);
+    return false;
 }
 
-QString TMedia::getFileName()
+void TMedia::downloadSucceed(QString local_path) // slot
 {
-    return filename;
+    local_file_path = local_path;
+    downloaded = true;
+    return;
 }
 
-QString TMedia::getCacheControl()
-{
-    return cache_control;
-}
 
 void TMedia::setBaseMediaAttributes()
 {
@@ -101,3 +128,11 @@ void TMedia::setBaseParameters()
     }
 }
 
+
+QString TMedia::getFilePath(QString index_path)
+{
+    if (src.mid(0, 4) == "http" || src.mid(0, 3) == "ftp") // do not use Path of index-Smil when src is a web link
+        return src;
+    else
+        return index_path+src;
+}

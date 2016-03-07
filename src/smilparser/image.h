@@ -40,7 +40,7 @@ public:
     ~TImage();
     showImg  getMediaForShow();
     QString  getFit();
-    bool     load(QString index_path);
+    bool     load(QString file_path);
     void     pause();
     void     stop();
     void     play();
