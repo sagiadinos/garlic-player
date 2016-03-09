@@ -50,7 +50,7 @@ void TExcl::setDurationTimerBeforePlay()
     {
         ActivePriorityClass    = NULL;
         NewActivePriorityClass = NULL;
-        finishedActiveDuration();
+        setInternalDefaultDur();
     }
     return;
 }

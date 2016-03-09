@@ -66,14 +66,15 @@ void TSmil::foundElement(TContainer *parent, QString type, QDomElement dom_eleme
     TBaseTiming                              *MyBase;
     bool                                     playable             = false;
     QHash<QString, TBaseTiming *>::iterator  ar_elements_iterator = ar_elements.find(TBase::parseID(dom_element));
+    QString                                  base_type            = "";
     if (ar_elements_iterator == ar_elements.end())
     {
-        MyBase = TFactory::createBase(type, parent);
+        MyBase     = TFactory::createBase(type, parent);
+        base_type  = MyBase->getBaseType();
         MyBase->parse(dom_element);
         if (MyBase != NULL)
         {
             ar_elements_iterator = insertIntoObjectContainer(parent, MyBase);
-            QString base_type    = MyBase->getBaseType();
             if (base_type == "media")
                 connectMediaSlots(qobject_cast<TMedia *> (MyBase));
             else if (base_type == "container")
@@ -81,32 +82,17 @@ void TSmil::foundElement(TContainer *parent, QString type, QDomElement dom_eleme
         }
     }
     else
-        MyBase  = *ar_elements_iterator;
+    {
+        MyBase     = *ar_elements_iterator;
+        base_type  = MyBase->getBaseType();
+    }
+    qDebug() << MyBase->getID() << QTime::currentTime().toString()  << " foundElement";
 
     playable    = MyBase->isPlayable();
 
-/*    prüfe vor dem Abspielen ob das File vollständig auf der Festplatte ist,
-        wenn nicht, dann schau auf cacheControl-Parameter
-                wenn onlyIfCached dann lade (weiter) und überspringe den Abspielvorgang
-                wenn auto dann lade (weiter) und spiele vom Server
-                wenn nocache, dann spiele vom Server
-
-    bei prefetch
-        prüfe ob die Datei auf dem Server aktueller ist
-            wenn ja dann lade sie
-
-     Die Funktionen zum laden müssen umgeschrieben werden
-
-     Der Downloader muss in die medien basis classe
-     eund wir brauchen jetzt eine prefetch-Klasse
-
-     Es muss an dieser Stelle jedesmal überprüft werden ob sich an der Medfie was geädnert
-            Falls ja muss reloaded werden
-
-*/
     if (playable)
     {
-        MyBase->prepareTimerBeforePlaying();
+         MyBase->prepareTimerBeforePlaying();
     }
 
     QString object_name = parent->objectName();
@@ -127,10 +113,11 @@ void TSmil::foundElement(TContainer *parent, QString type, QDomElement dom_eleme
  */
 void TSmil::startElement(TContainer *parent, TBaseTiming *element)
 {
+    qDebug() << element->getID() << QTime::currentTime().toString() << " startElement";
     bool         playable      = true;
-
     if (parent->getBaseType() == "container")
     {
+
         TContainer *MyContainer = qobject_cast<TContainer *> (parent);
         playable                = MyContainer->isChildPlayable(element);
         if (playable)
@@ -157,8 +144,7 @@ void TSmil::startElement(TContainer *parent, TBaseTiming *element)
  */
 void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
 {
-    //   finishElement should kill the timer (TSmil::stopElement(TBase *element)) of his child elements not his own
-    //   except the case that the element itself is child in an excl container and stopped by a peer
+    qDebug() << element->getID() << QTime::currentTime().toString() << " finishElement";
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
     {
         qDebug()<< element->getID() << QTime::currentTime().toString() << "Not kill Timer";
@@ -248,7 +234,6 @@ void TSmil::killTimer(TBaseTiming *element)
     return;
 }
 
-
 QHash<QString, TBaseTiming *>::iterator TSmil::insertIntoObjectContainer(TBaseTiming *parent, TBaseTiming *child)
 {
     QString type = parent->objectName();
@@ -283,6 +268,7 @@ void TSmil::connectMediaSlots(TMedia *MyMedia)
 {
     if (MyMedia->isPlayable())
     {
+        MyMedia->prepareLoad(index_path, MyConfiguration); // load media
         connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
         connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     }
@@ -291,23 +277,23 @@ void TSmil::connectMediaSlots(TMedia *MyMedia)
 
 void TSmil::emitStartShowMedia(TMedia *MyMedia)
 {
-    qDebug() << MyMedia->getID() <<QTime::currentTime().toString() << "startShowMedia";
-    if (MyMedia->isLoaded(index_path, MyConfiguration))
+    if (MyMedia->isLoaded())
     {
         MyMedia->play();
+        qDebug() << MyMedia->getID() <<QTime::currentTime().toString() << "startShowMedia";
         ar_played_media.insert(MyMedia);
         emit startShowMedia(MyMedia);
     }
     return;
 }
 
-void TSmil::emitStopShowMedia(TMedia *media)
+void TSmil::emitStopShowMedia(TMedia *MyMedia)
 {
-    if (ar_played_media.find(media) != ar_played_media.end())
+    if (ar_played_media.find(MyMedia) != ar_played_media.end())
     {
-        ar_played_media.remove(media);
-        qDebug() << media->getID() <<QTime::currentTime().toString() << "stopShowMedia";
-        emit stopShowMedia(media);
+        ar_played_media.remove(MyMedia);
+        qDebug() << MyMedia->getID() <<QTime::currentTime().toString() << "stopShowMedia";
+        emit stopShowMedia(MyMedia);
     }
     return;
 }

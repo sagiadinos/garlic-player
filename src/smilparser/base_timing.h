@@ -70,6 +70,7 @@ protected:
             bool          indefinite     = false;
             bool          is_resumed     = false;
             int           internal_count = 1;
+            void          setInternalDefaultDur();
             void          setTimingAttributes();
             void          resetInternalRepeatCount();
             bool          hasDurAttribute();

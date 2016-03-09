@@ -51,7 +51,6 @@ private slots:
 private:
     QUrl           remote_file;
     QByteArray     user_agent;
-    bool           smil_index;
     QFileInfo      local_file;
     QNetworkReply *get_reply;
     QString        getFileNameFromUrl();

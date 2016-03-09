@@ -34,10 +34,12 @@ public:
     QString         getRegion();
     bool            parse(QDomElement element);
     void            resume(){play();}
-    bool            isLoaded(QString index_path, TConfiguration *config);
+    void            prepareLoad(QString index_path, TConfiguration *config);
+    bool            isLoaded();
     QString         getBaseType() {return "media";}
     bool            hasPlayingChilds(){return false;}
     TBaseTiming    *getChildElementFromList(){return this;}
+    TContainer     *getParentContainer(){return parent_container;}
 public slots:
     void            emitfinished();
 protected:
@@ -56,7 +58,6 @@ protected:
 protected slots:
     void            downloadSucceed(QString local_path);
 private:
-    QString         local_file_path;
     QString         getFilePath(QString index_path);
 signals:
     void            startedMedia(TContainer *parent , TBaseTiming *element);

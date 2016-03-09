@@ -42,6 +42,7 @@ public slots:
     void     setDurationTimerBeforePlay();
 private:
     bool     random            = false;
+    int      count             = 0;
     int      pickNumber        = 0;
     int      internal_pick     = 0;
     QString  pickingAlgorithm  = "";

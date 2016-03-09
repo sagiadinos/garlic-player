@@ -39,10 +39,16 @@ showVideo TVideo::getMediaForShow()
 
 void TVideo::setDurationTimerBeforePlay()
 {
-    if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
-        connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
-    if (!is_resumed)
-        emit startedMedia(parent_container, this);
+    if (!loaded)
+    {
+        if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
+            connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
+        if (!is_resumed)
+            emit startedMedia(parent_container, this);
+    }
+    else // set a duration otherwise it runs in a recursion stack overflow when load is not complete
+        setInternalDefaultDur();
+
     return;
 }
 

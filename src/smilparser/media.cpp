@@ -41,11 +41,15 @@ QString TMedia::getRegion()
     return region;
 }
 
-bool TMedia::isLoaded(QString index_path, TConfiguration *config)
+bool TMedia::isLoaded()
 {
     if (loaded)
         return true;
+    return false;
+}
 
+void TMedia::prepareLoad(QString index_path, TConfiguration *config)
+{
     MyConfiguration = config;
     MyDownloader->setUserAgent(MyConfiguration->getUserAgent());
     QString file_path  = getFilePath(index_path);
@@ -55,20 +59,24 @@ bool TMedia::isLoaded(QString index_path, TConfiguration *config)
         QString   cached_file_path = MyConfiguration->getPaths("var")+QString(QCryptographicHash::hash((file_path.toUtf8()),QCryptographicHash::Md5).toHex())+ "."+fi.suffix();
         qDebug() << cached_file_path;
         if (isDownloaded(cached_file_path, file_path))
-          loaded = load(cached_file_path);
-        else
-            return false;
+          downloadSucceed(cached_file_path);
     }
     else
-        loaded = load(file_path);
-
-    return loaded;
+        downloadSucceed(file_path);
+    return;
 }
 
 bool TMedia::isDownloaded(QString cached_file_path, QString file_path)
 {
     if (downloaded)
         return true;
+
+    QFile file(cached_file_path);
+    if (file.exists())
+    {
+        downloaded = true;
+        return true;
+    }
 
     if (!MyDownloader->downloadInProgress()) // start a download when it is not already in Progress
         MyDownloader->checkFiles(cached_file_path, file_path);
@@ -77,8 +85,8 @@ bool TMedia::isDownloaded(QString cached_file_path, QString file_path)
 
 void TMedia::downloadSucceed(QString local_path) // slot
 {
-    local_file_path = local_path;
-    downloaded = true;
+    downloaded      = true;
+    loaded          = load(local_path);
     return;
 }
 
@@ -98,7 +106,6 @@ void TMedia::setBaseMediaAttributes()
 
 void TMedia::emitfinished() // called from finishedActiveDuration() in TBase
 {
-   qDebug() << getID() << QTime::currentTime().toString() << "finished Media";
    emit finishedMedia(parent_container, this);
    return;
 }

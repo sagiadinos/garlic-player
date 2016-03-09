@@ -27,7 +27,6 @@ TDownloader::TDownloader(QObject * parent)
     connect(manager_get, SIGNAL(finished(QNetworkReply*)), SLOT(finishedGetRequest(QNetworkReply*)));
     connect(manager_head, SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRequest(QNetworkReply*)));
     user_agent = QByteArray("");
-    smil_index = false;
 }
 
 void TDownloader::setUserAgent(QString ua)

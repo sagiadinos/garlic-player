@@ -166,6 +166,12 @@ void TBaseTiming::prepareTimerBeforeResume()
     return;
 }
 
+void TBaseTiming::setInternalDefaultDur()
+{
+    dur_timer->start(100);
+    return;
+}
+
 // ========================= protected methods ======================================================
 
 void TBaseTiming::finishedSimpleDuration()

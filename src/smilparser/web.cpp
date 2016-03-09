@@ -34,13 +34,13 @@ TWeb::~TWeb()
 
 void TWeb::setDurationTimerBeforePlay()
 {
-    if (hasDurAttribute() || end_timer->isActive()) // if dur or end is not specified end, cause images don't have an implicit duration like audio/video
+    if (loaded && (hasDurAttribute() || end_timer->isActive()))
     {
         if (!is_resumed)
-           emit startedMedia(parent_container, this);
+            emit startedMedia(parent_container, this);
     }
-    else // when end or dur is not specified stop imediately
-        finishedActiveDuration();
+    else // set a duration otherwise it runs in a recursion stack overflow when no dur set or load is not complete
+        setInternalDefaultDur();
     return;
 }
 

@@ -47,7 +47,7 @@ void TPar::setDurationTimerBeforePlay()
         }
     }
     else // when end or duration is not specified or no child elements stop imediately
-        finishedActiveDuration();
+        setInternalDefaultDur();
     return;
 }
 

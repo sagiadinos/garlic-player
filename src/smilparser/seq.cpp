@@ -43,7 +43,7 @@ bool TSeq::parse(QDomElement element)
 
 bool TSeq::isChildPlayable(TBaseTiming *element)
 {
-    qDebug() << element->getID() <<QTime::currentTime().toString() << "is ChildPlayable in seq";
+    qDebug() << element->getID() << QTime::currentTime().toString() << "is ChildPlayable in seq";
     childStarted(element);
     return true;
 }
@@ -58,7 +58,7 @@ void TSeq::setDurationTimerBeforePlay()
             emit startedContainer(parent_container, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
-        finishedActiveDuration();
+        setInternalDefaultDur();
     return;
 }
 
@@ -124,6 +124,7 @@ void TSeq::next(TBaseTiming *ended_element)
     {
         if (checkRepeatCountStatus())
         {
+            qDebug() << "Repeats: " << count++;
             play();
         }
         else
