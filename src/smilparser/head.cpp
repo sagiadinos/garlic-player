@@ -183,8 +183,10 @@ void THead::setRefreshTimer()
     if (refresh == 0) // not refresh timer when refresh is 0
         return;
 
-    if (refresh < 31) // make sure that impaciently clients do not stress the cms too much
+#ifdef QT_NO_DEBUG
+    if (refresh < 31) // make sure that impaciently clients do not stress the cms too much but only in release mode
         refresh = 30;
+#endif
 
     refresh_timer->start(refresh*1000);
     return;

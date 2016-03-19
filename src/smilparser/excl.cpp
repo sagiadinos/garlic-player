@@ -32,9 +32,7 @@ bool TExcl::parse(QDomElement element)
 {
     root_element   = element;
     setTimingAttributes();
-    // important! begin default is indefinite in excl container.
-    if (!root_element.hasAttribute("begin"))
-        begin.parse("indefinite");
+    setBaseContainerAttributes();
     if (element.hasChildNodes())
         setPlaylist();
     else

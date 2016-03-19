@@ -111,6 +111,7 @@ void TDownloader::doHttpGetRequest()
 
 void TDownloader::finishedGetRequest(QNetworkReply *reply)
 {
+    download = false;
     if (reply->error())
     {
         qDebug() << "Download of " << reply->url().toString() << " failed: " << reply->errorString() << "\r";
@@ -121,7 +122,6 @@ void TDownloader::finishedGetRequest(QNetworkReply *reply)
         saveToDisk(reply);
         emit downloadSucceed(remote_file.toString());
     }
-    download = false;
     return;
 
 }

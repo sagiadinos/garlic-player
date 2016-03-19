@@ -26,20 +26,22 @@ MainWindow::MainWindow(QWidget *parent) :  QWidget(parent)
 
 void MainWindow::setInitialSmilIndex(QString path)
 {
-    // path = "http://smil-admin.com/resources/smil/test/index.smil";
- //   path = "tests/data/full_smil/simple_media.smil";
+  //  path = "http://smil-admin.com/resources/smil/test/index.smil";
+//    path = "tests/data/full_smil/simple_excl_never.smil";
     MyConfiguration = new TConfiguration(path);
     MyIndexFile     = new TIndexFile(MyConfiguration);
     connect(MyIndexFile, SIGNAL(isLoaded()), this, SLOT(setSmilIndex()));
     MyHead          = new THead();
     connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
-
+    MySmil = new TSmil(MyConfiguration);
+    connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
+    connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     loadIndex(); // initial Start
 }
 
 void MainWindow::loadIndex()
 {
-    MyIndexFile->load();
+    MyIndexFile->load(); // if load successfully setSmilIndex gets a Signal
     return;
 }
 
@@ -49,15 +51,14 @@ void MainWindow::loadIndex()
  */
 void MainWindow::setSmilIndex()
 {
-    MySmil = new TSmil(MyConfiguration);
-    connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
-    connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
+    qDebug() << "clear MySmil";
+    MySmil->clearLists();
+    deleteRegionsAndLayouts();
 
     MySmil->init();
     setRegions(MyIndexFile->getHead());
     setGeometry(0,0, width(), height());
     MySmil->beginSmilParsing(MyIndexFile->getBody());
-
     return;
 }
 
@@ -66,8 +67,6 @@ void MainWindow::setSmilIndex()
  */
 void MainWindow::checkForNewSmilIndex()
 {
-    delete MySmil;
-    deleteRegionsAndLayouts();
     loadIndex();
     return;
 }
@@ -75,13 +74,15 @@ void MainWindow::checkForNewSmilIndex()
 
 void MainWindow::deleteRegionsAndLayouts()
 {
-    ar_regions.clear();
     while(!layout->isEmpty())
     {
-      delete layout->takeAt(0);
+        delete layout->takeAt(0);
     }
-    if (MySmil != NULL)
-        delete MySmil;
+    for (QMap<QString, TRegion *>::iterator i = ar_regions.begin(); i != ar_regions.end(); i++)
+    {
+        delete ar_regions[i.key()];
+    }
+    ar_regions.clear();
     return;
 }
 

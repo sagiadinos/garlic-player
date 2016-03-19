@@ -29,6 +29,8 @@ bool TPar::parse(QDomElement element)
 {
     root_element   = element;
     setTimingAttributes();
+    setBaseContainerAttributes();
+
     if (element.hasChildNodes())
     {
         setPlaylist();

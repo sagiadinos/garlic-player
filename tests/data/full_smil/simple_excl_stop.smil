@@ -10,7 +10,7 @@
 	<body>
 		<!-- 5, 6, 7, 8, 9, 10, 5, 6, 7, 8, 9, 10 -->
 		<img xml:id="img begin" src="../images/begin.jpg" fit="meetbest" dur="2s" />
-		<excl xml:id="excl1_dur">
+		<excl xml:id="excl1">
 			<priorityClass peers="stop">
 				<img xml:id="imgA0001" src="../images/0001.jpg" begin="0s" dur="1s" fit="meetbest" />
 				<img xml:id="imgA0002" src="../images/0002.jpg" begin="0s" dur="1s" fit="meetbest" />

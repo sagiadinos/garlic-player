@@ -36,6 +36,7 @@ public:
     TSmil(TConfiguration *config, QObject *parent = 0);
     ~TSmil();
     void                               init();
+    void                               clearLists();
     void                               beginSmilParsing(QDomElement body);
 protected:
     QDomElement                        parser;

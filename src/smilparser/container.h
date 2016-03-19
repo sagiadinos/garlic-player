@@ -58,6 +58,7 @@ protected:
             QHash<QString, TBaseTiming *> ar_elements;
             QDomElement                   active_element;
             QString                       reactByTag();
+            void                          setBaseContainerAttributes();
 signals:
             void                          foundElement(TContainer *, QString, QDomElement);
             void                          startedContainer(TContainer * , TBaseTiming *);

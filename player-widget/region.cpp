@@ -31,6 +31,8 @@ TRegion::TRegion(QWidget *parent)
 
 TRegion::~TRegion()
 {
+    qDebug() << "clear QGraphicsScene";
+    scene->clear();
     delete scene;
 }
 

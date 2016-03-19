@@ -94,6 +94,12 @@ bool TContainer::hasPlayingChilds()
     return false;
 }
 
+void TContainer::setBaseContainerAttributes()
+{
+    if (!root_element.hasAttribute("begin") && parent_container->objectName() == "TExcl")
+        begin.parse("indefinite");
+}
+
 QString TContainer::reactByTag()
 {
     QString tag_name = active_element.tagName();

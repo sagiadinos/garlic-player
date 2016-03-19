@@ -73,6 +73,8 @@ void TMedia::prepareLoad(TFileManager *manager)
 void TMedia::setBaseMediaAttributes()
 {
     region = title = src = exec = "";
+    if (!root_element.hasAttribute("begin") && parent_container->objectName() == "TExcl")
+        begin.parse("indefinite");
     if (root_element.hasAttribute("region"))
         region = root_element.attribute("region");
     src = parseSrc(root_element);

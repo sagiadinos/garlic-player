@@ -31,8 +31,14 @@ TFileManager::TFileManager(TConfiguration *config, QObject *parent) : QObject(pa
 TFileManager::~TFileManager()
 {
     delete MyDownloader;
+    clearQueues();
+}
+
+void TFileManager::clearQueues()
+{
     loaded_list.clear();
     download_queue.clear();
+    return;
 }
 
 

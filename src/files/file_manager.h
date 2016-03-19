@@ -34,6 +34,7 @@ public:
     const     int        _reloadable = 3;
     explicit TFileManager(TConfiguration *config, QObject *parent = 0);
     ~TFileManager();
+    void     clearQueues();
     void     registerFile(QString file_path);
     QString  getLocalFilePath(QString file_path);
     int      checkCacheStatus(QString file_path);

@@ -29,6 +29,8 @@ bool TSeq::parse(QDomElement element)
 {
     root_element   = element;
     setTimingAttributes();
+    setBaseContainerAttributes();
+
     if (element.hasChildNodes())
     {
         active_element = element.firstChildElement();

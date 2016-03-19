@@ -22,21 +22,31 @@ TSmil::TSmil(TConfiguration *config, QObject *parent)
 {
     Q_UNUSED(parent)
     MyConfiguration = config;
+    MyFileManager   = new TFileManager(MyConfiguration);
 }
 
 TSmil::~TSmil()
 {
-    ar_elements.clear();
-    delete MyFileManager;
+    clearLists();
 }
 
 void TSmil::init()
 {
-    // removes the index name from index_path
-    QString smil_index_path = MyConfiguration->getIndexPath();
-    MyFileManager = new TFileManager(MyConfiguration);
+    MyFileManager->clearQueues();
     return;
 }
+
+void TSmil::clearLists()
+{
+    for (QHash<QString, TBaseTiming *>::iterator i = ar_elements.begin(); i != ar_elements.end(); i++)
+    {
+        delete ar_elements[i.key()];
+    }
+    ar_elements.clear();
+    ar_played_media.clear();
+    return;
+}
+
 
 void TSmil::beginSmilParsing(QDomElement body)
 {
