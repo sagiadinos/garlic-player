@@ -1,6 +1,6 @@
 #include <QString>
 #include <QtTest>
-#include <smilparser/tools/downloader.h>
+#include <files/downloader.h>
 
 class TestTDownloader : public QObject
 {
@@ -20,10 +20,9 @@ private Q_SLOTS:
 
 void TestTDownloader::testAgentString()
 {
-    TDownloader *MyDownloader = new TDownloader();
-    QString user_agent = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
-    QString file_name  = "./agent.txt";
-    MyDownloader->setUserAgent(user_agent);
+    QString user_agent        = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
+    TDownloader *MyDownloader = new TDownloader(user_agent);
+    QString file_name         = "./agent.txt";
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=show_agent_string");
     QSignalSpy spy(MyDownloader, SIGNAL(downloadSucceed(QString)));
     while (spy.count() == 0)
@@ -40,10 +39,9 @@ void TestTDownloader::testAgentString()
 
 void TestTDownloader::testWithoutAgentString()
 {
-    TDownloader *MyDownloader = new TDownloader();
-    QString user_agent = "";
-    QString file_name  = "./agent.txt";
-    MyDownloader->setUserAgent(user_agent);
+    QString user_agent        = "";
+    TDownloader *MyDownloader = new TDownloader(user_agent);
+    QString file_name         = "./agent.txt";
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=show_agent_string");
 
     QFile file(file_name);
@@ -52,10 +50,9 @@ void TestTDownloader::testWithoutAgentString()
 
 void TestTDownloader::testDownloadSmil()
 {
-    TDownloader *MyDownloader = new TDownloader();
-    QString user_agent = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
-    QString file_name  = "./test.smil";
-    MyDownloader->setUserAgent(user_agent);
+    QString user_agent        = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
+    TDownloader *MyDownloader = new TDownloader(user_agent);
+    QString file_name         = "./test.smil";
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_smil_new");
     QSignalSpy spy1(MyDownloader, SIGNAL(downloadSucceed(QString)));
     while (spy1.count() == 0)
@@ -65,7 +62,7 @@ void TestTDownloader::testDownloadSmil()
     QFileInfo fi(file);
     QDateTime last_modified = fi.lastModified();
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_smil_new");
-    QSignalSpy spy2(MyDownloader, SIGNAL(downloadCanceled()));
+    QSignalSpy spy2(MyDownloader, SIGNAL(downloadCanceled(QString)));
     while (spy2.count() == 0)
         QTest::qWait(200);
     QFileInfo fi2(file);
@@ -74,7 +71,7 @@ void TestTDownloader::testDownloadSmil()
     QTest::qWait(500); // to write file with new date
 
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_smil_cached");
-    QSignalSpy spy3(MyDownloader, SIGNAL(downloadCanceled()));
+    QSignalSpy spy3(MyDownloader, SIGNAL(downloadCanceled(QString)));
     while (spy3.count() == 0)
         QTest::qWait(200);
     QFileInfo fi3(file);
@@ -92,10 +89,9 @@ void TestTDownloader::testDownloadSmil()
 
 void TestTDownloader::testDownloadMedia()
 {
-    TDownloader *MyDownloader = new TDownloader();
-    QString user_agent = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
-    QString file_name  = "./test.jpg";
-    MyDownloader->setUserAgent(user_agent);
+    QString user_agent        = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
+    TDownloader *MyDownloader = new TDownloader(user_agent);
+    QString file_name         = "./test.jpg";
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_media_new");
     QSignalSpy spy1(MyDownloader, SIGNAL(downloadSucceed(QString)));
     while (spy1.count() == 0)
@@ -106,7 +102,7 @@ void TestTDownloader::testDownloadMedia()
     QDateTime last_modified = fi.lastModified();
 
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_media_new");
-    QSignalSpy spy2(MyDownloader, SIGNAL(downloadCanceled()));
+    QSignalSpy spy2(MyDownloader, SIGNAL(downloadCanceled(QString)));
     while (spy2.count() == 0)
         QTest::qWait(200);
     QFileInfo fi2(file);
@@ -114,7 +110,7 @@ void TestTDownloader::testDownloadMedia()
     QTest::qWait(500); // to write file with new date
 
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_media_cached");
-    QSignalSpy spy3(MyDownloader, SIGNAL(downloadCanceled()));
+    QSignalSpy spy3(MyDownloader, SIGNAL(downloadCanceled(QString)));
     while (spy3.count() == 0)
         QTest::qWait(200);
     QFileInfo fi3(file);
@@ -131,10 +127,9 @@ void TestTDownloader::testDownloadMedia()
 
 void TestTDownloader::testDownloadMediaDirect()
 {
-    TDownloader *MyDownloader = new TDownloader();
-    QString user_agent = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
-    QString file_name  = "./server.jpg";
-    MyDownloader->setUserAgent(user_agent);
+    QString user_agent        = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
+    TDownloader *MyDownloader = new TDownloader(user_agent);
+    QString file_name         = "./server.jpg";
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/server.jpg");
     QSignalSpy spy1(MyDownloader, SIGNAL(downloadSucceed(QString)));
     while (spy1.count() == 0)

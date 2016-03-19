@@ -82,7 +82,6 @@ void TestTBaseTiming::test_TimingsOnly()
     // start, then pause and look on the remaining times
     InhertitedTBaseTiming *MyTest1 = new InhertitedTBaseTiming(NULL);
     MyTest1->parse(element);
-    QCOMPARE(MyTest1->isPlayable(), true);
     MyTest1->prepareTimerBeforePlaying();
     QCOMPARE(MyTest1->getStatus(),  MyTest1->_stopped);
     MyTest1->prepareTimerBeforePausing();
@@ -97,7 +96,6 @@ void TestTBaseTiming::test_TimingsOnly()
     // start, then pause and look on the remaining times
     InhertitedTBaseTiming *MyTest2 = new InhertitedTBaseTiming(NULL);
     MyTest2->parse(element);
-    QCOMPARE(MyTest2->isPlayable(), true);
     MyTest2->prepareTimerBeforePlaying();
     MyTest2->prepareTimerBeforePausing();
     QCOMPARE(MyTest2->getID(), QString("test2"));
@@ -113,7 +111,6 @@ void TestTBaseTiming::test_TimingsOnly()
     // start, then pause and look on the remaining times
     InhertitedTBaseTiming *MyTest3 = new InhertitedTBaseTiming(NULL);
     MyTest3->parse(element);
-    QCOMPARE(MyTest3->isPlayable(), true);
     MyTest3->prepareTimerBeforePlaying();
     QCOMPARE(MyTest3->getID(), QString("test3"));
     QCOMPARE(MyTest3->getRemainingBegin(), int(0));

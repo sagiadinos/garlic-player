@@ -2,7 +2,7 @@
 <smil>
 	<head>
 		<meta name="title" content="Complex SMIL header for testing" />
-		<meta http-equiv="Refresh" content="300" />
+		<meta http-equiv="Refresh" content="2" />
 		<metadata>
 			<x-server xmlns="http://schemas.adfotain.org/adapi-1.0">
 				<subscriptionList>

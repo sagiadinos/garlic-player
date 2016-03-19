@@ -16,4 +16,7 @@ TARGET = tst_timings
 SOURCES += \
     tst_timings.cpp
 
+DESTDIR = ../../test-bin
 HEADERS +=
+
+include(../tests.pri)

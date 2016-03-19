@@ -11,7 +11,8 @@ QT       -= gui
 CONFIG   += console testcase c++11
 CONFIG   -= app_bundle
 TEMPLATE = app
-LIBS += -L../../lib -lgarlic
 
 TARGET = tst_basetiming
 SOURCES += tst_basetiming.cpp
+
+include(../tests.pri)

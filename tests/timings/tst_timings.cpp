@@ -156,7 +156,7 @@ void TestTTiming::test_checkStatus()
     delete MyTiming;
     MyTiming = new InhertitedTTiming();
     MyTiming->parse("0;15");  // no support for value-list @moment
-    QCOMPARE(MyTiming->getStatus(), QString("ignore"));
+    QCOMPARE(MyTiming->getStatus(), QString("ms"));
 
 
 }
@@ -190,6 +190,6 @@ void TestTTiming::test_getNextTrigger()
 }
 
 
-QTEST_APPLESS_MAIN(TimingsTest)
+QTEST_APPLESS_MAIN(TestTTiming)
 
 #include "tst_timings.moc"

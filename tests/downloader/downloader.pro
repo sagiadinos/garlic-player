@@ -10,7 +10,8 @@ QT       -= gui
 CONFIG   += console testcase c++11
 CONFIG   -= app_bundle
 TEMPLATE = app
-LIBS += -L../../lib -lgarlic
 
 TARGET = tst_downloader
 SOURCES += tst_downloader.cpp
+
+include(../tests.pri)

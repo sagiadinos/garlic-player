@@ -14,14 +14,12 @@ private Q_SLOTS:
     void test_getDefaultValues();
     void test_getHeadValuesFromSimpleSmil();
     void test_getHeadValuesFromComplexSmil();
+    void test_refreshSmilIndex();
 };
 
 void TestTHead::test_getDefaultValues()
 {
     THead MySmilHead;
-    QCOMPARE(MySmilHead.getRefreshTime(), int(0));
-    QCOMPARE(MySmilHead.getRootWidth(), int(1366));
-    QCOMPARE(MySmilHead.getRootHeight(), int(768));
     QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("transparent"));
     QCOMPARE(MySmilHead.getTitle(), QString("No Title"));
     QList<Region> region_list = MySmilHead.getLayout();
@@ -37,7 +35,7 @@ void TestTHead::test_getDefaultValues()
 
 void TestTHead::test_getHeadValuesFromSimpleSmil()
 {
-    QFile file("../data/smil/head_simple.smil");
+    QFile file("../tests/data/smil/head_simple.smil");
     QDomDocument document;
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     document.setContent(&file);
@@ -45,9 +43,6 @@ void TestTHead::test_getHeadValuesFromSimpleSmil()
     QDomElement head = document.firstChildElement().firstChildElement();
     THead MySmilHead;
     MySmilHead.parse(head);
-    QCOMPARE(MySmilHead.getRefreshTime(), int(60));
-    QCOMPARE(MySmilHead.getRootWidth(), int(1920));
-    QCOMPARE(MySmilHead.getRootHeight(), int(1080));
     QCOMPARE(MySmilHead.getTitle(), QString("Simple SMIL header for testing"));
     QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("transparent"));
     QList<Region> region_list = MySmilHead.getLayout();
@@ -65,7 +60,7 @@ void TestTHead::test_getHeadValuesFromSimpleSmil()
 
 void TestTHead::test_getHeadValuesFromComplexSmil()
 {
-    QFile file("../data/smil/head_complex.smil");
+    QFile file("../tests/data/smil/head_complex.smil");
     QDomDocument document;
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     document.setContent(&file);
@@ -74,7 +69,7 @@ void TestTHead::test_getHeadValuesFromComplexSmil()
     THead MySmilHead;
     MySmilHead.parse(head);
 
-    QCOMPARE(MySmilHead.getRefreshTime(), int(300));
+    QCOMPARE(MySmilHead.getRefreshTime(), int(30)); // in file stands 2 seconds for refresh
     QCOMPARE(MySmilHead.getTitle(), QString("Complex SMIL header for testing"));
     QList<Region> region_list = MySmilHead.getLayout();
     QCOMPARE(region_list.count(), int(5));
@@ -120,6 +115,33 @@ void TestTHead::test_getHeadValuesFromComplexSmil()
     QCOMPARE(region_list.at(4).backgroundColor, QString("transparent"));
 }
 
-QTEST_APPLESS_MAIN(TestTHead)
+void TestTHead::test_refreshSmilIndex()
+{
+    QFile file("../tests/data/smil/head_complex.smil");
+    QDomDocument document;
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    document.setContent(&file);
+    file.close();
+    QDomElement head = document.firstChildElement().firstChildElement();
+    THead *MyHead = new THead();
+    MyHead->parse(head);
+    QSignalSpy spy1(MyHead, SIGNAL(checkForNewIndex()));
+    int i = 0;
+    while (spy1.count() == 0)
+    {
+        QTest::qWait(1000);
+        i += 1000;
+    }
+    QVERIFY(i > 9000);
+    QSignalSpy spy2(MyHead, SIGNAL(checkForNewIndex()));
+    while (spy2.count() == 0)
+    {
+        QTest::qWait(1000);
+        i += 1000;
+    }
+    QVERIFY(i > 19000);
+}
+
+QTEST_MAIN(TestTHead)
 
 #include "tst_head.moc"
