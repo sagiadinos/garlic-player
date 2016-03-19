@@ -24,23 +24,29 @@
 #include <mutex>
 
 
-TConfiguration::TConfiguration()
+TConfiguration::TConfiguration(QString path)
 {
     user_settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player");
-    index_server       = "";
-    user_agent         = "";
-
-    QString absolute_path = dir.absolutePath();
-    if (absolute_path.contains("/bin"))
-        base_path     = absolute_path.mid(0, absolute_path.length()-3); // "/" is set when xyz/bin
-    else
-        base_path     = absolute_path+"/";
+    setBasePath();
+    setFullIndexPath(path);
+    setIndexPath();
+    setUserAgent();
     createDirectories();
 }
 
 QString TConfiguration::getSetting(QString setting_name)
 {
     return user_settings->value(setting_name).toString();
+}
+
+QString TConfiguration::getFullIndexPath()
+{
+    return full_index_path;
+}
+
+QString TConfiguration::getIndexPath()
+{
+    return index_path;
 }
 
 /**
@@ -52,7 +58,7 @@ QString TConfiguration::getSetting(QString setting_name)
 QString TConfiguration::getPaths(QString path_name)
 {
     QString ret = "";
-    if (path_name == "config")
+    if (path_name == "configuration")
         ret = base_path + "configuration/";
     else if (path_name == "var")
         ret = base_path + "var/";
@@ -64,53 +70,83 @@ QString TConfiguration::getPaths(QString path_name)
     return ret;
 }
 
-void TConfiguration::setBaseDirectory(QString directory)
+void TConfiguration::setFullIndexPath(QString path)
 {
-    base_path = directory;
+    if (path != "")
+        full_index_path = path;
+    else
+    {
+        QFile file(getPaths("configuration")+"config.xml");
+        if (!file.exists() || !file.open(QIODevice::ReadOnly))
+            full_index_path = "http://indexes.smil-admin.com";
+
+        QXmlStreamReader reader(&file);
+        while (!reader.atEnd())
+        {
+             reader.readNext();
+             if (reader.isStartElement())
+             {
+                 if (reader.name() == "prop" && reader.attributes().value("name") == "content.serverUrl")
+                     full_index_path = reader.attributes().value("value").toString();
+             }
+         }
+    }
+    if (full_index_path.mid(0, 4) != "http" && full_index_path.mid(0, 3) != "ftp")
+        full_index_path = base_path+full_index_path;
+    return;
+}
+
+void TConfiguration::setIndexPath()
+{
+    if (full_index_path.mid(0, 4) == "http" || full_index_path.mid(0, 3) == "ftp")
+    {
+        QUrl url(full_index_path);
+        index_path = url.adjusted(QUrl::RemoveFilename).toString();
+    }
+    else
+    {
+        QFileInfo fi(full_index_path);
+        index_path = fi.path();
+    }
+    if (index_path.mid(index_path.length()-1, 1) != "/")
+        index_path += "/";
+    return;
+}
+
+
+void TConfiguration::setBasePath()
+{
+    QDir            dir;
+    QString absolute_path = dir.absolutePath();
+    if (absolute_path.contains("/bin"))
+        base_path     = absolute_path.mid(0, absolute_path.length()-3); // "/" is set when xyz/bin
+    else
+        base_path     = absolute_path+"/";
+    return;
 }
 
 void TConfiguration::createDirectories()
 {
     QDir            dir;
-    dir.setPath(getPaths("media"));  // this means ./var and ./var/media
+    dir.setPath(getPaths("var"));
     if (!dir.exists() && !dir.mkpath("."))
-        qDebug() << "Failed to create var/media"<< dir.path() << "\r";
+        qDebug() << "Failed to create var"<< dir.path() << "\r";
 
     dir.setPath(getPaths("configuration"));
     if (!dir.exists() && !dir.mkpath("."))
-        qDebug() << "Failed to create " << dir.path() << "\r";
+        qDebug() << "FaigetIndexPath" << dir.path() << "\r";
     return;
 
 }
 
-QString TConfiguration::getIndexServer()
-{
-    if (index_server != "")
-        return index_server;
-    QFile file(getPaths("config")+"config.xml");
-    if (!file.exists() || !file.open(QIODevice::ReadOnly))
-    {
-        index_server = "http://indexes.smil-admin.com";
-        return index_server;
-    }
-    QXmlStreamReader reader(&file);
-    while (!reader.atEnd())
-    {
-         reader.readNext();
-         if (reader.isStartElement())
-         {
-             if (reader.name() == "prop" && reader.attributes().value("name") == "content.serverUrl")
-                 index_server = reader.attributes().value("value").toString();
-         }
-     }
-    return index_server;
-}
 
 QString TConfiguration::getUserAgent()
 {
-    if (user_agent != "")
-        return user_agent;
+   return user_agent;
+}
 
+void TConfiguration::setUserAgent()
+{
     if (user_settings->value("uuid", "").toString() == "")
         user_settings->setValue("uuid", QUuid::createUuid().toString().mid(1, 36));
 #if defined  Q_OS_ANDROID
@@ -143,8 +179,8 @@ QString TConfiguration::getUserAgent()
     QString os("unknown");
 #endif
 
-    user_agent = "GAPI/1.0 (UUID:"+getSetting("uuid")+"; NAME:"+user_settings->value("player_name", getSetting("uuid").mid(24,12)).toString()+") "+os+"/"+getVersion()+" (MODEL:Garlic)";
+    user_agent = "GAPI/1.0 (UUID:"+getSetting("uuid")+"; NAME:"+user_settings->value("player_name", getSetting("uuid").mid(24,12)).toString()+") garlic-"+os+"/"+getVersion()+" (MODEL:Garlic)";
    // ADAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:Player with known UUID) SK8855-ADAPI/2.0.5 (MODEL:XMP-330)
-   return user_agent;
+   return;
 }
 

@@ -43,7 +43,6 @@ public:
     const     int        _paused   = 3;
 
     explicit              TBaseTiming(QObject * parent = 0);
-            bool          isPlayable();
             bool          prepareTimerBeforePlaying();      // what to do when parent sends an order to begin executions
             void          prepareTimerBeforePausing();
             void          prepareTimerBeforeStop();      // what to do when parent sends an order to begin executions
@@ -83,7 +82,6 @@ protected slots:
             void          finishedActiveDuration();
 private:
             bool          repeatable;
-            bool          playable;
             void          setRepeatCount(QString rC);
 };
 

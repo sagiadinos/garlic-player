@@ -27,14 +27,14 @@
 #include <QWidget>
 #include <QList>
 #include "smilparser/head.h"
-#include <smilparser.h>
+#include "smilparser.h"
 
 class TRegion : public QGraphicsView
 {
     Q_OBJECT
 public:
-    TRegion(QWidget *p = 0);
-    virtual ~TRegion();
+    TRegion(QWidget *parent = 0);
+    ~TRegion();
     void setRootSize(int w, int h);
     void setRegion(Region region);
     void playImage(showImg structure);

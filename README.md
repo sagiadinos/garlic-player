@@ -34,7 +34,7 @@ Only sources! First binaries will deployed, when the downloader is implemented c
 - **excl**
 - **priorityClass**
 
-####Attributes for excl/prioritySlass time container
+####Attributes for excl/priorityClass time container
 - **peers** stop|never|pause|defer
 - **higher** stop|pause
 - **lower** never|defer
@@ -44,6 +44,9 @@ Only sources! First binaries will deployed, when the downloader is implemented c
 - **audio**
 - **images**
 - **text** websites only
+
+###other Elements
+- **prefetch**
 
 ####Attributes for media
 - **region**

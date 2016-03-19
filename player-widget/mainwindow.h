@@ -25,38 +25,41 @@
 #include "region.h"
 #include "smilparser/index_file.h"
 #include "smilparser/head.h"
-#include "smilparser/tools/downloader.h"
+#include "files/downloader.h"
 
 class MainWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void setInitialSmilIndex(QString path = "");
+    void                      setInitialSmilIndex(QString path = "");
 public slots:
-    void setSmilIndex();
-    void startShowMedia(TMedia *media);
-    void stopShowMedia(TMedia *media);
-private:
-    QMap<QString, TRegion *> ar_regions;
-    TSmil          *MySmil;
-    TIndexFile     *MyIndexFile;
-    TConfiguration *MyConfiguration;
-    QHBoxLayout    *layout;
-    QString         smil_index_path;
-    void setRegions(QDomElement head);
-    QString selectRegion(QString region_name);
-    void resizeEvent(QResizeEvent * event);
-    void playImage(TImage *MyImage);
-    void playVideo(TVideo *MyVideo);
-    void playAudio(TAudio *MyAudio);
-    void playWeb(TWeb *MyWeb);
-    void removeImage(TImage *MyImage);
-    void removeVideo(TVideo *MyVideo);
-    void removeWeb(TWeb *MyWeb);
-
+    void                      setSmilIndex();
+    void                      checkForNewSmilIndex();
+    void                      startShowMedia(TMedia *media);
+    void                      stopShowMedia(TMedia *media);
+protected:
+    QMap<QString, TRegion *>  ar_regions;
+    TSmil                    *MySmil          = NULL;
+    THead                    *MyHead          = NULL;
+    TIndexFile               *MyIndexFile     = NULL;
+    TConfiguration           *MyConfiguration = NULL;
+    QHBoxLayout              *layout;
+    QString                   smil_index_path;
+    void                      deleteRegionsAndLayouts();
+    void                      loadIndex();
+    void                      setRegions(QDomElement head);
+    QString                   selectRegion(QString region_name);
+    void                      resizeEvent(QResizeEvent * event);
+    void                      playImage(TImage *MyImage);
+    void                      playVideo(TVideo *MyVideo);
+    void                      playAudio(TAudio *MyAudio);
+    void                      playWeb(TWeb *MyWeb);
+    void                      removeImage(TImage *MyImage);
+    void                      removeVideo(TVideo *MyVideo);
+    void                      removeWeb(TWeb *MyWeb);
 };
 
 #endif // MAINWINDOW_H

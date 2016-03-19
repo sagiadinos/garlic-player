@@ -22,46 +22,43 @@
 #include <QFile>
 #include <QCryptographicHash>
 #include "smilparser/container.h"
-#include "smilparser/tools/downloader.h"
-#include "configuration.h"
+#include "files/file_manager.h"
 
 class TMedia : public TBaseTiming
 {
     Q_OBJECT
 public:
     TMedia(TBaseTiming * parent = 0);
-    void            setIndexPath(QString path);
-    QString         getRegion();
-    bool            parse(QDomElement element);
-    void            resume(){play();}
-    void            prepareLoad(QString index_path, TConfiguration *config);
-    bool            isLoaded();
-    QString         getBaseType() {return "media";}
-    bool            hasPlayingChilds(){return false;}
-    TBaseTiming    *getChildElementFromList(){return this;}
-    TContainer     *getParentContainer(){return parent_container;}
+    void              setIndexPath(QString path);
+    QString           getRegion();
+    bool              parse(QDomElement element);
+    void              resume(){play();}
+    void              prepareLoad(TFileManager *downloader);
+    bool              isLoaded();
+    QString           getSrc() {return "src";}
+    QString           getBaseType() {return "media";}
+    bool              hasPlayingChilds(){return false;}
+    TBaseTiming      *getChildElementFromList(){return this;}
+    TContainer       *getParentContainer(){return parent_container;}
+    virtual bool      load(QString file_path) = 0;
+    static  QString   parseSrc(QDomElement element);
+
 public slots:
-    void            emitfinished();
+    void              emitfinished();
 protected:
-    TContainer     *parent_container;
-    QString         region, src, exec;
-    QString         filename, cache_control, log_content_id  = "";
-    TDownloader    *MyDownloader;
-    TConfiguration *MyConfiguration;
-    bool            downloaded;
-    bool            loaded;
-    void            setBaseMediaAttributes();
-    void            setBaseParameters();
-    virtual void    setAttributes() = 0;
-    virtual bool    load(QString file_path) = 0;
-    bool            isDownloaded(QString cached_file_path, QString file_path);
-protected slots:
-    void            downloadSucceed(QString local_path);
+    TContainer       *parent_container;
+    QString           region, src, exec;
+    QString           cached_file_path;
+    QString           filename, cache_control, log_content_id  = "";
+    TFileManager     *MyFileManager;
+    bool              loaded;
+    void              setBaseMediaAttributes();
+    void              setBaseParameters();
+    virtual void      setAttributes() = 0;
 private:
-    QString         getFilePath(QString index_path);
 signals:
-    void            startedMedia(TContainer *parent , TBaseTiming *element);
-    void            finishedMedia(TContainer *parent , TBaseTiming *element);
+    void              startedMedia(TContainer *parent , TBaseTiming *element);
+    void              finishedMedia(TContainer *parent , TBaseTiming *element);
 
 };
 

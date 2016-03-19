@@ -24,26 +24,29 @@
 #include <QString>
 #include <QtXml>
 #include <QDebug>
-#include "tools/downloader.h"
-#include "configuration.h"
+#include "files/downloader.h"
+#include "tools/configuration.h"
 
-class TIndexFile: public QObject
+class TIndexFile : public QObject
 {
     Q_OBJECT
 public:
-    TIndexFile();
-    void            load(QString path, TConfiguration *config);
+    TIndexFile(TConfiguration *config, QObject *parent = 0);
+    void            load();
     QDomElement     getHead();
     QDomElement     getBody();
-    QString         getFilePath();
 protected:
-    void            loadFromHttpToDom(QString uri);
+    bool            loaded;
     TDownloader    *MyDownloader;
     TConfiguration *MyConfiguration;
     QDomDocument    document;
+    void            loadFromHttpToDom(QString uri);
+    void            loadFromLocalToDom(QString filename);
+    QString         determineLocalFileName(QString uri);
     QDomElement     getTag(QString name);
 protected slots:
-    void            loadFromLocalToDom(QString filename);
+    void            loadAfterDownload(QString filename);
+    void            checkForLoaded(QString filename);
 signals:
     void isLoaded();
 };

@@ -27,22 +27,14 @@ TSmil::TSmil(TConfiguration *config, QObject *parent)
 TSmil::~TSmil()
 {
     ar_elements.clear();
+    delete MyFileManager;
 }
 
-void TSmil::init(QString smil_index_path)
+void TSmil::init()
 {
-    if (smil_index_path.mid(0, 4) == "http" || smil_index_path.mid(0, 3) == "ftp")
-    {
-        QUrl url(smil_index_path);
-        index_path = url.adjusted(QUrl::RemoveFilename).toString();
-    }
-    else
-    {
-        QFileInfo fi(smil_index_path);
-        index_path = fi.path();
-    }
-    if (index_path.mid(index_path.length()-1, 1) != "/")
-        index_path += "/";
+    // removes the index name from index_path
+    QString smil_index_path = MyConfiguration->getIndexPath();
+    MyFileManager = new TFileManager(MyConfiguration);
     return;
 }
 
@@ -61,44 +53,47 @@ void TSmil::beginSmilParsing(QDomElement body)
  * @param parent
  * @param found_tag
  */
-void TSmil::foundElement(TContainer *parent, QString type, QDomElement dom_element)
+void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement dom_element)
 {
-    TBaseTiming                              *MyBase;
-    bool                                     playable             = false;
+    TBaseTiming                              *MyBaseTiming;
     QHash<QString, TBaseTiming *>::iterator  ar_elements_iterator = ar_elements.find(TBase::parseID(dom_element));
     QString                                  base_type            = "";
+    if (type == "prefetch")
+    {
+        MyFileManager->registerFile(TMedia::parseSrc(dom_element));
+        return;
+    }
     if (ar_elements_iterator == ar_elements.end())
     {
-        MyBase     = TFactory::createBase(type, parent);
-        base_type  = MyBase->getBaseType();
-        MyBase->parse(dom_element);
-        if (MyBase != NULL)
+        MyBaseTiming     = TFactory::createBase(type, ParentContainer);
+        base_type  = MyBaseTiming->getBaseType();
+        MyBaseTiming->parse(dom_element);
+        if (MyBaseTiming != NULL)
         {
-            ar_elements_iterator = insertIntoObjectContainer(parent, MyBase);
+            ar_elements_iterator = insertIntoObjectContainer(ParentContainer, MyBaseTiming);
             if (base_type == "media")
-                connectMediaSlots(qobject_cast<TMedia *> (MyBase));
+                connectMediaSlots(qobject_cast<TMedia *> (MyBaseTiming));
             else if (base_type == "container")
-                connectContainerSlots(MyBase);
+                connectContainerSlots(qobject_cast<TContainer *> (MyBaseTiming));
         }
     }
     else
     {
-        MyBase     = *ar_elements_iterator;
-        base_type  = MyBase->getBaseType();
+        MyBaseTiming     = *ar_elements_iterator;
+        base_type  = MyBaseTiming->getBaseType();
     }
-    qDebug() << MyBase->getID() << QTime::currentTime().toString()  << " foundElement";
-
-    playable    = MyBase->isPlayable();
-
-    if (playable)
+    qDebug() << MyBaseTiming->getID() << QTime::currentTime().toString()  << " foundElement";
+    if (base_type == "media")
     {
-         MyBase->prepareTimerBeforePlaying();
+        TMedia *MyMedia = qobject_cast<TMedia *> (MyBaseTiming);
+        MyMedia->isLoaded();
     }
+     MyBaseTiming->prepareTimerBeforePlaying();
 
-    QString object_name = parent->objectName();
-    if (object_name == "TExcl" && playable)  // increment active child to determine end of a excl
+    QString object_name = ParentContainer->objectName();
+    if (object_name == "TExcl")  // increment active child to determine end of a excl
     {
-        TExcl   *MyExclParent   = qobject_cast<TExcl *> (parent);
+        TExcl   *MyExclParent   = qobject_cast<TExcl *> (ParentContainer);
         MyExclParent->childStarted(*ar_elements_iterator);
     }
     return;
@@ -124,14 +119,11 @@ void TSmil::startElement(TContainer *parent, TBaseTiming *element)
             MyContainer->setPlayedElement(element);
     }
 
-    if (playable)
-    {
-        if (element->getBaseType() == "media")
-            emitStartShowMedia(qobject_cast<TMedia *> (element));
-        else
-            element->play();
+    if (element->getBaseType() == "media")
+        emitStartShowMedia(qobject_cast<TMedia *> (element));
+    else
+        element->play();
 
-    }
     return;
 }
 
@@ -165,14 +157,14 @@ void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
  * @param parent
  * @param element
  */
-void TSmil::pausePlaylingElement(TBaseTiming *element)
+void TSmil::pausePlayingElement(TBaseTiming *element)
 {
     qDebug() << element->getID() << QTime::currentTime().toString() << "pause Element";
     element->prepareTimerBeforePausing();
     if (element->hasPlayingChilds())
     {
         TContainer  *MyContainer      = qobject_cast<TContainer *> (element);
-        pausePlaylingElement(MyContainer->getChildElementFromList());
+        pausePlayingElement(MyContainer->getChildElementFromList());
     }
     element->pause();
     if (element->getBaseType() == "media")
@@ -201,7 +193,7 @@ void TSmil::resumeQueuedElement(TBaseTiming *element)
  * @param parent
  * @param element
  */
-void TSmil::stopPlaylingElement(TBaseTiming *element)
+void TSmil::stopPlayingElement(TBaseTiming *element)
 {
     qDebug()<< element->getID() << QTime::currentTime().toString() << "Kill Timer";
     killTimer(element);
@@ -218,7 +210,7 @@ void TSmil::stopElement(TBaseTiming *element)
         if (element->hasPlayingChilds())
         {
             qDebug()<< element->getID() << QTime::currentTime().toString() << "has Childs";
-            stopPlaylingElement(element->getChildElementFromList()); // recurse with stopPlaylingElement to kill timer of childs
+            stopPlayingElement(element->getChildElementFromList()); // recurse with stopPlaylingElement to kill timer of childs
         }
         element->stop();
         if (element->getBaseType() == "media")
@@ -246,32 +238,25 @@ QHash<QString, TBaseTiming *>::iterator TSmil::insertIntoObjectContainer(TBaseTi
     return ar_elements.insert(id, child);;
 }
 
-void TSmil::connectContainerSlots(TBaseTiming *element)
+void TSmil::connectContainerSlots(TContainer *MyContainer)
 {
-    TContainer *MyPlaylist = qobject_cast<TContainer *> (element);
-    if (MyPlaylist->isPlayable())
+    connect(MyContainer, SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));
+    connect(MyContainer, SIGNAL(startedContainer(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
+    connect(MyContainer, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
+    if (MyContainer->objectName() == "TExcl")
     {
-        connect(MyPlaylist, SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));
-        connect(MyPlaylist, SIGNAL(startedContainer(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
-        connect(MyPlaylist, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
-        if (element->objectName() == "TExcl")
-        {
-            connect(MyPlaylist, SIGNAL(resumeElement(TBaseTiming *)), this, SLOT(resumeQueuedElement(TBaseTiming *)));
-            connect(MyPlaylist, SIGNAL(pauseElement(TBaseTiming *)), this, SLOT(pausePlaylingElement(TBaseTiming *)));
-            connect(MyPlaylist, SIGNAL(stopElement(TBaseTiming *)), this, SLOT(stopPlaylingElement(TBaseTiming *)));
-        }
+        connect(MyContainer, SIGNAL(resumeElement(TBaseTiming *)), this, SLOT(resumeQueuedElement(TBaseTiming *)));
+        connect(MyContainer, SIGNAL(pauseElement(TBaseTiming *)), this, SLOT(pausePlayingElement(TBaseTiming *)));
+        connect(MyContainer, SIGNAL(stopElement(TBaseTiming *)), this, SLOT(stopPlayingElement(TBaseTiming *)));
     }
     return;
 }
 
 void TSmil::connectMediaSlots(TMedia *MyMedia)
 {
-    if (MyMedia->isPlayable())
-    {
-        MyMedia->prepareLoad(index_path, MyConfiguration); // load media
-        connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
-        connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
-    }
+    MyMedia->prepareLoad(MyFileManager);
+    connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
+    connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     return;
 }
 

@@ -23,19 +23,8 @@ TBaseTiming::TBaseTiming(QObject * parent)
     Q_UNUSED(parent);
 }
 
-bool TBaseTiming::isPlayable()
-{
-    playable = true;
-    if (end.getStatus() == "ignore" || begin.getStatus() == "ignore")
-        playable = false;
-    return playable;
-}
-
 bool TBaseTiming::prepareTimerBeforePlaying()
 {
-    if (!playable)
-        return false;
-
     bool    ret        = true;
     QString end_status = end.getStatus();
     is_resumed         = false;
@@ -58,8 +47,8 @@ bool TBaseTiming::prepareTimerBeforePlaying()
         }
         else if (begin_status == "wallclock") // look if begin should be delayed
         {
-            begin_timer->start(begin.getNextTrigger(QDateTime::currentDateTime()));
             qDebug() << getID() <<QTime::currentTime().toString() << "begin " << begin.getNextTrigger(QDateTime::currentDateTime());
+            begin_timer->start(begin.getNextTrigger(QDateTime::currentDateTime()));
             status = _waiting;
         }
         else if (begin_status == "indefinite")

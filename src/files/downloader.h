@@ -22,7 +22,6 @@
 #include <QLocale>
 #include <QDir>
 #include <QFileInfo>
-#include <QList>
 #include <QByteArray>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -39,9 +38,9 @@ class TDownloader: public QObject
     QNetworkAccessManager *manager_head, *manager_get;
 
 public:
-    TDownloader(QObject * parent = 0);
+    TDownloader(QString ua, QObject * parent = 0);
+    ~TDownloader();
     void checkFiles(QString local, QString remote);
-    void setUserAgent(QString ua);
     bool downloadInProgress();
 
 private slots:
@@ -50,9 +49,9 @@ private slots:
 
 private:
     QUrl           remote_file;
+    bool           download;
     QByteArray     user_agent;
     QFileInfo      local_file;
-    QNetworkReply *get_reply;
     QString        getFileNameFromUrl();
     void           doHttpGetRequest();
     void           doHttpHeadRequest();
@@ -60,7 +59,7 @@ private:
 signals:
     void downloadSucceed(QString);
     void downloadCanceled(QString); // when file is in cache cancel download
-    void downloadFailed();
+    void downloadFailed(QString);
 
 };
 #endif // TDOWNLOADER_H

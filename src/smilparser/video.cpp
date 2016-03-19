@@ -39,7 +39,7 @@ showVideo TVideo::getMediaForShow()
 
 void TVideo::setDurationTimerBeforePlay()
 {
-    if (!loaded)
+    if (loaded)
     {
         if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
             connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
@@ -84,9 +84,13 @@ bool TVideo::load(QString file_path)
     show_video.video_item  = new QtAV::GraphicsItemRenderer;
     media_player           = new QtAV::AVPlayer;
     media_player->setRenderer(show_video.video_item);
-
-    media_player->setFile(file_path);
-    return true;
+    bool isload = media_player->load(file_path);
+    // deprecated status informed but there is not alternative to get load status
+    if (isload)
+        qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
+    else
+        qDebug() << getID() << QTime::currentTime().toString()  << "not loaded: " << file_path;
+    return isload;
 }
 
 // ====================  protected methods =================================

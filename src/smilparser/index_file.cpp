@@ -18,51 +18,23 @@
 
 #include "index_file.h"
 
-TIndexFile::TIndexFile()
+TIndexFile::TIndexFile(TConfiguration *config, QObject *parent)
 {
-    MyDownloader = new TDownloader();
-    MyDownloader->setUserAgent("GARLIC");
-    connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(loadFromLocalToDom(QString)));
-    connect(MyDownloader, SIGNAL(downloadCanceled(QString)), SLOT(loadFromLocalToDom(QString)));
+    Q_UNUSED(parent);
+    MyConfiguration = config;
+    MyDownloader    = new TDownloader(MyConfiguration->getUserAgent());
+    loaded          = false;
+    connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(loadAfterDownload(QString)));
+    connect(MyDownloader, SIGNAL(downloadCanceled(QString)), SLOT(checkForLoaded(QString)));
 }
 
-void TIndexFile::load(QString path, TConfiguration *config)
+void TIndexFile::load()
 {
-    MyConfiguration = config;
+    QString path = MyConfiguration->getFullIndexPath();
     if (path.mid(0, 4) == "http" || path.mid(0, 4) == "ftp")
         loadFromHttpToDom(path);
     else
         loadFromLocalToDom(path);
-    return;
-}
-
-void TIndexFile::loadFromHttpToDom(QString uri)
-{
-
-    QUrl url(uri);
-    QString file_name = url.fileName();
-    if (file_name == "")
-        file_name = "index.smil";
-
-    file_name = MyConfiguration->getPaths("var")+"index.smil";
-
-    MyDownloader->setUserAgent(MyConfiguration->getUserAgent());
-    MyDownloader->checkFiles(file_name, uri);
-    return;
-}
-
-void TIndexFile::loadFromLocalToDom(QString filename)
-{
-    QFile file(filename);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        if (!document.setContent(&file))
-            qDebug() << "Fail load to a DomDocument";
-        file.close();
-    }
-    else
-        qDebug() << "Fail to open file";
-    emit isLoaded();
     return;
 }
 
@@ -77,6 +49,58 @@ QDomElement TIndexFile::getBody()
 }
 
 
+// ========================== protected methods =============================================
+
+
+void TIndexFile::loadAfterDownload(QString filename)
+{
+    loadFromLocalToDom(determineLocalFileName(filename));
+    return;
+}
+
+
+QString TIndexFile::determineLocalFileName(QString uri)
+{
+    QUrl url(uri);
+    QString file_name = url.fileName();
+    if (file_name == "")
+        file_name = "index.smil";
+    return MyConfiguration->getPaths("var")+"index.smil";
+}
+
+
+void TIndexFile::checkForLoaded(QString filename)
+{
+    if (!loaded)
+        loadFromLocalToDom(determineLocalFileName(filename));
+    return;
+}
+
+void TIndexFile::loadFromHttpToDom(QString uri)
+{
+    MyDownloader->checkFiles(determineLocalFileName(uri), uri);
+    return;
+}
+
+void TIndexFile::loadFromLocalToDom(QString filename)
+{
+    QFile file(filename);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        if (document.setContent(&file))
+        {
+            emit isLoaded();
+            loaded = true;
+        }
+        else
+            qDebug() << "Fail load to a DomDocument";
+        file.close();
+    }
+    else
+        qDebug() << QTime::currentTime().toString() << "fail to load " << filename;
+    return;
+}
+
 QDomElement TIndexFile::getTag(QString tag_name)
 {
     QDomNodeList nodelist = document.elementsByTagName(tag_name);
@@ -85,3 +109,4 @@ QDomElement TIndexFile::getTag(QString tag_name)
        tag = nodelist.item(0).toElement();
     return tag;
 }
+

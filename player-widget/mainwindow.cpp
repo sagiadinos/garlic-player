@@ -22,44 +22,74 @@ MainWindow::MainWindow(QWidget *parent) :  QWidget(parent)
 {
     layout = new QHBoxLayout();
     setLayout(layout);
-    MyIndexFile = new TIndexFile();
-    connect(MyIndexFile, SIGNAL(isLoaded()), SLOT(setSmilIndex()));
-    MyConfiguration = new TConfiguration();
 }
 
 void MainWindow::setInitialSmilIndex(QString path)
 {
-    smil_index_path = path;
+    // path = "http://smil-admin.com/resources/smil/test/index.smil";
+ //   path = "tests/data/full_smil/simple_media.smil";
+    MyConfiguration = new TConfiguration(path);
+    MyIndexFile     = new TIndexFile(MyConfiguration);
+    connect(MyIndexFile, SIGNAL(isLoaded()), this, SLOT(setSmilIndex()));
+    MyHead          = new THead();
+    connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
 
-    // only for developing
-    if (smil_index_path == "")
-        smil_index_path = "http://smil-admin.com/resources/smil/test/index.smil";
-//        smil_index_path = "http://smil-admin.com/resources/smil/test/full_smil/simple_body.smil";
-
-    if (smil_index_path == "")
-        smil_index_path = MyConfiguration->getIndexServer();
-
-    MyIndexFile->load(smil_index_path, MyConfiguration);
+    loadIndex(); // initial Start
 }
 
+void MainWindow::loadIndex()
+{
+    MyIndexFile->load();
+    return;
+}
+
+
+/**
+ * @briegetIndexPathsetSmilIndex is a slot which is activated, when an indexfile is ready on local hard disc for reading
+ */
 void MainWindow::setSmilIndex()
 {
     MySmil = new TSmil(MyConfiguration);
-    MySmil->init(smil_index_path);
-    setRegions(MyIndexFile->getHead());
     connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
+
+    MySmil->init();
+    setRegions(MyIndexFile->getHead());
     setGeometry(0,0, width(), height());
     MySmil->beginSmilParsing(MyIndexFile->getBody());
+
+    return;
+}
+
+/**
+ * @brief MainWindow::refreshSmilIndex is a slot which is called when THead send a signal to check for a new Smil-Index (refresh)
+ */
+void MainWindow::checkForNewSmilIndex()
+{
+    delete MySmil;
+    deleteRegionsAndLayouts();
+    loadIndex();
+    return;
+}
+
+
+void MainWindow::deleteRegionsAndLayouts()
+{
+    ar_regions.clear();
+    while(!layout->isEmpty())
+    {
+      delete layout->takeAt(0);
+    }
+    if (MySmil != NULL)
+        delete MySmil;
     return;
 }
 
 void MainWindow::setRegions(QDomElement head)
 {
-    THead MyHead;
-    MyHead.parse(head);
-    setStyleSheet("background-color:"+MyHead.getRootBackgroundColor()+";");
-    QList<Region>  region_list = MyHead.getLayout();
+    MyHead->parse(head);
+    setStyleSheet("background-color:"+MyHead->getRootBackgroundColor()+";");
+    QList<Region>  region_list = MyHead->getLayout();
     QMap<QString, TRegion *>::iterator j;
     for (int i = 0; i < region_list.length(); i++)
     {

@@ -20,6 +20,7 @@
 #define CONFIGURATION_H
 #include <QSettings>
 #include <QDir>
+#include <QUrl>
 #include <QUuid>
 
 /**
@@ -29,21 +30,24 @@ class TConfiguration
 {
 
 public:
-    TConfiguration();
+    TConfiguration(QString path = "");
     static QString getVersion(){return "0.1.0";}
     static QString getAppName(){return "garlic player";}
     static QString getDescription() {return "SMIL Player for Digital Signage";}
-    void    setBaseDirectory(QString directory);
     QString getSetting(QString setting_name);
     QString getPaths(QString path_name);
-    QString getIndexServer();
+    QString getFullIndexPath();
+    QString getIndexPath();
     QString getUserAgent();
 protected:
     void createDirectories();
+    void setIndexPath();
+    void setFullIndexPath(QString path);
+    void setBasePath();
+    void setUserAgent();
 private:
-    QDir            dir;
     QString         base_path;
-    QString         user_agent, index_server;
+    QString         user_agent, full_index_path, index_path;
     QSettings      *user_settings;
 };
 

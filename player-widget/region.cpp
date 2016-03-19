@@ -19,14 +19,19 @@
 #include "region.h"
 #include <QLayout>
 
-TRegion::TRegion(QWidget *p)
+TRegion::TRegion(QWidget *parent)
 {
-    parent = p;
+    Q_UNUSED(parent);
     scene = new QGraphicsScene();
     setScene(scene);
     setAlignment(Qt::AlignCenter);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
+
+TRegion::~TRegion()
+{
+    delete scene;
 }
 
 void TRegion::playImage(showImg structure)
@@ -152,6 +157,3 @@ void TRegion::resizeWeb(int w, int h)
     return;
 }
 
-TRegion::~TRegion()
-{
-}

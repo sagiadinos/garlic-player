@@ -46,14 +46,11 @@ void TTiming::parse(QString s_val)
             parseWallclock(s_val.mid(10, s_val.length()-11)); // wallclock(the_interesting stuff)
             status    = "wallclock";
         }
-        else if (s_val.contains(';'))
-            status = "ignore";
-        else
+        else // default an unrecognized set to 0 except on excl-element (indefinite). This ist set in TExcl->parse
         {
             ms = calculateMilliseconds(s_val);
             status = "ms";
         }
-        // media should be returned ms like waste cause this class is only for begin or end attribute
     }
     return;
 }

@@ -24,6 +24,7 @@
 #include <QtXml>
 #include <QDebug>
 #include <QList>
+#include <QTimer>
 
 /**
  * @brief The Region struct
@@ -40,34 +41,37 @@ struct Region
     QString backgroundColor;
 };
 
-class THead
+class THead: public QObject
 {
+    Q_OBJECT
 public:
     THead(QObject *parent = 0);
-    void          parse(QDomElement head);
-    int           getRefreshTime();
-    QString       getRootBackgroundColor();
-    int           getRootWidth();
-    int           getRootHeight();
-    QString       getTitle();
-    QList<Region> getLayout();
-    void          setRootLayout(int w, int h);
-
-protected:
+     ~THead();
+    void           setDefaultValues();
+    void           parse(QDomElement head);
+    int            getRefreshTime(){return refresh;}
+    QString        getRootBackgroundColor();
+    QString        getTitle();
+    QList<Region>  getLayout();
+    void           setRootLayout(int w, int h);
+public slots:
+    void           emitCheckForNewIndex();
 private:
-    Region default_region;
-    QString title;
-    int refresh;
-    int width;
-    int height;
-    QString backgroundColor;
-    QDomElement head;
-    QList<Region> region_list;
-    void          parseMeta(QDomElement element);
-    void          parseLayout(QDomElement layout);
-    void          parseRootLayout(QDomElement root_layout);
-    void          parseRegions(QDomNodeList childs);
-    qreal         calculatePercentBasedOnRoot(QString value, qreal root);
+    Region         default_region;
+    QString        title;
+    int            refresh, width, height;
+    QString        backgroundColor;
+    QDomElement    head;
+    QList<Region>  region_list;
+    QTimer        *refresh_timer;
+    void           parseMeta(QDomElement element);
+    void           parseLayout(QDomElement layout);
+    void           parseRootLayout(QDomElement root_layout);
+    void           parseRegions(QDomNodeList childs);
+    void           setRefreshTimer();
+    qreal          calculatePercentBasedOnRoot(QString value, qreal root);
+signals:
+    void           checkForNewIndex();
 };
 
 #endif // HEAD_H

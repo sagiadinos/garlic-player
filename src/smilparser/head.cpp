@@ -21,11 +21,26 @@
 THead::THead(QObject *parent)
 {
     Q_UNUSED(parent);
-    refresh         = 0; // means no looking for new index
-    title           = "No Title";
-    width           = 1366;
-    height          = 768;
-    backgroundColor = "transparent";
+    refresh_timer  = new QTimer;
+    connect(refresh_timer, SIGNAL(timeout()), this, SLOT(emitCheckForNewIndex()));
+    setDefaultValues();
+}
+
+THead::~THead()
+{
+    setDefaultValues();
+    delete refresh_timer;
+}
+
+
+void THead::setDefaultValues()
+{
+    refresh                        = 0; // means no looking for new index
+    title                          = "No Title";
+    width                          = 1366;
+    height                         = 768;
+    backgroundColor                = "transparent";
+    region_list.clear();
     default_region.regionName      = "screen";
     default_region.top             = 0;
     default_region.left            = 0;
@@ -34,11 +49,9 @@ THead::THead(QObject *parent)
     default_region.z_index         = 0;
     default_region.backgroundColor = "transparent";
     region_list.append(default_region);
-}
-
-int THead::getRefreshTime()
-{
-    return refresh;
+    if (refresh_timer->isActive())
+        refresh_timer->stop();
+    return;
 }
 
 QString THead::getTitle()
@@ -51,16 +64,6 @@ QString THead::getRootBackgroundColor()
     return backgroundColor;
 }
 
-int THead::getRootWidth()
-{
-    return width;
-}
-
-int THead::getRootHeight()
-{
-    return height;
-}
-
 QList<Region> THead::getLayout()
 {
     return region_list;
@@ -68,6 +71,7 @@ QList<Region> THead::getLayout()
 
 void THead::parse(QDomElement head)
 {
+    setDefaultValues();
     if (head.hasChildNodes())
     {
         QDomNodeList childs = head.childNodes();
@@ -90,12 +94,26 @@ void THead::setRootLayout(int w, int h)
     return;
 }
 
+
+/**
+ * @brief THead::emitRefreshIndex is a slot
+ */
+void THead::emitCheckForNewIndex()
+{
+    qDebug() << QTime::currentTime().toString() << "emit check for new index";
+    emit checkForNewIndex();
+    return;
+}
+
 void THead::parseMeta(QDomElement element)
 {
     if (element.hasAttribute("name") && element.attribute("name") == "title" && element.hasAttribute("content"))
         title = element.attribute("content");
     else if (element.hasAttribute("http-equiv") && element.attribute("http-equiv") == "Refresh" && element.hasAttribute("content"))
+    {
         refresh = element.attribute("content").toInt();
+        setRefreshTimer();
+    }
     return;
 }
 
@@ -158,6 +176,18 @@ void THead::parseRegions(QDomNodeList childs)
         }
     }
 
+}
+
+void THead::setRefreshTimer()
+{
+    if (refresh == 0) // not refresh timer when refresh is 0
+        return;
+
+    if (refresh < 31) // make sure that impaciently clients do not stress the cms too much
+        refresh = 30;
+
+    refresh_timer->start(refresh*1000);
+    return;
 }
 
 qreal THead::calculatePercentBasedOnRoot(QString value, qreal root)

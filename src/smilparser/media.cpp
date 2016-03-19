@@ -28,12 +28,18 @@ bool TMedia::parse(QDomElement element)
     root_element   = element;
     setAttributes();     // special for every media type
     setBaseParameters(); // in this class
-    MyDownloader = new TDownloader();
-    connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(downloadSucceed(QString)));
-    downloaded   = false;
     loaded       = false;
     return true;
 }
+
+QString TMedia::parseSrc(QDomElement element)
+{
+    QString ret = "";
+    if (element.hasAttribute("src"))
+        ret = element.attribute("src");
+    return ret;
+}
+
 
 
 QString TMedia::getRegion()
@@ -43,61 +49,33 @@ QString TMedia::getRegion()
 
 bool TMedia::isLoaded()
 {
-    if (loaded)
-        return true;
-    return false;
+    int stat = MyFileManager->checkCacheStatus(src);
+    if (!loaded && stat > 0)
+    {
+        loaded = load(MyFileManager->getLocalFilePath(src));
+        return loaded;
+    }
+    if (loaded && stat == MyFileManager->_reloadable)
+    {
+        loaded = load(MyFileManager->getLocalFilePath(src));
+        return loaded;
+    }
+    return loaded;
 }
 
-void TMedia::prepareLoad(QString index_path, TConfiguration *config)
+void TMedia::prepareLoad(TFileManager *manager)
 {
-    MyConfiguration = config;
-    MyDownloader->setUserAgent(MyConfiguration->getUserAgent());
-    QString file_path  = getFilePath(index_path);
-    if (index_path.mid(0, 4) == "http" || index_path.mid(0, 3) == "ftp") // if index-Smil is from Web-Service check if download
-    {
-        QFileInfo fi(file_path);
-        QString   cached_file_path = MyConfiguration->getPaths("var")+QString(QCryptographicHash::hash((file_path.toUtf8()),QCryptographicHash::Md5).toHex())+ "."+fi.suffix();
-        qDebug() << cached_file_path;
-        if (isDownloaded(cached_file_path, file_path))
-          downloadSucceed(cached_file_path);
-    }
-    else
-        downloadSucceed(file_path);
+    MyFileManager = manager;
+    MyFileManager->registerFile(src);
     return;
 }
-
-bool TMedia::isDownloaded(QString cached_file_path, QString file_path)
-{
-    if (downloaded)
-        return true;
-
-    QFile file(cached_file_path);
-    if (file.exists())
-    {
-        downloaded = true;
-        return true;
-    }
-
-    if (!MyDownloader->downloadInProgress()) // start a download when it is not already in Progress
-        MyDownloader->checkFiles(cached_file_path, file_path);
-    return false;
-}
-
-void TMedia::downloadSucceed(QString local_path) // slot
-{
-    downloaded      = true;
-    loaded          = load(local_path);
-    return;
-}
-
 
 void TMedia::setBaseMediaAttributes()
 {
     region = title = src = exec = "";
     if (root_element.hasAttribute("region"))
         region = root_element.attribute("region");
-    if (root_element.hasAttribute("src"))
-        src = root_element.attribute("src");
+    src = parseSrc(root_element);
     if (root_element.hasAttribute("exec"))
         exec = root_element.attribute("exec");
     setTimingAttributes();
@@ -133,13 +111,4 @@ void TMedia::setBaseParameters()
         }
 
     }
-}
-
-
-QString TMedia::getFilePath(QString index_path)
-{
-    if (src.mid(0, 4) == "http" || src.mid(0, 3) == "ftp") // do not use Path of index-Smil when src is a web link
-        return src;
-    else
-        return index_path+src;
 }
