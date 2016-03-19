@@ -56,7 +56,7 @@ public:
     void           setRootLayout(int w, int h);
 public slots:
     void           emitCheckForNewIndex();
-private:
+protected:
     Region         default_region;
     QString        title;
     int            refresh, width, height;
