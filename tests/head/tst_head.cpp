@@ -2,6 +2,17 @@
 #include <QtTest>
 
 #include "smilparser/head.h"
+class InhertitedTHead : public THead
+{
+    public:
+    // for not waiting for godot in test_refreshSmilIndex, cause of the hammering preventing function in void THead::setRefreshTimer()
+    void resetRefreshTimer()
+    {
+        refresh_timer->start(500);
+    }
+
+
+};
 
 class TestTHead : public QObject
 {
@@ -19,7 +30,7 @@ private Q_SLOTS:
 
 void TestTHead::test_getDefaultValues()
 {
-    THead MySmilHead;
+    InhertitedTHead MySmilHead;
     QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("transparent"));
     QCOMPARE(MySmilHead.getTitle(), QString("No Title"));
     QList<Region> region_list = MySmilHead.getLayout();
@@ -41,7 +52,7 @@ void TestTHead::test_getHeadValuesFromSimpleSmil()
     document.setContent(&file);
     file.close();
     QDomElement head = document.firstChildElement().firstChildElement();
-    THead MySmilHead;
+    InhertitedTHead MySmilHead;
     MySmilHead.parse(head);
     QCOMPARE(MySmilHead.getTitle(), QString("Simple SMIL header for testing"));
     QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("transparent"));
@@ -66,7 +77,7 @@ void TestTHead::test_getHeadValuesFromComplexSmil()
     document.setContent(&file);
     file.close();
     QDomElement head = document.firstChildElement().firstChildElement();
-    THead MySmilHead;
+    InhertitedTHead MySmilHead;
     MySmilHead.parse(head);
 
     QCOMPARE(MySmilHead.getRefreshTime(), int(30)); // in file stands 2 seconds for refresh
@@ -123,23 +134,27 @@ void TestTHead::test_refreshSmilIndex()
     document.setContent(&file);
     file.close();
     QDomElement head = document.firstChildElement().firstChildElement();
-    THead *MyHead = new THead();
+    InhertitedTHead *MyHead = new InhertitedTHead();
+
     MyHead->parse(head);
+    MyHead->resetRefreshTimer();
     QSignalSpy spy1(MyHead, SIGNAL(checkForNewIndex()));
     int i = 0;
     while (spy1.count() == 0)
     {
-        QTest::qWait(1000);
-        i += 1000;
+        QTest::qWait(100);
+        i += 100;
     }
-    QVERIFY(i > 9000);
+    QVERIFY(i > 499);
+    QVERIFY(i < 601);
     QSignalSpy spy2(MyHead, SIGNAL(checkForNewIndex()));
     while (spy2.count() == 0)
     {
-        QTest::qWait(1000);
-        i += 1000;
+        QTest::qWait(100);
+        i += 100;
     }
-    QVERIFY(i > 19000);
+    QVERIFY(i > 999);
+    QVERIFY(i < 1101);
 }
 
 QTEST_MAIN(TestTHead)
