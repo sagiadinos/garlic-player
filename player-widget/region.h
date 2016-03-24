@@ -35,31 +35,30 @@ class TRegion : public QGraphicsView
 public:
     TRegion(QWidget *parent = 0);
     ~TRegion();
-    void setRootSize(int w, int h);
-    void setRegion(Region region);
-    void playImage(showImg structure);
-    void playVideo(showVideo structure);
-    void playAudio(showAudio structure);
-    void playWeb(showWeb structure);
-    void removeImage(showImg structure);
-    void removeVideo(showVideo structure);
-    void removeWeb(showWeb structure);
+        void                setRootSize(int w, int h);
+        void                setRegion(Region region);
+        void                playImage(showImg structure);
+        void                playVideo(showVideo structure);
+        void                playAudio(showAudio structure);
+        void                playWeb(showWeb structure);
+        void                removeImage(showImg structure);
+        void                removeVideo(showVideo structure);
+        void                removeWeb(showWeb structure);
 private:
-        qreal  root_width_px, root_height_px = 0;
-        QWidget                    *parent;
-        QString                     actual_media = "";
-        Region                      region;
-        showImg                     show_image;
-        showVideo                   show_video;
-        showAudio                   show_audio;
-        showWeb                     show_web;
-        QList<QGraphicsItem *>      glist;
-        QPixmap                     image;
-        QGraphicsScene             *scene;
-        void resizeGeometry();
-        void resizeImage(int w, int h);
-        void resizeVideo(int w, int h);
-        void resizeWeb(int w, int h);
+        qreal               root_width_px, root_height_px = 0;
+        QWidget            *parent;
+        QString             actual_media = "";
+        Region              region;
+        showImg             show_image;
+        showVideo           show_video;
+        showAudio           show_audio;
+        showWeb             show_web;
+        QPixmap             image;
+        QGraphicsScene     *scene;
+        void                resizeGeometry();
+        void                resizeImage(int w, int h);
+        void                resizeVideo(int w, int h);
+        void                resizeWeb(int w, int h);
 };
 
 #endif // TREGION_H

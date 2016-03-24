@@ -31,7 +31,6 @@ TRegion::TRegion(QWidget *parent)
 
 TRegion::~TRegion()
 {
-    qDebug() << "clear QGraphicsScene";
     scene->clear();
     delete scene;
 }
@@ -60,8 +59,8 @@ void TRegion::playAudio(showAudio structure)
 
 void TRegion::playWeb(showWeb structure)
 {
-    show_web               = structure;
-    show_web.browser_proxy = scene->addWidget(show_web.browser);
+    show_web = structure;
+    scene->addItem(show_web.browser_proxy);
     actual_media  = "web";
     return;
 }
@@ -69,21 +68,18 @@ void TRegion::playWeb(showWeb structure)
 void TRegion::removeImage(showImg structure)
 {
     scene->removeItem(structure.image_item);
-//    scene->clear();
     return;
 }
 
 void TRegion::removeVideo(showVideo structure)
 {
     scene->removeItem(structure.video_item);
-//    scene->clear();
     return;
 }
 
 void TRegion::removeWeb(showWeb structure)
 {
-    scene->removeItem(structure.browser_proxy->createProxyForChildWidget(structure.browser));
-//    scene->clear();
+    scene->removeItem(structure.browser_proxy);
     return;
 }
 

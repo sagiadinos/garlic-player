@@ -78,7 +78,7 @@ Only sources! First binaries will deployed, when the downloader is implemented c
 
 <!-- --> - HTML-like comments in SMIL-File are supported and content insite will ignored
 
-## actual supported Remote-Features via downloader
+## actual supported remote features via downloader
 - http downloads and caching
 - caching of remote SMIL index file
 - caching of remote media files

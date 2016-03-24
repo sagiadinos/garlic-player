@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :  QWidget(parent)
 
 void MainWindow::setInitialSmilIndex(QString path)
 {
-//   path = "http://smil-admin.com/resources/smil/test/index_site.smil";
+   path = "http://smil-admin.com/resources/smil/test/index_real.smil";
 //    path = "tests/data/full_smil/simple_excl_defer.smil";
     MyConfiguration = new TConfiguration(path);
     MyIndexFile     = new TIndexFile(MyConfiguration);
