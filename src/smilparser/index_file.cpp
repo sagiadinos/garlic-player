@@ -25,7 +25,7 @@ TIndexFile::TIndexFile(TConfiguration *config, QObject *parent)
     MyDownloader    = new TDownloader(MyConfiguration->getUserAgent());
     loaded          = false;
     connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(loadAfterDownload(QString)));
-    connect(MyDownloader, SIGNAL(downloadCanceled(QString)), SLOT(checkForLoaded(QString)));
+    connect(MyDownloader, SIGNAL(noModified(QString)), SLOT(checkForLoaded(QString)));
 }
 
 void TIndexFile::load()

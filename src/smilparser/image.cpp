@@ -54,9 +54,10 @@ QString TImage::getFit()
 
 }
 
-bool TImage::load(QString file_path)
+bool TImage::load()
 {
-    bool isload = show_img.pixmap.load(file_path);
+    QString file_path   = MyFileManager->getLoadablePath(src);
+    bool isload         = show_img.pixmap.load(file_path);
     show_img.image_item = new QGraphicsPixmapItem();
     show_img.image_item->setPixmap(show_img.pixmap);
     if (isload)

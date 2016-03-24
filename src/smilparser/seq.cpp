@@ -66,9 +66,12 @@ void TSeq::setDurationTimerBeforePlay()
 
 void TSeq::play()
 {
-    iterator       = dom_list.begin();
-    active_element = *iterator;
-    reactByTag();
+    if (dom_list.size() > 0)
+    {
+        iterator       = dom_list.begin();
+        active_element = *iterator;
+        reactByTag();
+    }
     status = _playing;
     return;
 }

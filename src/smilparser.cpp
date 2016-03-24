@@ -68,11 +68,6 @@ void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement 
     TBaseTiming                              *MyBaseTiming;
     QHash<QString, TBaseTiming *>::iterator  ar_elements_iterator = ar_elements.find(TBase::parseID(dom_element));
     QString                                  base_type            = "";
-    if (type == "prefetch")
-    {
-        MyFileManager->registerFile(TMedia::parseSrc(dom_element));
-        return;
-    }
     if (ar_elements_iterator == ar_elements.end())
     {
         MyBaseTiming     = TFactory::createBase(type, ParentContainer);
@@ -129,11 +124,13 @@ void TSmil::startElement(TContainer *parent, TBaseTiming *element)
             MyContainer->setPlayedElement(element);
     }
 
-    if (element->getBaseType() == "media")
-        emitStartShowMedia(qobject_cast<TMedia *> (element));
-    else
-        element->play();
-
+    if (playable)
+    {
+        if (element->getBaseType() == "media")
+            emitStartShowMedia(qobject_cast<TMedia *> (element));
+        else
+            element->play();
+    }
     return;
 }
 
@@ -205,7 +202,6 @@ void TSmil::resumeQueuedElement(TBaseTiming *element)
  */
 void TSmil::stopPlayingElement(TBaseTiming *element)
 {
-    qDebug()<< element->getID() << QTime::currentTime().toString() << "Kill Timer";
     killTimer(element);
     stopElement(element);
     return;

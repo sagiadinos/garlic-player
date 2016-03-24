@@ -33,14 +33,14 @@ public:
     QString           getRegion();
     bool              parse(QDomElement element);
     void              resume(){play();}
-    void              prepareLoad(TFileManager *downloader);
+    void              prepareLoad(TFileManager *manager);
     bool              isLoaded();
     QString           getSrc() {return "src";}
     QString           getBaseType() {return "media";}
     bool              hasPlayingChilds(){return false;}
     TBaseTiming      *getChildElementFromList(){return this;}
     TContainer       *getParentContainer(){return parent_container;}
-    virtual bool      load(QString file_path) = 0;
+    virtual bool      load() = 0;
     static  QString   parseSrc(QDomElement element);
 
 public slots:

@@ -49,13 +49,13 @@ QString TWeb::getFit()
     return show_web.fit;
 }
 
-bool TWeb::load(QString file_path)
+bool TWeb::load()
 {
-    Q_UNUSED(file_path);
-
-    show_web.url = src; // websites should load from src.
+    QString file_path      = MyFileManager->getLoadablePath(src);
+    show_web.url           = file_path;
     show_web.browser_proxy = new QGraphicsProxyWidget();
     show_web.browser       = new QWebView();
+    show_web.browser->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
     show_web.browser->setUrl(QUrl(show_web.url));
     show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
     show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);

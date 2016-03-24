@@ -96,7 +96,7 @@ bool TContainer::hasPlayingChilds()
 
 void TContainer::setBaseContainerAttributes()
 {
-    if (!root_element.hasAttribute("begin") && parent_container->objectName() == "TExcl")
+    if (!root_element.hasAttribute("begin") && parent_container != NULL && parent_container->objectName() == "TExcl")
         begin.parse("indefinite");
 }
 

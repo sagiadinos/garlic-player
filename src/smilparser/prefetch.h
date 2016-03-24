@@ -15,32 +15,24 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include "factory.h"
+#ifndef TPREFETCH_H
+#define TPREFETCH_H
 
-TFactory::TFactory(TBaseTiming *parent)
-{
-    Q_UNUSED(parent);
-}
+#include "media.h"
 
-TBaseTiming* TFactory::createBase(QString type, TContainer *parent)
+class TPrefetch : public TMedia
 {
-    if (type == "img")
-        return new TImage(parent);
-    else if (type == "video")
-        return new TVideo(parent);
-    else if (type == "audio")
-        return new TAudio(parent);
-    else if (type == "text")
-        return new TWeb(parent);
-    else if (type == "prefetch")
-        return new TPrefetch(parent);
-    else if (type == "seq")
-        return new TSeq(parent);
-    else if (type == "par")
-        return new TPar(parent);
-    else if (type == "excl")
-        return new TExcl(parent);
-    else if (type == "body")
-        return new TBody();
-    return NULL;
-}
+    Q_OBJECT
+public:
+    TPrefetch(TContainer *parent = 0);
+    bool     load();
+    void     pause();
+    void     stop();
+    void     play();
+public slots:
+    void     setDurationTimerBeforePlay();
+protected:
+    void    setAttributes();
+};
+
+#endif // TPREFETCH_H

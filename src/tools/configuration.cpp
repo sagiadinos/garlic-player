@@ -130,11 +130,15 @@ void TConfiguration::createDirectories()
     QDir            dir;
     dir.setPath(getPaths("var"));
     if (!dir.exists() && !dir.mkpath("."))
-        qDebug() << "Failed to create var"<< dir.path() << "\r";
+        qDebug() << "Failed to create "<< dir.path() << "\r";
 
     dir.setPath(getPaths("configuration"));
     if (!dir.exists() && !dir.mkpath("."))
-        qDebug() << "FaigetIndexPath" << dir.path() << "\r";
+        qDebug() << "Failed to create " << dir.path() << "\r";
+
+    dir.setPath(getPaths("logs"));
+    if (!dir.exists() && !dir.mkpath("."))
+        qDebug() << "Failed to create " << dir.path() << "\r";
     return;
 
 }

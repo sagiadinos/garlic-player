@@ -39,7 +39,7 @@ public:
     ~TVideo();
     showVideo       getMediaForShow();
     QString         getFit();
-    bool            load(QString file_path);
+    bool            load();
     void            pause();
     void            stop();
     void            play();

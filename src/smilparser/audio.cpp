@@ -36,12 +36,13 @@ showAudio TAudio::getMediaForShow()
     return show_audio;
 }
 
-bool TAudio::load(QString file_path)
+bool TAudio::load()
 {
-    output           = new QtAV::VideoOutput();
-    media_player     = new QtAV::AVPlayer();
+    QString file_path      = MyFileManager->getLoadablePath(src);
+    output                 = new QtAV::VideoOutput();
+    media_player           = new QtAV::AVPlayer();
     media_player->setRenderer(output);
-    bool isload = media_player->load(file_path);
+    bool isload            = media_player->load(file_path);
     // deprecated status informed but there is not alternative to get load status
     if (isload)
         qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;

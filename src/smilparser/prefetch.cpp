@@ -15,32 +15,49 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include "factory.h"
+#include "prefetch.h"
 
-TFactory::TFactory(TBaseTiming *parent)
+TPrefetch::TPrefetch(TContainer *parent)
 {
-    Q_UNUSED(parent);
+    parent_container = parent;
+    initTimer();
+    setObjectName("TPrefetch");
 }
 
-TBaseTiming* TFactory::createBase(QString type, TContainer *parent)
+bool TPrefetch::load()
 {
-    if (type == "img")
-        return new TImage(parent);
-    else if (type == "video")
-        return new TVideo(parent);
-    else if (type == "audio")
-        return new TAudio(parent);
-    else if (type == "text")
-        return new TWeb(parent);
-    else if (type == "prefetch")
-        return new TPrefetch(parent);
-    else if (type == "seq")
-        return new TSeq(parent);
-    else if (type == "par")
-        return new TPar(parent);
-    else if (type == "excl")
-        return new TExcl(parent);
-    else if (type == "body")
-        return new TBody();
-    return NULL;
+    return true;
+}
+
+void TPrefetch::pause()
+{
+    qDebug() << getID() << QTime::currentTime().toString() << "paused ";
+    status = _paused;
+    return;
+}
+
+void TPrefetch::stop()
+{
+    qDebug() << getID() << QTime::currentTime().toString() << "stopped";
+    status = _stopped;
+    return;
+}
+
+void TPrefetch::play()
+{
+    MyFileManager->registerFile(src);
+    qDebug() << getID() << QTime::currentTime().toString()  << "prefetch play (load)";
+    status = _playing;
+    return;
+}
+
+void TPrefetch::setDurationTimerBeforePlay()
+{
+    setInternalDefaultDur();
+}
+
+void TPrefetch::setAttributes()
+{
+    setBaseMediaAttributes();
+    return;
 }

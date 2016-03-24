@@ -40,8 +40,6 @@ QString TMedia::parseSrc(QDomElement element)
     return ret;
 }
 
-
-
 QString TMedia::getRegion()
 {
     return region;
@@ -50,16 +48,17 @@ QString TMedia::getRegion()
 bool TMedia::isLoaded()
 {
     int stat = MyFileManager->checkCacheStatus(src);
-    if (!loaded && stat > 0)
+    if (!loaded)
     {
-        loaded = load(MyFileManager->getLocalFilePath(src));
-        return loaded;
+        if(stat > 0)
+            loaded = load();
     }
-    if (loaded && stat == MyFileManager->_reloadable)
+    else
     {
-        loaded = load(MyFileManager->getLocalFilePath(src));
-        return loaded;
+        if(stat == MyFileManager->_reloadable)
+            loaded = load();
     }
+
     return loaded;
 }
 
@@ -89,7 +88,6 @@ void TMedia::emitfinished() // called from finishedActiveDuration() in TBase
    emit finishedMedia(parent_container, this);
    return;
 }
-
 
 void TMedia::setBaseParameters()
 {

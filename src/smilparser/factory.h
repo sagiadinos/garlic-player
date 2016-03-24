@@ -21,6 +21,7 @@
 #include <smilparser/audio.h>
 #include <smilparser/video.h>
 #include <smilparser/web.h>
+#include <smilparser/prefetch.h>
 
 #include <smilparser/body.h>
 #include <smilparser/seq.h>

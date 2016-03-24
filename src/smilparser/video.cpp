@@ -79,12 +79,13 @@ QString TVideo::getFit()
     return show_video.fit;
 }
 
-bool TVideo::load(QString file_path)
+bool TVideo::load()
 {
+    QString file_path      = MyFileManager->getLoadablePath(src);
     show_video.video_item  = new QtAV::GraphicsItemRenderer;
     media_player           = new QtAV::AVPlayer;
     media_player->setRenderer(show_video.video_item);
-    bool isload = media_player->load(file_path);
+    bool isload            = media_player->load(file_path);
     // deprecated status informed but there is not alternative to get load status
     if (isload)
         qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
