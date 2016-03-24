@@ -23,8 +23,9 @@ TFileManager::TFileManager(TConfiguration *config, QObject *parent) : QObject(pa
     MyConfiguration = config;
     MyDownloader    = new TDownloader(MyConfiguration->getUserAgent());
     connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(doFinishDownload(QString)));
-    connect(MyDownloader, SIGNAL(downloadCanceled(QString)), SLOT(doCancelDownload(QString)));
+    connect(MyDownloader, SIGNAL(noModified(QString)), SLOT(doCancelDownload(QString)));
     connect(MyDownloader, SIGNAL(downloadFailed(QString)), SLOT(doFailDownload(QString)));
+    connect(MyDownloader, SIGNAL(uncachable(QString)), SLOT(doUncachable(QString)));
     index_path = MyConfiguration->getFullIndexPath();
 }
 
@@ -41,83 +42,62 @@ void TFileManager::clearQueues()
     return;
 }
 
-
-void TFileManager::registerFile(QString file_path)
+void TFileManager::registerFile(QString remote_file)
 {
+    // Use Cache only when files are on web
     if (index_path.mid(0, 4) == "http" || index_path.mid(0, 3) == "ftp") // if index-Smil is from Web-Service check if download
     {
-        download_queue.enqueue(file_path);
-        loaded_list.insert(file_path, _no_exist);
-        proceedDownloadQueue();
+        if (!isFileInList(remote_file))
+        {
+            loaded_list.insert(remote_file, _no_exist);
+            insertForDownloadQueue(remote_file);
+        }
+        else
+        {
+            if (loaded_list[remote_file] != _uncachable)
+                insertForDownloadQueue(remote_file);
+        }
     }
     else
     {
-        loaded_list.insert(file_path, _exist);
+        if (!isFileInList(remote_file))
+            loaded_list.insert(remote_file, _exist);
     }
     return;
 }
 
-QString TFileManager::getLocalFilePath(QString file_path)
+QString TFileManager::getLoadablePath(QString remote_file)
 {
+    int  status = checkCacheStatus(remote_file);
+    QString ret = "";
+
     if (index_path.mid(0, 4) == "http" || index_path.mid(0, 3) == "ftp") // if index-Smil is from Web-Service check if download
-        return MyConfiguration->getPaths("var")+getHashedFilePath(file_path);
+    {
+        if (status != _uncachable)
+            ret = MyConfiguration->getPaths("var")+getHashedFilePath(remote_file);
+        else
+        {
+            if (remote_file.mid(0, 4) == "http" || remote_file.mid(0, 3) == "ftp") // if index-Smil is from Web-Service check if download
+                ret = remote_file;
+            else
+                ret =  MyConfiguration->getIndexPath()+remote_file;
+        }
+    }
     else
-        return MyConfiguration->getIndexPath()+file_path;
+        ret = MyConfiguration->getIndexPath()+remote_file;
+
+    return ret;
 }
 
-int TFileManager::checkCacheStatus(QString file_path)
+int TFileManager::checkCacheStatus(QString remote_file)
 {
-    QHash<QString, int>::const_iterator i = loaded_list.find(file_path);
-    if (i != loaded_list.end())
-         return loaded_list[file_path];
+    if (isFileInList(remote_file))
+        return loaded_list[remote_file];
     else
         return _no_exist;
 }
 
-QString TFileManager::getHashedFilePath(QString remote_path)
-{
-    QFileInfo fi(remote_path);
-    return QString(QCryptographicHash::hash((remote_path.toUtf8()),QCryptographicHash::Md5).toHex())+ "."+fi.suffix();
-}
-
-void TFileManager::doFinishDownload(QString local_file)
-{
-    QHash<QString, int>::const_iterator i = loaded_list.find(local_file);
-    if (i != loaded_list.end())
-    {
-        loaded_list[local_file] = _exist;
-    }
-    qDebug() << QTime::currentTime().toString() << "finished Download " << local_file;
-    proceedDownloadQueue();
-    return;
-}
-
-void TFileManager::doCancelDownload(QString local_file)
-{
-    QHash<QString, int>::const_iterator i = loaded_list.find(local_file);
-    if (i != loaded_list.end())
-    {
-        loaded_list[local_file] = _exist;
-    }
-    qDebug() << QTime::currentTime().toString() << "canceled Download " << local_file;
-    proceedDownloadQueue();
-    return;
-}
-
-void TFileManager::doFailDownload(QString local_file)
-{
-    QHash<QString, int>::const_iterator i = loaded_list.find(local_file);
-    if (i != loaded_list.end())
-    {
-        if (loaded_list[local_file] == _exist)
-            loaded_list[local_file] = _outdated;
-        // Todo: log a failed download and outdated file
-    }
-    qDebug() << QTime::currentTime().toString() << "fail Download " << local_file;
-    proceedDownloadQueue();
-    return;
-}
-
+// ==================  protected methods =======================================
 
 void TFileManager::proceedDownloadQueue()
 {
@@ -126,6 +106,62 @@ void TFileManager::proceedDownloadQueue()
         QString remote_path = download_queue.dequeue();
         MyDownloader->checkFiles(MyConfiguration->getPaths("var")+getHashedFilePath(remote_path), remote_path);
     }
+    return;
+}
+
+QString TFileManager::getHashedFilePath(QString remote_path)
+{
+    QFileInfo fi(remote_path);
+    return QString(QCryptographicHash::hash((remote_path.toUtf8()),QCryptographicHash::Md5).toHex())+ "."+fi.suffix();
+}
+
+bool TFileManager::isFileInList(QString file_path)
+{
+    QHash<QString, int>::iterator i = loaded_list.find(file_path);
+    if (i == loaded_list.end())
+        return false;
+    else
+        return true;
+}
+
+void TFileManager::insertForDownloadQueue(QString remote_file)
+{
+    download_queue.enqueue(remote_file);
+    proceedDownloadQueue();
+    return;
+}
+
+// =================== proteced slots =========================================
+
+void TFileManager::doFinishDownload(QString remote_file)
+{
+    if (isFileInList(remote_file))
+        loaded_list[remote_file] = _exist;
+    proceedDownloadQueue();
+    return;
+}
+
+void TFileManager::doCancelDownload(QString remote_file)
+{
+    if (isFileInList(remote_file))
+        loaded_list[remote_file] = _exist;
+    proceedDownloadQueue();
+    return;
+}
+
+void TFileManager::doFailDownload(QString remote_file)
+{
+    if (isFileInList(remote_file) && loaded_list[remote_file] == _exist)
+        loaded_list[remote_file] = _outdated;
+    proceedDownloadQueue();
+    return;
+}
+
+void TFileManager::doUncachable(QString remote_file)
+{
+    if (isFileInList(remote_file))
+       loaded_list[remote_file] = _uncachable;
+    proceedDownloadQueue();
     return;
 }
 

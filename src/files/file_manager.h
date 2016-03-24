@@ -32,17 +32,14 @@ public:
     const     int        _outdated   = 1;
     const     int        _exist      = 2;
     const     int        _reloadable = 3;
+    const     int        _uncachable = 4;
     explicit TFileManager(TConfiguration *config, QObject *parent = 0);
     ~TFileManager();
-    void     clearQueues();
-    void     registerFile(QString file_path);
-    QString  getLocalFilePath(QString file_path);
-    int      checkCacheStatus(QString file_path);
-protected slots:
-    void     doFinishDownload(QString local_file);
-    void     doCancelDownload(QString local_file);
-    void     doFailDownload(QString local_file);
-private:
+    void                       clearQueues();
+    void                       registerFile(QString remote_file);
+    QString                    getLoadablePath(QString remote_file);
+    int                        checkCacheStatus(QString remote_file);
+protected:
      QHash<QString, int>       loaded_list;
      QQueue<QString>           download_queue;
      TConfiguration           *MyConfiguration;
@@ -50,6 +47,13 @@ private:
      QString                   index_path;
      void                      proceedDownloadQueue();
      QString                   getHashedFilePath(QString remote_path);
+     bool                      isFileInList(QString file_path);
+     void                      insertForDownloadQueue(QString remote_file);
+protected slots:
+    void     doFinishDownload(QString remote_file);
+    void     doCancelDownload(QString remote_file);
+    void     doFailDownload(QString remote_file);
+    void     doUncachable(QString remote_file);
 signals:
 
 };

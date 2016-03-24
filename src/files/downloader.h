@@ -35,7 +35,7 @@
 class TDownloader: public QObject
 {
     Q_OBJECT
-    QNetworkAccessManager *manager_head, *manager_get;
+    QNetworkAccessManager *manager_head, *manager_head_redirect, *manager_get;
 
 public:
     TDownloader(QString ua, QObject * parent = 0);
@@ -46,19 +46,26 @@ public:
 private slots:
     void finishedGetRequest(QNetworkReply *reply);
     void finishedHeadRequest(QNetworkReply *reply);
+    void finishedHeadRedirectRequest(QNetworkReply *reply);
 
 private:
-    QUrl           remote_file;
+    QUrl           remote_file_url;
+    QString        remote_file_path;
     bool           download;
     QByteArray     user_agent;
-    QFileInfo      local_file;
-    QString        getFileNameFromUrl();
+    QFileInfo      local_file_info;
+    void           checkHttpHeaders(QNetworkReply *reply);
+    void           checkStatusCode(QNetworkReply *reply, int status_code);
     void           doHttpGetRequest();
     void           doHttpHeadRequest();
     bool           saveToDisk(QIODevice *data);
+    void           emitNoModified();
+    void           emitUnCachable();
+    void           emitDownloadFailed(QString error_message);
 signals:
     void downloadSucceed(QString);
-    void downloadCanceled(QString); // when file is in cache cancel download
+    void noModified(QString); // when file is in cache cancel download
+    void uncachable(QString); // when file is in cache cancel download
     void downloadFailed(QString);
 
 };

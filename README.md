@@ -47,6 +47,7 @@ Only sources! First binaries will deployed, when the downloader is implemented c
 
 ###other Elements
 - **prefetch**
+- **meta** for refresh index via http-equiv="Refresh"
 
 ####Attributes for media
 - **region**
@@ -76,5 +77,12 @@ Only sources! First binaries will deployed, when the downloader is implemented c
 - **backgroundColor** values are compatible with CSS
 
 <!-- --> - HTML-like comments in SMIL-File are supported and content insite will ignored
+
+## actual supported Remote-Features via downloader
+- http downloads and caching
+- caching of remote SMIL index file
+- caching of remote media files
+- refresh via meta tag in cyclic timer periods
+- http 301 redirects for index and media
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)
