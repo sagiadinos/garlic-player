@@ -1,3 +1,20 @@
+/*************************************************************************************
+    garlic-player: SMIL Player for Digital Signage
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
+    This file is part of the garlic-player source code
+
+    This program is free software: you can redistribute it and/or  modify
+    it under the terms of the GNU Affero General Public License, version 3,
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************************/
 #include <QString>
 #include <QtTest>
 #include <files/downloader.h>
@@ -15,6 +32,7 @@ private Q_SLOTS:
     void testDownloadSmil();
     void testDownloadMedia();
     void testDownloadMediaDirect();
+    void testDownloadWebSite();
     void deleteFiles();
 };
 
@@ -62,7 +80,7 @@ void TestTDownloader::testDownloadSmil()
     QFileInfo fi(file);
     QDateTime last_modified = fi.lastModified();
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_smil_new");
-    QSignalSpy spy2(MyDownloader, SIGNAL(downloadCanceled(QString)));
+    QSignalSpy spy2(MyDownloader, SIGNAL(noModified(QString)));
     while (spy2.count() == 0)
         QTest::qWait(200);
     QFileInfo fi2(file);
@@ -71,7 +89,7 @@ void TestTDownloader::testDownloadSmil()
     QTest::qWait(500); // to write file with new date
 
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_smil_cached");
-    QSignalSpy spy3(MyDownloader, SIGNAL(downloadCanceled(QString)));
+    QSignalSpy spy3(MyDownloader, SIGNAL(noModified(QString)));
     while (spy3.count() == 0)
         QTest::qWait(200);
     QFileInfo fi3(file);
@@ -102,7 +120,7 @@ void TestTDownloader::testDownloadMedia()
     QDateTime last_modified = fi.lastModified();
 
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_media_new");
-    QSignalSpy spy2(MyDownloader, SIGNAL(downloadCanceled(QString)));
+    QSignalSpy spy2(MyDownloader, SIGNAL(noModified(QString)));
     while (spy2.count() == 0)
         QTest::qWait(200);
     QFileInfo fi2(file);
@@ -110,7 +128,7 @@ void TestTDownloader::testDownloadMedia()
     QTest::qWait(500); // to write file with new date
 
     MyDownloader->checkFiles(file_name, "http://smil-admin.com/garlic/test.php?action=get_media_cached");
-    QSignalSpy spy3(MyDownloader, SIGNAL(downloadCanceled(QString)));
+    QSignalSpy spy3(MyDownloader, SIGNAL(noModified(QString)));
     while (spy3.count() == 0)
         QTest::qWait(200);
     QFileInfo fi3(file);
@@ -138,6 +156,18 @@ void TestTDownloader::testDownloadMediaDirect()
     QVERIFY(file.exists());
 }
 
+void TestTDownloader::testDownloadWebSite()
+{
+    QString user_agent        = "GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)";
+    TDownloader *MyDownloader = new TDownloader(user_agent);
+    QString file_name         = "./websuite.html";
+    MyDownloader->checkFiles(file_name, "http://www.tagesschau.de/infoscreen/");
+    QSignalSpy spy1(MyDownloader, SIGNAL(uncachable(QString)));
+    while (spy1.count() == 0)
+        QTest::qWait(200);
+    QFile file(file_name);
+    QVERIFY(!file.exists());
+}
 
 // ====================== tool methods ===========================
 

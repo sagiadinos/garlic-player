@@ -1,4 +1,5 @@
 LIBS += -L../../lib -lgarlic
+
 DESTDIR = ../../test-bin
 
 OBJECTS_DIR = ../_compile

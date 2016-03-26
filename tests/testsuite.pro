@@ -7,5 +7,7 @@ SUBDIRS += \
          downloader \
          excl \
          head \
-         timings
+         timings \
+         seq \
+    shuffle
          
