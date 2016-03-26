@@ -1,13 +1,12 @@
 # garlic-player - SMIL Player for Digital Signage
 
-The goal is to create an as most as neccessary SMIL 3.0 compatible and as most as possible platform independent multimedia player to meet Digital Signage needs.
+The goal is to create an as most as neccessary SMIL 3.0 and compatible and as most as possible platform independent multimedia player to meet Digital Signage needs.
 Garlic should be used online with web-based content managment systems like [SmilControl](http://smil-control.com) or other.
 Offline usage via command-line will also possible.
 
 ## OS targets:
 
-Primary: Linux, Windows
-Secondary: Android, OSX and iOS
+Linux, Windows and maybe later OSX
 
 Developing with Qt 5.5 and QtAV 1.8.0 under Kubuntu 14.04
 
@@ -24,7 +23,7 @@ Options:
 Arguments:
 SMIL_INDEX        Path to SMIL index
 ```
-Only sources! First binaries will deployed, when the downloader is implemented complete.
+Only sources! Binaries will deployed later.
 
 ## actual supported SMIL-Features
 
@@ -78,11 +77,19 @@ Only sources! First binaries will deployed, when the downloader is implemented c
 
 <!-- --> - HTML-like comments in SMIL-File are supported and content insite will ignored
 
+## additional features supported not in w3c standard
+- **shuffle play** in seq container via metadata
+
 ## actual supported remote features via downloader
 - http downloads and caching
 - caching of remote SMIL index file
 - caching of remote media files
 - refresh via meta tag in cyclic timer periods
 - http 301 redirects for index and media
+
+## ToDos
+- **expr-attribute* in media tags for conditional play like described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
+- **logs and reports** like described in [a-smil.org reporting](http://www.a-smil.org/index.php/Reporting)
+- **administration functions** like described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)
