@@ -27,8 +27,6 @@ TAudio::TAudio(TContainer *parent)
 
 TAudio::~TAudio()
 {
- //   delete media_player;
- //    delete output;
 }
 
 showAudio TAudio::getMediaForShow()

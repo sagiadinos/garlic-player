@@ -27,8 +27,6 @@ TVideo::TVideo(TContainer *parent)
 
 TVideo::~TVideo()
 {
- //   delete media_player;
- //   delete show_video.video_item;
 }
 
 

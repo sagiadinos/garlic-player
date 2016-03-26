@@ -25,14 +25,13 @@ TRegion::TRegion(QWidget *parent)
     scene = new QGraphicsScene();
     setScene(scene);
     setAlignment(Qt::AlignCenter);
+    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 TRegion::~TRegion()
 {
-//    scene->clear();
-//    delete scene;
 }
 
 void TRegion::playImage(showImg structure)

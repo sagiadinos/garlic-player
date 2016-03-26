@@ -27,8 +27,6 @@ TWeb::TWeb(TContainer *parent)
 
 TWeb::~TWeb()
 {
-//    delete show_web.browser_proxy;
-//    delete show_web.browser;
 }
 
 

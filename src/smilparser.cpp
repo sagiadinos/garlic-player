@@ -38,12 +38,12 @@ void TSmil::init()
 
 void TSmil::clearLists()
 {
-/*    for (QHash<QString, TBaseTiming *>::iterator i = ar_elements.begin(); i != ar_elements.end(); i++)
+    QSet<TBaseTiming *> ar = ar_played_media;                               // to prevent crash when erasing from ar_played_media in emitStopShowMedia
+    for (QSet<TBaseTiming *>::iterator i = ar.begin(); i != ar.end(); i++)  // stop actual played media to get them out of QGraphicscene
     {
-        delete ar_elements[i.key()];
+        stopPlayingElement(*i);
     }
-*/    ar_elements.clear();
-    ar_played_media.clear();
+    ar_elements.clear();
     return;
 }
 

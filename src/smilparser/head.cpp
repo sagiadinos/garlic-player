@@ -29,7 +29,6 @@ THead::THead(QObject *parent)
 THead::~THead()
 {
     setDefaultValues();
-    delete refresh_timer;
 }
 
 
