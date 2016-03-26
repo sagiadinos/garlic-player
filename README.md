@@ -87,9 +87,9 @@ Only sources! Binaries will deployed later.
 - refresh via meta tag in cyclic timer periods
 - http 301 redirects for index and media
 
-## ToDos
-- **expr-attribute* in media tags for conditional play like described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
-- **logs and reports** like described in [a-smil.org reporting](http://www.a-smil.org/index.php/Reporting)
-- **administration functions** like described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)
+## ToDo's
+- **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
+- **logs and reports** as described in [a-smil.org reporting](http://www.a-smil.org/index.php/Reporting)
+- **administration functions** as described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)
