@@ -100,7 +100,6 @@ void THead::setRootLayout(int w, int h)
  */
 void THead::emitCheckForNewIndex()
 {
-    qDebug() << QTime::currentTime().toString() << "emit check for new index";
     emit checkForNewIndex();
     return;
 }

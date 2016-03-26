@@ -27,8 +27,7 @@ TImage::TImage(TContainer *parent)
 
 TImage::~TImage()
 {
-    delete show_img.image_item;
-
+ //   delete show_img.image_item;
 }
 
 showImg TImage::getMediaForShow()

@@ -38,11 +38,11 @@ void TSmil::init()
 
 void TSmil::clearLists()
 {
-    for (QHash<QString, TBaseTiming *>::iterator i = ar_elements.begin(); i != ar_elements.end(); i++)
+/*    for (QHash<QString, TBaseTiming *>::iterator i = ar_elements.begin(); i != ar_elements.end(); i++)
     {
         delete ar_elements[i.key()];
     }
-    ar_elements.clear();
+*/    ar_elements.clear();
     ar_played_media.clear();
     return;
 }
@@ -148,6 +148,7 @@ void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
     {
         qDebug()<< element->getID() << QTime::currentTime().toString() << "Not kill Timer";
         stopElement(element);
+
         parent->next(element);
     }
     else

@@ -40,8 +40,8 @@ class TDownloader: public QObject
 public:
     TDownloader(QString ua, QObject * parent = 0);
     ~TDownloader();
-    void checkFiles(QString local, QString remote);
-    bool downloadInProgress();
+    virtual void checkFiles(QString local, QString remote);
+    virtual bool downloadInProgress();
 
 private slots:
     void finishedGetRequest(QNetworkReply *reply);

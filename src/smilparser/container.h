@@ -20,6 +20,7 @@
 #define TPLAYLIST_H
 
 #include "smilparser/base_timing.h"
+#include <QList>
 
 /**
  * @brief The TBasePlaylist is an abstract class for Smil Playlists which is inherited by seq, par and excl.

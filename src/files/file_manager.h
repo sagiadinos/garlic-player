@@ -33,7 +33,7 @@ public:
     const     int        _exist      = 2;
     const     int        _reloadable = 3;
     const     int        _uncachable = 4;
-    explicit TFileManager(TConfiguration *config, QObject *parent = 0);
+    TFileManager(TConfiguration *config, QObject *parent = 0);
     ~TFileManager();
     void                       clearQueues();
     void                       registerFile(QString remote_file);

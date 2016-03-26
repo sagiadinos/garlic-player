@@ -35,8 +35,9 @@ TDownloader::TDownloader(QString ua, QObject * parent)
 
 TDownloader::~TDownloader()
 {
-    delete manager_get;
-    delete manager_head;
+ //   delete manager_get;
+ //   delete manager_head;
+ //   delete manager_head_redirect;
 }
 
 bool TDownloader::downloadInProgress()
@@ -178,7 +179,7 @@ bool TDownloader::saveToDisk(QIODevice *data)
     file.write(data->readAll());
     file.close();
 
-    qDebug() << QTime::currentTime().toString() << remote_file_path << " written locally";
+    qDebug() << QTime::currentTime().toString() << remote_file_path << " was modified and written locally";
     emit downloadSucceed(remote_file_path);
     return true;
 }
@@ -187,7 +188,7 @@ void TDownloader::emitNoModified()
 {
     download = false;
     emit noModified(remote_file_path);
-    qDebug() << QTime::currentTime().toString() << remote_file_path << " not modified";
+    qDebug() << QTime::currentTime().toString() << remote_file_path << " was not modified";
     return;
 }
 

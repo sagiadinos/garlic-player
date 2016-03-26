@@ -64,6 +64,8 @@ QString TConfiguration::getPaths(QString path_name)
         ret = base_path + "var/";
     else if (path_name == "media")
         ret = base_path + "var/media/";
+    else if (path_name == "logs")
+        ret = base_path + "logs/";
     else if (path_name == "base")
         ret = base_path;
 
@@ -77,19 +79,22 @@ void TConfiguration::setFullIndexPath(QString path)
     else
     {
         QFile file(getPaths("configuration")+"config.xml");
-        if (!file.exists() || !file.open(QIODevice::ReadOnly))
+        if (file.exists() && file.open(QIODevice::ReadOnly))
+        {
+            QXmlStreamReader reader(&file);
+            while (!reader.atEnd())
+            {
+                 reader.readNext();
+                 if (reader.isStartElement())
+                 {
+                     if (reader.name() == "prop" && reader.attributes().value("name") == "content.serverUrl")
+                         full_index_path = reader.attributes().value("value").toString();
+                 }
+             }
+        }
+        else
             full_index_path = "http://indexes.smil-admin.com";
 
-        QXmlStreamReader reader(&file);
-        while (!reader.atEnd())
-        {
-             reader.readNext();
-             if (reader.isStartElement())
-             {
-                 if (reader.name() == "prop" && reader.attributes().value("name") == "content.serverUrl")
-                     full_index_path = reader.attributes().value("value").toString();
-             }
-         }
     }
     if (full_index_path.mid(0, 4) != "http" && full_index_path.mid(0, 3) != "ftp")
         full_index_path = base_path+full_index_path;

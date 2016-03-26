@@ -22,13 +22,14 @@
 #include <QDir>
 #include <QUrl>
 #include <QUuid>
+#include <QString>
 
 /**
  * @brief The TConfiguration class
  */
-class TConfiguration
+class TConfiguration  : public QObject
 {
-
+    Q_OBJECT
 public:
     TConfiguration(QString path = "");
     static QString getVersion(){return "0.1.0";}

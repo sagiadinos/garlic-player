@@ -27,8 +27,8 @@ TAudio::TAudio(TContainer *parent)
 
 TAudio::~TAudio()
 {
-    delete media_player;
-    delete output;
+ //   delete media_player;
+ //    delete output;
 }
 
 showAudio TAudio::getMediaForShow()
@@ -56,7 +56,7 @@ void TAudio::setDurationTimerBeforePlay()
     if (loaded)
     {
         if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
-            connect(media_player, SIGNAL(stopped()), this, SLOT(finishedSimpleDuration()));
+            dur_timer->start(media_player->duration()); // do not connect signal stopped cause it could be sended more than one and causes sync problems
         if (!is_resumed)
             emit startedMedia(parent_container, this);
     }

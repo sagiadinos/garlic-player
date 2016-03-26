@@ -30,7 +30,8 @@ SOURCES += \
     tools/configuration.cpp \
     files/file_manager.cpp \
     smilparser.cpp \
-    smilparser/prefetch.cpp
+    smilparser/prefetch.cpp \
+    smilparser/tools/shuffle.cpp
 HEADERS += tools/configuration.h \
     smilparser.h \
     smilparser/head.h \
@@ -53,6 +54,7 @@ HEADERS += tools/configuration.h \
     smilparser/base_timing.h \
     smilparser/index_file.h \
     files/file_manager.h \
-    smilparser/prefetch.h
+    smilparser/prefetch.h \
+    smilparser/tools/shuffle.h
 
 DISTFILES +=

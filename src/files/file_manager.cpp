@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "file_manager.h"
 
-TFileManager::TFileManager(TConfiguration *config, QObject *parent) : QObject(parent)
+TFileManager::TFileManager(TConfiguration *config, QObject *parent)
 {
     Q_UNUSED(parent);
     MyConfiguration = config;
@@ -31,7 +31,7 @@ TFileManager::TFileManager(TConfiguration *config, QObject *parent) : QObject(pa
 
 TFileManager::~TFileManager()
 {
-    delete MyDownloader;
+//    delete MyDownloader;
     clearQueues();
 }
 

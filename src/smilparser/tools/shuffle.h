@@ -15,38 +15,40 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
+#ifndef TSHUFFLE_H
+#define TSHUFFLE_H
 
-#ifndef SEQ_H
-#define SEQ_H
-#include "smilparser/container.h"
-#include "smilparser/tools/shuffle.h"
+#include <QObject>
+#include <QtXml>
+#include <algorithm>
 
 /**
- * @brief   The TSeq class parses seq-Tag
- *
+ * @brief The TShuffle class
+ * <metadata>
+ *   <meta name="adapi:pickingAlgorithm" content="shuffle"/>
+ *   <meta name="adapi:pickingBehavior" content="pickN"/>
+ *   <meta name="adapi:pickNumber" content="1"/>
+ * </metadata>
  */
-class TSeq : public TContainer
+class TShuffle : public QObject
 {
     Q_OBJECT
 public:
-    TSeq(TContainer *parent = 0);
-    bool         parse(QDomElement element);
-    void         next(TBaseTiming *ended_element);
-    void         pause();
-    void         stop();
-    void         play();
-    void         resume();
-    bool         isChildPlayable(TBaseTiming *element);
-public slots:
-    void         setDurationTimerBeforePlay();
-protected:
-    TShuffle    *MyShuffle;
-    bool         shuffle           = false;
-    int          count             = 0;
+    explicit TShuffle(QList<QDomElement> list, QObject *parent = 0);
+    void         parse(QDomElement metadata);
     bool         canGetNextItem();
     QDomElement  getNextItem();
-    void         handlePossibleRepeat();
-    void         setPlaylist();
+protected:
+        QList<QDomElement>            dom_list, shuffle_list;
+        QList<QDomElement>::iterator  shuffle_iterator;
+        QString pickingAlgorithm = "shuffle";
+        QString pickingBehavior  = "pickN";
+        int     pickNumber       = 1;
+        int     internal_pick    = 0;
+        void    randomizePlaylist();
+signals:
+
+public slots:
 };
 
-#endif // SEQ_H
+#endif // TSHUFFLE_H

@@ -30,17 +30,44 @@ bool TSeq::parse(QDomElement element)
     root_element   = element;
     setTimingAttributes();
     setBaseContainerAttributes();
-
     if (element.hasChildNodes())
     {
         active_element = element.firstChildElement();
-        if (active_element.tagName() == "metadata")
-            doMetaData();
         setPlaylist();
-        iterator       = dom_list.begin();
-        active_element = *iterator;
+        if (active_element.tagName() == "metadata")
+        {
+            MyShuffle = new TShuffle(dom_list);
+            MyShuffle->parse(active_element);
+        }
+
     }
     return true;
+}
+
+void TSeq::next(TBaseTiming *ended_element)
+{
+    childEnded(ended_element);
+    if (!shuffle)
+    {
+        if (canGetNextItem())  // cause .end() pointing to the imaginary item after the last item in the list
+        {
+            active_element = getNextItem();
+            reactByTag();
+        }
+        else // end check if repeat value is indefined or Limnit not reached
+            handlePossibleRepeat();
+    }
+    else
+    {
+        if (MyShuffle->canGetNextItem())
+        {
+            active_element = MyShuffle->getNextItem();
+            reactByTag();
+        }
+        else
+            handlePossibleRepeat();
+    }
+    return;
 }
 
 bool TSeq::isChildPlayable(TBaseTiming *element)
@@ -50,6 +77,40 @@ bool TSeq::isChildPlayable(TBaseTiming *element)
     return true;
 }
 
+void TSeq::play()
+{
+    if (dom_list.size() > 0)
+    {
+        if (!shuffle)
+        {
+            iterator       = dom_list.begin();
+            active_element = getNextItem();
+        }
+        else
+            active_element = MyShuffle->getNextItem();
+        reactByTag();
+    }
+    status = _playing;
+    return;
+}
+
+void TSeq::resume()
+{
+    status = _playing;
+    return;
+}
+
+void TSeq::stop()
+{
+    status = _stopped;
+    return;
+}
+
+void TSeq::pause()
+{
+    status = _paused;
+    return;
+}
 
 void TSeq::setDurationTimerBeforePlay()
 {
@@ -64,83 +125,33 @@ void TSeq::setDurationTimerBeforePlay()
     return;
 }
 
-void TSeq::play()
+bool TSeq::canGetNextItem()
 {
-    if (dom_list.size() > 0)
+    if (iterator != dom_list.end())
+        return true;
+    else
+        return false;
+}
+
+QDomElement TSeq::getNextItem()
+{
+    if (iterator == dom_list.end())
+        iterator = dom_list.begin();
+    QDomElement ret = *iterator;
+    iterator++;
+    return ret;
+}
+
+void TSeq::handlePossibleRepeat()
+{
+    if (checkRepeatCountStatus())
     {
-        iterator       = dom_list.begin();
-        active_element = *iterator;
-        reactByTag();
+        qDebug() << getID() << QTime::currentTime().toString() << "Repeats: " << count++;
+        play();
     }
-    status = _playing;
+    else
+        finishedActiveDuration();
     return;
-}
-
-void TSeq::resume()
-{
-    status = _playing;
-    return;
-}
-
-
-void TSeq::stop()
-{
-    status = _stopped;
-    return;
-}
-
-void TSeq::pause()
-{
-    status = _paused;
-    return;
-}
-
-void TSeq::doMetaData()
-{
-    QDomNodeList childs = root_element.childNodes();
-    QDomElement  element;
-    int          length = childs.length();
-    for (int i = 0; i < length; i++)
-    {
-        element = childs.item(i).toElement();
-        if (element.tagName() == "meta" && element.hasAttribute("name") && element.hasAttribute("content"))
-        {
-            if (element.attribute("name") == "adapi:pickingAlgorithm")
-                pickingAlgorithm = element.attribute("content");
-            else if (element.attribute("name") == "adapi:pickingBehavior")
-                pickingBehavior = element.attribute("content");
-            else if (element.attribute("name") == "adapi:pickNumber")
-                pickNumber = element.attribute("content").toInt();
-        }
-    }
-    return;
-}
-
-void TSeq::next(TBaseTiming *ended_element)
-{
-    childEnded(ended_element);
-    iterator++; // inc iterator first only when inc result smaller than  .end()
-    if (iterator < dom_list.end())  // cause .end() pointing to the imaginary item after the last item in the vector
-    {
-        active_element = *iterator;
-        reactByTag();
-    }
-    else // end check if repeat value is indefined or Limnit not reached
-    {
-        if (checkRepeatCountStatus())
-        {
-            qDebug() << "Repeats: " << count++;
-            play();
-        }
-        else
-            finishedActiveDuration();
-    }
-    return;
-}
-
-bool TSeq::previous()
-{
-    return false;
 }
 
 void TSeq::setPlaylist()
@@ -154,26 +165,7 @@ void TSeq::setPlaylist()
         if (element.tagName() != "metadata" && element.tagName() != "") // e.g. comments
             dom_list.append(element);
     }
-    if (pickingAlgorithm == "shuffle" && pickingBehavior == "pickN" && pickNumber > 0)
-    {
-        randomizePlaylist();
-        random = true;
-        internal_pick = pickNumber;
-    }
+    iterator = dom_list.begin();
     return;
 }
 
-void TSeq::randomizePlaylist()
-{
-    // Knuth shuffle
-    int length = dom_list.length();
-    for (int i = length - 1; i > 0; --i)
-    {
-        int i2 = qrand() % (i + 1);
-        std::swap(dom_list[i], dom_list[i2]);
-    }
-    // Let only pickNumber items in List
-    for (int i = 0; i < (length-pickNumber); i++)
-        dom_list.removeLast();
-    return;
-}
