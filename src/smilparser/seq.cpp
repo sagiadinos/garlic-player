@@ -38,6 +38,7 @@ bool TSeq::parse(QDomElement element)
         {
             MyShuffle = new TShuffle(dom_list);
             MyShuffle->parse(active_element);
+            shuffle = true;
         }
 
     }
@@ -87,7 +88,9 @@ void TSeq::play()
             active_element = getNextItem();
         }
         else
+        {
             active_element = MyShuffle->getNextItem();
+        }
         reactByTag();
     }
     status = _playing;

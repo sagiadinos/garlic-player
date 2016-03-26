@@ -49,10 +49,7 @@ void TShuffle::parse(QDomElement metadata)
 bool TShuffle::canGetNextItem()
 {
     if (internal_pick > 0)
-    {
-        internal_pick--;
         return true;
-    }
     else
     {
         internal_pick = pickNumber;
@@ -66,6 +63,7 @@ QDomElement TShuffle::getNextItem()
         shuffle_iterator = shuffle_list.begin();
     QDomElement ret = *shuffle_iterator;
     shuffle_iterator++;
+    internal_pick--;
     return ret;
 }
 
