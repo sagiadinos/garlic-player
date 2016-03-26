@@ -31,22 +31,22 @@ TRegion::TRegion(QWidget *parent)
 
 TRegion::~TRegion()
 {
-    scene->clear();
-    delete scene;
+//    scene->clear();
+//    delete scene;
 }
 
 void TRegion::playImage(showImg structure)
 {
     show_image = structure;
-    scene->addItem(show_image.image_item);
     actual_media  = "image";
+    addItem("image", show_image.image_item);
 }
 
 void TRegion::playVideo(showVideo structure)
 {
     show_video = structure;
-    scene->addItem(show_video.video_item);
     actual_media = "video";
+    addItem("video", show_video.video_item);
 }
 
 void TRegion::playAudio(showAudio structure)
@@ -60,26 +60,42 @@ void TRegion::playAudio(showAudio structure)
 void TRegion::playWeb(showWeb structure)
 {
     show_web = structure;
-    scene->addItem(show_web.browser_proxy);
     actual_media  = "web";
+    addItem("web", show_web.browser_proxy);
     return;
 }
 
 void TRegion::removeImage(showImg structure)
 {
-    scene->removeItem(structure.image_item);
+    removeItem("image", structure.image_item);
     return;
 }
 
 void TRegion::removeVideo(showVideo structure)
 {
-    scene->removeItem(structure.video_item);
+    removeItem("video", structure.video_item);
     return;
 }
 
 void TRegion::removeWeb(showWeb structure)
 {
-    scene->removeItem(structure.browser_proxy);
+    removeItem("web", structure.browser_proxy);
+    return;
+}
+
+void TRegion::addItem(QString media_type, QGraphicsItem *item)
+{
+    int before = scene->items().size();
+    scene->addItem(item);
+    qDebug() << QTime::currentTime().toString() << "insert " << item << " " << media_type << "before insert: " << before << " after insert: "<< scene->items().size();
+    return;
+}
+
+void TRegion::removeItem(QString media_type, QGraphicsItem *item)
+{
+    int before = scene->items().size();
+    scene->removeItem(item);
+    qDebug() << QTime::currentTime().toString() << "remove " << item << " " << media_type << " before remove: " << before << " after remove: "<< scene->items().size();
     return;
 }
 

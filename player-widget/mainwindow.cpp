@@ -21,12 +21,11 @@
 MainWindow::MainWindow(QWidget *parent) :  QWidget(parent)
 {
     layout = new QHBoxLayout();
-    setLayout(layout);
 }
 
 void MainWindow::setInitialSmilIndex(QString path)
 {
-   path = "http://smil-admin.com/resources/smil/test/index_real.smil";
+//    path = "http://smil-admin.com/resources/smil/test/index_real.smil";
 //    path = "tests/data/full_smil/simple_excl_defer.smil";
     MyConfiguration = new TConfiguration(path);
     MyIndexFile     = new TIndexFile(MyConfiguration);
@@ -54,7 +53,6 @@ void MainWindow::setSmilIndex()
     qDebug() << "clear MySmil";
     MySmil->clearLists();
     deleteRegionsAndLayouts();
-
     MySmil->init();
     setRegions(MyIndexFile->getHead());
     setGeometry(0,0, width(), height());
@@ -74,14 +72,11 @@ void MainWindow::checkForNewSmilIndex()
 
 void MainWindow::deleteRegionsAndLayouts()
 {
-    while(!layout->isEmpty())
-    {
-        delete layout->takeAt(0);
-    }
     for (QMap<QString, TRegion *>::iterator i = ar_regions.begin(); i != ar_regions.end(); i++)
     {
-        delete ar_regions[i.key()];
+        layout->removeWidget(ar_regions[i.key()]);
     }
+    qDeleteAll(ar_regions);
     ar_regions.clear();
     return;
 }
@@ -99,6 +94,7 @@ void MainWindow::setRegions(QDomElement head)
         ar_regions[j.key()]->setRegion(region_list.at(i));
         ar_regions[j.key()]->setRootSize(width(), height());
     }
+    setLayout(layout);
 }
 
 QString MainWindow::selectRegion(QString region_name)

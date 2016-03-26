@@ -55,6 +55,8 @@ private:
         showWeb             show_web;
         QPixmap             image;
         QGraphicsScene     *scene;
+        void                addItem(QString media_type, QGraphicsItem *item);
+        void                removeItem(QString media_type, QGraphicsItem *item);
         void                resizeGeometry();
         void                resizeImage(int w, int h);
         void                resizeVideo(int w, int h);
