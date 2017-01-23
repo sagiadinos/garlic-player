@@ -40,7 +40,11 @@ void TVideo::setDurationTimerBeforePlay()
     if (loaded)
     {
         if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
-            dur_timer->start(media_player->duration()); // do not connect signal stopped it could be sended more than one and causes sync problems
+        {
+            bool bo = media_player->isLoaded();
+            qint64 i = media_player->duration();
+            dur_timer->start(i); // do not connect signal stopped it could be sended more than one and causes sync problems
+        }
         if (!is_resumed)
             emit startedMedia(parent_container, this);
     }
@@ -83,7 +87,11 @@ bool TVideo::load()
     show_video.video_item  = new QtAV::GraphicsItemRenderer;
     media_player           = new QtAV::AVPlayer;
     media_player->setRenderer(show_video.video_item);
-    bool isload            = media_player->load(file_path);
+
+    media_player->setAsyncLoad(false);
+    media_player->setFile(file_path);
+    bool isload            = media_player->load();
+
     // deprecated status informed but there is not alternative to get load status
     if (isload)
         qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;

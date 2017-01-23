@@ -19,8 +19,8 @@
 #ifndef TWEB_H
 #define TWEB_H
 #include <QGraphicsProxyWidget>
-#include <QWebView>
-#include <QWebFrame>
+#include <QWebEngineView>
+#include <QWebEnginePage>
 #include "smilparser/media.h"
 
 struct showWeb
@@ -29,7 +29,7 @@ struct showWeb
     QString               region;
     QString               fit;
     QString               url;
-    QWebView             *browser;
+    QWebEngineView       *browser;
     QGraphicsProxyWidget *browser_proxy;
 };
 

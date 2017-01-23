@@ -40,7 +40,9 @@ bool TAudio::load()
     output                 = new QtAV::VideoOutput();
     media_player           = new QtAV::AVPlayer();
     media_player->setRenderer(output);
-    bool isload            = media_player->load(file_path);
+    media_player->setAsyncLoad(false);
+    media_player->setFile(file_path);
+    bool isload            = media_player->load();
     // deprecated status informed but there is not alternative to get load status
     if (isload)
         qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
