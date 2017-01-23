@@ -1,6 +1,6 @@
 include(../defaults.pri)
 
-QT       += core network xml gui avwidgets webkitwidgets
+QT       += core network xml gui avwidgets webenginewidgets
 TEMPLATE  = lib
 CONFIG   += warn_on avwidgets lib c++11
 

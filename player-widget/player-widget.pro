@@ -5,7 +5,7 @@
 #-------------------------------------------------
 include(../defaults.pri)
 
-QT     += core gui xml widgets avwidgets webkitwidgets
+QT     += core gui xml widgets avwidgets webenginewidgets
 CONFIG += warn_on avwidgets c++11
 
 TARGET = garlic-player
