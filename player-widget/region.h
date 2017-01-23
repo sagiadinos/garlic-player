@@ -19,7 +19,7 @@
 #ifndef TREGION_H
 #define TREGION_H
 
-#include <QWebView>
+#include <QWebEngineView>
 #include <QGraphicsWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>

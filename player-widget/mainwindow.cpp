@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :  QWidget(parent)
 void MainWindow::setInitialSmilIndex(QString path)
 {
 //    path = "http://smil-admin.com/resources/smil/test/index_real.smil";
-//    path = "tests/data/full_smil/complex_seq.smil";
+//    path = "source/garlic-player/garlic-testmedia/simple.smil";
     MyConfiguration = new TConfiguration(path);
     MyIndexFile     = new TIndexFile(MyConfiguration);
     connect(MyIndexFile, SIGNAL(isLoaded()), this, SLOT(setSmilIndex()));
