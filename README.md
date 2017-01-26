@@ -8,9 +8,9 @@ Offline usage via command-line will also possible.
 
 Linux, Windows and maybe later OSX
 
-Developing with Qt 5.6 and QtAV 1.10.0 under kde neon
+Developing with Qt 5.7 and QtAV 1.11.0 under kde neon
 
-At the moment there is an alpha which is able to play local and remote (http) SMIL-Files with actual supported features via command-line.
+At the moment there is an alpha which is able to play local and remote (http) SMIL-Files with actual supported features.
 
 *garlic.sh [options] SMIL_INDEX*
 ```sh

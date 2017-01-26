@@ -55,6 +55,7 @@ void TAudio::setDurationTimerBeforePlay()
 {
     if (loaded)
     {
+        media_player->load();
         if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
             dur_timer->start(media_player->duration()); // do not connect signal stopped cause it could be sended more than one and causes sync problems
         if (!is_resumed)
@@ -75,7 +76,7 @@ void TAudio::play()
 void TAudio::stop()
 {
     media_player->stop();
-    status = _playing;
+    status = _stopped;
     return;
 }
 

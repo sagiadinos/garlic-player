@@ -39,6 +39,7 @@ void TVideo::setDurationTimerBeforePlay()
 {
     if (loaded)
     {
+        media_player->load(); // cause second round vid had to be reloaded
         if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
         {
             qint64 i = media_player->duration();
