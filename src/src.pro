@@ -56,5 +56,3 @@ HEADERS += tools/configuration.h \
     files/file_manager.h \
     smilparser/prefetch.h \
     smilparser/tools/shuffle.h
-
-DISTFILES +=

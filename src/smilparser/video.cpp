@@ -41,7 +41,6 @@ void TVideo::setDurationTimerBeforePlay()
     {
         if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
         {
-            bool bo = media_player->isLoaded();
             qint64 i = media_player->duration();
             dur_timer->start(i); // do not connect signal stopped it could be sended more than one and causes sync problems
         }

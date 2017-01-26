@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
- SUBDIRS =  ./src ./player-widget
+SUBDIRS =  ./src ./player-widget
 CONFIG  += ordered

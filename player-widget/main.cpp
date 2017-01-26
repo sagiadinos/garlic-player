@@ -20,18 +20,24 @@
 #include <QCommandLineOption>
 #include <QCommandLineParser>
 #include <QApplication>
+#include <QDir>
 
 int main(int argc, char *argv[])
 {
+    TConfiguration *MyConfiguration = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
+    QDir dir(".");
+    MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator
+    MyConfiguration->determineUserAgent();
+    MyConfiguration->createDirectories();
 
     QApplication app(argc, argv);
 
-    QApplication::setApplicationName(TConfiguration::getAppName());
-    QApplication::setApplicationVersion(TConfiguration::getVersion());
-    QApplication::setApplicationDisplayName(TConfiguration::getAppName());
+    QApplication::setApplicationName(MyConfiguration->getAppName());
+    QApplication::setApplicationVersion(MyConfiguration->getVersion());
+    QApplication::setApplicationDisplayName(MyConfiguration->getAppName());
     QCommandLineParser parser;
 
-    parser.setApplicationDescription(TConfiguration::getDescription());
+    parser.setApplicationDescription(MyConfiguration->getDescription());
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addPositionalArgument("SMIL_INDEX", QCoreApplication::translate("main", "Path to SMIL index"));
@@ -46,9 +52,11 @@ int main(int argc, char *argv[])
 
     const QStringList args = parser.positionalArguments();
     if (args.size() > 0)
-        w.setInitialSmilIndex(args.at(0));
+        MyConfiguration->determineIndexUri(args.at(0));
     else
-        w.setInitialSmilIndex("");
+        MyConfiguration->determineIndexUri("");
+
+    w.setInitialSmilIndex(MyConfiguration);
 
     if (parser.isSet("f"))
         w.showFullScreen();

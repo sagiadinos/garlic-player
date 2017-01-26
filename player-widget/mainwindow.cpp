@@ -23,16 +23,13 @@ MainWindow::MainWindow(QWidget *parent) :  QWidget(parent)
     layout = new QHBoxLayout();
 }
 
-void MainWindow::setInitialSmilIndex(QString path)
+void MainWindow::setInitialSmilIndex(TConfiguration *Configuration)
 {
-//    path = "http://smil-admin.com/resources/smil/test/index_real.smil";
-//    path = "source/garlic-player/garlic-testmedia/simple.smil";
-    MyConfiguration = new TConfiguration(path);
-    MyIndexFile     = new TIndexFile(MyConfiguration);
+    MyIndexFile     = new TIndexFile(Configuration);
     connect(MyIndexFile, SIGNAL(isLoaded()), this, SLOT(setSmilIndex()));
     MyHead          = new THead();
     connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
-    MySmil = new TSmil(MyConfiguration);
+    MySmil = new TSmil(Configuration);
     connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     loadIndex(); // initial Start

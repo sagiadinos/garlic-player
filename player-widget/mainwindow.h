@@ -34,7 +34,7 @@ class MainWindow : public QWidget
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void                      setInitialSmilIndex(QString path = "");
+    void                      setInitialSmilIndex(TConfiguration *Configuration);
 public slots:
     void                      setSmilIndex();
     void                      checkForNewSmilIndex();

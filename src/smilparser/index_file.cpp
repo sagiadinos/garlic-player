@@ -30,7 +30,7 @@ TIndexFile::TIndexFile(TConfiguration *config, QObject *parent)
 
 void TIndexFile::load()
 {
-    QString path = MyConfiguration->getFullIndexPath();
+    QString path = MyConfiguration->getIndexUri();
     if (path.mid(0, 4) == "http" || path.mid(0, 4) == "ftp")
         loadFromHttpToDom(path);
     else

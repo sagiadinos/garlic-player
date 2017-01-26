@@ -23,31 +23,159 @@
 #include <memory>
 #include <mutex>
 
-
-TConfiguration::TConfiguration(QString path)
+/**
+ * @brief TConfiguration::TConfiguration
+ * @param UserConfig
+ */
+TConfiguration::TConfiguration(QSettings *UserConfig)
 {
-    user_settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player");
-    setBasePath();
-    setFullIndexPath(path);
-    setIndexPath();
-    setUserAgent();
-    createDirectories();
+    setUserConfig(UserConfig);
+    determineUuid();
+    determinePlayerName();
+    determineOS();
 }
 
-QString TConfiguration::getSetting(QString setting_name)
+QSettings *TConfiguration::getUserConfig() const
 {
-    return user_settings->value(setting_name).toString();
+    return UserConfig;
 }
 
-QString TConfiguration::getFullIndexPath()
+void TConfiguration::setUserConfig(QSettings *value)
 {
-    return full_index_path;
+    UserConfig = value;
 }
+
+QString TConfiguration::getUserConfigByKey(QString key)
+{
+    return UserConfig->value(key, "").toString();
+}
+
+QString TConfiguration::getPlayerName() const
+{
+    return player_name;
+}
+
+void TConfiguration::setPlayerName(const QString &value)
+{
+    player_name = value;
+    UserConfig->setValue("player_name", value);
+}
+
+QString TConfiguration::getUuid() const
+{
+    return uuid;
+}
+
+void TConfiguration::setUuid(const QString &value)
+{
+    uuid = value;
+    UserConfig->setValue("uuid", value);
+}
+
+QString TConfiguration::getUserAgent() const
+{
+   return user_agent;
+}
+
+void TConfiguration::setUserAgent(const QString &value)
+{
+    user_agent = value;
+}
+
+
+QString TConfiguration::getIndexUri()
+{
+    return index_uri;
+}
+
+void TConfiguration::setIndexUri(const QString &value)
+{
+    index_uri = value;
+}
+
+void TConfiguration::determineIndexUri(QString path)
+{
+    if (path != "")
+        setIndexUri(path);
+    else if (getUserConfigByKey("index_uri") != "")
+    {
+        setIndexUri(getUserConfigByKey("index_uri"));
+    }
+    else
+    {
+        checkConfigXML();
+        if (index_uri == "")
+            setIndexUri("http://indexes.smil-admin.com");
+    }
+
+    if (index_uri.mid(0, 4) != "http"  && index_uri.mid(0, 3) != "ftp" && index_uri.mid(0, 1) != "/") // https is includered in http!
+        setIndexUri(base_path+index_uri);
+
+    determineIndexPath();
+}
+
+void TConfiguration::setIndexPath(const QString &value)
+{
+    index_path = value;
+}
+
+void TConfiguration::determineIndexPath()
+{
+    if (index_uri.mid(0, 4) == "http" || index_uri.mid(0, 3) == "ftp")
+    {
+        QUrl url(index_uri);
+        setIndexPath(url.adjusted(QUrl::RemoveFilename |
+                                  QUrl::RemoveQuery |
+                                  QUrl::RemoveFragment |
+                                  QUrl::RemovePort).toString());
+        if (index_path.mid(index_path.length()-1, 1) != "/")
+            setIndexPath(index_path+"/");
+
+    }
+    else
+    {
+        QFileInfo fi(index_uri);
+        setIndexPath(fi.path()+"/");
+    }
+}
+
 
 QString TConfiguration::getIndexPath()
 {
     return index_path;
 }
+
+QString TConfiguration::getOS() const
+{
+    return os;
+}
+
+void TConfiguration::setOS(const QString &value)
+{
+    os = value;
+}
+
+QString TConfiguration::getBasePath() const
+{
+    return base_path;
+}
+
+void TConfiguration::setBasePath(const QString &value)
+{
+    base_path = value;
+}
+
+void TConfiguration::determineBasePath(QString absolute_path_to_bin)
+{
+    if (absolute_path_to_bin.contains("/bin"))
+        setBasePath(absolute_path_to_bin.mid(0, absolute_path_to_bin.length()-3)); // "/" is set when xyz/bin
+    else
+        setBasePath(absolute_path_to_bin);
+
+    if (base_path.mid(base_path.length()-1, 1) != "/")
+        setBasePath(base_path+"/");
+}
+
 
 /**
  * @brief TConfiguration::getPaths returns paths.
@@ -57,139 +185,112 @@ QString TConfiguration::getIndexPath()
  */
 QString TConfiguration::getPaths(QString path_name)
 {
-    QString ret = "";
     if (path_name == "configuration")
-        ret = base_path + "configuration/";
+        return base_path + "configuration/";
     else if (path_name == "var")
-        ret = base_path + "var/";
+        return base_path + "var/";
     else if (path_name == "media")
-        ret = base_path + "var/media/";
+        return base_path + "var/media/";
     else if (path_name == "logs")
-        ret = base_path + "logs/";
+        return base_path + "logs/";
     else if (path_name == "base")
-        ret = base_path;
+        return base_path;
 
-    return ret;
-}
-
-void TConfiguration::setFullIndexPath(QString path)
-{
-    if (path != "")
-        full_index_path = path;
-    else
-    {
-        QFile file(getPaths("configuration")+"config.xml");
-        if (file.exists() && file.open(QIODevice::ReadOnly))
-        {
-            QXmlStreamReader reader(&file);
-            while (!reader.atEnd())
-            {
-                 reader.readNext();
-                 if (reader.isStartElement())
-                 {
-                     if (reader.name() == "prop" && reader.attributes().value("name") == "content.serverUrl")
-                         full_index_path = reader.attributes().value("value").toString();
-                 }
-             }
-        }
-        else
-            full_index_path = "http://indexes.smil-admin.com";
-
-    }
-    if (full_index_path.mid(0, 4) != "http" && full_index_path.mid(0, 3) != "ftp")
-        full_index_path = base_path+full_index_path;
-    return;
-}
-
-void TConfiguration::setIndexPath()
-{
-    if (full_index_path.mid(0, 4) == "http" || full_index_path.mid(0, 3) == "ftp")
-    {
-        QUrl url(full_index_path);
-        index_path = url.adjusted(QUrl::RemoveFilename).toString();
-    }
-    else
-    {
-        QFileInfo fi(full_index_path);
-        index_path = fi.path();
-    }
-    if (index_path.mid(index_path.length()-1, 1) != "/")
-        index_path += "/";
-    return;
-}
-
-
-void TConfiguration::setBasePath()
-{
-    QDir            dir;
-    QString absolute_path = dir.absolutePath();
-    if (absolute_path.contains("/bin"))
-        base_path     = absolute_path.mid(0, absolute_path.length()-3); // "/" is set when xyz/bin
-    else
-        base_path     = absolute_path+"/";
-    return;
+    return base_path;
 }
 
 void TConfiguration::createDirectories()
 {
-    QDir            dir;
-    dir.setPath(getPaths("var"));
-    if (!dir.exists() && !dir.mkpath("."))
-        qDebug() << "Failed to create "<< dir.path() << "\r";
+    createDirectoryIfNotExist("var");
+    createDirectoryIfNotExist("configuration");
+    createDirectoryIfNotExist("logs");
+}
 
-    dir.setPath(getPaths("configuration"));
-    if (!dir.exists() && !dir.mkpath("."))
-        qDebug() << "Failed to create " << dir.path() << "\r";
+void TConfiguration::determineUserAgent()
+{
+    setUserAgent("GAPI/1.0 (UUID:"+getUuid()+"; NAME:"+getPlayerName()+") garlic-"+getOS()+"/"+getVersion()+" (MODEL:Garlic)");
+}
 
-    dir.setPath(getPaths("logs"));
+
+void TConfiguration::checkConfigXML()
+{
+    QFile file(getPaths("configuration")+"config.xml");
+    if (file.exists() && file.open(QIODevice::ReadOnly))
+    {
+        QXmlStreamReader reader(&file);
+        while (!reader.atEnd())
+        {
+             reader.readNext();
+             if (reader.isStartElement())
+             {
+                 if (reader.name() == "prop" && reader.attributes().value("name") == "content.serverUrl")
+                 {
+                     setIndexUri(reader.attributes().value("value").toString());
+                 }
+             }
+         }
+    }
+}
+
+void TConfiguration::createDirectoryIfNotExist(QString key)
+{
+    QDir dir;
+    dir.setPath(getPaths(key));
     if (!dir.exists() && !dir.mkpath("."))
         qDebug() << "Failed to create " << dir.path() << "\r";
     return;
-
 }
 
-
-QString TConfiguration::getUserAgent()
+void TConfiguration::determineUuid()
 {
-   return user_agent;
+    setUuid(getUserConfigByKey("uuid"));
+    if (getUuid() == "")
+    {
+        setUuid(QUuid::createUuid().toString().mid(1, 36));
+        UserConfig->setValue("uuid", getUuid());
+    }
 }
 
-void TConfiguration::setUserAgent()
+void TConfiguration::determinePlayerName()
 {
-    if (user_settings->value("uuid", "").toString() == "")
-        user_settings->setValue("uuid", QUuid::createUuid().toString().mid(1, 36));
+    setPlayerName(getUserConfigByKey("player_name"));
+    if (getPlayerName() == "")
+    {
+        setPlayerName(getUuid().mid(24,12));
+        UserConfig->setValue("player_name", getPlayerName());
+    }
+}
+
+void TConfiguration::determineOS()
+{
 #if defined  Q_OS_ANDROID
-    QString os("android");
+    setOS("android");
 #elif defined Q_OS_BSD4
-    QString os("bsd4");
+    setOS("bsd4");
 #elif defined Q_OS_DARWIN
-    QString os("darwin");
+    setOS("darwin");
 #elif defined Q_OS_FREEBSD
-    QString os("freebsd");
+    setOS("freebsd");
 #elif defined Q_OS_HURD
-    QString os("hurd");
+    setOS("hurd");
 #elif defined Q_OS_IOS
-    QString os("ios");
+    setOS("ios");
 #elif defined Q_OS_LINUX
-    QString os("linux");
+    setOS("linux");
 #elif defined Q_OS_NETBSD
-    QString os("netbsd");
+    setOS("netbsd");
 #elif defined Q_OS_OPENBSD
-    QString os("openbsd");
+    setOS("openbsd");
 #elif defined Q_OS_OSX
-    QString os("osx");
+    setOS("osx");
 #elif defined Q_OS_WIN32
-    QString os("windows");
+    setOS("windows");
 #elif defined Q_OS_WINPHONE
-    QString os("winphone");
+    setOS("winphone");
 #elif defined Q_OS_WINRT
-    QString os("winrt");
+    setOS("winrt");
 #else
-    QString os("unknown");
+    setOS("unknown");
 #endif
-
-    user_agent = "GAPI/1.0 (UUID:"+getSetting("uuid")+"; NAME:"+user_settings->value("player_name", getSetting("uuid").mid(24,12)).toString()+") garlic-"+os+"/"+getVersion()+" (MODEL:Garlic)";
-   // ADAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:Player with known UUID) SK8855-ADAPI/2.0.5 (MODEL:XMP-330)
-   return;
 }
 

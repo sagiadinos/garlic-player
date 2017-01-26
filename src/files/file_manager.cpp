@@ -26,7 +26,7 @@ TFileManager::TFileManager(TConfiguration *config, QObject *parent)
     connect(MyDownloader, SIGNAL(noModified(QString)), SLOT(doCancelDownload(QString)));
     connect(MyDownloader, SIGNAL(downloadFailed(QString)), SLOT(doFailDownload(QString)));
     connect(MyDownloader, SIGNAL(uncachable(QString)), SLOT(doUncachable(QString)));
-    index_path = MyConfiguration->getFullIndexPath();
+    index_path = MyConfiguration->getIndexUri();
 }
 
 TFileManager::~TFileManager()

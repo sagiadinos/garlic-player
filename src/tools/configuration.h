@@ -31,25 +31,46 @@ class TConfiguration  : public QObject
 {
     Q_OBJECT
 public:
-    TConfiguration(QString path = "");
-    static QString getVersion(){return "0.1.0";}
-    static QString getAppName(){return "garlic player";}
-    static QString getDescription() {return "SMIL Player for Digital Signage";}
-    QString getSetting(QString setting_name);
-    QString getPaths(QString path_name);
-    QString getFullIndexPath();
-    QString getIndexPath();
-    QString getUserAgent();
+    TConfiguration(QSettings *UserConfig = 0);
+    QString getVersion(){return "0.1.0";}
+    QString getAppName(){return "garlic player";}
+    QString getDescription() {return "SMIL Media Player for Digital Signage";}
+
+    QSettings *getUserConfig() const;
+    void       setUserConfig(QSettings *value);
+    QString    getUserConfigByKey(QString key);
+    QString    getUuid() const;
+    void       setUuid(const QString &value);
+    QString    getPlayerName() const;
+    void       setPlayerName(const QString &value);
+    QString    getUserAgent() const;
+    void       setUserAgent(const QString &value);
+    QString    getOS() const;
+    void       setOS(const QString &value);
+    QString    getPaths(QString path_name);
+    void       setIndexUri(const QString &value);
+    QString    getIndexUri();
+    void       setIndexPath(const QString &value);
+    QString    getIndexPath();
+    QString    getBasePath() const;
+    void       setBasePath(const QString &value);
+
+
+    void       determineBasePath(QString absolute_path_to_bin);
+    void       determineIndexUri(QString path);
+    void       createDirectories();
+    void       determineUserAgent();
+    void       checkConfigXML();
+
+
 protected:
-    void createDirectories();
-    void setIndexPath();
-    void setFullIndexPath(QString path);
-    void setBasePath();
-    void setUserAgent();
-private:
-    QString         base_path;
-    QString         user_agent, full_index_path, index_path;
-    QSettings      *user_settings;
+    QSettings *UserConfig;
+    QString    uuid, player_name, user_agent, os, base_path, index_uri, index_path;
+    void       createDirectoryIfNotExist(QString key);
+    void       determineIndexPath();
+    void       determineUuid();
+    void       determinePlayerName();
+    void       determineOS();
 };
 
 #endif // CONFIGURATION_H

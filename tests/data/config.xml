@@ -27,7 +27,7 @@
     <prop name="hardware.audioOut.0.masterSoundLevel" value="0~100%"/>
  
     <prop name="content.bootFromServer" value="true"/>
-    <prop name="content.serverUrl" value="http://indexes.of-a-smil-server.com"/>
+    <prop name="content.serverUrl" value="http://indexes.of-a-smil-server.com/path_to_a/index.php?site=player_get_index&amp;owner_id=2"/>
  
     <prop name="schedule.reboot.days" value="Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday"/>
     <prop name="schedule.reboot.time" value="HH:MM in 24-hr format"/>
