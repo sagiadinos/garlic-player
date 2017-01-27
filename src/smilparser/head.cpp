@@ -43,8 +43,8 @@ void THead::setDefaultValues()
     default_region.regionName      = "screen";
     default_region.top             = 0;
     default_region.left            = 0;
-    default_region.width           = 100;
-    default_region.height          = 100;
+    default_region.width           = 1;
+    default_region.height          = 1;
     default_region.z_index         = 0;
     default_region.backgroundColor = "transparent";
     region_list.append(default_region);

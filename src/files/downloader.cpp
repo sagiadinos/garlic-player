@@ -45,13 +45,14 @@ bool TDownloader::downloadInProgress()
     return download;
 }
 
-void TDownloader::checkFiles(QString local, QString remote)
+void TDownloader::checkFiles(QString local, QString remote, QString src)
 {
     if (local != "" && remote != "")
     {
+        src_file_path      = src;
         remote_file_path   = remote;
         remote_file_url    = QUrl(remote);
-        local_file_info         = QFileInfo(local);
+        local_file_info    = QFileInfo(local);
         doHttpHeadRequest();
     }
     return;
@@ -179,29 +180,29 @@ bool TDownloader::saveToDisk(QIODevice *data)
     file.write(data->readAll());
     file.close();
 
-    qDebug() << QTime::currentTime().toString() << remote_file_path << " was modified and written locally";
-    emit downloadSucceed(remote_file_path);
+    qDebug() << QTime::currentTime().toString() << src_file_path << " was modified and written locally";
+    emit downloadSucceed(src_file_path);
     return true;
 }
 
 void TDownloader::emitNoModified()
 {
     download = false;
-    emit noModified(remote_file_path);
-    qDebug() << QTime::currentTime().toString() << remote_file_path << " was not modified";
+    emit noModified(src_file_path);
+    qDebug() << QTime::currentTime().toString() << src_file_path << " was not modified";
     return;
 }
 
 void TDownloader::emitUnCachable()
 {
     download = false;
-    emit uncachable(remote_file_path);
+    emit uncachable(src_file_path);
 }
 
 void TDownloader::emitDownloadFailed(QString error_message)
 {
     download = false;
-    qDebug() << QTime::currentTime().toString() << remote_file_path << " download failed " << error_message;
-    emit downloadFailed(remote_file_path);
+    qDebug() << QTime::currentTime().toString() << src_file_path << " download failed " << error_message;
+    emit downloadFailed(src_file_path);
     return;
 }

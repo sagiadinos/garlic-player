@@ -78,7 +78,7 @@ void TIndexFile::checkForLoaded(QString filename)
 
 void TIndexFile::loadFromHttpToDom(QString uri)
 {
-    MyDownloader->checkFiles(determineLocalFileName(uri), uri);
+    MyDownloader->checkFiles(determineLocalFileName(uri), uri, uri);
     return;
 }
 

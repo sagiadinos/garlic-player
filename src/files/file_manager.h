@@ -19,8 +19,8 @@
 #define TFILEMANAGER_H
 
 #include <QObject>
+#include <QPair>
 #include <QQueue>
-#include <QHash>
 #include "downloader.h"
 #include "tools/configuration.h"
 
@@ -35,25 +35,27 @@ public:
     const     int        _uncachable = 4;
     TFileManager(TConfiguration *config, QObject *parent = 0);
     ~TFileManager();
-    void                       clearQueues();
-    void                       registerFile(QString remote_file);
-    QString                    getLoadablePath(QString remote_file);
-    int                        checkCacheStatus(QString remote_file);
+    void                              clearQueues();
+    void                              registerFile(QString src);
+    QString                           getLoadablePath(QString src);
+    int                               checkCacheStatus(QString src);
 protected:
-     QHash<QString, int>       loaded_list;
-     QQueue<QString>           download_queue;
-     TConfiguration           *MyConfiguration;
-     TDownloader              *MyDownloader;
-     QString                   index_path;
-     void                      proceedDownloadQueue();
-     QString                   getHashedFilePath(QString remote_path);
-     bool                      isFileInList(QString file_path);
-     void                      insertForDownloadQueue(QString remote_file);
+     QHash<QString, int>              loaded_list;
+     QQueue<QPair<QString, QString>>  download_queue;
+     TConfiguration                  *MyConfiguration;
+     TDownloader                     *MyDownloader;
+     QString                          index_uri, src_file_path;
+     QString                          determineFullRemoteFilePath(QString src);
+     void                             proceedDownloadQueue();
+     QString                          getHashedFilePath(QString remote_path);
+     bool                             isFileInList(QString file_path);
+     void                             insertForDownloadQueue(QString remote_file, QString local_hash_value);
+     bool                             isRemote(QString file_path);
 protected slots:
-    void     doFinishDownload(QString remote_file);
-    void     doCancelDownload(QString remote_file);
-    void     doFailDownload(QString remote_file);
-    void     doUncachable(QString remote_file);
+    void     doFinishDownload(QString src);
+    void     doCancelDownload(QString src);
+    void     doFailDownload(QString src);
+    void     doUncachable(QString src);
 signals:
 
 };

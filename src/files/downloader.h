@@ -40,7 +40,7 @@ class TDownloader: public QObject
 public:
     TDownloader(QString ua, QObject * parent = 0);
     ~TDownloader();
-    virtual void checkFiles(QString local, QString remote);
+    virtual void checkFiles(QString local, QString remote, QString src);
     virtual bool downloadInProgress();
 
 private slots:
@@ -50,7 +50,7 @@ private slots:
 
 private:
     QUrl           remote_file_url;
-    QString        remote_file_path;
+    QString        remote_file_path, src_file_path;
     bool           download;
     QByteArray     user_agent;
     QFileInfo      local_file_info;
