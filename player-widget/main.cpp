@@ -60,18 +60,11 @@ int main(int argc, char *argv[])
 
     if (parser.isSet("f"))
         w.showFullScreen();
-    else if (parser.isSet("w"))
-    {
-        w.setMinimumSize(980, 540);
-        w.show();
-    }
     else
     {
         w.setMinimumSize(980, 540);
         w.show();
     }
-
-//        parser.showHelp(0);
 
     return app.exec();
 }

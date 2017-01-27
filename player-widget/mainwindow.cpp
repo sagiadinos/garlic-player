@@ -131,12 +131,21 @@ void MainWindow::stopShowMedia(TMedia *media)
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
-    if(ke->key() == Qt::Key_F)
+    if (!ke->modifiers().testFlag(Qt::ControlModifier))
+        return;
+    switch (ke->key())
     {
-        if (!isFullScreen())
-            showFullScreen();
-        else
-            showNormal();
+        case Qt::Key_F:
+            if (!isFullScreen())
+                showFullScreen();
+            else
+                showNormal();
+        break;
+        case Qt::Key_C:
+            exit(0);
+
+        break;
+
     }
 }
 

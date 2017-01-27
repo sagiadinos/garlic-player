@@ -53,10 +53,13 @@ bool TWeb::load()
     show_web.url           = file_path;
     show_web.browser_proxy = new QGraphicsProxyWidget();
     show_web.browser       = new QWebEngineView();
+//    show_web.browser->setUrl(QUrl(show_web.url));
+    show_web.browser->load(QUrl(show_web.url));
+
     show_web.browser_proxy->setWidget(show_web.browser);
-//    show_web.browser->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
-    show_web.browser->setUrl(QUrl(show_web.url));
-//    show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
+    show_web.browser->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled,true);
+    show_web.browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled,true);
+//    show_web.browser->page()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
 //    show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
     qDebug() << getID() << QTime::currentTime().toString()  << "maybe ;) loaded: " << file_path;
     return true;

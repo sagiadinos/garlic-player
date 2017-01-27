@@ -20,6 +20,7 @@
 #define TWEB_H
 #include <QGraphicsProxyWidget>
 #include <QWebEngineView>
+#include <QWebEngineSettings>
 #include <QWebEnginePage>
 #include "smilparser/media.h"
 
