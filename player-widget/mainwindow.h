@@ -40,6 +40,7 @@ public slots:
     void                      checkForNewSmilIndex();
     void                      startShowMedia(TMedia *media);
     void                      stopShowMedia(TMedia *media);
+    void                      keyPressEvent(QKeyEvent *ke);
 protected:
     QMap<QString, TRegion *>  ar_regions;
     TSmil                    *MySmil          = NULL;

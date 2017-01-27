@@ -129,6 +129,17 @@ void MainWindow::stopShowMedia(TMedia *media)
     return;
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *ke)
+{
+    if(ke->key() == Qt::Key_F)
+    {
+        if (!isFullScreen())
+            showFullScreen();
+        else
+            showNormal();
+    }
+}
+
 void MainWindow::resizeEvent(QResizeEvent * event)
 {
     Q_UNUSED(event);
