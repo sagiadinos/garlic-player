@@ -58,11 +58,11 @@ void TFileManager::registerFile(QString src)
     }
     else
     {
-        if (src.mid(0, 4) != "/" ) // when relative path
-            src = MyConfiguration->getIndexPath()+src;
+//        if (src.mid(0, 1) != "/" ) // when relative path
+//            src = MyConfiguration->getIndexPath()+src;
 
-        if (!isFileInList(src))
-            loaded_list.insert(src, _exist);
+        if (!isFileInList(src_file_path))
+            loaded_list.insert(src_file_path, _exist);
     }
     return;
 }
@@ -85,7 +85,10 @@ QString TFileManager::getLoadablePath(QString src)
         }
     }
     else
-        ret = MyConfiguration->getIndexPath()+src;
+        if (!isRemote(src) && src.mid(0, 1) != "/" ) // when relative path
+            ret = MyConfiguration->getIndexPath()+src;
+        else
+            ret = src;
 
     return ret;
 }
