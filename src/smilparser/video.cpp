@@ -84,7 +84,7 @@ QString TVideo::getFit()
 bool TVideo::load()
 {
     QString file_path      = MyFileManager->getLoadablePath(src);
-    show_video.video_item  = new QtAV::GraphicsItemRenderer;
+    show_video.video_item  = new QtAV::WidgetRenderer;
     media_player           = new QtAV::AVPlayer;
     media_player->setRenderer(show_video.video_item);
 

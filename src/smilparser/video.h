@@ -28,7 +28,7 @@ struct showVideo
     QString media_type;
     QString region;
     QString fit;
-    QtAV::GraphicsItemRenderer *video_item;
+    QtAV::WidgetRenderer *video_item;
 };
 
 class TVideo : public TMedia

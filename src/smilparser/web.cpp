@@ -51,12 +51,10 @@ bool TWeb::load()
 {
     QString file_path      = MyFileManager->getLoadablePath(src);
     show_web.url           = file_path;
-    show_web.browser_proxy = new QGraphicsProxyWidget();
     show_web.browser       = new QWebEngineView();
 //    show_web.browser->setUrl(QUrl(show_web.url));
     show_web.browser->load(QUrl(show_web.url));
 
-    show_web.browser_proxy->setWidget(show_web.browser);
     show_web.browser->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled,true);
     show_web.browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled,true);
 //    show_web.browser->page()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);

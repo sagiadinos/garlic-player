@@ -19,12 +19,14 @@
 #ifndef HEAD_H
 #define HEAD_H
 
+#include <algorithm>
 #include <QFile>
 #include <QString>
 #include <QtXml>
 #include <QDebug>
 #include <QList>
 #include <QTimer>
+
 
 /**
  * @brief The Region struct
@@ -39,7 +41,9 @@ struct Region
     qreal height;
     int z_index;
     QString backgroundColor;
+    bool operator<(const Region& other) const {return z_index < other.z_index;}\// use for sorting a list of Regions
 };
+
 
 class THead: public QObject
 {

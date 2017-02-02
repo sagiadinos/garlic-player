@@ -18,7 +18,6 @@
 
 #ifndef TWEB_H
 #define TWEB_H
-#include <QGraphicsProxyWidget>
 #include <QWebEngineView>
 #include <QWebEngineSettings>
 #include <QWebEnginePage>
@@ -31,7 +30,6 @@ struct showWeb
     QString               fit;
     QString               url;
     QWebEngineView       *browser;
-    QGraphicsProxyWidget *browser_proxy;
 };
 
 class TWeb : public TMedia

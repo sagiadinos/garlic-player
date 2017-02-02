@@ -21,7 +21,6 @@
 
 #include "media.h"
 #include <QPixmap>
-#include <QGraphicsPixmapItem>
 
 struct showImg
 {
@@ -29,7 +28,6 @@ struct showImg
     QString region;
     QString fit;
     QPixmap pixmap;
-    QGraphicsPixmapItem *image_item;
 };
 
 class TImage : public TMedia

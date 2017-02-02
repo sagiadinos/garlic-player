@@ -164,6 +164,7 @@ void THead::parseRegions(QDomNodeList childs)
                 if (element.hasAttribute("backgroundColor"))
                     region.backgroundColor = element.attribute("backgroundColor");
                 region_list.append(region);
+                std::sort(region_list.begin(), region_list.end()); // sort z-indexes ascending to plaace Widgets coorect in mainwindow
             }
             else // when one region-tag has no regionName break the loop delete QList and put the default_region 100% region as multizone
             {
@@ -171,6 +172,7 @@ void THead::parseRegions(QDomNodeList childs)
                 region_list.append(default_region);
                 break;
             }
+
         }
     }
 
