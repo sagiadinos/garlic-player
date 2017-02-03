@@ -90,6 +90,10 @@ Only sources! Binaries will deployed later.
 ## general features
 -toogle fullscreen with Ctrl-F
 
+## Actual Working
+ - smil parser rewriting to seperate media models
+ - move from disappointing Graphics View Framework to simple QWidget for more performnce with QWebEngine and WebGL
+
 ## ToDo's
 - change config.xml during plaback
 - settings meny via key
