@@ -88,7 +88,7 @@ Only sources! Binaries will deployed later.
 - http 301 redirects for index and media
 
 ## general features
--toogle fullscreen with Ctrl-F
+ - toogle fullscreen with Ctrl-F
 
 ## Actual Working
  - smil parser rewriting to seperate media models

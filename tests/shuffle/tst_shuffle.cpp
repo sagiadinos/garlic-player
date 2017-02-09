@@ -69,7 +69,6 @@ void TestTShuffle::testWithThreePickPerRound()
     return;
 }
 
-
 QList<QDomElement> TestTShuffle::createSeqList()
 {
     QList<QDomElement> list;
