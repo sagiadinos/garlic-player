@@ -33,7 +33,7 @@ class TSmil : public QObject
 {
     Q_OBJECT
 public:
-    TSmil(TConfiguration *config, QObject *parent = 0);
+    TSmil(TFileManager *filemanager);
     ~TSmil();
     void                               init();
     void                               clearLists();
@@ -43,7 +43,6 @@ protected:
     QString                            index_path;
     TBody                             *MyBody;
     QHash<QString, TBaseTiming *>      ar_elements;
-    TConfiguration                    *MyConfiguration;
     TFileManager                      *MyFileManager;
 protected slots:
     void                               foundElement(TContainer *ParentContainer, QString type, QDomElement dom_element);

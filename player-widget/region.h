@@ -19,48 +19,52 @@
 #ifndef TREGION_H
 #define TREGION_H
 
-#include <QWebEngineView>
-#include <QGraphicsWidget>
-#include <QGraphicsScene>
-#include <QGraphicsView>
 #include <QObject>
 #include <QWidget>
-#include <QList>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QStyle>
+#include <QStyleOption>
 #include "smilparser/head.h"
 #include "smilparser.h"
+#include "files/file_manager.h"
 
-class TRegion : public QGraphicsView
+class TRegion : public QWidget
 {
     Q_OBJECT
 public:
-    TRegion(QWidget *parent = 0);
+    explicit TRegion(QWidget *parent, TFileManager *filemanager);
     ~TRegion();
-        void                setRootSize(int w, int h);
-        void                setRegion(Region region);
-        void                playImage(showImg structure);
-        void                playVideo(showVideo structure);
-        void                playAudio(showAudio structure);
-        void                playWeb(showWeb structure);
-        void                removeImage(showImg structure);
-        void                removeVideo(showVideo structure);
-        void                removeWeb(showWeb structure);
-private:
-        qreal               root_width_px, root_height_px = 0;
-        QWidget            *parent;
-        QString             actual_media = "";
-        Region              region;
-        showImg             show_image;
-        showVideo           show_video;
-        showAudio           show_audio;
-        showWeb             show_web;
-        QPixmap             image;
-        QGraphicsScene     *scene;
-        void                addItem(QString media_type, QGraphicsItem *item);
-        void                removeItem(QString media_type, QGraphicsItem *item);
-        void                resizeGeometry();
-        void                resizeImage(int w, int h);
-        void                resizeVideo(int w, int h);
-        void                resizeWeb(int w, int h);
+    void                paintEvent(QPaintEvent *event);
+    void                setRootSize(int w, int h);
+    void                setRegion(Region region);
+    void                playImage(TImage *structure);
+    void                playVideo(TVideo *structure);
+    void                playAudio(TAudio *structure);
+    void                playWeb(TWeb *structure);
+    void                removeImage();
+    void                removeVideo();
+    void                removeAudio();
+    void                removeWeb();
+
+protected:
+    QLabel               *image_widget;
+    QtAV::WidgetRenderer *video_widget;
+    TImage               *MyImage;
+    TVideo               *MyVideo;
+    TAudio               *MyAudio;
+    TWeb                 *MyWeb;
+    qreal                 root_width_px, root_height_px = 0;
+    QString               actual_media = "";
+    Region                region;
+    QHBoxLayout          *layout;
+    TFileManager         *MyFileManager;
+    void                  resizeGeometry();
+    void                  resizeImage(int w, int h);
+    void                  resizeVideo(int w, int h);
+    void                  resizeWeb(int w, int h);
 };
 
 #endif // TREGION_H

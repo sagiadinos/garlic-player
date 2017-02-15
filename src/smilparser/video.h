@@ -18,36 +18,16 @@
 
 #ifndef TVIDEO_H
 #define TVIDEO_H
-
-#include "media.h"
 #include <QtAV>
 #include <QtAVWidgets>
+#include "audio.h"
 
-struct showVideo
-{
-    QString media_type;
-    QString region;
-    QString fit;
-    QtAV::WidgetRenderer *video_item;
-};
-
-class TVideo : public TMedia
+class TVideo : public TAudio
 {
     Q_OBJECT
 public:
     TVideo(TContainer *parent = 0);
-    ~TVideo();
-    showVideo       getMediaForShow();
-    QString         getFit();
-    bool            load();
-    void            pause();
-    void            stop();
-    void            play();
-protected:
-    void            setDurationTimerBeforePlay();
-    QtAV::AVPlayer *media_player;
-    showVideo       show_video;
-    void            setAttributes();
+    void setRenderer(QtAV::WidgetRenderer *renderer);
 };
 
 #endif // TVIDEO_H

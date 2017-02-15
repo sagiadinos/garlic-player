@@ -18,27 +18,16 @@
 
 #include "mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :  QWidget(parent)
+MainWindow::MainWindow(TFileManager *FileManager)
 {
-    layout = new QHBoxLayout();
-}
-
-void MainWindow::setInitialSmilIndex(TConfiguration *Configuration)
-{
-    MyIndexFile     = new TIndexFile(Configuration);
+    MyFileManager   = FileManager;
+    MyIndexFile     = new TIndexManager(MyFileManager->getConfiguration());
     connect(MyIndexFile, SIGNAL(isLoaded()), this, SLOT(setSmilIndex()));
     MyHead          = new THead();
     connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
-    MySmil = new TSmil(Configuration);
+    MySmil = new TSmil(MyFileManager);
     connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
-    loadIndex(); // initial Start
-}
-
-void MainWindow::loadIndex()
-{
-    MyIndexFile->load(); // if load successfully setSmilIndex gets a Signal
-    return;
 }
 
 /**
@@ -47,8 +36,11 @@ void MainWindow::loadIndex()
 void MainWindow::setSmilIndex()
 {
     qDebug() << "clear MySmil";
-    MySmil->clearLists();
-    deleteRegionsAndLayouts();
+    if (ar_regions.size() > 0)
+    {
+        MySmil->clearLists();
+        deleteRegionsAndLayouts();
+    }
     MySmil->init();
     setRegions(MyIndexFile->getHead());
     setGeometry(0,0, width(), height());
@@ -61,7 +53,7 @@ void MainWindow::setSmilIndex()
  */
 void MainWindow::checkForNewSmilIndex()
 {
-    loadIndex();
+    MyIndexFile->load();
     return;
 }
 
@@ -70,7 +62,6 @@ void MainWindow::deleteRegionsAndLayouts()
 {
     for (QMap<QString, TRegion *>::iterator i = ar_regions.begin(); i != ar_regions.end(); i++)
     {
-        layout->removeWidget(ar_regions[i.key()]);
     }
     qDeleteAll(ar_regions);
     ar_regions.clear();
@@ -85,12 +76,11 @@ void MainWindow::setRegions(QDomElement head)
     QMap<QString, TRegion *>::iterator j;
     for (int i = 0; i < region_list.length(); i++)
     {
-        j = ar_regions.insert(region_list.at(i).regionName, new TRegion(this));
-        layout->addWidget(ar_regions[j.key()]);
+        j = ar_regions.insert(region_list.at(i).regionName, new TRegion(this, MyFileManager));
         ar_regions[j.key()]->setRegion(region_list.at(i));
         ar_regions[j.key()]->setRootSize(width(), height());
+        ar_regions[j.key()]->show();
     }
-    setLayout(layout);
 }
 
 QString MainWindow::selectRegion(QString region_name)
@@ -151,56 +141,55 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 
 void MainWindow::resizeEvent(QResizeEvent * event)
 {
-    Q_UNUSED(event);
-    QMap<QString, TRegion *>::iterator i;
-    for (i = ar_regions.begin(); i != ar_regions.end(); ++i)
-        ar_regions[i.key()]->setRootSize(width(), height());
+    if (ar_regions.size() > 0)
+    {
+        Q_UNUSED(event);
+        QMap<QString, TRegion *>::iterator i;
+        for (i = ar_regions.begin(); i != ar_regions.end(); ++i)
+            ar_regions[i.key()]->setRootSize(width(), height());
+    }
+    return;
 }
 
 void MainWindow::playImage(TImage *MyImage)
 {
     QString region_name = selectRegion(MyImage->getRegion());
-    ar_regions[region_name]->playImage(MyImage->getMediaForShow());
+    ar_regions[region_name]->playImage(MyImage);
     ar_regions[region_name]->setRootSize(width(), height());
 }
 
 void MainWindow::playVideo(TVideo *MyVideo)
 {
     QString region_name = selectRegion(MyVideo->getRegion());
-    ar_regions[region_name]->playVideo(MyVideo->getMediaForShow());
+    ar_regions[region_name]->playVideo(MyVideo);
     ar_regions[region_name]->setRootSize(width(), height());
 }
 
 void MainWindow::playAudio(TAudio *MyAudio)
 {
-    QString region_name = selectRegion(MyAudio->getRegion());
-    ar_regions[region_name]->playAudio(MyAudio->getMediaForShow());
-    //ar_regions[region_name]->setRootSize(width(), height());
+    ar_regions[selectRegion(MyAudio->getRegion())]->playAudio(MyAudio);
 }
 
 void MainWindow::playWeb(TWeb *MyWeb)
 {
     QString region_name = selectRegion(MyWeb->getRegion());
-    ar_regions[region_name]->playWeb(MyWeb->getMediaForShow());
+    ar_regions[region_name]->playWeb(MyWeb);
     ar_regions[region_name]->setRootSize(width(), height());
 }
 
 void MainWindow::removeImage(TImage *MyImage)
 {
-    QString region_name = selectRegion(MyImage->getRegion());
-    ar_regions[region_name]->removeImage(MyImage->getMediaForShow());
+    ar_regions[selectRegion(MyImage->getRegion())]->removeImage();
 }
 
 void MainWindow::removeVideo(TVideo *MyVideo)
 {
-    QString region_name = selectRegion(MyVideo->getRegion());
-    ar_regions[region_name]->removeVideo(MyVideo->getMediaForShow());
+    ar_regions[selectRegion(MyVideo->getRegion())]->removeVideo();
 }
 
 void MainWindow::removeWeb(TWeb *MyWeb)
 {
-    QString region_name = selectRegion(MyWeb->getRegion());
-    ar_regions[region_name]->removeWeb(MyWeb->getMediaForShow());
+    ar_regions[selectRegion(MyWeb->getRegion())]->removeWeb();
 }
 
 MainWindow::~MainWindow()

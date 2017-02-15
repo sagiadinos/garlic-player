@@ -41,7 +41,7 @@ struct Region
     qreal height;
     int z_index;
     QString backgroundColor;
-    bool operator<(const Region& other) const {return z_index < other.z_index;}\// use for sorting a list of Regions
+    bool operator<(const Region& other) const {return z_index < other.z_index;} // use for sorting a list of Regions
 };
 
 

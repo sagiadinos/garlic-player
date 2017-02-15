@@ -53,7 +53,7 @@ bool TBaseTiming::prepareTimerBeforePlaying()
         }
         else if (begin_status == "indefinite")
             status = _waiting;
-        else // play imediately
+        else // play immediately
             setDurationTimerBeforePlay();
     }
     begin_remaining = 0;

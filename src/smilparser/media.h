@@ -19,8 +19,6 @@
 #ifndef MEDIA_H
 #define MEDIA_H
 
-#include <QFile>
-#include <QCryptographicHash>
 #include "smilparser/container.h"
 #include "files/file_manager.h"
 
@@ -29,31 +27,31 @@ class TMedia : public TBaseTiming
     Q_OBJECT
 public:
     TMedia(TBaseTiming * parent = 0);
-    void              setIndexPath(QString path);
-    QString           getRegion();
+    QString           getRegion(){return region;}
+    QString           getFit(){return fit;}
+    QString           getSrc() {return src;}
+    QString           getBaseType() {return "media";}
     bool              parse(QDomElement element);
     void              resume(){play();}
-    void              prepareLoad(TFileManager *manager);
-    bool              isLoaded();
-    QString           getSrc() {return "src";}
-    QString           getBaseType() {return "media";}
+    void              registerFile(TFileManager *FileManager);
     bool              hasPlayingChilds(){return false;}
     TBaseTiming      *getChildElementFromList(){return this;}
     TContainer       *getParentContainer(){return parent_container;}
-    virtual bool      load() = 0;
     static  QString   parseSrc(QDomElement element);
-
+    bool              load();
 public slots:
     void              emitfinished();
 protected:
+    TFileManager     *MyFileManager;
     TContainer       *parent_container;
-    QString           region, src, exec;
+    QString           region = "screen";
+    QString           src, exec, fit = "";
     QString           cached_file_path;
     QString           filename, cache_control, log_content_id  = "";
-    TFileManager     *MyFileManager;
     bool              loaded;
     void              setBaseMediaAttributes();
     void              setBaseParameters();
+    virtual bool      loadMedia() = 0;
     virtual void      setAttributes() = 0;
 private:
 signals:

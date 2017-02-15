@@ -17,9 +17,8 @@
 *************************************************************************************/
 #include "file_manager.h"
 
-TFileManager::TFileManager(TConfiguration *config, QObject *parent)
+TFileManager::TFileManager(TConfiguration *config)
 {
-    Q_UNUSED(parent);
     MyConfiguration = config;
     MyDownloader    = new TDownloader(MyConfiguration->getUserAgent());
     connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(doFinishDownload(QString)));
@@ -45,40 +44,39 @@ void TFileManager::clearQueues()
 void TFileManager::registerFile(QString src)
 {
     src_file_path = src;
+    qDebug() << "register file " << QTime::currentTime().toString() << src;
     // Use Cache only when files are on web
-    if (isRemote(index_uri))
+    if (isRemote(index_uri) || isRemote(src))
     {
         if (!isFileInList(src))
         {
             loaded_list.insert(src, _no_exist);
             insertForDownloadQueue(determineFullRemoteFilePath(src), getHashedFilePath(src));
         }
-        else if (loaded_list[src] != _uncachable)
+       else if (loaded_list[src] != _uncachable)
            insertForDownloadQueue(determineFullRemoteFilePath(src), getHashedFilePath(src));
     }
     else
     {
-//        if (src.mid(0, 1) != "/" ) // when relative path
-//            src = MyConfiguration->getIndexPath()+src;
-
         if (!isFileInList(src_file_path))
             loaded_list.insert(src_file_path, _exist);
     }
     return;
 }
 
+
 QString TFileManager::getLoadablePath(QString src)
 {
     int  status = checkCacheStatus(src);
     QString ret = "";
 
-    if (isRemote(index_uri)) // if index-Smil is from Web-Service check if download
+    if (isRemote(index_uri) || isRemote(src))
     {
         if (status != _uncachable)
             ret = MyConfiguration->getPaths("var")+getHashedFilePath(src);
         else
         {
-            if (isRemote(src)) // if index-Smil is from Web-Service check if download
+            if (isRemote(index_uri)) // if index-Smil is from Web-Service check if download
                 ret = src;
             else
                 ret =  MyConfiguration->getIndexPath()+src;
@@ -95,6 +93,9 @@ QString TFileManager::getLoadablePath(QString src)
 
 int TFileManager::checkCacheStatus(QString src)
 {
+    if (download_queue.size() > 0) // to be sure not forget a download
+        proceedDownloadQueue();
+
     if (isFileInList(src))
         return loaded_list[src];
     else
@@ -147,6 +148,8 @@ void TFileManager::insertForDownloadQueue(QString remote_file, QString local_has
 
 bool TFileManager::isRemote(QString file_path)
 {
+    // cachabel wenn indexURI is remote and filepath
+
     if (file_path.mid(0, 4) == "http" || file_path.mid(0,3) == "ftp") // when relative path
         return true;
     else

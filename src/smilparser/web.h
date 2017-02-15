@@ -18,19 +18,12 @@
 
 #ifndef TWEB_H
 #define TWEB_H
+
 #include <QWebEngineView>
 #include <QWebEngineSettings>
-#include <QWebEnginePage>
 #include "smilparser/media.h"
 
-struct showWeb
-{
-    QString               media_type;
-    QString               region;
-    QString               fit;
-    QString               url;
-    QWebEngineView       *browser;
-};
+
 
 class TWeb : public TMedia
 {
@@ -38,17 +31,17 @@ class TWeb : public TMedia
 public:
     explicit TWeb(TContainer *parent = 0);
     ~TWeb();
-    showWeb  getMediaForShow();
-    QString  getFit();
-    bool     load();
-    void     pause();
-    void     stop();
-    void     play();
+    void            pause();
+    void            stop();
+    void            play();
+    void            registerFile(TFileManager *manager);
+    QWebEngineView *getBrowser(){return browser;}
 public slots:
-    void     setDurationTimerBeforePlay();
+    void            setDurationTimerBeforePlay();
 protected:
-    showWeb  show_web;
-    void     setAttributes();
+    QWebEngineView *browser;
+    bool            loadMedia();
+    void            setAttributes();
 };
 
 

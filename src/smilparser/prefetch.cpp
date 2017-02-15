@@ -24,11 +24,6 @@ TPrefetch::TPrefetch(TContainer *parent)
     setObjectName("TPrefetch");
 }
 
-bool TPrefetch::load()
-{
-    return true;
-}
-
 void TPrefetch::pause()
 {
     qDebug() << getID() << QTime::currentTime().toString() << "paused ";
@@ -45,10 +40,14 @@ void TPrefetch::stop()
 
 void TPrefetch::play()
 {
-    MyFileManager->registerFile(src);
     qDebug() << getID() << QTime::currentTime().toString()  << "prefetch play (load)";
     status = _playing;
     return;
+}
+
+bool TPrefetch::loadMedia()
+{
+    return true;
 }
 
 void TPrefetch::setDurationTimerBeforePlay()

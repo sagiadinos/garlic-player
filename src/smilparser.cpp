@@ -18,11 +18,9 @@
 
 #include "smilparser.h"
 
-TSmil::TSmil(TConfiguration *config, QObject *parent)
+TSmil::TSmil(TFileManager *filemanager)
 {
-    Q_UNUSED(parent)
-    MyConfiguration = config;
-    MyFileManager   = new TFileManager(MyConfiguration);
+    MyFileManager   = filemanager;
 }
 
 TSmil::~TSmil()
@@ -71,7 +69,7 @@ void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement 
     if (ar_elements_iterator == ar_elements.end())
     {
         MyBaseTiming     = TFactory::createBase(type, ParentContainer);
-        base_type  = MyBaseTiming->getBaseType();
+        base_type        = MyBaseTiming->getBaseType();
         MyBaseTiming->parse(dom_element);
         if (MyBaseTiming != NULL)
         {
@@ -85,15 +83,12 @@ void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement 
     else
     {
         MyBaseTiming     = *ar_elements_iterator;
-        base_type  = MyBaseTiming->getBaseType();
+        base_type        = MyBaseTiming->getBaseType();
     }
+
     qDebug() << MyBaseTiming->getID() << QTime::currentTime().toString()  << " foundElement";
-    if (base_type == "media")
-    {
-        TMedia *MyMedia = qobject_cast<TMedia *> (MyBaseTiming);
-        MyMedia->isLoaded();
-    }
-     MyBaseTiming->prepareTimerBeforePlaying();
+
+    MyBaseTiming->prepareTimerBeforePlaying();
 
     QString object_name = ParentContainer->objectName();
     if (object_name == "TExcl")  // increment active child to determine end of a excl
@@ -235,14 +230,13 @@ void TSmil::killTimer(TBaseTiming *element)
 
 QHash<QString, TBaseTiming *>::iterator TSmil::insertIntoObjectContainer(TBaseTiming *parent, TBaseTiming *child)
 {
-    QString type = parent->objectName();
     QString id   = child->getID();
     if (parent->getBaseType() == "container")
     {
-        TContainer *MyPlaylist  = qobject_cast<TContainer *> (parent);
-        MyPlaylist->insertContainerObject(id, child);
+        TContainer *MyContainer  = qobject_cast<TContainer *> (parent);
+        MyContainer->insertContainerObject(id, child);
     }
-    return ar_elements.insert(id, child);;
+    return ar_elements.insert(id, child);
 }
 
 void TSmil::connectContainerSlots(TContainer *MyContainer)
@@ -261,7 +255,7 @@ void TSmil::connectContainerSlots(TContainer *MyContainer)
 
 void TSmil::connectMediaSlots(TMedia *MyMedia)
 {
-    MyMedia->prepareLoad(MyFileManager);
+    MyMedia->registerFile(MyFileManager);
     connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
     connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     return;
@@ -269,13 +263,10 @@ void TSmil::connectMediaSlots(TMedia *MyMedia)
 
 void TSmil::emitStartShowMedia(TMedia *MyMedia)
 {
-    if (MyMedia->isLoaded())
-    {
-        MyMedia->play();
-        qDebug() << MyMedia->getID() <<QTime::currentTime().toString() << "startShowMedia";
-        ar_played_media.insert(MyMedia);
-        emit startShowMedia(MyMedia);
-    }
+    MyMedia->play();
+    qDebug() << MyMedia->getID() <<QTime::currentTime().toString() << "startShowMedia";
+    ar_played_media.insert(MyMedia);
+    emit startShowMedia(MyMedia);
     return;
 }
 

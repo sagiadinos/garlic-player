@@ -16,34 +16,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#include "index_file.h"
 
-TIndexFile::TIndexFile(TConfiguration *config, QObject *parent)
+#include "index.h"
+
+TIndexManager::TIndexManager(TConfiguration *config, QObject *parent)
 {
     Q_UNUSED(parent);
     MyConfiguration = config;
     MyDownloader    = new TDownloader(MyConfiguration->getUserAgent());
-    loaded          = false;
     connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(loadAfterDownload(QString)));
     connect(MyDownloader, SIGNAL(noModified(QString)), SLOT(checkForLoaded(QString)));
 }
 
-void TIndexFile::load()
+void TIndexManager::load()
 {
     QString path = MyConfiguration->getIndexUri();
     if (path.mid(0, 4) == "http" || path.mid(0, 4) == "ftp")
-        loadFromHttpToDom(path);
+        MyDownloader->checkFiles(determineLocalFileName(path), path, path);
     else
-        loadFromLocalToDom(path);
-    return;
+        checkForLoaded(path);
 }
 
-QDomElement TIndexFile::getHead()
+QDomElement TIndexManager::getHead()
 {
     return getTag("head");
 }
 
-QDomElement TIndexFile::getBody()
+QDomElement TIndexManager::getBody()
 {
     return getTag("body");
 }
@@ -51,15 +50,28 @@ QDomElement TIndexFile::getBody()
 
 // ========================== protected methods =============================================
 
-
-void TIndexFile::loadAfterDownload(QString filename)
+void TIndexManager::checkForLoaded(QString file_path)
 {
-    loadFromLocalToDom(determineLocalFileName(filename));
+    if (!actual_index.exists())
+        loadFromLocal(determineLocalFileName(file_path));
     return;
 }
 
 
-QString TIndexFile::determineLocalFileName(QString uri)
+bool TIndexManager::isIndexEqual(QString file_path)
+{
+    // Verleiche Dateigrösse
+    QFileInfo new_index(file_path);
+    return (actual_index == new_index);
+}
+
+void TIndexManager::loadAfterDownload(QString filename)
+{
+    loadFromLocal(determineLocalFileName(filename));
+    return;
+}
+
+QString TIndexManager::determineLocalFileName(QString uri)
 {
     QUrl url(uri);
     QString file_name = url.fileName();
@@ -69,39 +81,26 @@ QString TIndexFile::determineLocalFileName(QString uri)
 }
 
 
-void TIndexFile::checkForLoaded(QString filename)
+void TIndexManager::loadFromLocal(QString file_path)
 {
-    if (!loaded)
-        loadFromLocalToDom(determineLocalFileName(filename));
-    return;
-}
-
-void TIndexFile::loadFromHttpToDom(QString uri)
-{
-    MyDownloader->checkFiles(determineLocalFileName(uri), uri, uri);
-    return;
-}
-
-void TIndexFile::loadFromLocalToDom(QString filename)
-{
-    QFile file(filename);
+    QFile file(file_path);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         if (document.setContent(&file))
         {
+            actual_index.setFile(file_path);
             emit isLoaded();
-            loaded = true;
         }
         else
             qDebug() << "Fail load to a DomDocument";
         file.close();
     }
     else
-        qDebug() << QTime::currentTime().toString() << "fail to load " << filename;
+        qDebug() << QTime::currentTime().toString() << "fail to load " << file_path;
     return;
 }
 
-QDomElement TIndexFile::getTag(QString tag_name)
+QDomElement TIndexManager::getTag(QString tag_name)
 {
     QDomNodeList nodelist = document.elementsByTagName(tag_name);
     QDomElement tag;

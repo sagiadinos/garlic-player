@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
         {{"f", "fullscreen"}, "Starts in fullscreen mode"},
          {{"w", "window"}, "Starts in windows mode"}
     });
-    MainWindow w;
     parser.process(app);
 
     const QStringList args = parser.positionalArguments();
@@ -56,7 +55,9 @@ int main(int argc, char *argv[])
     else
         MyConfiguration->determineIndexUri("");
 
-    w.setInitialSmilIndex(MyConfiguration);
+// /home/niko/source/garlic-player/var/index.smil
+
+    MainWindow w(new TFileManager(MyConfiguration));
 
     if (parser.isSet("f"))
         w.showFullScreen();
@@ -65,6 +66,9 @@ int main(int argc, char *argv[])
         w.setMinimumSize(980, 540);
         w.show();
     }
+
+    w.checkForNewSmilIndex();
+
 
     return app.exec();
 }

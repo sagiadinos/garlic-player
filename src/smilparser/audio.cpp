@@ -29,35 +29,12 @@ TAudio::~TAudio()
 {
 }
 
-showAudio TAudio::getMediaForShow()
-{
-    return show_audio;
-}
-
-bool TAudio::load()
-{
-    QString file_path      = MyFileManager->getLoadablePath(src);
-    output                 = new QtAV::VideoOutput();
-    media_player           = new QtAV::AVPlayer();
-    media_player->setRenderer(output);
-    media_player->setAsyncLoad(false);
-    media_player->setFile(file_path);
-    bool isload            = media_player->load();
-    // deprecated status informed but there is not alternative to get load status
-    if (isload)
-        qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
-    else
-        qDebug() << getID() << QTime::currentTime().toString()  << "not loaded: " << file_path;
-    return isload;
-}
-
 void TAudio::setDurationTimerBeforePlay()
 {
-    if (loaded)
+    if (load())
     {
-        media_player->load();
-        if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
-            dur_timer->start(media_player->duration()); // do not connect signal stopped cause it could be sended more than one and causes sync problems
+        determineMediaDuration(media_player->duration());
+        hasDurAttribute(); // it doesn' matter if there is an dur set cause videos/audio have an own media duration
         if (!is_resumed)
             emit startedMedia(parent_container, this);
     }
@@ -66,17 +43,35 @@ void TAudio::setDurationTimerBeforePlay()
     return;
 }
 
+void TAudio::determineMediaDuration(qint64 media_duration)
+{
+    if (media_duration >= dur.getMilliseconds())
+    {
+        if (dur_timer->isActive())
+            dur_timer->stop();
+        dur_timer->start(media_duration);
+    }
+    else
+    {
+        if (!dur_timer->isActive())
+            dur_timer->start(dur.getMilliseconds());
+    }
+}
+
 // ====================  protected methods =================================
 void TAudio::play()
 {
     media_player->play();
     status = _playing;
+    return;
 }
 
 void TAudio::stop()
 {
     media_player->stop();
+    delete media_player;
     status = _stopped;
+    loaded = false;
     return;
 }
 
@@ -87,11 +82,28 @@ void TAudio::pause()
     status = _playing;
 }
 
+bool TAudio::loadMedia()
+{
+    QString file_path  = MyFileManager->getLoadablePath(src);
+    media_player       = new QtAV::AVPlayer;
+    media_player->setAsyncLoad(false);
+    media_player->setFile(file_path);
+    bool ret           = media_player->load();
+
+    if (!ret)
+        qCritical() << getID() << QTime::currentTime().toString()  << "not loaded: " << file_path;
+    else
+        qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
+    return ret;
+}
+
+
 
 void TAudio::setAttributes()
 {
     setBaseMediaAttributes();
-    show_audio.region      = region;
+    if (root_element.hasAttribute("soundLevel"))
+        soundLevel = root_element.attribute("soundLevel");
     return;
 }
 

@@ -1,8 +1,8 @@
 include(../defaults.pri)
 
-QT       += core network xml gui avwidgets webenginewidgets
+QT       += core network xml widgets avwidgets webenginewidgets
 TEMPLATE  = lib
-CONFIG   += warn_on avwidgets lib c++11
+CONFIG   += warn_on lib c++11 stl
 
 TARGET = garlic
 DESTDIR = ../lib
@@ -26,12 +26,12 @@ SOURCES += \
     smilparser/container.cpp \
     smilparser/base.cpp \
     smilparser/base_timing.cpp \
-    smilparser/index_file.cpp \
     tools/configuration.cpp \
     files/file_manager.cpp \
     smilparser.cpp \
     smilparser/prefetch.cpp \
-    smilparser/tools/shuffle.cpp
+    smilparser/tools/shuffle.cpp \
+    files/index.cpp
 HEADERS += tools/configuration.h \
     smilparser.h \
     smilparser/head.h \
@@ -52,7 +52,7 @@ HEADERS += tools/configuration.h \
     smilparser/container.h \
     smilparser/base.h \
     smilparser/base_timing.h \
-    smilparser/index_file.h \
     files/file_manager.h \
     smilparser/prefetch.h \
-    smilparser/tools/shuffle.h
+    smilparser/tools/shuffle.h \
+    files/index.h

@@ -40,31 +40,27 @@ QString TMedia::parseSrc(QDomElement element)
     return ret;
 }
 
-QString TMedia::getRegion()
-{
-    return region;
-}
-
-bool TMedia::isLoaded()
+bool TMedia::load()
 {
     int stat = MyFileManager->checkCacheStatus(src);
     if (!loaded)
     {
         if(stat > 0)
-            loaded = load();
+            loaded = loadMedia();
     }
     else
     {
         if(stat == MyFileManager->_reloadable)
-            loaded = load();
+            loaded = loadMedia();
     }
 
     return loaded;
 }
 
-void TMedia::prepareLoad(TFileManager *manager)
+
+void TMedia::registerFile(TFileManager *FileManager)
 {
-    MyFileManager = manager;
+    MyFileManager = FileManager;
     MyFileManager->registerFile(src);
     return;
 }
@@ -76,6 +72,8 @@ void TMedia::setBaseMediaAttributes()
         begin.parse("indefinite");
     if (root_element.hasAttribute("region"))
         region = root_element.attribute("region");
+    if (root_element.hasAttribute("fit"))
+        fit = root_element.attribute("fit");
     src = parseSrc(root_element);
     if (root_element.hasAttribute("exec"))
         exec = root_element.attribute("exec");

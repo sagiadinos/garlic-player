@@ -25,94 +25,13 @@ TVideo::TVideo(TContainer *parent)
     setObjectName("TVideo");
 }
 
-TVideo::~TVideo()
+void TVideo::setRenderer(QtAV::WidgetRenderer *renderer)
 {
-}
-
-
-showVideo TVideo::getMediaForShow()
-{
-    return show_video;
-}
-
-void TVideo::setDurationTimerBeforePlay()
-{
-    if (loaded)
-    {
-        media_player->load(); // cause second round vid had to be reloaded
-        if (!hasDurAttribute() && !end_timer->isActive()) // when end or dur is not specified use video duration for simple duration
-        {
-            qint64 i = media_player->duration();
-            dur_timer->start(i); // do not connect signal stopped it could be sended more than one and causes sync problems
-        }
-        if (!is_resumed)
-            emit startedMedia(parent_container, this);
-    }
-    else // set a duration otherwise it runs in a recursion stack overflow when load is not complete
-        setInternalDefaultDur();
-
+    media_player->setRenderer(renderer);
     return;
-}
-
-void TVideo::play()
-{
-    media_player->play();
-    status = _playing;
-    return;
-}
-
-void TVideo::stop()
-{
-    media_player->stop();
-    status = _stopped;
-    return;
-}
-
-void TVideo::pause()
-{
-    media_player->pause();
-    status = _paused;
-    return;
-}
-
-
-QString TVideo::getFit()
-{
-    return show_video.fit;
-}
-
-bool TVideo::load()
-{
-    QString file_path      = MyFileManager->getLoadablePath(src);
-    show_video.video_item  = new QtAV::WidgetRenderer;
-    media_player           = new QtAV::AVPlayer;
-    media_player->setRenderer(show_video.video_item);
-
-    media_player->setAsyncLoad(false);
-    media_player->setFile(file_path);
-    bool isload            = media_player->load();
-
-    // deprecated status informed but there is not alternative to get load status
-    if (isload)
-        qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
-    else
-        qDebug() << getID() << QTime::currentTime().toString()  << "not loaded: " << file_path;
-    return isload;
 }
 
 // ====================  protected methods =================================
-
-void TVideo::setAttributes()
-{
-    show_video.fit  = "";
-    setBaseMediaAttributes();
-
-    show_video.region      = region;
-
-    if (root_element.hasAttribute("fit"))
-        show_video.fit = root_element.attribute("fit");
-    return;
-}
 
 // ====================  private methods =================================
 

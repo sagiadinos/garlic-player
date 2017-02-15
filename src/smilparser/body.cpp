@@ -32,11 +32,11 @@ TBody::~TBody()
 
 bool TBody::parse(QDomElement element)
 {
-    bool ret = false;
+    bool ret       = false;
     root_element   = element;
     active_element = element;
     setTimingAttributes();
-    id = "body";  // useful for debug
+    id             = "body";  // useful for debug
     if (element.hasChildNodes())
     {
         active_element = element.firstChildElement();

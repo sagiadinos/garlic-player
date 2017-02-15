@@ -25,14 +25,14 @@ class TPrefetch : public TMedia
     Q_OBJECT
 public:
     TPrefetch(TContainer *parent = 0);
-    bool     load();
     void     pause();
     void     stop();
     void     play();
 public slots:
     void     setDurationTimerBeforePlay();
 protected:
-    void    setAttributes();
+    bool     loadMedia();
+    void     setAttributes();
 };
 
 #endif // TPREFETCH_H

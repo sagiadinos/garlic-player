@@ -24,6 +24,13 @@
 #include "downloader.h"
 #include "tools/configuration.h"
 
+struct FileInfo
+{
+    QString load_path;
+    int     status;
+};
+
+
 class TFileManager : public QObject
 {
     Q_OBJECT
@@ -33,8 +40,9 @@ public:
     const     int        _exist      = 2;
     const     int        _reloadable = 3;
     const     int        _uncachable = 4;
-    TFileManager(TConfiguration *config, QObject *parent = 0);
+    TFileManager(TConfiguration *config);
     ~TFileManager();
+    TConfiguration                   *getConfiguration(){return MyConfiguration;}
     void                              clearQueues();
     void                              registerFile(QString src);
     QString                           getLoadablePath(QString src);

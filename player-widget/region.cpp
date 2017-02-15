@@ -19,84 +19,86 @@
 #include "region.h"
 #include <QLayout>
 
-TRegion::TRegion(QWidget *parent)
+TRegion::TRegion(QWidget *parent, TFileManager *filemanager)
 {
-    Q_UNUSED(parent);
-    scene = new QGraphicsScene();
-    setScene(scene);
-    setAlignment(Qt::AlignCenter);
-    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    MyFileManager = filemanager;
+    setParent(parent);
+    layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
 }
 
 TRegion::~TRegion()
 {
 }
 
-void TRegion::playImage(showImg structure)
+void TRegion::paintEvent(QPaintEvent *event)
 {
-    show_image = structure;
-    actual_media  = "image";
-    addItem("image", show_image.image_item);
+    QWidget::paintEvent(event);
+    QStyleOption o;
+    o.initFrom(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
 
-void TRegion::playVideo(showVideo structure)
+void TRegion::playImage(TImage *structure)
 {
-    show_video = structure;
-    actual_media = "video";
-    addItem("video", show_video.video_item);
+    MyImage        = structure;
+    actual_media   = "image";
+    image_widget   = new QLabel;
+    image_widget->setPixmap(MyImage->getImage());
+    layout->addWidget(image_widget);
 }
 
-void TRegion::playAudio(showAudio structure)
+void TRegion::playVideo(TVideo *structure)
 {
-    // nothing to see for audio, so no scene item added
-    show_audio   = structure;
-    actual_media = "audio";
+    MyVideo        = structure;
+    actual_media   = "video";
+    video_widget   = new QtAV::WidgetRenderer;
+    MyVideo->setRenderer(video_widget);
+    layout->addWidget(video_widget);
 }
 
-
-void TRegion::playWeb(showWeb structure)
+void TRegion::playAudio(TAudio *structure)
 {
-    show_web = structure;
+    MyAudio        = structure;
+    actual_media   = "audio";
+}
+
+void TRegion::playWeb(TWeb *structure)
+{
     actual_media  = "web";
-    addItem("web", show_web.browser_proxy);
+    MyWeb        = structure;
+    layout->addWidget(MyWeb->getBrowser());
     return;
 }
 
-void TRegion::removeImage(showImg structure)
+void TRegion::removeImage()
 {
-    removeItem("image", structure.image_item);
+    layout->removeWidget(image_widget);
+    delete image_widget;
     return;
 }
 
-void TRegion::removeVideo(showVideo structure)
+void TRegion::removeVideo()
 {
-    removeItem("video", structure.video_item);
+    layout->removeWidget(video_widget);
+    delete video_widget;
     return;
 }
 
-void TRegion::removeWeb(showWeb structure)
+void TRegion::removeAudio()
 {
-    removeItem("web", structure.browser_proxy);
     return;
 }
 
-void TRegion::addItem(QString media_type, QGraphicsItem *item)
+
+void TRegion::removeWeb()
 {
-    int before = scene->items().size();
-    scene->addItem(item);
-    qDebug() << QTime::currentTime().toString() << "insert " << item << " " << media_type << "before insert: " << before << " after insert: "<< scene->items().size();
+    layout->removeWidget(MyWeb->getBrowser());
     return;
 }
 
-void TRegion::removeItem(QString media_type, QGraphicsItem *item)
-{
-    int before = scene->items().size();
-    scene->removeItem(item);
-    qDebug() << QTime::currentTime().toString() << "remove " << item << " " << media_type << " before remove: " << before << " after remove: "<< scene->items().size();
-    return;
-}
 
 /**
  * Needs the real pixel of the actual root size regardless
@@ -116,7 +118,7 @@ void TRegion::setRootSize(int w, int h)
 void TRegion::setRegion(Region r)
 {
     region = r;
-    setStyleSheet("background-color:"+region.backgroundColor+";");
+//    setStyleSheet("background-color:"+region.backgroundColor+";");
 }
 
 void TRegion::resizeGeometry()
@@ -124,8 +126,8 @@ void TRegion::resizeGeometry()
     qreal  xr, yr, wr, hr = 0.0;
     xr = (root_width_px*region.left);
     yr = (root_height_px*region.top);
-    wr = (root_width_px*region.width);
-    hr = (root_height_px*region.height);
+    wr = (root_width_px*region.width*1);
+    hr = (root_height_px*region.height*1);
     setGeometry(qRound(xr), qRound(yr), qRound(wr), qRound(hr));
     if (actual_media == "image")
         resizeImage(qRound(wr), qRound(hr));
@@ -137,36 +139,33 @@ void TRegion::resizeGeometry()
 
 void TRegion::resizeImage(int w, int h)
 {
-    if (show_image.fit == "fill")
-       image = show_image.pixmap.scaled(w, h, Qt::IgnoreAspectRatio);
-    else if (show_image.fit == "meet")
-        image = show_image.pixmap.scaled(w, h, Qt::KeepAspectRatioByExpanding);
-    else if (show_image.fit == "meetbest")
-        image = show_image.pixmap.scaled(w, h, Qt::KeepAspectRatio);
+    if (MyImage->getFit() == "fill")
+       image_widget->setPixmap(MyImage->getImage().scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    else if (MyImage->getFit() == "meet")
+        image_widget->setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+    else if (MyImage->getFit() == "meetbest")
+        image_widget->setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     else
-        image = show_image.pixmap;
-    show_image.image_item->setPixmap(image);
-    setSceneRect(0, 0, image.width()-2, image.height()-2);
+        image_widget->setPixmap(MyImage->getImage());
+    return;
 }
 
 void TRegion::resizeVideo(int w, int h)
 {
-    if (show_video.fit == "fill")
-        show_video.video_item->setOutAspectRatioMode(QtAV::VideoRenderer::RendererAspectRatio);
-    else if (show_video.fit == "meet")
-        show_video.video_item->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
-    else if (show_video.fit == "meetbest")
-        show_video.video_item->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
-    if (show_video.fit != "")
-        show_video.video_item->resizeRenderer(w, h);
-    setSceneRect(0, 0, show_video.video_item->rendererWidth()-2, show_video.video_item->rendererHeight()-2);
+    if (MyVideo->getFit() == "fill")
+        video_widget->setOutAspectRatioMode(QtAV::VideoRenderer::RendererAspectRatio);
+    else if (MyVideo->getFit() == "meet")
+        video_widget->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
+    else if (MyVideo->getFit() == "meetbest")
+        video_widget->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
+    else
+        video_widget->resizeRenderer(w, h);
     return;
 }
 
 void TRegion::resizeWeb(int w, int h)
 {
-    setSceneRect(0, 0, w, h);
-    show_web.browser->resize(w-2, h-2);
+    MyWeb->getBrowser()->resize(w-2, h-2);
     return;
 }
 

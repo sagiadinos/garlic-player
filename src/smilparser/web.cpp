@@ -32,7 +32,7 @@ TWeb::~TWeb()
 
 void TWeb::setDurationTimerBeforePlay()
 {
-    if (loaded && (hasDurAttribute() || end_timer->isActive()))
+    if (load() && (hasDurAttribute() || end_timer->isActive()))
     {
         if (!is_resumed)
             emit startedMedia(parent_container, this);
@@ -42,31 +42,17 @@ void TWeb::setDurationTimerBeforePlay()
     return;
 }
 
-QString TWeb::getFit()
+
+/**
+ * @brief TMedia::prepareLoad
+ * @param manager
+ */
+void TWeb::registerFile(TFileManager *manager)
 {
-    return show_web.fit;
+    Q_UNUSED(manager)
+    return;
 }
 
-bool TWeb::load()
-{
-    QString file_path      = MyFileManager->getLoadablePath(src);
-    show_web.url           = file_path;
-    show_web.browser       = new QWebEngineView();
-//    show_web.browser->setUrl(QUrl(show_web.url));
-    show_web.browser->load(QUrl(show_web.url));
-
-    show_web.browser->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled,true);
-    show_web.browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled,true);
-//    show_web.browser->page()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
-//    show_web.browser->page()->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
-    qDebug() << getID() << QTime::currentTime().toString()  << "maybe ;) loaded: " << file_path;
-    return true;
-}
-
-showWeb TWeb::getMediaForShow()
-{
-   return show_web;
-}
 
 void TWeb::play()
 {
@@ -83,17 +69,25 @@ void TWeb::pause()
 
 void TWeb::stop()
 {
+    delete browser;
     status = _stopped;
+    loaded = false;
     return;
+}
+
+bool TWeb::loadMedia()
+{
+    browser       = new QWebEngineView();
+    browser->load(QUrl(MyFileManager->getLoadablePath(src)));
+
+    browser->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled,true);
+    browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled,true);
+    qDebug() << getID() << QTime::currentTime().toString()  << "maybe ;) loaded: " << src;
+    return true;
 }
 
 void TWeb::setAttributes()
 {
-    show_web.fit    = "";
     setBaseMediaAttributes();
-
-    show_web.region        = region;
-    if (root_element.hasAttribute("fit"))
-        show_web.fit = root_element.attribute("fit");
     return;
 }

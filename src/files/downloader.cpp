@@ -121,7 +121,7 @@ void TDownloader::checkHttpHeaders(QNetworkReply *reply)
         content_type = reply->rawHeader("Content-Type");
 
     // text/texmacs is "sophisticated" support for ts-files
-    if (content_type.contains("image/") || content_type.contains("video/") || content_type.contains("text/texmacs") || content_type.contains("application/smil"))
+    if (content_type.contains("image/") || content_type.contains("video/") || content_type.contains("audio/") || content_type.contains("text/texmacs") || content_type.contains("application/smil"))
     {
         if (reply->hasRawHeader("Last-Modified"))
         {

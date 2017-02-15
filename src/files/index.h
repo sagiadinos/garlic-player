@@ -27,26 +27,26 @@
 #include "files/downloader.h"
 #include "tools/configuration.h"
 
-class TIndexFile : public QObject
+class TIndexManager : public QObject
 {
     Q_OBJECT
 public:
-    TIndexFile(TConfiguration *config, QObject *parent = 0);
+    TIndexManager(TConfiguration *config, QObject *parent = 0);
     void            load();
     QDomElement     getHead();
     QDomElement     getBody();
 protected:
-    bool            loaded;
+    QFileInfo       actual_index;
     TDownloader    *MyDownloader;
     TConfiguration *MyConfiguration;
     QDomDocument    document;
-    void            loadFromHttpToDom(QString uri);
-    void            loadFromLocalToDom(QString filename);
+    bool            isIndexEqual(QString file_path);
+    void            loadFromLocal(QString file_path);
     QString         determineLocalFileName(QString uri);
     QDomElement     getTag(QString name);
 protected slots:
     void            loadAfterDownload(QString filename);
-    void            checkForLoaded(QString filename);
+    void            checkForLoaded(QString file_path);
 signals:
     void isLoaded();
 };

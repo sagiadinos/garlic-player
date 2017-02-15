@@ -29,14 +29,9 @@ TImage::~TImage()
 {
 }
 
-showImg TImage::getMediaForShow()
-{
-    return show_img;
-}
-
 void TImage::setDurationTimerBeforePlay()
 {
-    if (loaded && (hasDurAttribute() || end_timer->isActive()))
+    if (load() && (hasDurAttribute() || end_timer->isActive()))
     {
         if (!is_resumed)
             emit startedMedia(parent_container, this);
@@ -44,23 +39,6 @@ void TImage::setDurationTimerBeforePlay()
     else // set a duration otherwise it runs in a recursion stack overflow when no dur set or load is not complete
         setInternalDefaultDur();
     return;
-}
-
-QString TImage::getFit()
-{
-    return show_img.fit;
-
-}
-
-bool TImage::load()
-{
-    QString file_path   = MyFileManager->getLoadablePath(src);
-    bool isload         = show_img.pixmap.load(file_path);
-    if (isload)
-        qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
-    else
-        qDebug() << getID() << QTime::currentTime().toString()  << "not loaded: " << file_path;
-    return isload;
 }
 
 void TImage::play()
@@ -80,21 +58,30 @@ void TImage::pause()
 void TImage::stop()
 {
     qDebug() << getID() << QTime::currentTime().toString() << "stopped";
+    // image  = QPixmap::QPixmap(); // unload
     status = _stopped;
+    loaded = false;
     return;
 }
+
+bool TImage::loadMedia()
+{
+    QString file_path = MyFileManager->getLoadablePath(src);
+    bool ret          = image.load(file_path);
+    if (!ret)
+        qCritical() << getID() << QTime::currentTime().toString()  << "not loaded: " << file_path;
+    else
+        qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
+
+    return ret;
+}
+
 
 // ====================  protected methods =================================
 
 void TImage::setAttributes()
 {
-    show_img.fit    = "";
-    //show_img.media  = QPixmap::detach();
     setBaseMediaAttributes();
-
-    show_img.region = region;
-    if (root_element.hasAttribute("fit"))
-        show_img.fit = root_element.attribute("fit");
     return;
 }
 

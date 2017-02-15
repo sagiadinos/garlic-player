@@ -19,15 +19,9 @@
 #ifndef TAUDIO_H
 #define TAUDIO_H
 
-#include "media.h"
 #include <QtAV>
 #include <QtAVWidgets>
-
-struct showAudio
-{
-    QString media_type;
-    QString region;
-};
+#include "media.h"
 
 class TAudio : public TMedia
 {
@@ -35,17 +29,18 @@ class TAudio : public TMedia
 public:
     TAudio(TContainer * parent = 0);
     ~TAudio();
-    showAudio          getMediaForShow();
-    bool               load();
+    QString            getSoundLevel(){return soundLevel;}
     void               pause();
     void               stop();
     void               play();
+    void               determineMediaDuration(qint64 media_duration);
+    QtAV::AVPlayer    *getMediaPlayer(){return media_player;}
 protected:
-    TBaseTiming       *parent_object;
-    QtAV::VideoOutput *output;
     QtAV::AVPlayer    *media_player;
-    showAudio          show_audio;
+    TBaseTiming       *parent_object;
+    QString            soundLevel = "100%";
     void               setAttributes();
+    bool               loadMedia();
 protected slots:
     void               setDurationTimerBeforePlay();
 };

@@ -19,16 +19,8 @@
 #ifndef MAGE_H
 #define IMAGE_H
 
-#include "media.h"
 #include <QPixmap>
-
-struct showImg
-{
-    QString media_type;
-    QString region;
-    QString fit;
-    QPixmap pixmap;
-};
+#include "media.h"
 
 class TImage : public TMedia
 {
@@ -36,17 +28,16 @@ class TImage : public TMedia
 public:
     TImage(TContainer *parent = 0);
     ~TImage();
-    showImg  getMediaForShow();
-    QString  getFit();
-    bool     load();
     void     pause();
     void     stop();
     void     play();
+    QPixmap  getImage(){return image;}
 public slots:
     void     setDurationTimerBeforePlay();
 protected:
-    showImg show_img;
-    void    setAttributes();
+    QPixmap  image;
+    bool     loadMedia();
+    void     setAttributes();
 };
 
 #endif // IMAGE_H
