@@ -43,7 +43,6 @@ void TFileManager::clearQueues()
 
 void TFileManager::registerFile(QString src)
 {
-    src_file_path = src;
     qDebug() << "register file " << QTime::currentTime().toString() << src;
     // Use Cache only when files are on web
     if (isRemote(index_uri) || isRemote(src))
@@ -51,15 +50,15 @@ void TFileManager::registerFile(QString src)
         if (!isFileInList(src))
         {
             loaded_list.insert(src, _no_exist);
-            insertForDownloadQueue(determineFullRemoteFilePath(src), getHashedFilePath(src));
+            insertForDownloadQueue(src);
         }
        else if (loaded_list[src] != _uncachable)
-           insertForDownloadQueue(determineFullRemoteFilePath(src), getHashedFilePath(src));
+           insertForDownloadQueue(src);
     }
     else
     {
-        if (!isFileInList(src_file_path))
-            loaded_list.insert(src_file_path, _exist);
+        if (!isFileInList(src))
+            loaded_list.insert(src, _exist);
     }
     return;
 }
@@ -117,9 +116,9 @@ void TFileManager::proceedDownloadQueue()
 {
     if (download_queue.size() > 0 && !MyDownloader->downloadInProgress())
     {
-        QPair<QString, QString> pair = download_queue.dequeue();
+        QString src = download_queue.dequeue();
 
-        MyDownloader->checkFiles(MyConfiguration->getPaths("var")+pair.second, pair.first, src_file_path);
+        MyDownloader->checkFiles(MyConfiguration->getPaths("var")+getHashedFilePath(src), determineFullRemoteFilePath(src), src);
     }
     return;
 }
@@ -139,16 +138,16 @@ bool TFileManager::isFileInList(QString file_path)
         return true;
 }
 
-void TFileManager::insertForDownloadQueue(QString remote_file, QString local_hash_value)
+void TFileManager::insertForDownloadQueue(QString src)
 {
-    download_queue.enqueue(qMakePair(remote_file, local_hash_value));
+    download_queue.enqueue(src);
     proceedDownloadQueue();
     return;
 }
 
 bool TFileManager::isRemote(QString file_path)
 {
-    // cachabel wenn indexURI is remote and filepath
+    // cachabel if indexURI is remote and filepath
 
     if (file_path.mid(0, 4) == "http" || file_path.mid(0,3) == "ftp") // when relative path
         return true;

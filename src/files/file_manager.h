@@ -49,15 +49,15 @@ public:
     int                               checkCacheStatus(QString src);
 protected:
      QHash<QString, int>              loaded_list;
-     QQueue<QPair<QString, QString>>  download_queue;
+     QQueue<QString>                  download_queue;
      TConfiguration                  *MyConfiguration;
      TDownloader                     *MyDownloader;
-     QString                          index_uri, src_file_path;
+     QString                          index_uri;
      QString                          determineFullRemoteFilePath(QString src);
      void                             proceedDownloadQueue();
      QString                          getHashedFilePath(QString remote_path);
      bool                             isFileInList(QString file_path);
-     void                             insertForDownloadQueue(QString remote_file, QString local_hash_value);
+     void                             insertForDownloadQueue(QString src);
      bool                             isRemote(QString file_path);
 protected slots:
     void     doFinishDownload(QString src);
