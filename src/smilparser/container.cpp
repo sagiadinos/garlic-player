@@ -119,6 +119,8 @@ QString TContainer::reactByTag()
            type = "audio";
         else if (active_element.attribute("type").contains("text"))
            type = "text";
+        else if (active_element.attribute("type").contains("application/widget"))
+           type = "text";
     }
     if (type != "")
         emit foundElement(this, type, active_element);

@@ -2,15 +2,16 @@
 
 The goal is to create an as most as neccessary SMIL 3.0 and compatible and as most as possible platform independent free open source multimedia player to meet Digital Signage needs.
 Garlic should be used online with web-based content managment systems like [SmilControl](http://smil-control.com) or other.
-Offline usage via command-line will also possible.
+Offline usage via command-line is also possible.
 
 ## OS targets:
 
-Linux, Windows and maybe later OSX
+Linux, Windows Raspberry Pi 3 and maybe later OSX, Android
 
-Developing with Qt 5.7 and QtAV 1.11.0 under kde neon
+Developing with Qt 5.7.1, QtAV 1.11.0 and Quazip 0.7.3 for wgt (zipped html)
 
-At the moment there is an alpha which is able to play local and remote (http) SMIL-Files with actual supported features.
+Garlic actually is able to play local and remote (http) SMIL-Files with actual supported features.
+Compilations tested with Kde Neon and  Windows 7 i64 (VS2015 Community)
 
 *garlic.sh [options] SMIL_INDEX*
 ```sh
@@ -43,6 +44,7 @@ Only sources! Binaries will deployed later.
 - **audio**
 - **images**
 - **text** websites only
+- **wgt** 
 
 ###other Elements
 - **prefetch**
@@ -91,12 +93,11 @@ Only sources! Binaries will deployed later.
  - toogle fullscreen with Ctrl-F
 
 ## Actual Working
- - smil parser rewriting to seperate media models
- - move from disappointing Graphics View Framework to simple QWidget for more performnce with QWebEngine and WebGL
+- deployment for Linux, Windows and Raspberry Pi 3
 
 ## ToDo's
 - change config.xml during plaback
-- settings meny via key
+- settings menu via key
 - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
 - **logs and reports** as described in [a-smil.org reporting](http://www.a-smil.org/index.php/Reporting)
 - **administration functions** as described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)

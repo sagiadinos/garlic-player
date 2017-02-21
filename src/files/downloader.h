@@ -27,6 +27,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
+#include "../ext/quazip/JlCompress.h"
 
 /**
  * @brief should get the "old" maybe local md5 named file in var and the path to the new file
@@ -48,17 +49,18 @@ private slots:
     void finishedHeadRequest(QNetworkReply *reply);
     void finishedHeadRedirectRequest(QNetworkReply *reply);
 
-private:
+protected:
     QUrl           remote_file_url;
     QString        remote_file_path, src_file_path;
     bool           download;
     QByteArray     user_agent;
     QFileInfo      local_file_info;
+    bool           extractWgt();
     void           checkHttpHeaders(QNetworkReply *reply);
     void           checkStatusCode(QNetworkReply *reply, int status_code);
     void           doHttpGetRequest();
     void           doHttpHeadRequest();
-    bool           saveToDisk(QIODevice *data);
+    void           saveToDisk(QIODevice *data);
     void           emitNoModified();
     void           emitUnCachable();
     void           emitDownloadFailed(QString error_message);

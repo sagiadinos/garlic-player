@@ -121,7 +121,7 @@ void TDownloader::checkHttpHeaders(QNetworkReply *reply)
         content_type = reply->rawHeader("Content-Type");
 
     // text/texmacs is "sophisticated" support for ts-files
-    if (content_type.contains("image/") || content_type.contains("video/") || content_type.contains("audio/") || content_type.contains("text/texmacs") || content_type.contains("application/smil"))
+    if (content_type.contains("image/") || content_type.contains("video/") || content_type.contains("audio/") || content_type.contains("text/texmacs") || content_type.contains("application/smil") || content_type.contains("application/widget"))
     {
         if (reply->hasRawHeader("Last-Modified"))
         {
@@ -168,21 +168,47 @@ void TDownloader::finishedGetRequest(QNetworkReply *reply)
 
 }
 
-bool TDownloader::saveToDisk(QIODevice *data)
+void TDownloader::saveToDisk(QIODevice *data)
 {
     download = false; // must be first cause sometimes file_manager run into race condition during save
     QFile file(local_file_info.absoluteFilePath());
     if (!file.open(QIODevice::WriteOnly))
     {
-        qDebug() << "Could not open " << local_file_info.absoluteFilePath() << " for writing: " << file.errorString() << "\r";
-        return false;
+        emitDownloadFailed("Could not open " + local_file_info.absoluteFilePath() + " for writing: " + file.errorString());
+        return;
     }
     file.write(data->readAll());
     file.close();
 
+    if (local_file_info.suffix() == "wgt")
+    {
+        if (!extractWgt())
+        {
+            emitDownloadFailed("Could not extreact " + local_file_info.absoluteFilePath() + "\r");
+            return;
+        }
+    }
+
     qDebug() << QTime::currentTime().toString() << src_file_path << " was modified and written locally";
     emit downloadSucceed(src_file_path);
-    return true;
+    return;
+}
+
+bool TDownloader::extractWgt()
+{
+    QuaZip zip(local_file_info.absoluteFilePath());
+    bool   ret = zip.open(QuaZip::mdUnzip);
+    if (ret)
+    {
+        QString folder_path = local_file_info.absolutePath()+"/"+local_file_info.baseName();
+        QDir dir(folder_path);
+        if (dir.exists())
+           dir.removeRecursively();
+        dir.mkdir(folder_path);
+        JlCompress::extractDir(local_file_info.absoluteFilePath(), folder_path+"/");
+        zip.close();
+    }
+    return ret;
 }
 
 void TDownloader::emitNoModified()

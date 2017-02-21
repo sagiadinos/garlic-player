@@ -1,4 +1,5 @@
 include(../defaults.pri)
+include(../ext/quazip/quazip.pri)
 
 QT       += core network xml widgets avwidgets webenginewidgets
 TEMPLATE  = lib
@@ -56,3 +57,4 @@ HEADERS += tools/configuration.h \
     smilparser/prefetch.h \
     smilparser/tools/shuffle.h \
     files/index.h
+

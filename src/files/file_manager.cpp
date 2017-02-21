@@ -72,7 +72,11 @@ QString TFileManager::getLoadablePath(QString src)
     if (isRemote(index_uri) || isRemote(src))
     {
         if (status != _uncachable)
-            ret = MyConfiguration->getPaths("var")+getHashedFilePath(src);
+        {
+           ret = MyConfiguration->getPaths("var")+getHashedFilePath(src);
+           if (src.mid(src.length()-4, 4) == ".wgt")
+                ret = "file://"+ret.mid(0, ret.length()-4)+"/index.html";
+        }
         else
         {
             if (isRemote(index_uri)) // if index-Smil is from Web-Service check if download
@@ -82,7 +86,7 @@ QString TFileManager::getLoadablePath(QString src)
         }
     }
     else
-        if (!isRemote(src) && src.mid(0, 1) != "/" ) // when relative path
+        if (src.mid(0, 1) != "/" ) // when relative path
             ret = MyConfiguration->getIndexPath()+src;
         else
             ret = src;
