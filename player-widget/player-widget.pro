@@ -20,3 +20,4 @@ HEADERS  += mainwindow.h \
     region.h
 
 LIBS += -L../lib -lgarlic
+LIBS += -L../ext -lquazip -lz

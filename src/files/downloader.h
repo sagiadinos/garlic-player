@@ -29,6 +29,8 @@
 #include <QUrl>
 #include "../ext/quazip/JlCompress.h"
 
+
+
 /**
  * @brief should get the "old" maybe local md5 named file in var and the path to the new file
  *  should send an signal when a new file is downloaded

@@ -1,9 +1,9 @@
 include(../defaults.pri)
-include(../ext/quazip/quazip.pri)
+#include(../ext/quazip/quazip.pri)
 
 QT       += core network xml widgets avwidgets webenginewidgets
 TEMPLATE  = lib
-CONFIG   += warn_on lib c++11 stl
+CONFIG   += warn_on staticlib c++11 stl
 
 TARGET = garlic
 DESTDIR = ../lib
