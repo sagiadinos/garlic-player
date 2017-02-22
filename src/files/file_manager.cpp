@@ -75,7 +75,13 @@ QString TFileManager::getLoadablePath(QString src)
         {
            ret = MyConfiguration->getPaths("var")+getHashedFilePath(src);
            if (src.mid(src.length()-4, 4) == ".wgt")
-                ret = "file://"+ret.mid(0, ret.length()-4)+"/index.html";
+           {
+                #if defined  Q_OS_WIN
+                    ret = "file:/"+ret.mid(0, ret.length()-4)+"/index.html"; // Windows needs file://absolute_path
+                #else
+                    ret = "file://"+ret.mid(0, ret.length()-4)+"/index.html"; // Linux needs file:///absolute_path
+                #endif
+           }
         }
         else
         {
