@@ -8,10 +8,10 @@ Offline usage via command-line is also possible.
 
 Linux, Windows, Raspberry Pi 3 maybe later OSX, Android
 
-Developing with Qt 5.7.1, QtAV 1.11.0 and Quazip 0.7.3 for wgt (zipped html)
+Developing with Qt 5.8.0, QtAV 1.11.0 (also QtMultimedia Support for Raspberry) and Quazip 0.7.3 for wgt (zipped html)
 
 Garlic actually is able to play local and remote (via http) SMIL Files with actual supported features.
-Compilations tested with Kde Neon and  Windows 7 i64 (VS2015 Community)
+Compilations tested with Kde Neon and Windows 7 i64 (VS2015 Community)
 
 *garlic.sh [options] SMIL_INDEX*
 
@@ -24,7 +24,7 @@ Options:
 Arguments:
 SMIL_INDEX        Path to SMIL index
 
-Only sources! Binaries will deployed later.
+Only sources! Binaries will deployed soon.
 
 ##actual supported SMIL-Features
 
