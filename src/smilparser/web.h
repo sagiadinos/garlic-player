@@ -34,7 +34,7 @@ public:
     void            pause();
     void            stop();
     void            play();
-    void            registerFile(TFileManager *manager);
+    void            registerFile(TFileManager *FileManager);
     QWebEngineView *getBrowser(){return browser;}
 public slots:
     void            setDurationTimerBeforePlay();

@@ -25,10 +25,9 @@ TVideo::TVideo(TContainer *parent)
     setObjectName("TVideo");
 }
 
-void TVideo::setRenderer(QtAV::WidgetRenderer *renderer)
+void TVideo::setRenderer(MediaViewWrapper *renderer)
 {
-    media_player->setRenderer(renderer);
-    return;
+    MediaDecoderW->setVideoOutput(renderer);
 }
 
 // ====================  protected methods =================================

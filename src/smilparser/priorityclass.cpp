@@ -31,7 +31,6 @@ void TPriorityClass::insertQueue(TBaseTiming *element)
         return ar_defer.push(element);
     if (peers == "pause" || lower == "pause")
         ar_pause.enqueue(element);
-    return;
 }
 
 int TPriorityClass::countQueue()
@@ -74,7 +73,6 @@ void TPriorityClass::setAttributes()
         higher = root_element.attribute("higher");
     if (root_element.hasAttribute("lower"))
         lower = root_element.attribute("lower");
-    return;
 }
 
 void TPriorityClass::setChildList()
@@ -88,5 +86,4 @@ void TPriorityClass::setChildList()
         if (element.tagName() != "priorityClass" && element.tagName() != "")
             ar_dom_childs.append(element);
     }
-    return;
 }

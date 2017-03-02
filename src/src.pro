@@ -1,12 +1,24 @@
 include(../defaults.pri)
-#include(../ext/quazip/quazip.pri)
 
-QT       += core network xml widgets avwidgets webenginewidgets
+QT       += core network xml widgets webenginewidgets
 TEMPLATE  = lib
-CONFIG   += warn_on staticlib c++11 stl
+CONFIG    += warn_on lib c++11 stl
+
+#Comment the next line in when you want to use QTMultimedia
+CONFIG    += support_qtav
+
+support_qtav {
+    DEFINES += SUPPORT_QTAV
+    QT      += avwidgets
+} else {
+    QT += multimedia multimediawidgets
+}
+
+
 
 TARGET = garlic
 DESTDIR = ../lib
+LIBS += -L../ext -lquazip -lz
 
 SOURCES += \
     smilparser/head.cpp \
@@ -32,7 +44,9 @@ SOURCES += \
     smilparser.cpp \
     smilparser/prefetch.cpp \
     smilparser/tools/shuffle.cpp \
-    files/index.cpp
+    files/index.cpp \
+    tools/mediadecoderwrapper.cpp \
+    tools/mediaviewwrapper.cpp
 HEADERS += tools/configuration.h \
     smilparser.h \
     smilparser/head.h \
@@ -56,5 +70,7 @@ HEADERS += tools/configuration.h \
     files/file_manager.h \
     smilparser/prefetch.h \
     smilparser/tools/shuffle.h \
-    files/index.h
+    files/index.h \
+    tools/mediadecoderwrapper.h \
+    tools/mediaviewwrapper.h
 

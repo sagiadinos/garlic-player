@@ -47,5 +47,4 @@ void TBase::setBaseAttributes()
         a_class = root_element.attribute("class");
     if (root_element.hasAttribute("xml:lang"))
         lang = root_element.attribute("xml:lang");
-    return;
 }

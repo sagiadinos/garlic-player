@@ -30,6 +30,13 @@ MainWindow::MainWindow(TFileManager *FileManager)
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
 }
 
+MainWindow::~MainWindow()
+{
+    deleteRegionsAndLayouts();
+    delete MySmil;
+    delete layout;
+}
+
 /**
  * @briegetIndexPathsetSmilIndex is a slot which is activated, when an indexfile is ready on local hard disc for reading
  */
@@ -45,7 +52,6 @@ void MainWindow::setSmilIndex()
     setRegions(MyIndexFile->getHead());
     setGeometry(0,0, width(), height());
     MySmil->beginSmilParsing(MyIndexFile->getBody());
-    return;
 }
 
 /**
@@ -54,18 +60,13 @@ void MainWindow::setSmilIndex()
 void MainWindow::checkForNewSmilIndex()
 {
     MyIndexFile->load();
-    return;
 }
 
 
 void MainWindow::deleteRegionsAndLayouts()
 {
-    for (QMap<QString, TRegion *>::iterator i = ar_regions.begin(); i != ar_regions.end(); i++)
-    {
-    }
     qDeleteAll(ar_regions);
     ar_regions.clear();
-    return;
 }
 
 void MainWindow::setRegions(QDomElement head)
@@ -97,7 +98,7 @@ void MainWindow::startShowMedia(TMedia *media)
 {
     QString type   = media->objectName();
 
-    if (type == "TImage")
+   if (type == "TImage")
         playImage(qobject_cast<TImage *>(media));
     else if (type == "TVideo")
         playVideo(qobject_cast<TVideo *>(media));
@@ -105,6 +106,7 @@ void MainWindow::startShowMedia(TMedia *media)
         playAudio(qobject_cast<TAudio *>(media));
     else if (type == "TWeb")
         playWeb(qobject_cast<TWeb *>(media));
+    return;
 }
 
 void MainWindow::stopShowMedia(TMedia *media)
@@ -133,7 +135,6 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
         break;
         case Qt::Key_C:
             exit(0);
-
         break;
 
     }
@@ -148,7 +149,6 @@ void MainWindow::resizeEvent(QResizeEvent * event)
         for (i = ar_regions.begin(); i != ar_regions.end(); ++i)
             ar_regions[i.key()]->setRootSize(width(), height());
     }
-    return;
 }
 
 void MainWindow::playImage(TImage *MyImage)
@@ -190,12 +190,5 @@ void MainWindow::removeVideo(TVideo *MyVideo)
 void MainWindow::removeWeb(TWeb *MyWeb)
 {
     ar_regions[selectRegion(MyWeb->getRegion())]->removeWeb();
-}
-
-MainWindow::~MainWindow()
-{
-    ar_regions.clear();
-    delete MySmil;
-    delete layout;
 }
 

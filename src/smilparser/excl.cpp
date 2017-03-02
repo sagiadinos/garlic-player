@@ -53,7 +53,6 @@ void TExcl::setDurationTimerBeforePlay()
         NewActivePriorityClass = NULL;
         setInternalDefaultDur();
     }
-    return;
 }
 
 TPriorityClass *TExcl::findPriorityClass(QDomElement dom_element)
@@ -204,7 +203,6 @@ void TExcl::next(TBaseTiming *ended_element)
             finishedActiveDuration();
         }
     }
-    return;
 }
 
 void TExcl::play()
@@ -233,25 +231,21 @@ void TExcl::play()
 
     }
     status = _playing;
-    return;
 }
 
 void TExcl::resume()
 {
     status = _playing;
-    return;
 }
 
 void TExcl::stop()
 {
     status = _stopped;
-    return;
 }
 
 void TExcl::pause()
 {
     status = _paused;
-    return;
 }
 
 // ============================ protected methods ================================================================
@@ -276,7 +270,6 @@ void TExcl::setPlaylist()
         if (root_element.childNodes().length() > 0) // put the eLements directly into one standard priorityclass object;
             parsePriorityClass(root_element);
     }
-    return;
 }
 
 void TExcl::parsePriorityClass(QDomElement element)

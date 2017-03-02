@@ -28,21 +28,18 @@ void TPrefetch::pause()
 {
     qDebug() << getID() << QTime::currentTime().toString() << "paused ";
     status = _paused;
-    return;
 }
 
 void TPrefetch::stop()
 {
     qDebug() << getID() << QTime::currentTime().toString() << "stopped";
     status = _stopped;
-    return;
 }
 
 void TPrefetch::play()
 {
     qDebug() << getID() << QTime::currentTime().toString()  << "prefetch play (load)";
     status = _playing;
-    return;
 }
 
 bool TPrefetch::loadMedia()
@@ -58,5 +55,4 @@ void TPrefetch::setDurationTimerBeforePlay()
 void TPrefetch::setAttributes()
 {
     setBaseMediaAttributes();
-    return;
 }

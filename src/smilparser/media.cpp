@@ -62,7 +62,6 @@ void TMedia::registerFile(TFileManager *FileManager)
 {
     MyFileManager = FileManager;
     MyFileManager->registerFile(src);
-    return;
 }
 
 void TMedia::setBaseMediaAttributes()
@@ -74,17 +73,18 @@ void TMedia::setBaseMediaAttributes()
         region = root_element.attribute("region");
     if (root_element.hasAttribute("fit"))
         fit = root_element.attribute("fit");
+    if (root_element.hasAttribute("type"))
+        type = root_element.attribute("type");
+
     src = parseSrc(root_element);
     if (root_element.hasAttribute("exec"))
         exec = root_element.attribute("exec");
     setTimingAttributes();
-    return;
 }
 
-void TMedia::emitfinished() // called from finishedActiveDuration() in TBase
+void TMedia::emitfinished() // called from finishedActiveDuration() in TBaseTiming
 {
    emit finishedMedia(parent_container, this);
-   return;
 }
 
 void TMedia::setBaseParameters()

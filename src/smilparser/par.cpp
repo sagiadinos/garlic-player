@@ -50,7 +50,6 @@ void TPar::setDurationTimerBeforePlay()
     }
     else // when end or duration is not specified or no child elements stop imediately
         setInternalDefaultDur();
-    return;
 }
 
 bool TPar::isChildPlayable(TBaseTiming *element)
@@ -99,25 +98,21 @@ void TPar::play()
         reactByTag();
     }
     status = _playing;
-    return;
 }
 
 void TPar::resume()
 {
     status = _playing;
-    return;
 }
 
 void TPar::pause()
 {
     status = _paused;
-    return;
 }
 
 void TPar::stop()
 {
     status = _stopped;
-    return;
 }
 
 

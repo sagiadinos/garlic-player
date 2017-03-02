@@ -19,9 +19,8 @@
 #ifndef TAUDIO_H
 #define TAUDIO_H
 
-#include <QtAV>
-#include <QtAVWidgets>
 #include "media.h"
+#include "tools/mediadecoderwrapper.h"
 
 class TAudio : public TMedia
 {
@@ -29,20 +28,20 @@ class TAudio : public TMedia
 public:
     TAudio(TContainer * parent = 0);
     ~TAudio();
-    QString            getSoundLevel(){return soundLevel;}
-    void               pause();
-    void               stop();
-    void               play();
-    void               determineMediaDuration(qint64 media_duration);
-    QtAV::AVPlayer    *getMediaPlayer(){return media_player;}
+    QString                 getSoundLevel(){return soundLevel;}
+    void                    pause();
+    void                    stop();
+    void                    play();
+    MediaDecoderWrapper    *getMediaPlayer(){return MediaDecoderW;}
 protected:
-    QtAV::AVPlayer    *media_player;
-    TBaseTiming       *parent_object;
-    QString            soundLevel = "100%";
-    void               setAttributes();
-    bool               loadMedia();
+    MediaDecoderWrapper    *MediaDecoderW;
+    TBaseTiming            *parent_object;
+    QString                 soundLevel = "100%";
+    void                    setAttributes();
+    bool                    loadMedia();
 protected slots:
-    void               setDurationTimerBeforePlay();
+    void                    setDurationTimerBeforePlay();
+    void                    finished();
 };
 
 #endif // TAUDIO_H

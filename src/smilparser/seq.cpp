@@ -68,7 +68,6 @@ void TSeq::next(TBaseTiming *ended_element)
         else
             handlePossibleRepeat();
     }
-    return;
 }
 
 bool TSeq::isChildPlayable(TBaseTiming *element)
@@ -94,25 +93,21 @@ void TSeq::play()
         reactByTag();
     }
     status = _playing;
-    return;
 }
 
 void TSeq::resume()
 {
     status = _playing;
-    return;
 }
 
 void TSeq::stop()
 {
     status = _stopped;
-    return;
 }
 
 void TSeq::pause()
 {
     status = _paused;
-    return;
 }
 
 void TSeq::setDurationTimerBeforePlay()
@@ -125,7 +120,6 @@ void TSeq::setDurationTimerBeforePlay()
     }
     else // when end or duration is not specified or no child elements stop imediately
         setInternalDefaultDur();
-    return;
 }
 
 bool TSeq::canGetNextItem()
@@ -154,7 +148,6 @@ void TSeq::handlePossibleRepeat()
     }
     else
         finishedActiveDuration();
-    return;
 }
 
 void TSeq::setPlaylist()
@@ -169,6 +162,5 @@ void TSeq::setPlaylist()
             dom_list.append(element);
     }
     iterator = dom_list.begin();
-    return;
 }
 

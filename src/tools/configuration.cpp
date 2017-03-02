@@ -112,7 +112,6 @@ void TConfiguration::determineIndexUri(QString path)
         setIndexUri(base_path+index_uri);
 
     determineIndexPath();
-    return;
 }
 
 void TConfiguration::setIndexPath(const QString &value)

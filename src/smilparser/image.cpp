@@ -38,21 +38,18 @@ void TImage::setDurationTimerBeforePlay()
     }
     else // set a duration otherwise it runs in a recursion stack overflow when no dur set or load is not complete
         setInternalDefaultDur();
-    return;
 }
 
 void TImage::play()
 {
     qDebug() << getID() << QTime::currentTime().toString()  << "play";
     status = _playing;
-    return;
 }
 
 void TImage::pause()
 {
     qDebug() << getID() << QTime::currentTime().toString() << "paused " << end_remaining;
     status = _paused;
-    return;
 }
 
 void TImage::stop()
@@ -61,7 +58,6 @@ void TImage::stop()
     // image  = QPixmap::QPixmap(); // unload
     status = _stopped;
     loaded = false;
-    return;
 }
 
 bool TImage::loadMedia()
@@ -82,7 +78,6 @@ bool TImage::loadMedia()
 void TImage::setAttributes()
 {
     setBaseMediaAttributes();
-    return;
 }
 
 // ====================  private methods =================================

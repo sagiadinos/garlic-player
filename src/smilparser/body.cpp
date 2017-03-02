@@ -53,7 +53,6 @@ bool TBody::parse(QDomElement element)
 void TBody::prepareTimerBeforePlaying()
 {
    setDurationTimerBeforePlay();
-   return;
 }
 
 bool TBody::isChildPlayable(TBaseTiming *element)
@@ -84,7 +83,6 @@ void TBody::next(TBaseTiming *ended_element)
     }
     else
         finishedActiveDuration();
-    return;
 }
 
 void TBody::setPlaylist()
@@ -98,5 +96,4 @@ void TBody::setPlaylist()
         if (element.tagName() != "")
             dom_list.append(element);
     }
-    return;
 }

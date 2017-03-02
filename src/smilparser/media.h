@@ -45,7 +45,7 @@ protected:
     TFileManager     *MyFileManager;
     TContainer       *parent_container;
     QString           region = "screen";
-    QString           src, exec, fit = "";
+    QString           src, exec, type, fit = "";
     QString           cached_file_path;
     QString           filename, cache_control, log_content_id  = "";
     bool              loaded;

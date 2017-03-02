@@ -95,7 +95,6 @@ void TBaseTiming::prepareTimerBeforeStop()
     begin_remaining = 0;
     end_remaining   = 0;
     dur_remaining   = 0;
-    return;
 }
 
 void TBaseTiming::prepareTimerBeforeResume()
@@ -152,13 +151,11 @@ void TBaseTiming::prepareTimerBeforeResume()
 
     begin_remaining = 0;
     end_remaining   = 0;
-    return;
 }
 
 void TBaseTiming::setInternalDefaultDur()
 {
     dur_timer->start(100);
-    return;
 }
 
 // ========================= protected methods ======================================================
@@ -167,7 +164,6 @@ void TBaseTiming::finishedSimpleDuration()
 {
     if (!checkRepeatCountStatus() && !end_timer->isActive())
         finishedActiveDuration();
-    return;
 }
 
 void TBaseTiming::finishedActiveDuration()
@@ -178,7 +174,6 @@ void TBaseTiming::finishedActiveDuration()
         qDebug() << getID() << QTime::currentTime().toString() << "check begin repeats "  << begin.getNextTrigger(QDateTime::currentDateTime());
     }
     emitfinished();
-    return;
 }
 
 bool TBaseTiming::hasDurAttribute()
@@ -213,7 +208,6 @@ void TBaseTiming::setTimingAttributes()
         dur.parse(root_element.attribute("dur"));
     if (root_element.hasAttribute("repeatCount"))
         setRepeatCount(root_element.attribute("repeatCount"));
-    return;
 }
 
 /**
@@ -270,12 +264,10 @@ void TBaseTiming::initTimer()
     begin_remaining = 0;
     end_remaining   = 0;
     dur_remaining   = 0;
-    return;
 }
 
 void TBaseTiming::releasePlay()
 {
     setDurationTimerBeforePlay();
-    return;
 }
 

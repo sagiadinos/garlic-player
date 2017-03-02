@@ -50,7 +50,6 @@ void THead::setDefaultValues()
     region_list.append(default_region);
     if (refresh_timer->isActive())
         refresh_timer->stop();
-    return;
 }
 
 QString THead::getTitle()
@@ -112,7 +111,6 @@ void THead::parseMeta(QDomElement element)
         refresh = element.attribute("content").toInt();
         setRefreshTimer();
     }
-    return;
 }
 
 void THead::parseLayout(QDomElement layout)
@@ -124,7 +122,6 @@ void THead::parseLayout(QDomElement layout)
     nodelist = layout.elementsByTagName("region");
     if (nodelist.length() > 0)
         parseRegions(nodelist);
-    return;
 }
 
 void THead::parseRootLayout(QDomElement root_layout)
@@ -135,7 +132,6 @@ void THead::parseRootLayout(QDomElement root_layout)
         height = root_layout.attribute("height").toInt();
     if (root_layout.hasAttribute("backgroundColor"))
         backgroundColor = root_layout.attribute("backgroundColor");
-   return;
 }
 
 void THead::parseRegions(QDomNodeList childs)
@@ -189,7 +185,6 @@ void THead::setRefreshTimer()
 #endif
 
     refresh_timer->start(refresh*1000);
-    return;
 }
 
 qreal THead::calculatePercentBasedOnRoot(QString value, qreal root)

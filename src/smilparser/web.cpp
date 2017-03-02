@@ -47,23 +47,24 @@ void TWeb::setDurationTimerBeforePlay()
  * @brief TMedia::prepareLoad
  * @param manager
  */
-void TWeb::registerFile(TFileManager *manager)
+void TWeb::registerFile(TFileManager *FileManager)
 {
-    Q_UNUSED(manager)
-    return;
+    if (type.contains("application/widget"))
+    {
+        MyFileManager = FileManager;
+        MyFileManager->registerFile(src);
+    }
 }
 
 
 void TWeb::play()
 {
     status = _playing;
-    return;
 }
 
 void TWeb::pause()
 {
     status = _paused;
-    return;
 }
 
 
@@ -72,7 +73,6 @@ void TWeb::stop()
     delete browser;
     status = _stopped;
     loaded = false;
-    return;
 }
 
 bool TWeb::loadMedia()
@@ -89,5 +89,4 @@ bool TWeb::loadMedia()
 void TWeb::setAttributes()
 {
     setBaseMediaAttributes();
-    return;
 }

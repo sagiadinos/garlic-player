@@ -46,7 +46,7 @@ protected:
     QMap<QString, TRegion *>  ar_regions;
     TSmil                    *MySmil          = NULL;
     THead                    *MyHead          = NULL;
-    TIndexManager               *MyIndexFile     = NULL;
+    TIndexManager            *MyIndexFile     = NULL;
     TConfiguration           *MyConfiguration = NULL;
     TFileManager             *MyFileManager   = NULL;
     QHBoxLayout              *layout;

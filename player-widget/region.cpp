@@ -30,6 +30,26 @@ TRegion::TRegion(QWidget *parent, TFileManager *filemanager)
 
 TRegion::~TRegion()
 {
+    if (actual_media == "image")
+    {
+        MyImage->stop();
+        removeImage();
+    }
+    else if (actual_media == "video")
+    {
+        MyVideo->stop();
+        removeVideo();
+    }
+    else if (actual_media == "MyAudio")
+    {
+        MyAudio->stop();
+        removeAudio();
+    }
+    else if (actual_media == "web")
+    {
+        MyWeb->stop();
+        removeWeb();
+    }
 }
 
 void TRegion::paintEvent(QPaintEvent *event)
@@ -45,18 +65,17 @@ void TRegion::playImage(TImage *structure)
 {
     MyImage        = structure;
     actual_media   = "image";
-    image_widget   = new QLabel;
-    image_widget->setPixmap(MyImage->getImage());
-    layout->addWidget(image_widget);
+    ImageWidget.setPixmap(MyImage->getImage());
+    layout->addWidget(&ImageWidget);
 }
 
 void TRegion::playVideo(TVideo *structure)
 {
     MyVideo        = structure;
     actual_media   = "video";
-    video_widget   = new QtAV::WidgetRenderer;
-    MyVideo->setRenderer(video_widget);
-    layout->addWidget(video_widget);
+    MyVideo->setRenderer(&VideoWidget);
+    VideoWidget.setParentWidget(this);
+    layout->addWidget(VideoWidget.getVideoWidget());
 }
 
 void TRegion::playAudio(TAudio *structure)
@@ -70,21 +89,16 @@ void TRegion::playWeb(TWeb *structure)
     actual_media  = "web";
     MyWeb        = structure;
     layout->addWidget(MyWeb->getBrowser());
-    return;
 }
 
 void TRegion::removeImage()
 {
-    layout->removeWidget(image_widget);
-    delete image_widget;
-    return;
+    layout->removeWidget(&ImageWidget);
 }
 
 void TRegion::removeVideo()
 {
-    layout->removeWidget(video_widget);
-    delete video_widget;
-    return;
+    layout->removeWidget(VideoWidget.getVideoWidget());
 }
 
 void TRegion::removeAudio()
@@ -92,11 +106,9 @@ void TRegion::removeAudio()
     return;
 }
 
-
 void TRegion::removeWeb()
 {
     layout->removeWidget(MyWeb->getBrowser());
-    return;
 }
 
 
@@ -118,7 +130,7 @@ void TRegion::setRootSize(int w, int h)
 void TRegion::setRegion(Region r)
 {
     region = r;
-//    setStyleSheet("background-color:"+region.backgroundColor+";");
+    setStyleSheet("background-color:"+region.backgroundColor+";");
 }
 
 void TRegion::resizeGeometry()
@@ -140,32 +152,28 @@ void TRegion::resizeGeometry()
 void TRegion::resizeImage(int w, int h)
 {
     if (MyImage->getFit() == "fill")
-       image_widget->setPixmap(MyImage->getImage().scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+       ImageWidget.setPixmap(MyImage->getImage().scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     else if (MyImage->getFit() == "meet")
-        image_widget->setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        ImageWidget.setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
     else if (MyImage->getFit() == "meetbest")
-        image_widget->setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ImageWidget.setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     else
-        image_widget->setPixmap(MyImage->getImage());
-    return;
+        ImageWidget.setPixmap(MyImage->getImage());
 }
 
 void TRegion::resizeVideo(int w, int h)
 {
     if (MyVideo->getFit() == "fill")
-        video_widget->setOutAspectRatioMode(QtAV::VideoRenderer::RendererAspectRatio);
+        VideoWidget.setAspectRatioFill();
     else if (MyVideo->getFit() == "meet")
-        video_widget->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
+        VideoWidget.setAspectRatioMeet();
     else if (MyVideo->getFit() == "meetbest")
-        video_widget->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
-    else
-        video_widget->resizeRenderer(w, h);
+        VideoWidget.setAspectRatioMeetBest();
     return;
 }
 
 void TRegion::resizeWeb(int w, int h)
 {
     MyWeb->getBrowser()->resize(w-2, h-2);
-    return;
 }
 

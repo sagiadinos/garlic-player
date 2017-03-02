@@ -71,20 +71,17 @@ void TContainer::childStarted(TBaseTiming *element)
 {
     activatable_childs.insert(element);
     childs_iterator = activatable_childs.begin();
-    return;
 }
 
 void TContainer::childEnded(TBaseTiming *element)
 {
     if (activatable_childs.find(element) != activatable_childs.end())
         activatable_childs.remove(element);
-    return;
 }
 
 void TContainer::setChildActive(bool active)
 {
     is_child_active = active;
-    return;
 }
 
 bool TContainer::hasPlayingChilds()
@@ -131,6 +128,5 @@ void TContainer::emitfinished() // called from finishedActiveDuration() TBase
 {
     qDebug() << getID() << QTime::currentTime().toString() << "finished Playlist";
     emit finishedContainer(parent_container, this);
-    return;
 }
 

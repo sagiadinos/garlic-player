@@ -18,16 +18,15 @@
 
 #ifndef TVIDEO_H
 #define TVIDEO_H
-#include <QtAV>
-#include <QtAVWidgets>
 #include "audio.h"
+#include "tools/mediaviewwrapper.h"
 
 class TVideo : public TAudio
 {
     Q_OBJECT
 public:
     TVideo(TContainer *parent = 0);
-    void setRenderer(QtAV::WidgetRenderer *renderer);
+    void setRenderer(MediaViewWrapper *renderer);
 };
 
 #endif // TVIDEO_H
