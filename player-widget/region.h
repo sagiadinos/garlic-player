@@ -50,8 +50,8 @@ public:
     void                removeWeb();
 
 protected:
-    QLabel               ImageWidget;
-    MediaViewWrapper     VideoWidget;
+    QLabel               *ImageWidget;
+    MediaViewWrapper     *VideoWidget;
     TImage               *MyImage;
     TVideo               *MyVideo;
     TAudio               *MyAudio;

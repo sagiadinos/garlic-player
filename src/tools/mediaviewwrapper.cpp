@@ -1,7 +1,8 @@
 #include "mediaviewwrapper.h"
 
-MediaViewWrapper::MediaViewWrapper()
+MediaViewWrapper::MediaViewWrapper(QWidget *parent)
 {
+    setParentWidget(parent);
 }
 
 MediaViewWrapper::~MediaViewWrapper()

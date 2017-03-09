@@ -10,7 +10,7 @@ QT     += core gui xml widgets webenginewidgets
 CONFIG += warn_on c++11
 
 #Comment the next line in when you want to use QTMultimedia
-CONFIG    += support_qtav
+ONFIG    += support_qtav
 
 support_qtav {
     DEFINES += SUPPORT_QTAV

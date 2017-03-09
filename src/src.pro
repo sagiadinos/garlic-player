@@ -4,7 +4,7 @@ QT       += core network xml widgets webenginewidgets
 TEMPLATE  = lib
 CONFIG    += warn_on lib c++11 stl
 
-#Comment the next line in when you want to use QTMultimedia
+#Comment the next line in when use QTMultimedia
 CONFIG    += support_qtav
 
 support_qtav {

@@ -10,11 +10,11 @@
 #endif
 
 
-class MediaViewWrapper : public QObject
+class MediaViewWrapper : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MediaViewWrapper();
+    explicit MediaViewWrapper(QWidget *parent);
     ~MediaViewWrapper();
 #ifdef SUPPORT_QTAV
     QtAV::WidgetRenderer *getVideoWidget();

@@ -65,17 +65,19 @@ void TRegion::playImage(TImage *structure)
 {
     MyImage        = structure;
     actual_media   = "image";
-    ImageWidget.setPixmap(MyImage->getImage());
-    layout->addWidget(&ImageWidget);
+    ImageWidget    = new QLabel;
+    ImageWidget->setPixmap(MyImage->getImage());
+    layout->addWidget(ImageWidget);
 }
 
 void TRegion::playVideo(TVideo *structure)
 {
     MyVideo        = structure;
     actual_media   = "video";
-    MyVideo->setRenderer(&VideoWidget);
-    VideoWidget.setParentWidget(this);
-    layout->addWidget(VideoWidget.getVideoWidget());
+    VideoWidget    = new MediaViewWrapper(this);
+    MyVideo->setRenderer(VideoWidget);
+    VideoWidget->setParentWidget(this);
+    layout->addWidget(VideoWidget->getVideoWidget());
 }
 
 void TRegion::playAudio(TAudio *structure)
@@ -93,12 +95,14 @@ void TRegion::playWeb(TWeb *structure)
 
 void TRegion::removeImage()
 {
-    layout->removeWidget(&ImageWidget);
+    layout->removeWidget(ImageWidget);
+    ImageWidget->deleteLater();
 }
 
 void TRegion::removeVideo()
 {
-    layout->removeWidget(VideoWidget.getVideoWidget());
+    layout->removeWidget(VideoWidget->getVideoWidget());
+    VideoWidget->deleteLater();
 }
 
 void TRegion::removeAudio()
@@ -152,23 +156,24 @@ void TRegion::resizeGeometry()
 void TRegion::resizeImage(int w, int h)
 {
     if (MyImage->getFit() == "fill")
-       ImageWidget.setPixmap(MyImage->getImage().scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+       ImageWidget->setPixmap(MyImage->getImage().scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     else if (MyImage->getFit() == "meet")
-        ImageWidget.setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        ImageWidget->setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
     else if (MyImage->getFit() == "meetbest")
-        ImageWidget.setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ImageWidget->setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     else
-        ImageWidget.setPixmap(MyImage->getImage());
+        ImageWidget->setPixmap(MyImage->getImage());
 }
 
 void TRegion::resizeVideo(int w, int h)
 {
+    Q_UNUSED(w);Q_UNUSED(h)
     if (MyVideo->getFit() == "fill")
-        VideoWidget.setAspectRatioFill();
+        VideoWidget->setAspectRatioFill();
     else if (MyVideo->getFit() == "meet")
-        VideoWidget.setAspectRatioMeet();
+        VideoWidget->setAspectRatioMeet();
     else if (MyVideo->getFit() == "meetbest")
-        VideoWidget.setAspectRatioMeetBest();
+        VideoWidget->setAspectRatioMeetBest();
     return;
 }
 
