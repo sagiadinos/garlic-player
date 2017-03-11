@@ -56,7 +56,8 @@ void TestTConfiguration::cleanup()
 
 void TestTConfiguration::test_determineIndexUriWhenParameter()
 {
-    TConfiguration *MyConfig = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test"));
+    QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
+    TConfiguration *MyConfig = new TConfiguration(Settings);
 
     MyConfig->determineIndexUri("http://domain.tld/path_to/index.smil");
     QCOMPARE(MyConfig->getIndexUri(), QString("http://domain.tld/path_to/index.smil"));
@@ -93,25 +94,25 @@ void TestTConfiguration::test_determineIndexUriWhenIni()
 
 }
 
-
 void TestTConfiguration::test_determineIndexUriWhenConfigXML()
 {
-    TConfiguration *MyConfig = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test"));
-    QDir dir;
-    dir.mkdir("configuration");
-    QFile::copy("../tests/data/config.xml", "configuration/config.xml");
+    QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
+    TConfiguration *MyConfig = new TConfiguration(Settings);
+    QDir dir(".");
+    MyConfig->determineBasePath(dir.absolutePath()+"/../"); // cause the working directory is ./bin in creator
+    QFile::copy("../tests/data/config.xml", "../config.xml");
 
     MyConfig->determineIndexUri("");
     QCOMPARE(MyConfig->getIndexUri(), QString("http://indexes.of-a-smil-server.com/path_to_a/index.php?site=player_get_index&owner_id=2"));
     QCOMPARE(MyConfig->getIndexPath(), QString("http://indexes.of-a-smil-server.com/path_to_a/"));
-
-    dir.setPath("configuration");
-    dir.removeRecursively(); // clean up
+    QFile file("../config_readed.xml");
+    file.remove();
 }
 
 void TestTConfiguration::test_determineIndexUriWhenFallback()
 {
-    TConfiguration *MyConfig = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test"));
+    QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
+    TConfiguration *MyConfig = new TConfiguration(Settings);
 
     MyConfig->determineIndexUri("");
     QCOMPARE(MyConfig->getIndexUri(), QString("http://indexes.smil-admin.com"));
@@ -120,7 +121,8 @@ void TestTConfiguration::test_determineIndexUriWhenFallback()
 
 void TestTConfiguration::test_determineBasePath()
 {
-    TConfiguration *MyConfig = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test"));
+    QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
+    TConfiguration *MyConfig = new TConfiguration(Settings);
 
     MyConfig->determineBasePath("/home/user/garlic/bin");
     QCOMPARE(MyConfig->getBasePath(), QString("/home/user/garlic/"));
@@ -134,18 +136,16 @@ void TestTConfiguration::test_determineBasePath()
 
 void TestTConfiguration::test_createDirectories()
 {
-    TConfiguration *MyConfig = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test"));
+    QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
+    TConfiguration *MyConfig = new TConfiguration(Settings);
+    MyConfig->setAppName("garlic-player-test");
     QDir             dir;
     MyConfig->createDirectories();
-    dir.setPath("var");
+    dir.setPath(QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) + "garlic-player-test/");
     QCOMPARE(dir.exists(), true);
     dir.removeRecursively(); // clean up
 
-    dir.setPath("configuration");
-    QCOMPARE(dir.exists(), true);
-    dir.removeRecursively(); // clean up
-
-    dir.setPath("logs");
+    dir.setPath(QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) + "garlic-player-test/logs/");
     QCOMPARE(dir.exists(), true);
     dir.removeRecursively(); // clean up
 }
@@ -153,7 +153,8 @@ void TestTConfiguration::test_createDirectories()
 
 void TestTConfiguration::test_determineUserAgent()
 {
-   TConfiguration *MyConfig = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test"));
+   QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
+   TConfiguration *MyConfig = new TConfiguration(Settings);
    MyConfig->setUuid("the-uuid-is-this");
    MyConfig->setPlayerName("the playername");
    MyConfig->setOS("hurd");
