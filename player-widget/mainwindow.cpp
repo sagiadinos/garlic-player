@@ -65,6 +65,7 @@ void MainWindow::checkForNewSmilIndex()
 
 void MainWindow::deleteRegionsAndLayouts()
 {
+
     qDeleteAll(ar_regions);
     ar_regions.clear();
 }
@@ -77,7 +78,7 @@ void MainWindow::setRegions(QDomElement head)
     QMap<QString, TRegion *>::iterator j;
     for (int i = 0; i < region_list.length(); i++)
     {
-        j = ar_regions.insert(region_list.at(i).regionName, new TRegion(this, MyFileManager));
+        j = ar_regions.insert(region_list.at(i).regionName, new TRegion(this));
         ar_regions[j.key()]->setRegion(region_list.at(i));
         ar_regions[j.key()]->setRootSize(width(), height());
         ar_regions[j.key()]->show();

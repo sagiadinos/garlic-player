@@ -19,13 +19,13 @@
 #include "region.h"
 #include <QLayout>
 
-TRegion::TRegion(QWidget *parent, TFileManager *filemanager)
+TRegion::TRegion(QWidget *parent)
 {
-    MyFileManager = filemanager;
     setParent(parent);
     layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
+    connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
 }
 
 TRegion::~TRegion()
@@ -33,22 +33,20 @@ TRegion::~TRegion()
     if (actual_media == "image")
     {
         MyImage->stop();
-        removeImage();
     }
     else if (actual_media == "video")
     {
+        MediaDecoder.stop();
         MyVideo->stop();
-        removeVideo();
     }
     else if (actual_media == "MyAudio")
     {
+        MediaDecoder.stop();
         MyAudio->stop();
-        removeAudio();
     }
     else if (actual_media == "web")
     {
         MyWeb->stop();
-        removeWeb();
     }
 }
 
@@ -66,7 +64,9 @@ void TRegion::playImage(TImage *structure)
     MyImage        = structure;
     actual_media   = "image";
     ImageWidget    = new QLabel;
-    ImageWidget->setPixmap(MyImage->getImage());
+    ImageWidget->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    image.load(MyImage->getLoadablePath());
+    ImageWidget->setPixmap(image);
     layout->addWidget(ImageWidget);
 }
 
@@ -75,8 +75,9 @@ void TRegion::playVideo(TVideo *structure)
     MyVideo        = structure;
     actual_media   = "video";
     VideoWidget    = new MediaViewWrapper(this);
-    MyVideo->setRenderer(VideoWidget);
-    VideoWidget->setParentWidget(this);
+    MediaDecoder.setVideoOutput(VideoWidget);
+    MediaDecoder.load(MyVideo->getLoadablePath());
+    MediaDecoder.play();
     layout->addWidget(VideoWidget->getVideoWidget());
 }
 
@@ -84,13 +85,19 @@ void TRegion::playAudio(TAudio *structure)
 {
     MyAudio        = structure;
     actual_media   = "audio";
+    MediaDecoder.load(MyAudio->getLoadablePath());
+    MediaDecoder.play();
 }
 
 void TRegion::playWeb(TWeb *structure)
 {
-    actual_media  = "web";
     MyWeb        = structure;
-    layout->addWidget(MyWeb->getBrowser());
+    actual_media = "web";
+    browser      = new QWebEngineView;
+    browser->load(QUrl(MyWeb->getLoadablePath()));
+    browser->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled,true);
+    browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled,true);
+    layout->addWidget(browser);
 }
 
 void TRegion::removeImage()
@@ -102,7 +109,7 @@ void TRegion::removeImage()
 void TRegion::removeVideo()
 {
     layout->removeWidget(VideoWidget->getVideoWidget());
-    VideoWidget->deleteLater();
+    delete VideoWidget;
 }
 
 void TRegion::removeAudio()
@@ -112,9 +119,9 @@ void TRegion::removeAudio()
 
 void TRegion::removeWeb()
 {
-    layout->removeWidget(MyWeb->getBrowser());
+    layout->removeWidget(browser);
+    delete browser;
 }
-
 
 /**
  * Needs the real pixel of the actual root size regardless
@@ -156,13 +163,13 @@ void TRegion::resizeGeometry()
 void TRegion::resizeImage(int w, int h)
 {
     if (MyImage->getFit() == "fill")
-       ImageWidget->setPixmap(MyImage->getImage().scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+       ImageWidget->setPixmap(image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     else if (MyImage->getFit() == "meet")
-        ImageWidget->setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        ImageWidget->setPixmap(image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
     else if (MyImage->getFit() == "meetbest")
-        ImageWidget->setPixmap(MyImage->getImage().scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ImageWidget->setPixmap(image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     else
-        ImageWidget->setPixmap(MyImage->getImage());
+        ImageWidget->setPixmap(image);
 }
 
 void TRegion::resizeVideo(int w, int h)
@@ -174,11 +181,18 @@ void TRegion::resizeVideo(int w, int h)
         VideoWidget->setAspectRatioMeet();
     else if (MyVideo->getFit() == "meetbest")
         VideoWidget->setAspectRatioMeetBest();
-    return;
 }
 
 void TRegion::resizeWeb(int w, int h)
 {
-    MyWeb->getBrowser()->resize(w-2, h-2);
+    browser->resize(w-2, h-2);
+}
+
+void TRegion::finished()
+{
+    if (actual_media == "video")
+        MyVideo->finishedSimpleDuration();
+    else if (actual_media == "audio")
+        MyAudio->finishedSimpleDuration();
 }
 

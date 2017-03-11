@@ -47,7 +47,7 @@ protected:
     TSmil                    *MySmil          = NULL;
     THead                    *MyHead          = NULL;
     TIndexManager            *MyIndexFile     = NULL;
-    TConfiguration           *MyConfiguration = NULL;
+    TConfiguration            *MyConfiguration = NULL;
     TFileManager             *MyFileManager   = NULL;
     QHBoxLayout              *layout;
     QString                   smil_index_path;

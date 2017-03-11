@@ -5,21 +5,18 @@
 #-------------------------------------------------
 include(../defaults.pri)
 
-
 QT     += core gui xml widgets webenginewidgets
 CONFIG += warn_on c++11
 
 #Comment the next line in when you want to use QTMultimedia
-ONFIG    += support_qtav
+CONFIG    += support_qtav
 
 support_qtav {
     DEFINES += SUPPORT_QTAV
     QT      += avwidgets
-    CONFIG  += avwidgets
 } else {
     QT += multimedia multimediawidgets
 }
-
 
 TARGET = garlic-player
 TEMPLATE = app
@@ -27,9 +24,13 @@ DESTDIR = ../bin
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    region.cpp
+    region.cpp \
+    mediadecoderwrapper.cpp \
+    mediaviewwrapper.cpp
 
 HEADERS  += mainwindow.h \
-    region.h
+    region.h \
+    mediadecoderwrapper.h \
+    mediaviewwrapper.h
 
 LIBS += -L../lib -lgarlic

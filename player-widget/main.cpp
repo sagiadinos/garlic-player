@@ -55,8 +55,6 @@ int main(int argc, char *argv[])
     else
         MyConfiguration->determineIndexUri("");
 
-// /home/niko/source/garlic-player/var/index.smil
-
     MainWindow w(new TFileManager(MyConfiguration));
 
     if (parser.isSet("f"))

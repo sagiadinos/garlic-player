@@ -24,18 +24,25 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPainter>
+#include <QPixmap>
 #include <QPaintEvent>
 #include <QStyle>
 #include <QStyleOption>
 #include "smilparser/head.h"
 #include "smilparser.h"
 #include "files/file_manager.h"
+#include <QWebEngineView>
+#include <QWebEngineSettings>
+
+#include "mediadecoderwrapper.h"
+#include "mediaviewwrapper.h"
+
 
 class TRegion : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TRegion(QWidget *parent, TFileManager *filemanager);
+    explicit TRegion(QWidget *parent);
     ~TRegion();
     void                paintEvent(QPaintEvent *event);
     void                setRootSize(int w, int h);
@@ -51,7 +58,10 @@ public:
 
 protected:
     QLabel               *ImageWidget;
+    QPixmap               image;
+    QWebEngineView       *browser;
     MediaViewWrapper     *VideoWidget;
+    MediaDecoderWrapper   MediaDecoder;
     TImage               *MyImage;
     TVideo               *MyVideo;
     TAudio               *MyAudio;
@@ -60,11 +70,12 @@ protected:
     QString               actual_media = "";
     Region                region;
     QHBoxLayout          *layout;
-    TFileManager         *MyFileManager;
     void                  resizeGeometry();
     void                  resizeImage(int w, int h);
     void                  resizeVideo(int w, int h);
     void                  resizeWeb(int w, int h);
+protected slots:
+    void                  finished();
 };
 
 #endif // TREGION_H
