@@ -158,13 +158,13 @@ void TBaseTiming::setInternalDefaultDur()
     dur_timer->start(100);
 }
 
-// ========================= protected methods ======================================================
-
 void TBaseTiming::finishedSimpleDuration()
 {
     if (!checkRepeatCountStatus() && !end_timer->isActive())
         finishedActiveDuration();
 }
+
+// ========================= protected methods ======================================================
 
 void TBaseTiming::finishedActiveDuration()
 {

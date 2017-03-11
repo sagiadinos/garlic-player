@@ -19,11 +19,7 @@
 #ifndef TWEB_H
 #define TWEB_H
 
-#include <QWebEngineView>
-#include <QWebEngineSettings>
 #include "smilparser/media.h"
-
-
 
 class TWeb : public TMedia
 {
@@ -35,12 +31,9 @@ public:
     void            stop();
     void            play();
     void            registerFile(TFileManager *FileManager);
-    QWebEngineView *getBrowser(){return browser;}
 public slots:
     void            setDurationTimerBeforePlay();
 protected:
-    QWebEngineView *browser;
-    bool            loadMedia();
     void            setAttributes();
 };
 

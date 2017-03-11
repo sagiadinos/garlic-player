@@ -18,12 +18,11 @@
 
 #include "downloader.h"
 
-TDownloader::TDownloader(QString ua, QObject * parent)
+TDownloader::TDownloader(QString ua)
 {
-    Q_UNUSED(parent);
-    manager_get           = new QNetworkAccessManager();
-    manager_head          = new QNetworkAccessManager();
-    manager_head_redirect = new QNetworkAccessManager();
+    manager_get           = new QNetworkAccessManager(this);
+    manager_head          = new QNetworkAccessManager(this);
+    manager_head_redirect = new QNetworkAccessManager(this);
     connect(manager_get, SIGNAL(finished(QNetworkReply*)), SLOT(finishedGetRequest(QNetworkReply*)));
     connect(manager_head, SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRequest(QNetworkReply*)));
     connect(manager_head_redirect, SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRedirectRequest(QNetworkReply*)));

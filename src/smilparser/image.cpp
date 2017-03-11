@@ -31,12 +31,12 @@ TImage::~TImage()
 
 void TImage::setDurationTimerBeforePlay()
 {
-    if (load() && (hasDurAttribute() || end_timer->isActive()))
+    if (isDownloaded() && (hasDurAttribute() || end_timer->isActive()))
     {
         if (!is_resumed)
             emit startedMedia(parent_container, this);
     }
-    else // set a duration otherwise it runs in a recursion stack overflow when no dur set or load is not complete
+    else // set a duration otherwise it runs in a recursion stack overflow when no dur set or download is not complete
         setInternalDefaultDur();
 }
 
@@ -55,23 +55,8 @@ void TImage::pause()
 void TImage::stop()
 {
     qDebug() << getID() << QTime::currentTime().toString() << "stopped";
-    // image  = QPixmap::QPixmap(); // unload
     status = _stopped;
-    loaded = false;
 }
-
-bool TImage::loadMedia()
-{
-    QString file_path = MyFileManager->getLoadablePath(src);
-    bool ret          = image.load(file_path);
-    if (!ret)
-        qCritical() << getID() << QTime::currentTime().toString()  << "not loaded: " << file_path;
-    else
-        qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
-
-    return ret;
-}
-
 
 // ====================  protected methods =================================
 

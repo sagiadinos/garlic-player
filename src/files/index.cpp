@@ -77,7 +77,7 @@ QString TIndexManager::determineLocalFileName(QString uri)
     QString file_name = url.fileName();
     if (file_name == "")
         file_name = "index.smil";
-    return MyConfiguration->getPaths("var")+"index.smil";
+    return MyConfiguration->getPaths("cache")+"index.smil";
 }
 
 

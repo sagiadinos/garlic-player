@@ -25,10 +25,6 @@ TVideo::TVideo(TContainer *parent)
     setObjectName("TVideo");
 }
 
-void TVideo::setRenderer(MediaViewWrapper *renderer)
-{
-    MediaDecoderW->setVideoOutput(renderer);
-}
 
 // ====================  protected methods =================================
 

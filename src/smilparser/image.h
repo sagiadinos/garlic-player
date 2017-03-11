@@ -19,7 +19,6 @@
 #ifndef MAGE_H
 #define IMAGE_H
 
-#include <QPixmap>
 #include "media.h"
 
 class TImage : public TMedia
@@ -31,12 +30,9 @@ public:
     void     pause();
     void     stop();
     void     play();
-    QPixmap  getImage(){return image;}
 public slots:
     void     setDurationTimerBeforePlay();
 protected:
-    QPixmap  image;
-    bool     loadMedia();
     void     setAttributes();
 };
 

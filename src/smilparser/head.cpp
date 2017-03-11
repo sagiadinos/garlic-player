@@ -21,7 +21,7 @@
 THead::THead(QObject *parent)
 {
     Q_UNUSED(parent);
-    refresh_timer  = new QTimer;
+    refresh_timer  = new QTimer(this);
     connect(refresh_timer, SIGNAL(timeout()), this, SLOT(emitCheckForNewIndex()));
     setDefaultValues();
 }

@@ -38,7 +38,8 @@ public:
     TBaseTiming      *getChildElementFromList(){return this;}
     TContainer       *getParentContainer(){return parent_container;}
     static  QString   parseSrc(QDomElement element);
-    bool              load();
+    bool              isDownloaded();
+    QString           getLoadablePath();
 public slots:
     void              emitfinished();
 protected:
@@ -48,10 +49,8 @@ protected:
     QString           src, exec, type, fit = "";
     QString           cached_file_path;
     QString           filename, cache_control, log_content_id  = "";
-    bool              loaded;
     void              setBaseMediaAttributes();
     void              setBaseParameters();
-    virtual bool      loadMedia() = 0;
     virtual void      setAttributes() = 0;
 private:
 signals:

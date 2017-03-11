@@ -20,7 +20,6 @@
 #define TAUDIO_H
 
 #include "media.h"
-#include "tools/mediadecoderwrapper.h"
 
 class TAudio : public TMedia
 {
@@ -32,16 +31,13 @@ public:
     void                    pause();
     void                    stop();
     void                    play();
-    MediaDecoderWrapper    *getMediaPlayer(){return MediaDecoderW;}
 protected:
-    MediaDecoderWrapper    *MediaDecoderW;
     TBaseTiming            *parent_object;
     QString                 soundLevel = "100%";
     void                    setAttributes();
     bool                    loadMedia();
 protected slots:
     void                    setDurationTimerBeforePlay();
-    void                    finished();
 };
 
 #endif // TAUDIO_H

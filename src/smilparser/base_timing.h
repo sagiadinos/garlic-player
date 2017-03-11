@@ -58,6 +58,7 @@ public:
     virtual bool          hasPlayingChilds() = 0;
 public slots:
     virtual void          emitfinished() = 0;
+            void          finishedSimpleDuration();
 protected:
             QTimer       *begin_timer, *end_timer, *dur_timer;
             qint64        pause_start;
@@ -78,7 +79,6 @@ protected:
    virtual  void          setDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
 protected slots:
             void          releasePlay();
-            void          finishedSimpleDuration();
             void          finishedActiveDuration();
 private:
             bool          repeatable;

@@ -32,21 +32,16 @@ TWeb::~TWeb()
 
 void TWeb::setDurationTimerBeforePlay()
 {
-    if (load() && (hasDurAttribute() || end_timer->isActive()))
+    if (isDownloaded() && (hasDurAttribute() || end_timer->isActive()))
     {
         if (!is_resumed)
             emit startedMedia(parent_container, this);
     }
-    else // set a duration otherwise it runs in a recursion stack overflow when no dur set or load is not complete
+    else // set a duration otherwise it runs in a recursion stack overflow when no dur set or download is not complete
         setInternalDefaultDur();
     return;
 }
 
-
-/**
- * @brief TMedia::prepareLoad
- * @param manager
- */
 void TWeb::registerFile(TFileManager *FileManager)
 {
     if (type.contains("application/widget"))
@@ -70,20 +65,7 @@ void TWeb::pause()
 
 void TWeb::stop()
 {
-    delete browser;
     status = _stopped;
-    loaded = false;
-}
-
-bool TWeb::loadMedia()
-{
-    browser       = new QWebEngineView();
-    browser->load(QUrl(MyFileManager->getLoadablePath(src)));
-
-    browser->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled,true);
-    browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled,true);
-    qDebug() << getID() << QTime::currentTime().toString()  << "maybe ;) loaded: " << src;
-    return true;
 }
 
 void TWeb::setAttributes()

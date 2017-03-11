@@ -50,6 +50,11 @@ QString TConfiguration::getUserConfigByKey(QString key)
     return UserConfig->value(key, "").toString();
 }
 
+void TConfiguration::setUserConfigByKey(QString key, QString value)
+{
+    UserConfig->setValue(key, value);
+}
+
 QString TConfiguration::getPlayerName() const
 {
     return player_name;
@@ -58,7 +63,8 @@ QString TConfiguration::getPlayerName() const
 void TConfiguration::setPlayerName(const QString &value)
 {
     player_name = value;
-    UserConfig->setValue("player_name", value);
+    setUserConfigByKey("player_name", value);
+
 }
 
 QString TConfiguration::getUuid() const
@@ -69,7 +75,7 @@ QString TConfiguration::getUuid() const
 void TConfiguration::setUuid(const QString &value)
 {
     uuid = value;
-    UserConfig->setValue("uuid", value);
+    setUserConfigByKey("uuid", value);
 }
 
 QString TConfiguration::getUserAgent() const
@@ -96,8 +102,11 @@ void TConfiguration::setIndexUri(const QString &value)
 void TConfiguration::determineIndexUri(QString path)
 {
     if (path != "")
+    {
         setIndexUri(path);
-    else if (getUserConfigByKey("index_uri") != "")
+        setUserConfigByKey("index_uri", "http://indexes.smil-admin.com");
+    }
+    else if (getUserConfigByKey("index_uri") != "") // get from intern config
     {
         setIndexUri(getUserConfigByKey("index_uri"));
     }
@@ -105,12 +114,17 @@ void TConfiguration::determineIndexUri(QString path)
     {
         checkConfigXML();
         if (index_uri == "")
+        {
             setIndexUri("http://indexes.smil-admin.com");
+            setUserConfigByKey("index_uri", "http://indexes.smil-admin.com");
+        }
     }
 
     if (index_uri.mid(0, 4) != "http"  && index_uri.mid(0, 3) != "ftp" && index_uri.mid(0, 1) != "/") // https is includered in http!
+    {
         setIndexUri(base_path+index_uri);
-
+        setUserConfigByKey("index_uri", base_path+index_uri);
+    }
     determineIndexPath();
 }
 
@@ -185,25 +199,21 @@ void TConfiguration::determineBasePath(QString absolute_path_to_bin)
  */
 QString TConfiguration::getPaths(QString path_name)
 {
-    if (path_name == "configuration")
-        return base_path + "configuration/";
-    else if (path_name == "var")
-        return base_path + "var/";
-    else if (path_name == "media")
-        return base_path + "var/media/";
+    QString ret = base_path;
+    if (path_name == "cache")
+        ret = cache_dir;
     else if (path_name == "logs")
-        return base_path + "logs/";
-    else if (path_name == "base")
-        return base_path;
+        ret = log_dir;
 
-    return base_path;
+    return ret;
 }
 
 void TConfiguration::createDirectories()
 {
-    createDirectoryIfNotExist("var");
-    createDirectoryIfNotExist("configuration");
-    createDirectoryIfNotExist("logs");
+    cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/";
+    createDirectoryIfNotExist(cache_dir);
+    log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/logs/";
+    createDirectoryIfNotExist(log_dir);
 }
 
 void TConfiguration::determineUserAgent()
@@ -214,7 +224,7 @@ void TConfiguration::determineUserAgent()
 
 void TConfiguration::checkConfigXML()
 {
-    QFile file(getPaths("configuration")+"config.xml");
+    QFile file(base_path+"config.xml");
     if (file.exists() && file.open(QIODevice::ReadOnly))
     {
         QXmlStreamReader reader(&file);
@@ -229,13 +239,15 @@ void TConfiguration::checkConfigXML()
                  }
              }
          }
+        file.rename(base_path+"config.xml", base_path+"config_readed.xml");
     }
 }
 
-void TConfiguration::createDirectoryIfNotExist(QString key)
+
+void TConfiguration::createDirectoryIfNotExist(QString path)
 {
     QDir dir;
-    dir.setPath(getPaths(key));
+    dir.setPath(path);
     if (!dir.exists() && !dir.mkpath("."))
         qDebug() << "Failed to create " << dir.path() << "\r";
     return;

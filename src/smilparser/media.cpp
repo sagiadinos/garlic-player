@@ -28,7 +28,6 @@ bool TMedia::parse(QDomElement element)
     root_element   = element;
     setAttributes();     // special for every media type
     setBaseParameters(); // in this class
-    loaded       = false;
     return true;
 }
 
@@ -40,21 +39,14 @@ QString TMedia::parseSrc(QDomElement element)
     return ret;
 }
 
-bool TMedia::load()
+bool TMedia::isDownloaded()
 {
-    int stat = MyFileManager->checkCacheStatus(src);
-    if (!loaded)
-    {
-        if(stat > 0)
-            loaded = loadMedia();
-    }
-    else
-    {
-        if(stat == MyFileManager->_reloadable)
-            loaded = loadMedia();
-    }
+    return (MyFileManager->checkCacheStatus(src) > 0);
+}
 
-    return loaded;
+QString TMedia::getLoadablePath()
+{
+     return MyFileManager->getLoadablePath(src);
 }
 
 

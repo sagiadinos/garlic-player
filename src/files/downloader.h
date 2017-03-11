@@ -41,7 +41,7 @@ class TDownloader: public QObject
     QNetworkAccessManager *manager_head, *manager_head_redirect, *manager_get;
 
 public:
-    TDownloader(QString ua, QObject * parent = 0);
+    TDownloader(QString ua);
     ~TDownloader();
     virtual void checkFiles(QString local, QString remote, QString src);
     virtual bool downloadInProgress();

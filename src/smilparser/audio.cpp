@@ -31,58 +31,32 @@ TAudio::~TAudio()
 
 void TAudio::setDurationTimerBeforePlay()
 {
-    if (load())
+    if (isDownloaded())
     {
         hasDurAttribute(); // it doesn' matter if there is an dur set cause videos/audio have an own media duration
         if (!is_resumed)
             emit startedMedia(parent_container, this);
     }
-    else // set a duration otherwise it runs in a recursion stack overflow when load is not complete
+    else // set a duration otherwise it runs in a recursion stack overflow when download is not complete
         setInternalDefaultDur();
-}
-
-void TAudio::finished()
-{
-    finishedSimpleDuration();
 }
 
 // ====================  protected methods =================================
 void TAudio::play()
 {
-    MediaDecoderW->play();
     status = _playing;
 }
 
 void TAudio::stop()
 {
-    MediaDecoderW->stop();
-    disconnect(MediaDecoderW, SIGNAL(finished()), this, SLOT(finished()));
-    MediaDecoderW->deleteLater();
     status        = _stopped;
-    loaded        = false;
 }
 
 
 void TAudio::pause()
 {
-    MediaDecoderW->pause();
     status = _playing;
 }
-
-bool TAudio::loadMedia()
-{
-    QString file_path  = MyFileManager->getLoadablePath(src);
-    MediaDecoderW      = new MediaDecoderWrapper;
-    connect(MediaDecoderW, SIGNAL(finished()), this, SLOT(finished()));
-    bool ret           = MediaDecoderW->load(file_path);
-
-    if (!ret)
-        qCritical() << getID() << QTime::currentTime().toString()  << "not loaded: " << file_path;
-    else
-        qDebug() << getID() << QTime::currentTime().toString()  << "loaded: " << file_path;
-    return ret;
-}
-
 
 
 void TAudio::setAttributes()

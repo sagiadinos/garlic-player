@@ -73,7 +73,7 @@ QString TFileManager::getLoadablePath(QString src)
     {
         if (status != _uncachable)
         {
-           ret = MyConfiguration->getPaths("var")+getHashedFilePath(src);
+           ret = MyConfiguration->getPaths("cache")+getHashedFilePath(src);
            if (src.mid(src.length()-4, 4) == ".wgt")
            {
                 #if defined  Q_OS_WIN
@@ -85,7 +85,7 @@ QString TFileManager::getLoadablePath(QString src)
         }
         else
         {
-            if (isRemote(index_uri)) // if index-Smil is from Web-Service check if download
+            if (isRemote(index_uri))
                 ret = src;
             else
                 ret =  MyConfiguration->getIndexPath()+src;
@@ -128,7 +128,7 @@ void TFileManager::proceedDownloadQueue()
     {
         QString src = download_queue.dequeue();
 
-        MyDownloader->checkFiles(MyConfiguration->getPaths("var")+getHashedFilePath(src), determineFullRemoteFilePath(src), src);
+        MyDownloader->checkFiles(MyConfiguration->getPaths("cache")+getHashedFilePath(src), determineFullRemoteFilePath(src), src);
     }
     return;
 }

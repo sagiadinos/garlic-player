@@ -19,6 +19,7 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 #include <QSettings>
+#include <QStandardPaths>
 #include <QDir>
 #include <QUrl>
 #include <QUuid>
@@ -31,46 +32,49 @@ class TConfiguration  : public QObject
 {
     Q_OBJECT
 public:
-    TConfiguration(QSettings *UserConfig = 0);
-    QString getVersion(){return "0.1.0";}
-    QString getAppName(){return "garlic player";}
-    QString getDescription() {return "SMIL Media Player for Digital Signage";}
+    TConfiguration(QSettings *UserConfig);
+    QString         getVersion(){return "0.1.0";}
+    void            setAppName(QString value){app_name = value;}
+    QString         getAppName(){return app_name;}
+    QString         getDescription() {return "SMIL Media Player for Digital Signage";}
 
-    QSettings *getUserConfig() const;
-    void       setUserConfig(QSettings *value);
-    QString    getUserConfigByKey(QString key);
-    QString    getUuid() const;
-    void       setUuid(const QString &value);
-    QString    getPlayerName() const;
-    void       setPlayerName(const QString &value);
-    QString    getUserAgent() const;
-    void       setUserAgent(const QString &value);
-    QString    getOS() const;
-    void       setOS(const QString &value);
-    QString    getPaths(QString path_name);
-    void       setIndexUri(const QString &value);
-    QString    getIndexUri();
-    void       setIndexPath(const QString &value);
-    QString    getIndexPath();
-    QString    getBasePath() const;
-    void       setBasePath(const QString &value);
+    QSettings      *getUserConfig() const;
+    void            setUserConfig(QSettings *value);
+    QString         getUserConfigByKey(QString key);
+    void            setUserConfigByKey(QString key, QString value);
+    QString         getUuid() const;
+    void            setUuid(const QString &value);
+    QString         getPlayerName() const;
+    void            setPlayerName(const QString &value);
+    QString         getUserAgent() const;
+    void            setUserAgent(const QString &value);
+    QString         getOS() const;
+    void            setOS(const QString &value);
+    QString         getPaths(QString path_name);
+    void            setIndexUri(const QString &value);
+    QString         getIndexUri();
+    void            setIndexPath(const QString &value);
+    QString         getIndexPath();
+    QString         getBasePath() const;
+    void            setBasePath(const QString &value);
+    void            determineBasePath(QString absolute_path_to_bin);
+    void            determineIndexUri(QString path);
+    void            createDirectories();
+    void            determineUserAgent();
+    void            checkConfigXML();
 
-
-    void       determineBasePath(QString absolute_path_to_bin);
-    void       determineIndexUri(QString path);
-    void       createDirectories();
-    void       determineUserAgent();
-    void       checkConfigXML();
 
 
 protected:
-    QSettings *UserConfig;
-    QString    uuid, player_name, user_agent, os, base_path, index_uri, index_path;
-    void       createDirectoryIfNotExist(QString key);
-    void       determineIndexPath();
-    void       determineUuid();
-    void       determinePlayerName();
-    void       determineOS();
+    QSettings      *UserConfig;
+    QString         uuid, player_name, user_agent, os, base_path, index_uri, index_path = "";
+    QString         cache_dir, log_dir = "";
+    QString         app_name = "garlic-player";
+    void            createDirectoryIfNotExist(QString path);
+    void            determineIndexPath();
+    void            determineUuid();
+    void            determinePlayerName();
+    void            determineOS();
 };
 
 #endif // CONFIGURATION_H
