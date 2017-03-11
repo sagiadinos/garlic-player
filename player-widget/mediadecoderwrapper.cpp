@@ -16,7 +16,6 @@ MediaDecoderWrapper::~MediaDecoderWrapper()
 #ifdef SUPPORT_QTAV
     MediaDecoder.clearVideoRenderers();
 #endif
-    qDebug() << "wat nen schiet";
 }
 
 void MediaDecoderWrapper::setVideoOutput(MediaViewWrapper *renderer)

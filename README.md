@@ -11,7 +11,7 @@ Linux, Windows, Raspberry Pi 3 maybe later OSX, Android
 Developing with Qt 5.8.0, QtAV 1.11.0 (also QtMultimedia Support for Raspberry) and Quazip 0.7.3 for wgt (zipped html)
 
 Garlic actually is able to play local and remote (via http) SMIL Files with actual supported features.
-Compilations tested with Kde Neon and Windows 7 i64 (VS2015 Community)
+Compilations tested with Kde Neon, Debian 8 Jessie, Rasperian Jessie (rpi2) and Windows 7 i64 (VS2015 Community Version)
 
 *garlic.sh [options] SMIL_INDEX*
 
@@ -91,11 +91,12 @@ Only sources! Binaries will deployed soon.
 
 ## general features
  - toogle fullscreen with Ctrl-F
+ - quit with Ctrl-C
 
 ## Actual Working
-- deployment for Linux, Windows and Raspberry Pi 3
+- deployment Linux and Windows for first binary release
 
-## ToDo's
+## future ToDo's
 - change config.xml during plaback
 - settings menu via key
 - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
