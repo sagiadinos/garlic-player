@@ -1,5 +1,5 @@
 #!/bin/bash
-PATH_QMAKE="/home/niko/Anwendungen/Qt/5.7/gcc_64/bin/qmake"
+PATH_QMAKE="/home/niko/Anwendungen/Qt/5.8/gcc_64/bin/qmake"
 
 cd tests/
 

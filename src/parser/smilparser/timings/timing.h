@@ -22,8 +22,10 @@
 #include <QObject>
 #include <QDateTime>
 #include <QRegularExpression>
-#include <timings/clock_value.h>
 #include <QDebug>
+
+#include "clock_value.h"
+
 struct IsoPeriod
 {
     int    years   = 0;

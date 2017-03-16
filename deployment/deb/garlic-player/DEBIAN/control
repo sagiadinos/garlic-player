@@ -1,0 +1,10 @@
+Package: garlic-player
+Version: 0.1.0
+Section: non-free
+Priority: extra
+Architecture: amd64
+Depends: libopenal1, libva1, libass5, libnss3,  libva-drm1, libva-x11-1
+Installed-Size: 226330852
+Maintainer: Nikolaos Sagiadinos <ns@smil-control.com>
+Homepage: www.garlic-player.com
+Description: SMIL based media player for digital signage
