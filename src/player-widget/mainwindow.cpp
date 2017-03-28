@@ -28,6 +28,7 @@ MainWindow::MainWindow(TFileManager *FileManager)
     MySmil = new TSmil(MyFileManager);
     connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
+    setCursor(Qt::BlankCursor);
 }
 
 MainWindow::~MainWindow()

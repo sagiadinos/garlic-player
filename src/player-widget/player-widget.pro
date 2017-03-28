@@ -22,7 +22,7 @@ DEFINES += QUAZIP_STATIC
 
 TARGET = garlic-player
 TEMPLATE = app
-DESTDIR = ../../bin
+DESTDIR = ../bin
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes
 
