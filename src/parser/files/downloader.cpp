@@ -60,8 +60,7 @@ void TDownloader::checkFiles(QString local, QString remote, QString src)
 
 void TDownloader::doHttpHeadRequest()
 {
-    QNetworkRequest request(remote_file_url);
-    request.setRawHeader(QByteArray("User-Agent"), user_agent);
+    QNetworkRequest request = prepareNetworkRequest(remote_file_url);
     manager_head->head(request);
     download = true;
     return;
@@ -78,8 +77,7 @@ void TDownloader::finishedHeadRequest(QNetworkReply *reply)
         {
             // change remote_file_url with new redirect address
             remote_file_url = QUrl(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString());
-            QNetworkRequest request(remote_file_url);
-            request.setRawHeader(QByteArray("User-Agent"), user_agent);
+            QNetworkRequest request = prepareNetworkRequest(remote_file_url);
             manager_head_redirect->head(request);
         }
     }
@@ -96,6 +94,16 @@ void TDownloader::finishedHeadRedirectRequest(QNetworkReply *reply)
     else
         emitDownloadFailed(reply->errorString());
     return;
+}
+
+QNetworkRequest TDownloader::prepareNetworkRequest(QUrl remote_url)
+{
+    QNetworkRequest request(remote_url);
+    QSslConfiguration conf = request.sslConfiguration();
+    conf.setPeerVerifyMode(QSslSocket::VerifyNone);
+    request.setSslConfiguration(conf);
+    request.setRawHeader(QByteArray("User-Agent"), user_agent);
+    return request;
 }
 
 void TDownloader::checkStatusCode(QNetworkReply *reply, int status_code)
@@ -150,9 +158,8 @@ void TDownloader::checkHttpHeaders(QNetworkReply *reply)
 
 void TDownloader::doHttpGetRequest()
 {
-    // cause it can be a riderect to a new url
-    QNetworkRequest request(remote_file_url);
-    request.setRawHeader(QByteArray("User-Agent"), user_agent);
+    // cause it can be a redirect to a new url
+    QNetworkRequest request = prepareNetworkRequest(remote_file_url);
     manager_get->get(request);
     return;
 }

@@ -37,4 +37,10 @@ HEADERS  += mainwindow.h \
     mediadecoderwrapper.h \
     mediaviewwrapper.h
 
-LIBS += -L../lib -lgarlic -lquazip -lzlib
+unix{
+    LIBS += -L../lib -lgarlic -lquazip -lzlib
+}
+win32 {
+    Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
+    Debug:LIBS += -L../lib -lgarlic -lquazipd -lzlib
+}

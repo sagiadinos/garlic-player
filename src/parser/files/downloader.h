@@ -52,20 +52,21 @@ private slots:
     void finishedHeadRedirectRequest(QNetworkReply *reply);
 
 protected:
-    QUrl           remote_file_url;
-    QString        remote_file_path, src_file_path;
-    bool           download;
-    QByteArray     user_agent;
-    QFileInfo      local_file_info;
-    bool           extractWgt();
-    void           checkHttpHeaders(QNetworkReply *reply);
-    void           checkStatusCode(QNetworkReply *reply, int status_code);
-    void           doHttpGetRequest();
-    void           doHttpHeadRequest();
-    void           saveToDisk(QIODevice *data);
-    void           emitNoModified();
-    void           emitUnCachable();
-    void           emitDownloadFailed(QString error_message);
+    QUrl            remote_file_url;
+    QString         remote_file_path, src_file_path;
+    bool            download;
+    QByteArray      user_agent;
+    QFileInfo       local_file_info;
+    QNetworkRequest prepareNetworkRequest(QUrl remote_url);
+    bool            extractWgt();
+    void            checkHttpHeaders(QNetworkReply *reply);
+    void            checkStatusCode(QNetworkReply *reply, int status_code);
+    void            doHttpGetRequest();
+    void            doHttpHeadRequest();
+    void            saveToDisk(QIODevice *data);
+    void            emitNoModified();
+    void            emitUnCachable();
+    void            emitDownloadFailed(QString error_message);
 signals:
     void downloadSucceed(QString);
     void noModified(QString); // when file is in cache cancel download
