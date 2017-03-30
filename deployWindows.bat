@@ -2,14 +2,14 @@
 rem execute this script in a VS Native CMD
 
 rem put all files needed and structured in %DEPLOYMENT_HELPER_PATH%
-set DEPLOYMENT_HELPER_PATH=C:\garlic-deployment
+set DEPLOYMENT_HELPER_PATH=
 if "%DEPLOYMENT_HELPER_PATH%" == "" (
 	echo on
 	echo Error: Set the correct paths for DEPLOYMENT_HELPER_PATH 
 	goto END
 )
 
-set QT_PATH=C:\Qt
+set QT_PATH=
 set QT_PATH_RUNTIME=%QT_PATH%\5.8\msvc2015_64
 if "%QT_PATH%" == "" (
 	echo on
@@ -24,16 +24,16 @@ cd build
 %QT_PATH%\Tools\QtCreator\bin\jom.exe
 
 %QT_PATH_RUNTIME%\bin\windeployqt.exe -opengl -webengine bin\garlic-player.exe
-missing Qt-Dlls which windeplayqt is not able to copy
+rem copy missing Qt-Dlls which windeplayqt seems is not able to handle
 copy /Y  %QT_PATH_RUNTIME%\bin\Qt5WebSockets.dll bin\*
 copy /Y  %QT_PATH_RUNTIME%\bin\Qt5WebView.dll bin\*
 copy /Y  %QT_PATH_RUNTIME%\bin\Qt5XmlPatterns.dll bin\*
 
-copy QtAV-Dlls
+rem copy QtAV-Dlls
 copy /Y  %QT_PATH_RUNTIME%\bin\QtAV1.dll bin\*
 copy /Y  %QT_PATH_RUNTIME%\bin\QtAVWidgets1.dll bin\*
 
-copy ffmpeg dlls
+rem copy ffmpeg dlls
 copy /Y %QT_PATH_RUNTIME%\bin\av*.dll bin\*
 copy /Y  %QT_PATH_RUNTIME%\bin\sw*.dll bin\*
 copy /Y  %DEPLOYMENT_HELPER_PATH%\libeay32.dll bin\*
@@ -54,6 +54,7 @@ xcopy bin\* deployment\packages\com.sagiadinos.garlic.x64\data\bin\* /sy
 
 %QT_PATH%\Tools\QtInstallerFramework\2.0\bin\binarycreator -c  deployment\config\config.xml -p  deployment\packages garlic-installer.exe
 
-:END
 cd ..
+:END
+
 
