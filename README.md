@@ -91,14 +91,14 @@ Only sources! Binaries will deployed soon.
 
 ## general features
  - toogle fullscreen with Ctrl-F
- - quit with Ctrl-C
+ - quit app with Ctrl-Q
+ - open configuration dialog with Ctrl-C
 
 ## Actual Working
 - deployment Linux and Windows for first binary release
 
 ## future ToDo's
 - change config.xml during plaback
-- settings menu via key
 - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
 - **logs and reports** as described in [a-smil.org reporting](http://www.a-smil.org/index.php/Reporting)
 - **administration functions** as described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)

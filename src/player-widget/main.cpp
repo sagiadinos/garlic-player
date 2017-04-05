@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 {
     TConfiguration *MyConfiguration = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
     QDir dir(".");
+    int ret = 0;
     MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator
     MyConfiguration->determineUserAgent();
     MyConfiguration->createDirectories();
@@ -55,18 +56,26 @@ int main(int argc, char *argv[])
     else
         MyConfiguration->determineIndexUri("");
 
+    bool is_index = true;
     MainWindow w(new TFileManager(MyConfiguration));
 
-    if (parser.isSet("f"))
-        w.showFullScreen();
-    else
+    if (MyConfiguration->getIndexUri() == "")
     {
-        w.setMinimumSize(980, 540);
-        w.show();
+        if (w.openConfigDialog() == QDialog::Rejected)
+            is_index = false;
     }
 
-    w.checkForNewSmilIndex();
-
-
-    return app.exec();
+    if (is_index)
+    {
+        if (parser.isSet("f"))
+            w.showFullScreen();
+        else
+        {
+            w.setMinimumSize(980, 540);
+            w.show();
+        }
+         w.checkForNewSmilIndex();
+         ret = app.exec();
+    }
+    return ret;
 }

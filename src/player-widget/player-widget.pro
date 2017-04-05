@@ -30,12 +30,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     region.cpp \
     mediadecoderwrapper.cpp \
-    mediaviewwrapper.cpp
+    mediaviewwrapper.cpp \
+    configdialog.cpp
 
 HEADERS  += mainwindow.h \
     region.h \
     mediadecoderwrapper.h \
-    mediaviewwrapper.h
+    mediaviewwrapper.h \
+    configdialog.h
 
 unix{
     LIBS += -L../lib -lgarlic -lquazip -lzlib
@@ -44,3 +46,8 @@ win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
     Debug:LIBS += -L../lib -lgarlic -lquazipd -lzlib
 }
+
+DISTFILES +=
+
+FORMS += \
+    configdialog.ui

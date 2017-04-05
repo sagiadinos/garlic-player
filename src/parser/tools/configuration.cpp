@@ -64,7 +64,6 @@ void TConfiguration::setPlayerName(const QString &value)
 {
     player_name = value;
     setUserConfigByKey("player_name", value);
-
 }
 
 QString TConfiguration::getUuid() const
@@ -103,8 +102,8 @@ void TConfiguration::determineIndexUri(QString path)
 {
     if (path != "")
     {
+        setUserConfigByKey("index_uri", path);
         setIndexUri(path);
-        setUserConfigByKey("index_uri", "http://indexes.smil-admin.com");
     }
     else if (getUserConfigByKey("index_uri") != "") // get from intern config
     {
@@ -113,17 +112,12 @@ void TConfiguration::determineIndexUri(QString path)
     else
     {
         checkConfigXML();
-        if (index_uri == "")
-        {
-            setIndexUri("http://indexes.smil-admin.com");
-            setUserConfigByKey("index_uri", "http://indexes.smil-admin.com");
-        }
     }
 
-    if (index_uri.mid(0, 4) != "http"  && index_uri.mid(0, 3) != "ftp" && index_uri.mid(0, 1) != "/") // https is includered in http!
+    if (index_uri != "" && index_uri.mid(0, 4) != "http"  && index_uri.mid(0, 3) != "ftp" && index_uri.mid(0, 1) != "/") // https is includered in http!
     {
-        setIndexUri(base_path+index_uri);
-        setUserConfigByKey("index_uri", base_path+index_uri);
+       setUserConfigByKey("index_uri", base_path+index_uri);
+       setIndexUri( base_path+index_uri);
     }
     determineIndexPath();
 }
@@ -235,6 +229,7 @@ void TConfiguration::checkConfigXML()
              {
                  if (reader.name() == "prop" && reader.attributes().value("name") == "content.serverUrl")
                  {
+                     setUserConfigByKey("index_uri", reader.attributes().value("value").toString());
                      setIndexUri(reader.attributes().value("value").toString());
                  }
              }

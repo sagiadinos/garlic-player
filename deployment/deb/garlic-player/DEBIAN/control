@@ -3,7 +3,7 @@ Version: 0.1.0
 Section: non-free
 Priority: extra
 Architecture: amd64
-Depends: libopenal1, libva1, libass5, libnss3,  libva-drm1, libva-x11-1, libwebp5, libwebpdemux1, libstdc++6, libxcb-shm0, libsnappy1, libXss1, libjack0, libminizip1, libopus0, libevent-2.0-5
+Depends: libopenal1, libva1, libass5, libnss3,  libva-drm1, libva-x11-1
 Installed-Size: 212653
 Maintainer: Nikolaos Sagiadinos <ns@smil-control.com>
 Homepage: www.garlic-player.com

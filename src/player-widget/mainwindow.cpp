@@ -65,7 +65,6 @@ void MainWindow::checkForNewSmilIndex()
 
 void MainWindow::deleteRegionsAndLayouts()
 {
-
     qDeleteAll(ar_regions);
     ar_regions.clear();
 }
@@ -134,11 +133,22 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             else
                 showNormal();
         break;
-        case Qt::Key_C:
+    case Qt::Key_C:
+        setCursor(Qt::ArrowCursor);
+        if (openConfigDialog() == QDialog::Accepted)
+            checkForNewSmilIndex();
+        setCursor(Qt::BlankCursor);
+        break;
+        case Qt::Key_Q:
             exit(0);
         break;
-
     }
+}
+
+int MainWindow::openConfigDialog()
+{
+    ConfigDialog MyConfigDialog(0, MyFileManager->getConfiguration());
+    return MyConfigDialog.exec();
 }
 
 void MainWindow::resizeEvent(QResizeEvent * event)

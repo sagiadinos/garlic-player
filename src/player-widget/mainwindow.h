@@ -25,6 +25,7 @@
 #include <video.h>
 #include <index.h>
 #include <downloader.h>
+#include "configdialog.h"
 
 class MainWindow : public QWidget
 {
@@ -40,12 +41,12 @@ public slots:
     void                      stopShowMedia(TMedia *media);
     void                      resizeEvent(QResizeEvent * event);
     void                      keyPressEvent(QKeyEvent *ke);
+    int                       openConfigDialog();
 protected:
     QMap<QString, TRegion *>  ar_regions;
     TSmil                    *MySmil          = NULL;
     THead                    *MyHead          = NULL;
     TIndexManager            *MyIndexFile     = NULL;
-    TConfiguration            *MyConfiguration = NULL;
     TFileManager             *MyFileManager   = NULL;
     QString                   smil_index_path;
     void                      deleteRegionsAndLayouts();
