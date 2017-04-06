@@ -6,6 +6,6 @@
     <Publisher>Nikolaos Sagiadinos</Publisher>
     <ProductUrl>http://www.garlic-player.com</ProductUrl>
     <StartMenuDir>garlic-player</StartMenuDir>
-    <TargetDir>@HomeDir@/garlic-player</TargetDir>
+    <TargetDir>@ApplicationsDir@/garlic-player</TargetDir>
     <ControlScript>controllerScript.js</ControlScript>
 </Installer>

@@ -19,3 +19,20 @@ function Component()
         cancelInstaller("Installation on " + systemInfo.currentCpuArchitecture + " architecture is not supported");
     }
 }
+
+Component.prototype.createOperations = function()
+{
+    component.createOperations();
+
+    if (systemInfo.productType === "windows")
+	{
+        component.addOperation("CreateShortcut", "@TargetDir@/start_garlic.bat", "@StartMenuDir@/garlic-player.lnk",
+            "workingDirectory=@TargetDir@",
+			"iconPath=@TargetDir@/bin/garlic-player.ico"
+        );
+        component.addOperation("CreateShortcut", "@TargetDir@/start_garlic.bat", "@DesktopDir@/garlic-player.lnk",
+            "workingDirectory=@TargetDir@",
+			"iconPath=@TargetDir@/bin/garlic-player.ico"
+        );
+    }
+}

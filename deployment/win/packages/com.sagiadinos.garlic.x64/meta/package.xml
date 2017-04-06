@@ -2,7 +2,7 @@
 <Package>
     <DisplayName>garlic-player (requires license agreement)</DisplayName>
     <Description>SMIL player for Digital Signage</Description>
-    <ReleaseDate>2017-03-15</ReleaseDate>
+    <ReleaseDate>2017-04-06</ReleaseDate>
     <Version>0.1.0</Version>
     <Default>true</Default>
     <Script>install.js</Script>
