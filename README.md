@@ -25,7 +25,7 @@ Command line options:
 Arguments:
 SMIL_INDEX        Path to SMIL index
 
-Only sources! Binaries will deployed soon.
+Binaries can downloaded at http://garlic-player.com
 
 ## Features
  - Support for multiple screens
