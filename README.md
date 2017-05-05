@@ -86,7 +86,7 @@ Only sources! Binaries will deployed soon.
 - **z-index** integer values
 - **backgroundColor** values are compatible with CSS
 
-<!-- --> - HTML-like comments in SMIL-File are supported and content inside will ignored
+<!-- -->  HTML-like comments in SMIL-File are supported and content inside will ignored
 
 ##additional features supported not in w3c standard
 - **shuffle play** in seq container via metadata
@@ -98,11 +98,11 @@ Only sources! Binaries will deployed soon.
 - refresh via meta tag in cyclic timer periods
 - http 301 redirects for index and media
 
- ## HotKeys
- - toogle fullscreen with Ctrl-F
- - toogle bigscreen with Ctrl-B
- - quit app with Ctrl-Q
- - open configuration dialog with Ctrl-C
+## HotKeys
+- toogle fullscreen with Ctrl-F
+- toogle bigscreen with Ctrl-B
+- quit app with Ctrl-Q
+- open configuration dialog with Ctrl-C
 
 ## Actual Working
 - deployment Linux and Windows for first binary release
