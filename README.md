@@ -15,12 +15,12 @@ Compilations tested with Kde Neon, Debian 8 Jessie, Rasperian Jessie (rpi2) and 
 
 *garlic.sh [options] SMIL_INDEX*
 
-Options:
--h, --help          Displays this help.
--v, --version       Displays version information.
--m, --windows-mode  fullscreen, bigscreen (when multi monitor) or windowed mode
--z, --windows-size  size of windows (when windows mode) e.g. 980x540 means 980px width and 540px height
--s, --screen-select Starts in selected screen
+Command line options:
+ - -h, --help          Displays this help.
+ - -v, --version       Displays version information.
+ - -m, --windows-mode  fullscreen, bigscreen (when multi monitor) or windowed mode
+ - -z, --windows-size  size of windows (when windows mode) e.g. 980x540 means 980px width and 540px height
+ - -s, --screen-select Starts in selected screen number
 
 Arguments:
 SMIL_INDEX        Path to SMIL index
