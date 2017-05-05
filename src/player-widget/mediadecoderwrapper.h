@@ -11,6 +11,7 @@
 
 #include <QObject>
 #include "mediaviewwrapper.h"
+#include "logging_categories.h"
 
 class MediaDecoderWrapper : public QObject
 {

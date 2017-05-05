@@ -86,7 +86,7 @@ void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement 
         base_type        = MyBaseTiming->getBaseType();
     }
 
-    qDebug() << MyBaseTiming->getID() << QTime::currentTime().toString()  << " foundElement";
+    qDebug(SmilParser) << MyBaseTiming->getID() << " foundElement";
 
     MyBaseTiming->prepareTimerBeforePlaying();
 
@@ -108,7 +108,7 @@ void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement 
  */
 void TSmil::startElement(TContainer *parent, TBaseTiming *element)
 {
-    qDebug() << element->getID() << QTime::currentTime().toString() << " startElement";
+    qDebug(SmilParser) << element->getID() << " startElement";
     bool         playable      = true;
     if (parent->getBaseType() == "container")
     {
@@ -138,10 +138,10 @@ void TSmil::startElement(TContainer *parent, TBaseTiming *element)
  */
 void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
 {
-    qDebug() << element->getID() << QTime::currentTime().toString() << " finishElement";
+    qDebug(SmilParser) << element->getID() <<  " finishElement";
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
     {
-        qDebug()<< element->getID() << QTime::currentTime().toString() << "Not kill Timer";
+        qDebug(SmilParser)<< element->getID() << "Not kill Timer";
         stopElement(element);
 
         parent->next(element);
@@ -162,7 +162,7 @@ void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
  */
 void TSmil::pausePlayingElement(TBaseTiming *element)
 {
-    qDebug() << element->getID() << QTime::currentTime().toString() << "pause Element";
+    qDebug(SmilParser) << element->getID() << "pause Element";
     element->prepareTimerBeforePausing();
     if (element->hasPlayingChilds())
     {
@@ -177,7 +177,7 @@ void TSmil::pausePlayingElement(TBaseTiming *element)
 
 void TSmil::resumeQueuedElement(TBaseTiming *element)
 {
-    qDebug() << element->getID() << QTime::currentTime().toString() << "resume Element";
+    qDebug(SmilParser) << element->getID() << "resume Element";
     element->prepareTimerBeforeResume();
     if (element->getStatus() == element->_paused)
     {
@@ -211,7 +211,6 @@ void TSmil::stopElement(TBaseTiming *element)
     {
         if (element->hasPlayingChilds())
         {
-            qDebug()<< element->getID() << QTime::currentTime().toString() << "has Childs";
             stopPlayingElement(element->getChildElementFromList()); // recurse with stopPlaylingElement to kill timer of childs
         }
         element->stop();
@@ -223,7 +222,6 @@ void TSmil::stopElement(TBaseTiming *element)
 
 void TSmil::killTimer(TBaseTiming *element)
 {
-    qDebug() << element->getID() << QTime::currentTime().toString() << "kill Timer";
     element->prepareTimerBeforeStop();
     return;
 }
@@ -264,7 +262,7 @@ void TSmil::connectMediaSlots(TMedia *MyMedia)
 void TSmil::emitStartShowMedia(TMedia *MyMedia)
 {
     MyMedia->play();
-    qDebug() << MyMedia->getID() <<QTime::currentTime().toString() << "startShowMedia";
+    qDebug(SmilParser) << MyMedia->getID() << "startShowMedia";
     ar_played_media.insert(MyMedia);
     emit startShowMedia(MyMedia);
     return;
@@ -275,7 +273,7 @@ void TSmil::emitStopShowMedia(TMedia *MyMedia)
     if (ar_played_media.find(MyMedia) != ar_played_media.end())
     {
         ar_played_media.remove(MyMedia);
-        qDebug() << MyMedia->getID() <<QTime::currentTime().toString() << "stopShowMedia";
+        qInfo() << MyMedia->getID() << "stopShowMedia";
         emit stopShowMedia(MyMedia);
     }
     return;

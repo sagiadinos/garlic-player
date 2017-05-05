@@ -126,7 +126,7 @@ QString TContainer::reactByTag()
 
 void TContainer::emitfinished() // called from finishedActiveDuration() TBase
 {
-    qDebug() << getID() << QTime::currentTime().toString() << "finished Playlist";
+    qDebug(SmilParser) << getID() << "finished Playlist";
     emit finishedContainer(parent_container, this);
 }
 

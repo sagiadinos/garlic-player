@@ -26,19 +26,19 @@ TPrefetch::TPrefetch(TContainer *parent)
 
 void TPrefetch::pause()
 {
-    qDebug() << getID() << QTime::currentTime().toString() << "paused ";
+    qDebug(SmilParser) << getID() << "paused ";
     status = _paused;
 }
 
 void TPrefetch::stop()
 {
-    qDebug() << getID() << QTime::currentTime().toString() << "stopped";
+    qDebug(SmilParser) << getID() << "stopped";
     status = _stopped;
 }
 
 void TPrefetch::play()
 {
-    qDebug() << getID() << QTime::currentTime().toString()  << "prefetch play (load)";
+    qDebug(SmilParser) << getID()  << "prefetch play (load)";
     status = _playing;
 }
 

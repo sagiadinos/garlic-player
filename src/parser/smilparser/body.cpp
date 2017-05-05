@@ -57,7 +57,7 @@ void TBody::prepareTimerBeforePlaying()
 
 bool TBody::isChildPlayable(TBaseTiming *element)
 {
-    qDebug() << element->getID() <<QTime::currentTime().toString() << "is ChildPlayable in body";
+    qDebug(SmilParser) << element->getID() << "is ChildPlayable in body";
     childStarted(element);
     return true;
 }

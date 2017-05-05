@@ -36,7 +36,8 @@ SOURCES += \
     smilparser.cpp \
     smilparser/prefetch.cpp \
     smilparser/tools/shuffle.cpp \
-    files/index.cpp
+    files/index.cpp \
+    tools/logging_categories.cpp
 HEADERS += tools/configuration.h \
     smilparser.h \
     smilparser/head.h \
@@ -60,5 +61,6 @@ HEADERS += tools/configuration.h \
     files/file_manager.h \
     smilparser/prefetch.h \
     smilparser/tools/shuffle.h \
-    files/index.h
+    files/index.h \
+    tools/logging_categories.h
 

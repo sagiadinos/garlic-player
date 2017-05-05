@@ -8,7 +8,7 @@ Offline usage via command-line is also possible.
 
 Linux, Windows, Raspberry Pi 3 maybe later OSX, Android
 
-Developing with Qt 5.8.0, QtAV 1.11.0 (also QtMultimedia Support for Raspberry) and Quazip 0.7.3 for wgt (zipped html)
+Developing with Qt 5.8.0, QtAV 1.11.0 (also not reconnomed QtMultimedia Support) and Quazip 0.7.3 for wgt (zipped html)
 
 Garlic actually is able to play local and remote (via http) SMIL Files with actual supported features.
 Compilations tested with Kde Neon, Debian 8 Jessie, Rasperian Jessie (rpi2) and Windows 7 i64 (VS2015 Community Version)
@@ -16,15 +16,24 @@ Compilations tested with Kde Neon, Debian 8 Jessie, Rasperian Jessie (rpi2) and 
 *garlic.sh [options] SMIL_INDEX*
 
 Options:
--h, --help        Displays this help.
--v, --version     Displays version information.
--f, --fullscreen  Starts in fullscreen mode
--w, --window      Starts in windows mode
+-h, --help          Displays this help.
+-v, --version       Displays version information.
+-m, --windows-mode  fullscreen, bigscreen (when multi monitor) or windowed mode
+-z, --windows-size  size of windows (when windows mode) e.g. 980x540 means 980px width and 540px height
+-s, --screen-select Starts in selected screen
 
 Arguments:
 SMIL_INDEX        Path to SMIL index
 
 Only sources! Binaries will deployed soon.
+
+## Features
+ - Support for multiple screens
+ - Logging in file
+ - Redirects
+ - lot's of video formats 
+ - Media Cache
+ - SMIL3, HTML5 and HTML5-Widgets support
 
 ##actual supported SMIL-Features
 
@@ -89,8 +98,9 @@ Only sources! Binaries will deployed soon.
 - refresh via meta tag in cyclic timer periods
 - http 301 redirects for index and media
 
-## general features
+ ## HotKeys
  - toogle fullscreen with Ctrl-F
+ - toogle bigscreen with Ctrl-B
  - quit app with Ctrl-Q
  - open configuration dialog with Ctrl-C
 

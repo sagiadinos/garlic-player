@@ -18,8 +18,11 @@
 
 #include "mainwindow.h"
 
-MainWindow::MainWindow(TFileManager *FileManager)
+MainWindow::MainWindow(TFileManager *FileManager, TScreen *screen)
 {
+    QWidget *centralWidget = new QWidget(this); // had to be there to get fullscreen simulation over multiple monitors
+    MyScreen        = screen;
+
     MyFileManager   = FileManager;
     MyIndexFile     = new TIndexManager(MyFileManager->getConfiguration());
     connect(MyIndexFile, SIGNAL(isLoaded()), this, SLOT(setSmilIndex()));
@@ -29,6 +32,9 @@ MainWindow::MainWindow(TFileManager *FileManager)
     connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     setCursor(Qt::BlankCursor);
+    setCentralWidget(centralWidget);
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setMainWindowSize(QSize(980, 540)); // set default
 }
 
 MainWindow::~MainWindow()
@@ -42,7 +48,7 @@ MainWindow::~MainWindow()
  */
 void MainWindow::setSmilIndex()
 {
-    qDebug() << "clear MySmil";
+    qDebug(SmilParser) << "clear MySmil";
     if (ar_regions.size() > 0)
     {
         MySmil->clearLists();
@@ -128,11 +134,17 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
     switch (ke->key())
     {
         case Qt::Key_F:
-            if (!isFullScreen())
-                showFullScreen();
+        if (screen_state != FULLSCREEN)
+                resizeAsNormalFullScreen();
             else
-                showNormal();
+                resizeAsWindow();
         break;
+    case Qt::Key_B:
+        if (screen_state != BIGFULLSCREEN)
+             resizeAsBigFullScreen();
+        else
+            resizeAsWindow();
+    break;
     case Qt::Key_C:
         setCursor(Qt::ArrowCursor);
         if (openConfigDialog() == QDialog::Accepted)
@@ -150,6 +162,39 @@ int MainWindow::openConfigDialog()
     ConfigDialog MyConfigDialog(0, MyFileManager->getConfiguration());
     return MyConfigDialog.exec();
 }
+
+void MainWindow::resizeAsNormalFullScreen()
+{
+    screen_state = FULLSCREEN;
+    move(MyScreen->getStartPointFromScreen());
+    resize(MyScreen->getSizeFromScreen());
+}
+
+void MainWindow::resizeAsBigFullScreen()
+{
+    screen_state = BIGFULLSCREEN;
+    move(0, 0);
+    resize(MyScreen->getWholeSize());
+}
+
+void MainWindow::resizeAsWindow()
+{
+    screen_state = WINDOWED;
+    move(MyScreen->getStartPointFromScreen());
+    resize(getMainWindowSize());
+}
+
+void MainWindow::setMainWindowSize(QSize size)
+{
+    mainwindow_size = size;
+}
+
+QSize MainWindow::getMainWindowSize()
+{
+    return mainwindow_size;
+}
+
+
 
 void MainWindow::resizeEvent(QResizeEvent * event)
 {

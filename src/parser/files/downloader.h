@@ -27,6 +27,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
+#include "logging_categories.h"
 #include "../ext/quazip/JlCompress.h"
 
 
@@ -66,7 +67,7 @@ protected:
     void            saveToDisk(QIODevice *data);
     void            emitNoModified();
     void            emitUnCachable();
-    void            emitDownloadFailed(QString error_message);
+    void            emitDownloadFailed(QString Msg);
 signals:
     void downloadSucceed(QString);
     void noModified(QString); // when file is in cache cancel download

@@ -43,7 +43,7 @@ void TFileManager::clearQueues()
 
 void TFileManager::registerFile(QString src)
 {
-    qDebug() << "register file " << QTime::currentTime().toString() << src;
+    qDebug(ContentManager) << " REGISTER_FILE resourceURI:" << src;
     // Use Cache only when files are on web
     if (isRemote(index_uri) || isRemote(src))
     {
@@ -157,8 +157,7 @@ void TFileManager::insertForDownloadQueue(QString src)
 
 bool TFileManager::isRemote(QString file_path)
 {
-    // cachabel if indexURI is remote and filepath
-
+    // cachable if indexURI is remote and filepath
     if (file_path.mid(0, 4) == "http" || file_path.mid(0,3) == "ftp") // when relative path
         return true;
     else

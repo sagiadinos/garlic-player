@@ -54,7 +54,7 @@ void TPar::setDurationTimerBeforePlay()
 
 bool TPar::isChildPlayable(TBaseTiming *element)
 {
-    qDebug() << element->getID() << QTime::currentTime().toString() << "is ChildPlayable in par";
+    qDebug(SmilParser) << element->getID() << "is ChildPlayable in par";
     childStarted(element);
     return true;
 }

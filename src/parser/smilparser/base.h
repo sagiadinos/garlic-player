@@ -23,8 +23,7 @@
 #include <QString>
 #include <QStringList>
 #include <QtXml>
-#include <QDebug>
-
+#include "logging_categories.h"
 /**
  * @brief The abstract TBase class should inherited for all smil elements in body section
  *        Here comes is the init of all common attributes:

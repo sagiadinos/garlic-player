@@ -60,7 +60,6 @@ void TIndexManager::checkForLoaded(QString file_path)
 
 bool TIndexManager::isIndexEqual(QString file_path)
 {
-    // Verleiche Dateigrösse
     QFileInfo new_index(file_path);
     return (actual_index == new_index);
 }
@@ -92,11 +91,11 @@ void TIndexManager::loadFromLocal(QString file_path)
             emit isLoaded();
         }
         else
-            qDebug() << "Fail load to a DomDocument";
+            qCritical(ContentManager) << "resourceUri:" << file_path << "Fail load to a DomDocument";
         file.close();
     }
     else
-        qDebug() << QTime::currentTime().toString() << "fail to load " << file_path;
+        qCritical(ContentManager) << "resourceUri:" << file_path << "Fail load";
     return;
 }
 

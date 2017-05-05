@@ -19,20 +19,21 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QWidget>
+#include <QMainWindow>
 #include <QMap>
 #include "region.h"
 #include <video.h>
 #include <index.h>
 #include <downloader.h>
 #include "configdialog.h"
+#include "screen.h"
 
-class MainWindow : public QWidget
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(TFileManager *FileManager);
+    MainWindow(TFileManager *FileManager, TScreen *screen);
     ~MainWindow();
 public slots:
     void                      setSmilIndex();
@@ -42,13 +43,24 @@ public slots:
     void                      resizeEvent(QResizeEvent * event);
     void                      keyPressEvent(QKeyEvent *ke);
     int                       openConfigDialog();
+    void                      resizeAsNormalFullScreen();
+    void                      resizeAsBigFullScreen();
+    void                      resizeAsWindow();
+    void                      setMainWindowSize(QSize size);
+    QSize                     getMainWindowSize();
 protected:
+    const int                 WINDOWED      = 0;
+    const int                 FULLSCREEN    = 1;
+    const int                 BIGFULLSCREEN = 2;
+    QSize                     mainwindow_size;
     QMap<QString, TRegion *>  ar_regions;
     TSmil                    *MySmil          = NULL;
     THead                    *MyHead          = NULL;
     TIndexManager            *MyIndexFile     = NULL;
     TFileManager             *MyFileManager   = NULL;
+    TScreen                  *MyScreen;
     QString                   smil_index_path;
+    int                       screen_state = 0;
     void                      deleteRegionsAndLayouts();
     void                      loadIndex();
     void                      setRegions(QDomElement head);

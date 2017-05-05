@@ -24,6 +24,7 @@
 #include <QUrl>
 #include <QUuid>
 #include <QString>
+#include "logging_categories.h"
 
 /**
  * @brief The TConfiguration class

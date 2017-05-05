@@ -26,7 +26,7 @@ TDownloader::TDownloader(QString ua)
     connect(manager_get, SIGNAL(finished(QNetworkReply*)), SLOT(finishedGetRequest(QNetworkReply*)));
     connect(manager_head, SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRequest(QNetworkReply*)));
     connect(manager_head_redirect, SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRedirectRequest(QNetworkReply*)));
-    // ToDo: Support Redirects
+    // ToDo: Support media Redirects
     // connect(manager_head, SIGNAL(redirected(QNetworkReply*)), SLOT(doRedirect(QNetworkReply*)));
     user_agent = QByteArray(ua.toUtf8());
     download = false;
@@ -82,7 +82,7 @@ void TDownloader::finishedHeadRequest(QNetworkReply *reply)
         }
     }
     else
-        emitDownloadFailed(reply->errorString());
+        emitDownloadFailed("FETCH_FAILED resourceURI: " + src_file_path +" "+ reply->errorString());
     return;
 }
 
@@ -92,7 +92,7 @@ void TDownloader::finishedHeadRedirectRequest(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::NoError)
         checkStatusCode(reply, reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
     else
-        emitDownloadFailed(reply->errorString());
+        emitDownloadFailed("FETCH_FAILED resourceURI: " + src_file_path +" "+ reply->errorString());
     return;
 }
 
@@ -143,15 +143,16 @@ void TDownloader::checkHttpHeaders(QNetworkReply *reply)
                 doHttpGetRequest();
         }
         else
-            emitDownloadFailed(" has no Last-Modified in http header");
+        {
+            emitDownloadFailed("FETCH_FAILED resourceURI:" + src_file_path + " no supported content type: "+ content_type);
+        }
     }
     else
     {
         if (content_type.contains("text/html") || content_type.contains("application/xhtml+xml"))
             emitUnCachable();
         else
-            emitDownloadFailed("no supported content type: "+ content_type);
-
+            emitDownloadFailed("FETCH_FAILED resourceURI:" + src_file_path + " no supported content type: " + content_type);
     }
     return;
 }
@@ -169,7 +170,7 @@ void TDownloader::finishedGetRequest(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::NoError)
         saveToDisk(reply);
     else
-        emitDownloadFailed(reply->errorString());
+        emitDownloadFailed("FETCH_FAILED resourceURI:" + src_file_path + " " + reply->errorString());
     return;
 
 }
@@ -180,7 +181,7 @@ void TDownloader::saveToDisk(QIODevice *data)
     QFile file(local_file_info.absoluteFilePath());
     if (!file.open(QIODevice::WriteOnly))
     {
-        emitDownloadFailed("Could not open " + local_file_info.absoluteFilePath() + " for writing: " + file.errorString());
+        emitDownloadFailed(" FETCH_FAILED resourceURI:" + src_file_path + " could not be saved " + file.errorString());
         return;
     }
     file.write(data->readAll());
@@ -190,12 +191,12 @@ void TDownloader::saveToDisk(QIODevice *data)
     {
         if (!extractWgt())
         {
-            emitDownloadFailed("Could not extreact " + local_file_info.absoluteFilePath() + "\r");
+            emitDownloadFailed("FETCH_FAILED resourceURI:" + src_file_path + " Widget can not be extracted");
             return;
         }
     }
 
-    qDebug() << QTime::currentTime().toString() << src_file_path << " was modified and written locally";
+    qInfo(ContentManager) << "OBJECT_UPDATED resourceURI:" << src_file_path << " was modified and written locally";
     emit downloadSucceed(src_file_path);
     return;
 }
@@ -220,21 +221,26 @@ bool TDownloader::extractWgt()
 void TDownloader::emitNoModified()
 {
     download = false;
+    qDebug(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << src_file_path << " no need to refresh";
     emit noModified(src_file_path);
-    qDebug() << QTime::currentTime().toString() << src_file_path << " was not modified";
     return;
 }
 
 void TDownloader::emitUnCachable()
 {
     download = false;
+    qDebug(ContentManager) << "resourceURI:" << src_file_path << " should not be cached";
     emit uncachable(src_file_path);
 }
 
-void TDownloader::emitDownloadFailed(QString error_message)
+void TDownloader::emitDownloadFailed(QString Msg)
 {
     download = false;
-    qDebug() << QTime::currentTime().toString() << src_file_path << " download failed " << error_message;
+    QFile file(local_file_info.absoluteFilePath());
+    if (file.exists())
+        qWarning(ContentManager) << Msg;
+    else
+        qCritical(ContentManager) << Msg;
     emit downloadFailed(src_file_path);
     return;
 }

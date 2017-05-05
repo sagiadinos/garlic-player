@@ -77,7 +77,7 @@ void MediaDecoderWrapper::onMediaStatusChanged(QtAV::MediaStatus status)
 
 void MediaDecoderWrapper::displayErrorMessage(const AVError &e)
 {
-    qDebug() << e.string();
+    qWarning(MediaPlayer) << e.string();
     return;
 }
 
@@ -111,7 +111,7 @@ void MediaDecoderWrapper::onMediaStatusChanged(QMediaPlayer::MediaStatus status)
 
 void MediaDecoderWrapper::displayErrorMessage()
 {
-    qDebug() << MediaDecoder.errorString();
+   qWarning(MediaPlayer) << MediaDecoder.errorString();
 }
 
 #endif

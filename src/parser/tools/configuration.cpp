@@ -18,7 +18,6 @@
 
 #include "configuration.h"
 #include <QXmlStreamReader>
-#include <QDebug>
 #include <QString>
 #include <memory>
 #include <mutex>
@@ -204,10 +203,7 @@ QString TConfiguration::getPaths(QString path_name)
 
 void TConfiguration::createDirectories()
 {
-    if (getOS() == "windows") //QStandardPaths::CacheLocation in windows 7 is set to appdir (bin)
-        cache_dir = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/cache/";
-    else
-        cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/";
+    cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/";
     createDirectoryIfNotExist(cache_dir);
     log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/logs/";
     createDirectoryIfNotExist(log_dir);
@@ -247,7 +243,7 @@ void TConfiguration::createDirectoryIfNotExist(QString path)
     QDir dir;
     dir.setPath(path);
     if (!dir.exists() && !dir.mkpath("."))
-        qDebug() << "Failed to create " << dir.path() << "\r";
+        qCritical(SmilParser) << "Failed to create " << dir.path() << "\r";
     return;
 }
 

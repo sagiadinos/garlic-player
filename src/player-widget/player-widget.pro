@@ -31,13 +31,17 @@ SOURCES += main.cpp\
     region.cpp \
     mediadecoderwrapper.cpp \
     mediaviewwrapper.cpp \
-    configdialog.cpp
+    configdialog.cpp \
+    screen.cpp \
+    cmdparser.cpp
 
 HEADERS  += mainwindow.h \
     region.h \
     mediadecoderwrapper.h \
     mediaviewwrapper.h \
-    configdialog.h
+    configdialog.h \
+    screen.h \
+    cmdparser.h
 
 unix{
     LIBS += -L../lib -lgarlic -lquazip -lzlib
