@@ -104,5 +104,9 @@ cp -L /usr/lib/x86_64-linux-gnu/libstdc++.so.6 $GARLIC_DEPLOY_PATH/garlic-player
 #
 cp bin/garlic-player $GARLIC_DEPLOY_PATH/garlic-player/bin/
 mv $GARLIC_DEPLOY_BASE_PATH/garlic.sh $GARLIC_DEPLOY_PATH/garlic-player
-#echo create deb  ...
+
+echo create deb  ...
 dpkg -b $GARLIC_DEPLOY_BASE_PATH/ garlic-player.deb
+
+echo create tar.xz
+tar -cJf garlic-player.tar.xz -C deb/garlic-player/opt .
