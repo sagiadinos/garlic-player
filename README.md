@@ -35,35 +35,35 @@ Only sources! Binaries will deployed soon.
  - Media Cache
  - SMIL3, HTML5 and HTML5-Widgets support
 
-##actual supported SMIL-Features
+## actual supported SMIL-Features
 
-###Time container elements
+### Time container elements
 - **seq**
 - **par**
 - **excl**
 - **priorityClass**
 
-####Attributes for excl/priorityClass time container
+#### Attributes for excl/priorityClass time container
 - **peers** stop|never|pause|defer
 - **higher** stop|pause
 - **lower** never|defer
 
-###Media-Elements
+### Media-Elements
 - **video**
 - **audio**
 - **images**
 - **text** websites only
 - **wgt** 
 
-###other Elements
+### other Elements
 - **prefetch**
 - **meta** for refresh index via http-equiv="Refresh"
 
-####Attributes for media
+#### Attributes for media
 - **region**
 - **fit** fill|scale|meetbest
 
-###Attributes for media and time container:
+### Attributes for media and time container:
 - **xml:id** with Fallback for SMIL 2.0 id
 - **title** stub
 - **class** stub
@@ -73,11 +73,11 @@ Only sources! Binaries will deployed soon.
 - **end** has same features as begin
 - **repeatCount** only integer values (float support maybe implemented later)
 
-###Layered multizone layouts elements:
+### Layered multizone layouts elements:
 - **root-layout**
 - **layout**
 
-###Multizone attributes
+### Multizone attributes
 - **regionName**
 - **top** values in px or %
 - **left** values in px or %
@@ -88,10 +88,10 @@ Only sources! Binaries will deployed soon.
 
 <!-- -->  HTML-like comments in SMIL-File are supported and content inside will ignored
 
-##additional features supported not in w3c standard
+## additional features supported not in w3c standard
 - **shuffle play** in seq container via metadata
 
-##actual supported remote features via downloader
+## actual supported remote features via downloader
 - http downloads and caching
 - caching of remote SMIL index file
 - caching of remote media files
