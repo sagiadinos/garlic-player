@@ -203,7 +203,10 @@ QString TConfiguration::getPaths(QString path_name)
 
 void TConfiguration::createDirectories()
 {
-    cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/";
+    if (getOS() == "windows") //QStandardPaths::CacheLocation in windows 7 is set to appdir (bin)
+        cache_dir = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/cache/";
+    else
+        cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/";
     createDirectoryIfNotExist(cache_dir);
     log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/logs/";
     createDirectoryIfNotExist(log_dir);

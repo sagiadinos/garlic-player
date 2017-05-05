@@ -68,9 +68,9 @@ copy ..\deployment\win\garlic-player.ico deployment\packages\com.sagiadinos.garl
 copy /Y ..\start_garlic.bat deployment\packages\com.sagiadinos.garlic.x64\data
 
 rem create install archive
-rem %QT_PATH%\Tools\QtInstallerFramework\2.0\bin\binarycreator -c  deployment\config\config.xml -p  deployment\packages garlic-installer.exe
+%QT_PATH%\Tools\QtInstallerFramework\2.0\bin\binarycreator -c  deployment\config\config.xml -p  deployment\packages garlic-installer.exe
 
-create 7zip archive (7Zip is needed to installed)
+rem create 7zip archive (7Zip is needed to installed)
 %SEVEN_ZIP_PATH% a garlic-player.7z  .\deployment\packages\com.sagiadinos.garlic.x64\data\*
 cd ..
 
