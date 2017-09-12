@@ -1,13 +1,7 @@
-
 QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 LIBS += \
-    -lgcov
+   -lgcov
 
-LIBS += -L../../lib -lgarlic
-DESTDIR = ../../test-bin
-OBJECTS_DIR = ../_compile
-MOC_DIR = ../_compile
-RCC_DIR = ../_compile
-UI_DIR = ../_compile
+LIBS += -L/home/niko/source/garlic-player/src/lib -lgarlic -lquazip -lzlib

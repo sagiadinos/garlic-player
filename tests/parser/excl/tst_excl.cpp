@@ -125,11 +125,8 @@ void TestTExcl::investigateTestList(InhertitedTExcl *MyExcl, QDomElement child)
 
 QDomElement TestTExcl::getTestSmilFile()
 {
-    QFile file("../tests/data/smil/priorityClass.smil");
+    QFile file(":/priorityClass.smil");
     QDomDocument document;
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        qDebug() << "------------------------------ ERROR open file";
-
     document.setContent(&file);
     file.close();
     return document.firstChildElement();

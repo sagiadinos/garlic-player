@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-include(../../defaults.pri)
+include(../../../src/defaults.pri)
 
 QT       += xml testlib
 QT       -= gui
@@ -15,4 +15,4 @@ TEMPLATE = app
 TARGET = tst_basetiming
 SOURCES += tst_basetiming.cpp
 
-include(../tests.pri)
+include(../../tests.pri)

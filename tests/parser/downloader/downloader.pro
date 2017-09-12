@@ -3,10 +3,11 @@
 # Project created by QtCreator 2016-03-05T19:38:17
 #
 #-------------------------------------------------
-include(../../defaults.pri)
+include(../../../src/defaults.pri)
 
 QT       += xml network testlib
 QT       -= gui
+
 CONFIG   += console testcase c++11
 CONFIG   -= app_bundle
 TEMPLATE = app
@@ -14,4 +15,4 @@ TEMPLATE = app
 TARGET = tst_downloader
 SOURCES += tst_downloader.cpp
 
-include(../tests.pri)
+include(../../tests.pri)

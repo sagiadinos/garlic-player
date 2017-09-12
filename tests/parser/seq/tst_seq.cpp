@@ -51,13 +51,15 @@ void TestTSeq::testEmptyWithDuration()
     TSeq       *MySeq   = new TSeq;
     MySeq->parse(element);
     MySeq->prepareTimerBeforePlaying();
-    QSignalSpy spy1(MySeq, SIGNAL(finishedSimpleDuration()));
+    MySeq->play();
+    QSignalSpy spy1(MySeq, SIGNAL(finishedContainer(TContainer * , TBaseTiming *)));
     int i = 0;
-    while (spy1.count() == 0)
+    while (spy1.count() == 0  && i < 2000)
     {
         QTest::qWait(100);
         i += 100;
     }
+    QCOMPARE(1, spy1.count());
     QVERIFY(i > 499);
     QVERIFY(i < 601);
     return;
@@ -83,11 +85,12 @@ void TestTSeq::testNormalPlay()
     QSignalSpy spy1(MySeq, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)));
     MySeq->next(MySeq);
     int i = 0;
-    while (spy1.count() == 0)
+    while (spy1.count() == 0 && i < 2000)
     {
         QTest::qWait(100);
         i += 100;
     }
+    QCOMPARE(1, spy1.count());
     return;
 }
 
@@ -129,11 +132,12 @@ void TestTSeq::testRepeatedPlay()
     QSignalSpy spy1(MySeq, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)));
     MySeq->next(MySeq);
     int i = 0;
-    while (spy1.count() == 0)
+    while (spy1.count() == 0 && i < 2000)
     {
         QTest::qWait(100);
         i += 100;
     }
+    QCOMPARE(1, spy1.count());
     return;
 }
 

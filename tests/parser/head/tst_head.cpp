@@ -37,6 +37,8 @@ class TestTHead : public QObject
 
 public:
     TestTHead(){}
+private:
+    QDomElement getTestSmilFile(QString file_string);
 
 private Q_SLOTS:
     void test_getDefaultValues();
@@ -63,12 +65,7 @@ void TestTHead::test_getDefaultValues()
 
 void TestTHead::test_getHeadValuesFromSimpleSmil()
 {
-    QFile file("../tests/data/smil/head_simple.smil");
-    QDomDocument document;
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    document.setContent(&file);
-    file.close();
-    QDomElement head = document.firstChildElement().firstChildElement();
+    QDomElement head = getTestSmilFile(":/head_simple.smil");
     InhertitedTHead MySmilHead;
     MySmilHead.parse(head);
     QCOMPARE(MySmilHead.getTitle(), QString("Simple SMIL header for testing"));
@@ -88,12 +85,7 @@ void TestTHead::test_getHeadValuesFromSimpleSmil()
 
 void TestTHead::test_getHeadValuesFromComplexSmil()
 {
-    QFile file("../tests/data/smil/head_complex.smil");
-    QDomDocument document;
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    document.setContent(&file);
-    file.close();
-    QDomElement head = document.firstChildElement().firstChildElement();
+    QDomElement head = getTestSmilFile(":/head_complex.smil");
     InhertitedTHead MySmilHead;
     MySmilHead.parse(head);
 
@@ -145,12 +137,7 @@ void TestTHead::test_getHeadValuesFromComplexSmil()
 
 void TestTHead::test_refreshSmilIndex()
 {
-    QFile file("../tests/data/smil/head_complex.smil");
-    QDomDocument document;
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    document.setContent(&file);
-    file.close();
-    QDomElement head = document.firstChildElement().firstChildElement();
+    QDomElement head = getTestSmilFile(":/head_complex.smil");
     InhertitedTHead *MyHead = new InhertitedTHead();
 
     MyHead->parse(head);
@@ -172,6 +159,15 @@ void TestTHead::test_refreshSmilIndex()
     }
     QVERIFY(i > 999);
     QVERIFY(i < 1101);
+}
+
+QDomElement TestTHead::getTestSmilFile(QString file_string)
+{
+    QFile file(file_string);
+    QDomDocument document;
+    document.setContent(&file);
+    file.close();
+    return document.firstChildElement().firstChildElement();
 }
 
 QTEST_MAIN(TestTHead)

@@ -31,7 +31,6 @@ private Q_SLOTS:
     void test_determineIndexUriWhenParameter();
     void test_determineIndexUriWhenIni();
     void test_determineIndexUriWhenConfigXML();
-    void test_determineIndexUriWhenFallback();
     void test_determineBasePath();
     void test_createDirectories();
     void test_determineUserAgent();
@@ -99,24 +98,16 @@ void TestTConfiguration::test_determineIndexUriWhenConfigXML()
     QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
     TConfiguration *MyConfig = new TConfiguration(Settings);
     QDir dir(".");
-    MyConfig->determineBasePath(dir.absolutePath()+"/../"); // cause the working directory is ./bin in creator
-    QFile::copy("../tests/data/config.xml", "../config.xml");
+
+    MyConfig->determineBasePath(dir.absolutePath());
+
+    QFile::copy(":/config.xml", "./config.xml");
 
     MyConfig->determineIndexUri("");
     QCOMPARE(MyConfig->getIndexUri(), QString("http://indexes.of-a-smil-server.com/path_to_a/index.php?site=player_get_index&owner_id=2"));
     QCOMPARE(MyConfig->getIndexPath(), QString("http://indexes.of-a-smil-server.com/path_to_a/"));
-    QFile file("../config_readed.xml");
+    QFile file("./config_readed.xml");
     file.remove();
-}
-
-void TestTConfiguration::test_determineIndexUriWhenFallback()
-{
-    QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    TConfiguration *MyConfig = new TConfiguration(Settings);
-
-    MyConfig->determineIndexUri("");
-    QCOMPARE(MyConfig->getIndexUri(), QString("http://indexes.smil-admin.com"));
-    QCOMPARE(MyConfig->getIndexPath(), QString("http://indexes.smil-admin.com/"));
 }
 
 void TestTConfiguration::test_determineBasePath()
