@@ -113,7 +113,6 @@ void MainWindow::stopShowMedia(TMedia *media)
 {
     if (ar_regions.size() == 0)
         return;
-
     ar_regions[selectRegion(media->getRegion())]->removeMedia();
 }
 
@@ -135,26 +134,28 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             else
                 resizeAsWindow();
         break;
-/*    case Qt::Key_C:
-        setCursor(Qt::ArrowCursor);
-        if (openConfigDialog() == QDialog::Accepted)
-            checkForNewSmilIndex();
-        setCursor(Qt::BlankCursor);
+        case Qt::Key_C:
+            setCursor(Qt::ArrowCursor);
+            if (openConfigDialog() == QDialog::Accepted)
+            {
+                checkForNewSmilIndex();
+            }
+            setCursor(Qt::BlankCursor);
         break;
-*/
+
         case Qt::Key_Q:
             exit(0);
         break;
     }
 }
 
-/*
+
 int MainWindow::openConfigDialog()
 {
     ConfigDialog MyConfigDialog(0, MyFileManager->getConfiguration());
     return MyConfigDialog.exec();
 }
-*/
+
 
 void MainWindow::resizeAsNormalFullScreen()
 {

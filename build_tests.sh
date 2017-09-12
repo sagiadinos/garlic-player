@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# need to compile parser, quazip and libzip first
+
 QT_PATH=""
 if [ -z "$QT_PATH" ]; then
 	echo Error: Set the correct paths in QT_PATH 

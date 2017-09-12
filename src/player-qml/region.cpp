@@ -49,10 +49,9 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
     engine = e;
     rectangle       = new QQmlComponent(engine);
     media_component = new QQmlComponent(engine);
-    QString str("import QtQuick 2.8\nRectangle {color: \""+region.backgroundColor+"\"}");
+    QString str("import QtQuick 2.7\nRectangle {color: \""+region.backgroundColor+"\"}");
     rectangle->setData(str.toUtf8(), QUrl());
     rectangle_item = qobject_cast<QQuickItem *>(rectangle->create());
-//    QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
     rectangle_item->setParentItem(root_item);
 }
 
@@ -65,7 +64,7 @@ void TRegion::playImage(TMedia *Media)
         anchors = "anchors.fill: parent;\n";
 
     QString str(
-                "import QtQuick 2.9\n \
+                "import QtQuick 2.7\n \
                     Image {\n " +
                             anchors+
                         "fillMode: Image."+fill_mode+";\n \
@@ -82,8 +81,8 @@ void TRegion::playVideo(TMedia *Media)
     QString anchors   = "";
     if (fill_mode != "Pad")
         anchors = "anchors.fill: parent;\n";
-    QString str("import QtQuick 2.9\n \
-                 import QtMultimedia 5.9\n \
+    QString str("import QtQuick 2.7\n \
+                 import QtMultimedia 5.7\n \
                     Video {\n " +
                         anchors+
                         "autoPlay: true;\n \
@@ -98,21 +97,21 @@ void TRegion::playVideo(TMedia *Media)
 void TRegion::playAudio(TMedia *Media)
 {
     MyMedia        = Media;
-    QString str("import QtQuick 2.9\n \
-                 import QtMultimedia 5.9\n \
+    QString str("import QtQuick 2.7\n \
+                 import QtMultimedia 5.7\n \
                     Audio {\n \
                         autoPlay: true;\n \
                         source: \"file:"+MyMedia->getLoadablePath()+"\";\n \
                    }\n"
     );
     handleMediaItem(str);
-   connect(media_item, SIGNAL(stopped()), this, SLOT(finished()));
+    connect(media_item, SIGNAL(stopped()), this, SLOT(finished()));
 }
 
 void TRegion::playWeb(TMedia *Media)
 {
     MyMedia        = Media;
-    QString str("import QtQuick 2.9\n \
+    QString str("import QtQuick 2.7\n \
                  import QtWebView 1.1\n \
                     WebView {\n \
                         anchors.fill: parent;\n \

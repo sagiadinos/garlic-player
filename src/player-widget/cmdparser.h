@@ -27,7 +27,7 @@ public:
     void addOptions();
     void parse(QApplication *app);
 protected:
-    QString              window_mode   = "bigscreen";
+    QString              window_mode   = "windowed";
     QSize                window_size   = QSize(980,540);
     int                  screen_select = 0;
     QString              index_url     = "";

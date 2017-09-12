@@ -30,6 +30,7 @@ TRegion::TRegion(QWidget *parent)
 
 TRegion::~TRegion()
 {
+
     if (actual_media == "image")
     {
         MyImage->stop();

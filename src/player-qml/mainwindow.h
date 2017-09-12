@@ -26,6 +26,7 @@
 #include <downloader.h>
 #include "configdialog.h"
 #include "screen.h"
+#include <QQmlEngine>
 #include <QQuickView>
 
 class MainWindow : public QQuickView
@@ -41,7 +42,7 @@ public slots:
     void                      stopShowMedia(TMedia *media);
     void                      resizeEvent(QResizeEvent * event);
     void                      keyPressEvent(QKeyEvent *ke);
-//    int                       openConfigDialog();
+    int                       openConfigDialog();
     void                      resizeAsNormalFullScreen();
     void                      resizeAsBigFullScreen();
     void                      resizeAsWindow();

@@ -9,18 +9,10 @@ INCLUDEPATH += ../parser/smilparser
 QT     += core widgets gui xml quick qml
 CONFIG += warn_on c++11
 
-#Comment the next line out when you want to use QTMultimedia
-#DEFINES += SUPPORT_QTMULTIMEDIA
-
-android {
-    QT += androidextras
-}
-
 DEFINES += QUAZIP_STATIC
 
 TARGET = garlic-player
 TEMPLATE = app
-DESTDIR = ../bin
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes
 
@@ -37,9 +29,14 @@ HEADERS  += mainwindow.h \
     screen.h \
     cmdparser.h
 
-unix:!android:LIBS += -L../lib -lgarlic -lquazip -lzlib
-android:LIBS += -L../libandroid -lgarlic -lquazip -lzlib
-
+unix:!android {
+    QT += webengine
+    LIBS += -L../lib -lgarlic -lquazip -lzlib
+}
+android {
+    QT += androidextras
+    LIBS += -L../libandroid -lgarlic -lquazip -lzlib
+}
 win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
     Debug:LIBS += -L../lib -lgarlic -lquazipd -lzlib
@@ -49,3 +46,5 @@ RESOURCES += qml.qrc
 
 FORMS += \
     configdialog.ui
+
+DISTFILES +=

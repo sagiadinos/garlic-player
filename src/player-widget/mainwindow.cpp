@@ -28,9 +28,6 @@ MainWindow::MainWindow(TFileManager *FileManager, TScreen *screen)
     connect(MyIndexFile, SIGNAL(isLoaded()), this, SLOT(setSmilIndex()));
     MyHead          = new THead();
     connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
-    MySmil = new TSmil(MyFileManager);
-    connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
-    connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
     setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
@@ -39,8 +36,8 @@ MainWindow::MainWindow(TFileManager *FileManager, TScreen *screen)
 
 MainWindow::~MainWindow()
 {
-    deleteRegionsAndLayouts();
     delete MySmil;
+    deleteRegionsAndLayouts(); // region must be deletetd at last, cause media pointer had to be deleted
 }
 
 /**
@@ -51,9 +48,12 @@ void MainWindow::setSmilIndex()
     qDebug(SmilParser) << "clear MySmil";
     if (ar_regions.size() > 0)
     {
-        MySmil->clearLists();
+        delete MySmil;
         deleteRegionsAndLayouts();
     }
+    MySmil = new TSmil(MyFileManager);
+    connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
+    connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     MySmil->init();
     setRegions(MyIndexFile->getHead());
     setGeometry(0,0, width(), height());

@@ -171,7 +171,7 @@ void THead::parseRegions(QDomNodeList childs)
 
         }
     }
-
+    qDebug() << childs.length() << "regions found in SMIL layout-tag and " << region_list.length() << " regions were initialized ";
 }
 
 void THead::setRefreshTimer()

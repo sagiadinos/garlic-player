@@ -6,8 +6,10 @@ CONFIG    += warn_on staticlib c++11 stl
 DEFINES += QUAZIP_STATIC
 
 TARGET = garlic
-DESTDIR = ../lib
 LIBS += -L../ext -lquazip -lzlib
+
+!android:DESTDIR = ../lib/
+android:DESTDIR = ../libandroid/
 
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes

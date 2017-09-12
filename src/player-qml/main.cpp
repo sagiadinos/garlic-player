@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
     MyConfiguration->determineUserAgent();
     MyConfiguration->createDirectories();
 
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
     // Set the logging file
@@ -82,13 +83,14 @@ int main(int argc, char *argv[])
     MyConfiguration->determineIndexUri("http://indexes.smil-admin.com");
 
     MainWindow w(new TFileManager(MyConfiguration), &MyScreen);
+    QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);
 
-/*    if (MyConfiguration->getIndexUri() == "")
+    if (MyConfiguration->getIndexUri() == "")
     {
         if (w.openConfigDialog() == QDialog::Rejected)
             is_index = false;
     }
-*/
+
     if (is_index)
     {
 
