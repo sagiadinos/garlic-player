@@ -23,7 +23,7 @@ TIndexManager::TIndexManager(TConfiguration *config, QObject *parent)
 {
     Q_UNUSED(parent);
     MyConfiguration = config;
-    MyDownloader    = new TDownloader(MyConfiguration->getUserAgent());
+    MyDownloader    = new TDownloader(MyConfiguration);
     connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(loadAfterDownload(QString)));
     connect(MyDownloader, SIGNAL(noModified(QString)), SLOT(checkForLoaded(QString)));
 }

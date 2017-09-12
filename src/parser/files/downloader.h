@@ -27,8 +27,11 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
+#include <QStorageInfo>
+
 #include "logging_categories.h"
 #include "../ext/quazip/JlCompress.h"
+#include "tools/configuration.h"
 
 
 
@@ -42,7 +45,7 @@ class TDownloader: public QObject
     QNetworkAccessManager *manager_head, *manager_head_redirect, *manager_get;
 
 public:
-    TDownloader(QString ua);
+    TDownloader(TConfiguration *config);
     ~TDownloader();
     virtual void checkFiles(QString local, QString remote, QString src);
     virtual bool downloadInProgress();
@@ -56,6 +59,7 @@ protected:
     QUrl            remote_file_url;
     QString         remote_file_path, src_file_path;
     bool            download;
+    TConfiguration *MyConfiguration;
     QByteArray      user_agent;
     QFileInfo       local_file_info;
     QNetworkRequest prepareNetworkRequest(QUrl remote_url);
@@ -65,6 +69,7 @@ protected:
     void            doHttpGetRequest();
     void            doHttpHeadRequest();
     void            saveToDisk(QIODevice *data);
+    void            handleFreeDiskSpace(QIODevice *data);
     void            emitNoModified();
     void            emitUnCachable();
     void            emitDownloadFailed(QString Msg);

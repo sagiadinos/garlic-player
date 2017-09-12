@@ -20,7 +20,7 @@
 TFileManager::TFileManager(TConfiguration *config)
 {
     MyConfiguration = config;
-    MyDownloader    = new TDownloader(MyConfiguration->getUserAgent());
+    MyDownloader    = new TDownloader(MyConfiguration);
     connect(MyDownloader, SIGNAL(downloadSucceed(QString)), SLOT(doFinishDownload(QString)));
     connect(MyDownloader, SIGNAL(noModified(QString)), SLOT(doCancelDownload(QString)));
     connect(MyDownloader, SIGNAL(downloadFailed(QString)), SLOT(doFailDownload(QString)));
@@ -30,7 +30,6 @@ TFileManager::TFileManager(TConfiguration *config)
 
 TFileManager::~TFileManager()
 {
-//    delete MyDownloader;
     clearQueues();
 }
 

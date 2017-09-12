@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QDesktopWidget>
 #include <QDebug>
+#include "logging_categories.h"
 
 class TScreen : public QObject
 {

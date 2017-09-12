@@ -18,8 +18,9 @@
 
 #include "downloader.h"
 
-TDownloader::TDownloader(QString ua)
+TDownloader::TDownloader(TConfiguration *config)
 {
+    MyConfiguration = config;
     manager_get           = new QNetworkAccessManager(this);
     manager_head          = new QNetworkAccessManager(this);
     manager_head_redirect = new QNetworkAccessManager(this);
@@ -28,15 +29,12 @@ TDownloader::TDownloader(QString ua)
     connect(manager_head_redirect, SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRedirectRequest(QNetworkReply*)));
     // ToDo: Support media Redirects
     // connect(manager_head, SIGNAL(redirected(QNetworkReply*)), SLOT(doRedirect(QNetworkReply*)));
-    user_agent = QByteArray(ua.toUtf8());
+    user_agent = QByteArray(MyConfiguration->getUserAgent().toUtf8());
     download = false;
 }
 
 TDownloader::~TDownloader()
 {
- //   delete manager_get;
- //   delete manager_head;
- //   delete manager_head_redirect;
 }
 
 bool TDownloader::downloadInProgress()
@@ -179,11 +177,14 @@ void TDownloader::saveToDisk(QIODevice *data)
 {
     download = false; // must be first cause sometimes file_manager run into race condition during save
     QFile file(local_file_info.absoluteFilePath());
-    if (!file.open(QIODevice::WriteOnly))
+    if (!file.open(QIODevice::ReadWrite))
     {
-        emitDownloadFailed(" FETCH_FAILED resourceURI:" + src_file_path + " could not be saved " + file.errorString());
+        emitDownloadFailed("FETCH_FAILED resourceURI:" + src_file_path + " could not be saved " + file.errorString());
         return;
     }
+
+    handleFreeDiskSpace(data);
+
     file.write(data->readAll());
     file.close();
 
@@ -199,6 +200,37 @@ void TDownloader::saveToDisk(QIODevice *data)
     qInfo(ContentManager) << "OBJECT_UPDATED resourceURI:" << src_file_path << " was modified and written locally";
     emit downloadSucceed(src_file_path);
     return;
+}
+
+void TDownloader::handleFreeDiskSpace(QIODevice *data)
+{
+    QStorageInfo storage(MyConfiguration->getPaths("cache"));
+    if (data->size() > storage.bytesAvailable())
+    {
+        QDir dir(MyConfiguration->getPaths("cache"));
+        QFileInfoList dirList = dir.entryInfoList(QDir::NoDotAndDotDot, QDir::Time | QDir::Reversed);
+        for(int i = 0; i < dirList.size(); i++)
+        {
+            if (dirList.at(i).exists()) // cause it could be an already deleted wgt file
+            {
+                if (dirList.at(i).isFile())
+                {
+                    QFile del_file(dirList.at(i).absoluteFilePath());
+                    del_file.remove();
+                }
+                else // a dir dir has a corresponding wgt file
+                {
+                    QDir del_dir((dirList.at(i).absoluteFilePath()));
+                    del_dir.removeRecursively();
+                    // delete corresponding wgt
+                    QFile del_file(dirList.at(i).absoluteFilePath()+".wgt");
+                    del_file.remove();
+                }
+            }
+            if (data->size() < storage.bytesAvailable())
+                break;
+        }
+    }
 }
 
 bool TDownloader::extractWgt()

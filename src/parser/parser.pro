@@ -4,6 +4,7 @@ QT       += core network xml widgets
 TEMPLATE  = lib
 CONFIG    += warn_on staticlib c++11 stl
 DEFINES += QUAZIP_STATIC
+CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
 
 TARGET = garlic
 LIBS += -L../ext -lquazip -lzlib
@@ -13,6 +14,7 @@ android:DESTDIR = ../libandroid/
 
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes
+
 
 SOURCES += \
     smilparser/head.cpp \

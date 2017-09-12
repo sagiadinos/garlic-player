@@ -31,7 +31,6 @@ THead::~THead()
     setDefaultValues();
 }
 
-
 void THead::setDefaultValues()
 {
     refresh                        = 0; // means no looking for new index

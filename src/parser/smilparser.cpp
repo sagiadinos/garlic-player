@@ -273,7 +273,7 @@ void TSmil::emitStopShowMedia(TMedia *MyMedia)
     if (ar_played_media.find(MyMedia) != ar_played_media.end())
     {
         ar_played_media.remove(MyMedia);
-        qInfo() << MyMedia->getID() << "stopShowMedia";
+        qDebug(SmilParser) << MyMedia->getID() << "stopShowMedia";
         emit stopShowMedia(MyMedia);
     }
     return;

@@ -22,7 +22,6 @@
 #include <QPair>
 #include <QQueue>
 #include "downloader.h"
-#include "tools/configuration.h"
 
 struct FileInfo
 {

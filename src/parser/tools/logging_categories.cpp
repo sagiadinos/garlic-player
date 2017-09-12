@@ -1,5 +1,6 @@
 #include "logging_categories.h"
 
+Q_LOGGING_CATEGORY(Screen, "Screen")
 Q_LOGGING_CATEGORY(SmilParser, "SmilParser")
 Q_LOGGING_CATEGORY(ContentManager, "ContentManager")
 Q_LOGGING_CATEGORY(MediaPlayer, "MediaPlayer")

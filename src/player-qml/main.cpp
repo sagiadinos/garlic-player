@@ -41,7 +41,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
             out << "WARNING ";
             break;
         case QtCriticalMsg:
-            out << "CRITICAL ";
+            out << "ERROR ";
             break;
         case QtFatalMsg:
             out << "FATAL ";
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     // Set the logging file
     event_log.reset(new QFile(MyConfiguration->getPaths("logs") + "events.log"));
     event_log.data()->open(QFile::Append | QFile::Text);
-   // QLoggingCategory::setFilterRules("*.debug=false\n");
+    QLoggingCategory::setFilterRules("*.debug=false\n");
     qInstallMessageHandler(myMessageHandler);
 
     QApplication::setApplicationName(MyConfiguration->getAppName());
