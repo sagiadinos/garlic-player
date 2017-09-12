@@ -2,7 +2,7 @@
 
 #Set correct paths to your Qt runtime
 export QT_PATH=
-export QT_PATH_RUNTIME=$QT_PATH/5.8/gcc_64
+export QT_PATH_RUNTIME=$QT_PATH/5.9.1/gcc_64
 export DEV_JOBS=$(grep -c "^processor" /proc/cpuinfo)
 if [ -z "$QT_PATH" ]; then
 	echo Error: Set the correct paths in QT_PATH 
