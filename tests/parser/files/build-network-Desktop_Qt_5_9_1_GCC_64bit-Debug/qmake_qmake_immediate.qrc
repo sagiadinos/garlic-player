@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+<file alias="simple.smil">/home/niko/source/garlic-player/tests/parser/files/network/simple.smil</file>
+</qresource>
+</RCC>

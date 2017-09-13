@@ -4,7 +4,7 @@ QT       += core network xml widgets
 TEMPLATE  = lib
 CONFIG    += warn_on staticlib c++11 stl
 DEFINES += QUAZIP_STATIC
-CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
+Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 TARGET = garlic
 LIBS += -L../ext -lquazip -lzlib
@@ -41,7 +41,8 @@ SOURCES += \
     smilparser/prefetch.cpp \
     smilparser/tools/shuffle.cpp \
     files/index.cpp \
-    tools/logging_categories.cpp
+    tools/logging_categories.cpp \
+    files/network.cpp
 HEADERS += tools/configuration.h \
     smilparser.h \
     smilparser/head.h \
@@ -66,5 +67,5 @@ HEADERS += tools/configuration.h \
     smilparser/prefetch.h \
     smilparser/tools/shuffle.h \
     files/index.h \
-    tools/logging_categories.h
-
+    tools/logging_categories.h \
+    files/network.h
