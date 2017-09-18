@@ -42,7 +42,7 @@ void TFileManager::clearQueues()
 
 void TFileManager::registerFile(QString src)
 {
-    qDebug(ContentManager) << " REGISTER_FILE resourceURI:" << src;
+    qDebug() << " REGISTER_FILE resourceURI:" << src;
     // Use Cache only when files are on web
     if (isRemote(index_uri) || isRemote(src))
     {

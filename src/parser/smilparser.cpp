@@ -86,7 +86,7 @@ void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement 
         base_type        = MyBaseTiming->getBaseType();
     }
 
-    qDebug(SmilParser) << MyBaseTiming->getID() << " foundElement";
+    qDebug() << MyBaseTiming->getID() << " foundElement";
 
     MyBaseTiming->prepareTimerBeforePlaying();
 
@@ -108,7 +108,7 @@ void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement 
  */
 void TSmil::startElement(TContainer *parent, TBaseTiming *element)
 {
-    qDebug(SmilParser) << element->getID() << " startElement";
+    qDebug() << element->getID() << " startElement";
     bool         playable      = true;
     if (parent->getBaseType() == "container")
     {
@@ -138,10 +138,10 @@ void TSmil::startElement(TContainer *parent, TBaseTiming *element)
  */
 void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
 {
-    qDebug(SmilParser) << element->getID() <<  " finishElement";
+    qDebug() << element->getID() <<  " finishElement";
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
     {
-        qDebug(SmilParser)<< element->getID() << "Not kill Timer";
+        qDebug()<< element->getID() << "Not kill Timer";
         stopElement(element);
 
         parent->next(element);
@@ -162,7 +162,7 @@ void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
  */
 void TSmil::pausePlayingElement(TBaseTiming *element)
 {
-    qDebug(SmilParser) << element->getID() << "pause Element";
+    qDebug() << element->getID() << "pause Element";
     element->prepareTimerBeforePausing();
     if (element->hasPlayingChilds())
     {
@@ -177,7 +177,7 @@ void TSmil::pausePlayingElement(TBaseTiming *element)
 
 void TSmil::resumeQueuedElement(TBaseTiming *element)
 {
-    qDebug(SmilParser) << element->getID() << "resume Element";
+    qDebug() << element->getID() << "resume Element";
     element->prepareTimerBeforeResume();
     if (element->getStatus() == element->_paused)
     {
@@ -262,7 +262,7 @@ void TSmil::connectMediaSlots(TMedia *MyMedia)
 void TSmil::emitStartShowMedia(TMedia *MyMedia)
 {
     MyMedia->play();
-    qDebug(SmilParser) << MyMedia->getID() << "startShowMedia";
+    qDebug() << MyMedia->getID() << "startShowMedia";
     ar_played_media.insert(MyMedia);
     emit startShowMedia(MyMedia);
     return;
@@ -273,7 +273,7 @@ void TSmil::emitStopShowMedia(TMedia *MyMedia)
     if (ar_played_media.find(MyMedia) != ar_played_media.end())
     {
         ar_played_media.remove(MyMedia);
-        qDebug(SmilParser) << MyMedia->getID() << "stopShowMedia";
+        qDebug() << MyMedia->getID() << "stopShowMedia";
         emit stopShowMedia(MyMedia);
     }
     return;

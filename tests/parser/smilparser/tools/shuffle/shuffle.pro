@@ -3,7 +3,7 @@
 # Project created by QtCreator 2016-03-26T02:43:55
 #
 #-------------------------------------------------
-include(../../../src/defaults.pri)
+include(../../../../../src/defaults.pri)
 
 QT       += xml testlib
 QT       -= gui
@@ -15,4 +15,4 @@ TEMPLATE = app
 TARGET = tst_shuffle
 SOURCES += tst_shuffle.cpp
 
-include(../../tests.pri)
+include(../../../../tests.pri)

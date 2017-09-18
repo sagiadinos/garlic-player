@@ -17,9 +17,9 @@
 *************************************************************************************/
 #include "network.h"
 
-TNetwork::TNetwork(QObject *parent) : QObject(parent)
+Network::Network(QByteArray agent)
 {
-    Q_UNUSED(parent);
+    setUserAgent(agent);
     manager_get           = new QNetworkAccessManager(this);
     manager_head          = new QNetworkAccessManager(this);
     manager_head_redirect = new QNetworkAccessManager(this);
@@ -28,31 +28,29 @@ TNetwork::TNetwork(QObject *parent) : QObject(parent)
     connect(manager_head_redirect, SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRedirectRequest(QNetworkReply*)));
 }
 
-void TNetwork::checkFiles(QByteArray agent, QUrl url, QFileInfo fi)
+void Network::processFile(QUrl url, QFileInfo fi)
 {
-    setUserAgent(agent);
     setRemoteFileUrl(url);
     setLocalFileInfo(fi);
     doHttpHeadRequest();
     return;
 }
 
-void TNetwork::doHttpHeadRequest()
+void Network::doHttpHeadRequest()
 {
     QNetworkRequest request = prepareNetworkRequest(remote_file_url);
     manager_head->head(request);
-    // download = true;
     return;
 }
 
-void TNetwork::finishedHeadRequest(QNetworkReply *reply)
+void Network::finishedHeadRequest(QNetworkReply *reply)
 {
     if (reply->error() != QNetworkReply::NoError)
     {
-        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url << " " << reply->errorString();
-        emit downloadInpossible();
+        handleNetworkError(reply);
         return;
     }
+
     int status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     if (status_code != 301)
         checkStatusCode(reply, status_code);
@@ -66,15 +64,18 @@ void TNetwork::finishedHeadRequest(QNetworkReply *reply)
     return;
 }
 
-void TNetwork::finishedHeadRedirectRequest(QNetworkReply *reply)
+void Network::finishedHeadRedirectRequest(QNetworkReply *reply)
 {
     if (reply->error() != QNetworkReply::NoError)
-        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url << " " << reply->errorString();
-
+    {
+        handleNetworkError(reply);
+        return;
+    }
     checkStatusCode(reply, reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+    return;
 }
 
-QNetworkRequest TNetwork::prepareNetworkRequest(QUrl remote_url)
+QNetworkRequest Network::prepareNetworkRequest(QUrl remote_url)
 {
     QNetworkRequest request(remote_url);
     QSslConfiguration conf = request.sslConfiguration();
@@ -84,7 +85,7 @@ QNetworkRequest TNetwork::prepareNetworkRequest(QUrl remote_url)
     return request;
 }
 
-void TNetwork::checkStatusCode(QNetworkReply *reply, int status_code)
+void Network::checkStatusCode(QNetworkReply *reply, int status_code)
 {
     switch (status_code)
     {
@@ -100,7 +101,7 @@ void TNetwork::checkStatusCode(QNetworkReply *reply, int status_code)
     return;
 }
 
-void TNetwork::checkHttpHeaders(QNetworkReply *reply)
+void Network::checkHttpHeaders(QNetworkReply *reply)
 {
     QString content_type = "";
     if (reply->hasRawHeader("Content-Type"))
@@ -119,7 +120,7 @@ void TNetwork::checkHttpHeaders(QNetworkReply *reply)
                 local_file_info.size() == reply->rawHeader("Content-Length").toLong() &&
                 local_file_info.lastModified() > locale.toDateTime(reply->rawHeader("Last-Modified"), "ddd, dd MMM yyyy hh:mm:ss 'GMT'"))
         {
-            qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url << " no need to refresh";
+            qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url << " no need for update";
             emit downloadInpossible();
         }
         else
@@ -127,13 +128,13 @@ void TNetwork::checkHttpHeaders(QNetworkReply *reply)
     }
     else
     {
-        qWarning(ContentManager) << " FETCH_FAILED resourceURI:" << remote_file_url << " has no Last-Modiefied entry in header";
+        qWarning(ContentManager) << " FETCH_FAILED resourceURI:" << remote_file_url << " has no Last-Modified entry in header";
         emit downloadInpossible();
     }
     return;
 }
 
-void TNetwork::doHttpGetRequest()
+void Network::doHttpGetRequest()
 {
     // cause it can be a redirect to a new url
     QNetworkRequest request = prepareNetworkRequest(remote_file_url);
@@ -141,20 +142,18 @@ void TNetwork::doHttpGetRequest()
     return;
 }
 
-void TNetwork::finishedGetRequest(QNetworkReply *reply)
+void Network::finishedGetRequest(QNetworkReply *reply)
 {
     if (reply->error() != QNetworkReply::NoError)
     {
-        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url << " " << reply->errorString();
-        emit downloadInpossible();
+        handleNetworkError(reply);
         return;
     }
-
     emit downloadPossible(reply);
     return;
 }
 
-bool TNetwork::validContentType(QString content_type)
+bool Network::validContentType(QString content_type)
 {
     if (content_type.contains("text/html")  || content_type.contains("application/xhtml+xml"))
         return false;
@@ -162,9 +161,17 @@ bool TNetwork::validContentType(QString content_type)
     // text/texmacs is "sophisticated" support for ts-files in old debian (squeeze) distros
     if (!content_type.contains("image/") && !content_type.contains("video/") && !content_type.contains("audio/") && !content_type.contains("text/texmacs") && !content_type.contains("application/smil") && !content_type.contains("application/widget"))
     {
-        qWarning() << "FETCH_FAILED resourceURI: " << remote_file_url << " has contentype " << content_type << " which is not supported.";
+        qCritical() << "FETCH_FAILED resourceURI: " << remote_file_url << " has contentype " << content_type << " which is not supported.";
         return false;
     }
     return true;
 }
 
+void Network::handleNetworkError(QNetworkReply *reply)
+{
+    if (local_file_info.exists())
+        qWarning(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url << " " << reply->errorString();
+    else
+        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url << " " << reply->errorString();
+    emit downloadInpossible();
+}

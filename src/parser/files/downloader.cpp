@@ -55,7 +55,6 @@ void TDownloader::checkFiles(QString local, QString remote, QString src)
     return;
 }
 
-
 void TDownloader::doHttpHeadRequest()
 {
     QNetworkRequest request = prepareNetworkRequest(remote_file_url);
@@ -83,7 +82,6 @@ void TDownloader::finishedHeadRequest(QNetworkReply *reply)
         emitDownloadFailed("FETCH_FAILED resourceURI: " + src_file_path +" "+ reply->errorString());
     return;
 }
-
 
 void TDownloader::finishedHeadRedirectRequest(QNetworkReply *reply)
 {
@@ -253,7 +251,7 @@ bool TDownloader::extractWgt()
 void TDownloader::emitNoModified()
 {
     download = false;
-    qDebug(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << src_file_path << " no need to refresh";
+    qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << src_file_path << " no need to refresh";
     emit noModified(src_file_path);
     return;
 }
@@ -261,7 +259,7 @@ void TDownloader::emitNoModified()
 void TDownloader::emitUnCachable()
 {
     download = false;
-    qDebug(ContentManager) << "resourceURI:" << src_file_path << " should not be cached";
+    qInfo(ContentManager) << "resourceURI:" << src_file_path << " should not be cached";
     emit uncachable(src_file_path);
 }
 

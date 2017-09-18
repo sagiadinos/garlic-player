@@ -1,9 +1,9 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-02-28T06:03:43
+# Project created by QtCreator 2016-02-28T06:11:21
 #
 #-------------------------------------------------
-include(../../../src/defaults.pri)
+include(../../../../src/defaults.pri)
 
 QT       += xml testlib
 QT       -= gui
@@ -12,9 +12,8 @@ CONFIG   += console testcase c++11
 CONFIG   -= app_bundle
 TEMPLATE = app
 
-TARGET = tst_configuration
-SOURCES += tst_configuration.cpp
+TARGET = tst_head
+SOURCES += tst_head.cpp
 
-include(../../tests.pri)
-
-RESOURCES += config.xml
+include(../../../tests.pri)
+RESOURCES += head_complex.smil head_simple.smil

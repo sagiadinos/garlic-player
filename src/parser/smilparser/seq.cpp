@@ -72,7 +72,7 @@ void TSeq::next(TBaseTiming *ended_element)
 
 bool TSeq::isChildPlayable(TBaseTiming *element)
 {
-    qDebug(SmilParser) << element->getID() << "is ChildPlayable in seq";
+    qDebug() << element->getID() << "is ChildPlayable in seq";
     childStarted(element);
     return true;
 }
@@ -143,7 +143,7 @@ void TSeq::handlePossibleRepeat()
 {
     if (checkRepeatCountStatus())
     {
-        qDebug(SmilParser) << getID() << "Repeats: " << count++;
+        qDebug() << getID() << "Repeats: " << count++;
         play();
     }
     else

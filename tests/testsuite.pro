@@ -1,14 +1,15 @@
 TEMPLATE = subdirs
 SUBDIRS += \
          parser/files/network \
-         parser/base \
-         parser/base_timing \
-         parser/configuration \
-         parser/container \
-         parser/downloader \
-         parser/excl \
-         parser/head \
-         parser/timings \
-         parser/seq \
-		 parser/shuffle
+         parser/files/file_model \
+         parser/files/disc_space \
+         parser/smilparser/base \
+         parser/smilparser/base_timing \
+         parser/tools/configuration \
+         parser/smilparser/container \
+         parser/smilparser/excl \
+         parser/smilparser/head \
+         parser/smilparser/timings \
+         parser/smilparser/seq \
+		 parser/smilparser/tools/shuffle
          

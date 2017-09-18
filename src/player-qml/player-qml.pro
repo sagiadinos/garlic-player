@@ -10,9 +10,11 @@ QT     += core widgets gui xml quick qml
 CONFIG += warn_on c++11
 
 DEFINES += QUAZIP_STATIC
+Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 TARGET = garlic-player
 TEMPLATE = app
+DESTDIR = ../bin
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes
 

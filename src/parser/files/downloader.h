@@ -26,14 +26,11 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QUrl>
 #include <QStorageInfo>
-
-#include "logging_categories.h"
+#include <QUrl>
+#include <logging_categories.h>
 #include "../ext/quazip/JlCompress.h"
 #include "tools/configuration.h"
-
-
 
 /**
  * @brief should get the "old" maybe local md5 named file in var and the path to the new file
@@ -43,14 +40,13 @@ class TDownloader: public QObject
 {
     Q_OBJECT
     QNetworkAccessManager *manager_head, *manager_head_redirect, *manager_get;
-
 public:
     TDownloader(TConfiguration *config);
     ~TDownloader();
     virtual void checkFiles(QString local, QString remote, QString src);
     virtual bool downloadInProgress();
 
-private slots:
+protected slots:
     void finishedGetRequest(QNetworkReply *reply);
     void finishedHeadRequest(QNetworkReply *reply);
     void finishedHeadRedirectRequest(QNetworkReply *reply);

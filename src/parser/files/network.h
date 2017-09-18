@@ -27,21 +27,21 @@
 #include <logging_categories.h>
 
 /**
- * @brief The TNetwork class capsulates network accesses
- * handles head, get and redirect requests
- * returns a QIODevioce for download when succeeded
- * logs success and error notifications
+ * @brief The Network class capsulates network accesses
+ * - handles head, get and redirect requests
+ * - emit a signal with QIODevioce for download when succeeded
+ * - logs success (info) and error notifications
  */
-class TNetwork : public QObject
+class Network : public QObject
 {
     Q_OBJECT
 public:
 
-    explicit TNetwork(QObject *parent = nullptr);
+    Network(QByteArray agent);
 
-    void       checkFiles(QByteArray agent, QUrl url, QFileInfo fi);
+    void       processFile(QUrl url, QFileInfo fi);
 
-    //getter/Setter
+    //Getter/Setter
     QByteArray getUserAgent() const {return user_agent;}
     void       setUserAgent(const QByteArray &value) {user_agent = value;}
     QFileInfo  getLocalFileInfo() const {return local_file_info;}
@@ -61,11 +61,11 @@ protected:
     void                   checkStatusCode(QNetworkReply *reply, int status_code);
     void                   checkHttpHeaders(QNetworkReply *reply);
     bool                   validContentType(QString content_type);
+    void                   handleNetworkError(QNetworkReply *reply);
 protected slots:
     void                   finishedHeadRequest(QNetworkReply *reply);
     void                   finishedHeadRedirectRequest(QNetworkReply *reply);
     void                   finishedGetRequest(QNetworkReply *reply);
-
 signals:
     void                   downloadPossible(QIODevice *data);
     void                   downloadInpossible();

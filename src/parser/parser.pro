@@ -42,7 +42,10 @@ SOURCES += \
     smilparser/tools/shuffle.cpp \
     files/index.cpp \
     tools/logging_categories.cpp \
-    files/network.cpp
+    files/network.cpp \
+    files/file_model.cpp \
+    files/file_list.cpp \
+    files/disc_space.cpp
 HEADERS += tools/configuration.h \
     smilparser.h \
     smilparser/head.h \
@@ -68,4 +71,7 @@ HEADERS += tools/configuration.h \
     smilparser/tools/shuffle.h \
     files/index.h \
     tools/logging_categories.h \
-    files/network.h
+    files/network.h \
+    files/file_model.h \
+    files/file_list.h \
+    files/disc_space.h

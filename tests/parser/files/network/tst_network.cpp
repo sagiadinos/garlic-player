@@ -19,16 +19,18 @@
 #include <QFileInfo>
 #include <QIODevice>
 #include <QtTest>
-#include <files/network.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <files/network.h>
+
 void noMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg){Q_UNUSED(type); Q_UNUSED(context); Q_UNUSED(msg)}
 
-class TestTNetwork : public QObject
+class TestNetwork : public QObject
 {
     Q_OBJECT
 public:
-    TestTNetwork(){}
+    TestNetwork(){}
 
 
 private Q_SLOTS:
@@ -41,19 +43,19 @@ private Q_SLOTS:
     void testDownloadWebSite();
 };
 
-void TestTNetwork::testAgentString()
+void TestNetwork::testAgentString()
 {
-    TNetwork *MyNetwork = new TNetwork;
     QByteArray agent("this is an agent string");
+    Network *MyNetwork = new Network(agent);
     QUrl url("http://smil-admin.com/garlic/test.php?action=show_agent_string");
     QFileInfo fi;
 
     qRegisterMetaType<QIODevice *>();
     QSignalSpy spy(MyNetwork, SIGNAL(downloadPossible(QIODevice *)));
     QVERIFY(spy.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     int i = 0;
-    while (spy.count() == 0 && i < 2000)
+    while (spy.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -61,21 +63,20 @@ void TestTNetwork::testAgentString()
     QCOMPARE(spy.count(), 1);
     QIODevice *data = qvariant_cast<QIODevice *>(spy.at(0).at(0));
     QCOMPARE(data->readAll(), agent);
-
 }
 
-void TestTNetwork::testDownloadSmil()
+void TestNetwork::testDownloadSmil()
 {
-    TNetwork *MyNetwork = new TNetwork;
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+    Network *MyNetwork = new Network(agent);
     QUrl url("http://smil-admin.com/garlic/test.php?action=get_smil_new");
     QFileInfo fi;
     qRegisterMetaType<QIODevice *>();
     QSignalSpy spy1(MyNetwork, SIGNAL(downloadPossible(QIODevice *)));
     QVERIFY(spy1.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     int i = 0;
-    while (spy1.count() == 0 && i < 2000)
+    while (spy1.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -91,9 +92,9 @@ void TestTNetwork::testDownloadSmil()
     fi.setFile(":/simple.smil");
     QSignalSpy spy2(MyNetwork, SIGNAL(downloadInpossible()));
     QVERIFY(spy2.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     i = 0;
-    while (spy2.count() == 0 && i < 2000)
+    while (spy2.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -105,9 +106,9 @@ void TestTNetwork::testDownloadSmil()
     fi.setFile(":/notavaible.smil"); // to make sure file is not exist
     QSignalSpy spy3(MyNetwork, SIGNAL(downloadInpossible()));
     QVERIFY(spy3.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     i = 0;
-    while (spy3.count() == 0 && i < 2000)
+    while (spy3.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -115,12 +116,12 @@ void TestTNetwork::testDownloadSmil()
     QCOMPARE(spy3.count(), 1);
 
     url.setUrl("http://smil-admin.com/garlic/test.php?action=get_smil_updated");
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     fi.setFile(":/simple.smil"); // to make sure file exists
     QSignalSpy spy4(MyNetwork, SIGNAL(downloadPossible(QIODevice *)));
     QVERIFY(spy4.isValid());
     i = 0;
-    while (spy4.count() == 0 && i < 2000)
+    while (spy4.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -128,18 +129,18 @@ void TestTNetwork::testDownloadSmil()
     QCOMPARE(spy4.count(), 1);
 }
 
-void TestTNetwork::testDownloadMedia()
+void TestNetwork::testDownloadMedia()
 {
-    TNetwork *MyNetwork = new TNetwork;
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+    Network *MyNetwork = new Network(agent);
     QUrl url("http://smil-admin.com/garlic/test.php?action=get_media_new");
     QFileInfo fi;
     qRegisterMetaType<QIODevice *>();
     QSignalSpy spy1(MyNetwork, SIGNAL(downloadPossible(QIODevice *)));
     QVERIFY(spy1.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     int i = 0;
-    while (spy1.count() == 0 && i < 2000)
+    while (spy1.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -155,9 +156,9 @@ void TestTNetwork::testDownloadMedia()
     fi.setFile(":/server.jpg");
     QSignalSpy spy2(MyNetwork, SIGNAL(downloadInpossible()));
     QVERIFY(spy2.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     i = 0;
-    while (spy2.count() == 0 && i < 2000)
+    while (spy2.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -169,9 +170,9 @@ void TestTNetwork::testDownloadMedia()
     fi.setFile(":/server_notavaible.jpg"); // to make sure file is not exist
     QSignalSpy spy3(MyNetwork, SIGNAL(downloadInpossible()));
     QVERIFY(spy3.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     i = 0;
-    while (spy3.count() == 0 && i < 2000)
+    while (spy3.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -182,9 +183,9 @@ void TestTNetwork::testDownloadMedia()
     fi.setFile(":/server.jpg"); // to make sure file exists
     QSignalSpy spy4(MyNetwork, SIGNAL(downloadPossible(QIODevice *)));
     QVERIFY(spy4.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     i = 0;
-    while (spy4.count() == 0 && i < 2000)
+    while (spy4.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -192,18 +193,18 @@ void TestTNetwork::testDownloadMedia()
     QCOMPARE(spy4.count(), 1);
 }
 
-void TestTNetwork::testDownloadMediaDirect()
+void TestNetwork::testDownloadMediaDirect()
 {
-    TNetwork *MyNetwork = new TNetwork;
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+    Network *MyNetwork = new Network(agent);
     QUrl url("http://smil-admin.com/garlic/server.jpg");
     QFileInfo fi;
     qRegisterMetaType<QIODevice *>();
     QSignalSpy spy1(MyNetwork, SIGNAL(downloadPossible(QIODevice *)));
     QVERIFY(spy1.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     int i = 0;
-    while (spy1.count() == 0 && i < 2000)
+    while (spy1.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -219,9 +220,9 @@ void TestTNetwork::testDownloadMediaDirect()
     fi.setFile(":/server.jpg");
     QSignalSpy spy2(MyNetwork, SIGNAL(downloadInpossible()));
     QVERIFY(spy2.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     i = 0;
-    while (spy2.count() == 0 && i < 2000)
+    while (spy2.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -229,18 +230,18 @@ void TestTNetwork::testDownloadMediaDirect()
     QCOMPARE(spy2.count(), 1);
 }
 
-void TestTNetwork::testDownloadWebSite()
+void TestNetwork::testDownloadWebSite()
 {
-    TNetwork *MyNetwork = new TNetwork;
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+    Network *MyNetwork = new Network(agent);
     QUrl url("http://smil-control.com");
     QFileInfo fi;
     qRegisterMetaType<QIODevice *>();
     QSignalSpy spy1(MyNetwork, SIGNAL(downloadInpossible()));
     QVERIFY(spy1.isValid());
-    MyNetwork->checkFiles(agent, url, fi);
+    MyNetwork->processFile(url, fi);
     int i = 0;
-    while (spy1.count() == 0 && i < 2000)
+    while (spy1.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
@@ -249,6 +250,6 @@ void TestTNetwork::testDownloadWebSite()
 }
 
 
-QTEST_MAIN(TestTNetwork)
+QTEST_MAIN(TestNetwork)
 
 #include "tst_network.moc"
