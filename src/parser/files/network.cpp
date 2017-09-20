@@ -95,7 +95,7 @@ void Network::checkStatusCode(QNetworkReply *reply, int status_code)
         case 304:
         default:
             qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url << " no need to refresh";
-            emit downloadInpossible();
+            emit notmodified(this);
         break;
     }
     return;
@@ -107,9 +107,15 @@ void Network::checkHttpHeaders(QNetworkReply *reply)
     if (reply->hasRawHeader("Content-Type"))
         content_type = reply->rawHeader("Content-Type");
 
+    if (content_type.contains("text/html")  || content_type.contains("application/xhtml+xml"))
+    {
+        emit notcacheable(this);
+        return;
+    }
+
     if (!validContentType(content_type))
     {
-        emit downloadInpossible();
+        emit failed(this);
         return;
     }
 
@@ -121,7 +127,7 @@ void Network::checkHttpHeaders(QNetworkReply *reply)
                 local_file_info.lastModified() > locale.toDateTime(reply->rawHeader("Last-Modified"), "ddd, dd MMM yyyy hh:mm:ss 'GMT'"))
         {
             qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url << " no need for update";
-            emit downloadInpossible();
+            emit notmodified(this);
         }
         else
             doHttpGetRequest();
@@ -129,7 +135,7 @@ void Network::checkHttpHeaders(QNetworkReply *reply)
     else
     {
         qWarning(ContentManager) << " FETCH_FAILED resourceURI:" << remote_file_url << " has no Last-Modified entry in header";
-        emit downloadInpossible();
+        emit failed(this);
     }
     return;
 }
@@ -149,15 +155,12 @@ void Network::finishedGetRequest(QNetworkReply *reply)
         handleNetworkError(reply);
         return;
     }
-    emit downloadPossible(reply);
+    emit succeed(this, reply); // reply is QIODevice
     return;
 }
 
 bool Network::validContentType(QString content_type)
 {
-    if (content_type.contains("text/html")  || content_type.contains("application/xhtml+xml"))
-        return false;
-
     // text/texmacs is "sophisticated" support for ts-files in old debian (squeeze) distros
     if (!content_type.contains("image/") && !content_type.contains("video/") && !content_type.contains("audio/") && !content_type.contains("text/texmacs") && !content_type.contains("application/smil") && !content_type.contains("application/widget"))
     {
@@ -173,5 +176,5 @@ void Network::handleNetworkError(QNetworkReply *reply)
         qWarning(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url << " " << reply->errorString();
     else
         qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url << " " << reply->errorString();
-    emit downloadInpossible();
+    emit failed(this);
 }

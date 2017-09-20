@@ -51,24 +51,27 @@ public:
 public slots:
 
 protected:
-    QUrl                   remote_file_url;
-    QByteArray             user_agent;
-    QFileInfo              local_file_info;
-    QNetworkAccessManager *manager_head, *manager_head_redirect, *manager_get;
-    void                   doHttpHeadRequest();
-    void                   doHttpGetRequest();
-    QNetworkRequest        prepareNetworkRequest(QUrl remote_url);
-    void                   checkStatusCode(QNetworkReply *reply, int status_code);
-    void                   checkHttpHeaders(QNetworkReply *reply);
-    bool                   validContentType(QString content_type);
-    void                   handleNetworkError(QNetworkReply *reply);
+    QHash<QString, QString> available_media;
+    QUrl                    remote_file_url;
+    QByteArray              user_agent;
+    QFileInfo               local_file_info;
+    QNetworkAccessManager  *manager_head, *manager_head_redirect, *manager_get;
+    void                    doHttpHeadRequest();
+    void                    doHttpGetRequest();
+    QNetworkRequest         prepareNetworkRequest(QUrl remote_url);
+    void                    checkStatusCode(QNetworkReply *reply, int status_code);
+    void                    checkHttpHeaders(QNetworkReply *reply);
+    bool                    validContentType(QString content_type);
+    void                    handleNetworkError(QNetworkReply *reply);
 protected slots:
-    void                   finishedHeadRequest(QNetworkReply *reply);
-    void                   finishedHeadRedirectRequest(QNetworkReply *reply);
-    void                   finishedGetRequest(QNetworkReply *reply);
+    void                    finishedHeadRequest(QNetworkReply *reply);
+    void                    finishedHeadRedirectRequest(QNetworkReply *reply);
+    void                    finishedGetRequest(QNetworkReply *reply);
 signals:
-    void                   downloadPossible(QIODevice *data);
-    void                   downloadInpossible();
+    void                    succeed(QObject *, QIODevice *data);
+    void                    notmodified(QObject *);
+    void                    notcacheable(QObject *);
+    void                    failed(QObject *);
 };
 
 #endif // NETWORK_H

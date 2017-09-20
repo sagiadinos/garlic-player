@@ -1,21 +1,19 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-09-18T13:15:12
+# Project created by QtCreator 2017-09-19T16:16:13
 #
 #-------------------------------------------------
 include(../../../../src/defaults.pri)
 
-QT       += network testlib
+QT       += testlib
 QT       -= gui
 
 CONFIG   += console testcase c++11
 CONFIG   -= app_bundle
 TEMPLATE = app
 
-TARGET = tst_disco_space
-SOURCES += \
-    tst_disc_space.cpp
-
+TARGET = tst_wgt
+SOURCES +=tst_wgt.cpp
 
 include(../../../tests.pri)
 RESOURCES     = resources.qrc

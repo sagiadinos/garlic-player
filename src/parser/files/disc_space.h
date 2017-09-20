@@ -22,6 +22,8 @@ public:
     explicit DiscSpace(QString path = "./");
     void     init(QString path);
     void     freedSpace(qint64 size_deleted);
+    bool     freeDiscSpace(qint64 size_to_free);
+    qint64   calculateNeededDiscSpace(qint64 size);
 
     // Getter/Setter
     qint64 getBytesDeleted() const {return bytes_deleted;}
@@ -33,11 +35,15 @@ public:
     qint64 getStorageBytesFree() const {return storage.bytesFree();}
 
 protected:
-    const int _percent_free  = 5; // let 10% of total disc space free for Operating System
+    const int _percent_free  = 5; // let some % of total disc space free for Operating System logs, tmp etc
+    bool            deleteFile(QString file_path);
+    bool            deleteDirectory(QString dir_path);
+    qint64          calculateDirectorySize(QString dir_path);
 
 public slots:
 
 protected:
+    QString        cache_path;
     quint64        bytes_deleted = 0;
     quint64        bytes_available = 0;
     QStorageInfo   storage;

@@ -1,35 +1,12 @@
 #include "file_model.h"
 
-FileModel::FileModel(Network *network, QString cache)
+FileModel::FileModel(TConfiguration *config)
 {
-    MyNetwork   = network;
-    setCachePath(cache);
-    connect(MyNetwork, SIGNAL(downloadPossible(QIODevice *)), SLOT(saveToDisk(QIODevice *)));
-    connect(MyNetwork, SIGNAL(downloadInpossible()), SLOT(emitPaths()));
-}
-
-/**
- * @brief FileModel::registerFile needs the full path to File
- * This class should do not differ between an smil.index and a medie file, cause it is possible to link to an index.
- *
- * @param src
- */
-void FileModel::registerFile(QString src)
-{
-    setSrcFilePath(src);
-    MyDiscSpace.init(getCachePath());
-    if (isRemote(src_file_path))
-    {
-        local_file_info.setFile(cache_path+"/"+determineHashedFilePath());
-        storage.setPath(cache_path);
-        MyNetwork->processFile(QUrl(src_file_path), local_file_info); // leads to method saveToDisk
-    }
-    else
-    {
-        local_file_info.setFile(src_file_path);
-    }
-    checkForExtension();
-    emitPaths();
+    MyConfiguration   = config;
+    MyDownloadQueue = new DownloadQueue(MyConfiguration->getUserAgent().toUtf8());
+    setCachePath(MyConfiguration->getPaths("cache"));
+    connect(MyDownloadQueue, SIGNAL(succeed(QString, QString, QIODevice *)), SLOT(doSucceed(QString, QString, QIODevice *)));
+    connect(MyDownloadQueue, SIGNAL(notcacheable(QString)), SLOT(doNotCacheable(QString)));
 }
 
 bool FileModel::isRemote(QString src)
@@ -40,173 +17,131 @@ bool FileModel::isRemote(QString src)
         return false;
 }
 
-qint64 FileModel::calculateNeededDiscSpace(qint64 size_new_file)
+/**
+ * @brief FileModel::registerFile needs the full path to File
+ * This method only differ between an smil-index and a media file, cause media files must have an unique name.
+ *
+ * @param src
+ */
+void FileModel::registerFile(QString src_file_path)
 {
-    return -1*(MyDiscSpace.getBytesAvailable() - size_new_file - 10);
+    MyDiscSpace.init(getCachePath());
+    if (isRemote(src_file_path))
+        handleRemoteFile(src_file_path);
+    else
+        handleExistingLocalFile(src_file_path, src_file_path); // src and local path and src are identically if src path not remote == local
 }
 
-bool FileModel::freeDiscSpace(qint64 size_to_free)
+QString FileModel::findBySrcMediaPath(QString src_file_path)
 {
-    QDir dir(cache_path);
-    dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot); // do not work, when used in entryInfoList overloaded params directly so set hiere first
-    dir.setSorting(QDir::Time | QDir::Reversed);
-    QFileInfoList dirList = dir.entryInfoList();
-    for(int i = 0; i < dirList.size(); i++)
-    {
-        if (dirList.at(i).isFile())
-        {
-            if (!deleteFile(dirList.at(i).absoluteFilePath()))
-                return false;
-        }
-        if (dirList.at(i).isDir())
-        {
-            if (!deleteDirectory(dirList.at(i).absoluteFilePath()))
-                return false;
+    i_available_media_list = available_media_list.find(src_file_path);
+    if (i_available_media_list != available_media_list.end())
+        return i_available_media_list.value().first;
 
-            // delete corresponding wgt here to prevent inconsistencies e.g. deleted dir, but not wgt - or vice versa
-            if (!deleteFile(dirList.at(i).absoluteFilePath()+".wgt"))
-                return false;
-        }
-        if (size_to_free < MyDiscSpace.getBytesDeleted())
-            break;
-    }
-    qInfo(ContentManager) << "INFO " << MyDiscSpace.getBytesDeleted() << " Bytes of old content were deleted";
-    return true;
+    return "";
 }
 
-void FileModel::checkForExtension()
+
+// =========================== protected methods ============================
+
+void FileModel::handleRemoteFile(QString src_file_path)
 {
-    QString path = local_file_info.absoluteFilePath();
-    if (local_file_info.suffix() == "wgt")
+    QFileInfo fi(src_file_path);
+    if (fi.suffix() != "smil")
+        src_file_path = determineHashedFilePath(src_file_path);
+    MyDownloadQueue->insertQueue(src_file_path, cache_path+"/"+src_file_path);
+}
+
+void FileModel::handleExistingLocalFile(QString src_file_path, QString local_file_path)
+{
+    QString path = determineCachePathByMediaExtension(src_file_path, local_file_path);
+    if (path == "")
+        return;
+
+    if (findBySrcMediaPath(src_file_path) == "")
+        available_media_list.insert(src_file_path, qMakePair(path, _exist));
+    else
+        available_media_list[src_file_path] = qMakePair(path, _reloadable);
+}
+
+QString FileModel::determineCachePathByMediaExtension(QString src_file_path, QString local_file_path)
+{
+    QFileInfo fi(local_file_path);
+    QString path = fi.absoluteFilePath();
+    QString real_file_path("");
+    if (fi.suffix() == "wgt")
     {
-        if (!extractWgt())
+        Wgt MyWgt(local_file_path);
+        qint64 i = MyWgt.calculateSize();
+        if (i <= 0 || !MyDiscSpace.freeDiscSpace(i))
         {
-            emit failed(src_file_path);
-            return;
+            qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << src_file_path << " could not be saved cause no Space could be freed";
+            return "";
+        }
+
+        if (!MyWgt.extract())
+        {
+            qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << src_file_path << " could not be saved cause wgt cannot extracted";
+            return "";
         }
         #if defined  Q_OS_WIN
-            setLocalFilePath("file:/"+path.mid(0, path.length()-4)+"/index.html"); // Windows needs file:// for opening absolute paths in WebEngine
+           real_file_path = "file:/"+path.mid(0, path.length()-4)+"/index.html"; // Windows needs file:// for opening absolute paths in WebEngine
         #else
-            setLocalFilePath("file://"+path.mid(0, path.length()-4)+"/index.html"); // Linux needs file:/// for opening absolute paths in WebEngine
+            real_file_path = "file://"+path.mid(0, path.length()-4)+"/index.html"; // Linux needs file:/// for opening absolute paths in WebEngine
         #endif
     }
     else
-        setLocalFilePath(path);
+        real_file_path = path;
 
+    qInfo(ContentManager) << "OBJECT_UPDATED resourceURI:" << src_file_path << " contentLenght: " << fi.size();
+    return real_file_path;
 }
 
-void FileModel::saveToDisk(QIODevice *data)
+bool FileModel::saveToDisk(QString src_file_path, QString local_file_path, QIODevice *data)
 {
-    QFile file(local_file_info.absoluteFilePath());
+    QFile file(local_file_path);
     if (!file.open(QIODevice::ReadWrite))
     {
         qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << src_file_path << " could not be saved " << file.errorString();
-        emit failed(src_file_path);
-        return;
+       // emit failed(src_file_path);
+        return false;
     }
-    qint64 calc = calculateNeededDiscSpace(data->size());
-    if (calc > 0 && !freeDiscSpace(calc))
+    qint64 calc = MyDiscSpace.calculateNeededDiscSpace(data->size());
+    if (calc > 0 && !MyDiscSpace.freeDiscSpace(calc))
     {
         qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << src_file_path << " could not be saved " << file.errorString() << "cause space cannot be freed";
-        emit failed(src_file_path);
-        return;
+        // emit failed(src_file_path);
+        return false;
     }
 
-    file.write(data->readAll());
+    file.write(data->readAll()); // should overwrites automatic existing files
     file.close();
-    return;
-}
-
-/**
- * @brief FileModel::extractWgt unzip the widget in the local_file_info.absolutePath()
- * which can be the cache directory or the local directory on usb, hardisc etc
- * @return
- */
-bool FileModel::extractWgt()
-{
-    QuaZip zip(local_file_info.absoluteFilePath());
-
-    if (!zip.open(QuaZip::mdUnzip))
-    {
-        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << src_file_path << " Widget can not be opend. Zip error code: " << zip.getZipError();
-        return false;
-    }
-
-    QString folder_path = local_file_info.absolutePath()+"/"+local_file_info.baseName();
-    QDir dir(folder_path);
-    if (dir.exists() && !dir.removeRecursively())
-    {
-        qWarning(ContentManager) << "FETCH_FAILED resourceURI: " << src_file_path << " Widget was not extracted. Directory cannot be deleted";
-        return false;
-    }
-    if (!dir.mkdir(folder_path))
-    {
-        qWarning(ContentManager) << "FETCH_FAILED resourceURI: " << src_file_path << " Widget was not extracted. Directory cannot be created";
-        return false;
-    }
-
-    JlCompress::extractDir(local_file_info.absoluteFilePath(), folder_path+"/");
-    zip.close();
-
     return true;
 }
 
-QString FileModel::determineHashedFilePath()
+QString FileModel::determineHashedFilePath(QString src_file_path)
 {
+    // ToDo Optimization: check if it is wise to get a md5-hash from complete file
+    // pro:
+    //      prevent multiple identically files on player
+    // cons:
+    //      files had to be downloaded in any case
+    //      md5 of a 1GB videofile can be extremly time/resource consuming on weak devices like rpi zero
     QFileInfo fi(src_file_path);
     return QString(QCryptographicHash::hash((src_file_path.toUtf8()), QCryptographicHash::Md5).toHex())+ "."+fi.suffix();
 }
 
-bool FileModel::deleteFile(QString file_path)
+// ================ slots ===========================
+
+void FileModel::doSucceed(QString src_file_path, QString local_file_path, QIODevice *data)
 {
-    QFile del_file(file_path);
-
-    if (!del_file.exists()) // not an error. to prevent eventually inconsistencies e.g. wgt <=> wgt directory
-        return true;
-
-    qint64 del_size = del_file.size();
-    if (!del_file.remove())
-    {
-        qCritical(ContentManager) << file_path << " cannot be removed " << del_file.errorString();
-        return false;
-    }
-    MyDiscSpace.freedSpace(del_size);
-    return true;
+    if (!saveToDisk(src_file_path, local_file_path, data))
+        return;
+    handleExistingLocalFile(src_file_path, local_file_path);
 }
 
-bool FileModel::deleteDirectory(QString dir_path)
+void FileModel::doNotCacheable(QString src_file_path)
 {
-    QDir del_dir(dir_path);
-
-    if (!del_dir.exists()) // not an error. to prevent eventually inconsistencies e.g wgt <=> wgt directory
-        return true;
-
-    quint64 dir_size = calculateDirectorySize(dir_path);
-    if (!del_dir.removeRecursively())
-    {
-        qCritical(ContentManager) << dir_path << " cannot be removed";
-        return false;
-    }
-    MyDiscSpace.freedSpace(dir_size);
-    return true;
+    if (findBySrcMediaPath(src_file_path) == "")
+        available_media_list.insert(src_file_path, qMakePair(src_file_path, _exist));
 }
-
-qint64 FileModel::calculateDirectorySize(QString dir_path)
-{
-    QDirIterator it(dir_path, QDir::Files, QDirIterator::Subdirectories);
-    QFileInfo fi;
-    qint64 dir_size = 0;
-    while (it.hasNext())
-    {
-        fi.setFile(it.next());
-        dir_size += fi.size();
-    }
-    return dir_size;
-}
-
-void FileModel::emitPaths()
-{
-    qInfo(ContentManager) << "OBJECT_UPDATED resourceURI:" << src_file_path << " contentLenght: " << local_file_info.size();
-    emit succeed(src_file_path, local_file_path);
-}
-

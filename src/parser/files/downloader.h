@@ -70,10 +70,10 @@ protected:
     void            emitUnCachable();
     void            emitDownloadFailed(QString Msg);
 signals:
-    void downloadSucceed(QString);
-    void noModified(QString); // when file is in cache cancel download
-    void uncachable(QString); // when file is in cache cancel download
-    void downloadFailed(QString);
+    void            downloadSucceed(QString);
+    void            noModified(QString); // when file is in cache cancel download
+    void            uncachable(QString); // when file is in cache cancel download
+    void                downloadFailed(QString);
 
 };
 #endif // TDOWNLOADER_H

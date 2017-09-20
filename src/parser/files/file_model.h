@@ -2,12 +2,12 @@
 #define FILE_MODEL_H
 
 #include <QObject>
-#include <QStorageInfo>
+#include <QMap>
 
-#include "../ext/quazip/JlCompress.h"
 #include "configuration.h"
-#include "network.h"
+#include "download_queue.h"
 #include "disc_space.h"
+#include "wgt.h"
 
 /**
  * @brief The FileModel class handles the file management and use the Network-class as helper
@@ -20,43 +20,39 @@ class FileModel : public QObject
 {
     Q_OBJECT
 public:
-    explicit        FileModel(Network *network, QString cache);
-    void            registerFile(QString src);
+    const     int        _no_exist   = 0;
+    const     int        _exist      = 1;
+    const     int        _reloadable = 2;
+    const     int        _uncachable = 3;
+    explicit        FileModel(TConfiguration *config);
     bool            isRemote(QString src);
+    void            registerFile(QString src_file_path);
+    QString         findBySrcMediaPath(QString src_file_path);
 
     //Getter/Setter
     QString         getCachePath() const{return cache_path;}
     void            setCachePath(const QString &value){cache_path = value;}
-    QString         getSrcFilePath() const{return src_file_path;}
-    void            setSrcFilePath(const QString &value){src_file_path = value;}
-    QFileInfo       getLocalFileInfo() const{return local_file_info;}
-    void            setLocalFileInfo(const QFileInfo value){local_file_info = value;}
-    QString         getLocalFilePath() const{return local_file_path;}
-    void            setLocalFilePath(const QString &value){local_file_path = value;}
-
+    QMap<QString, QPair<QString, int> > getAvailableMediaList() const {return available_media_list;}
+    void setAvailableMediaList(const QMap<QString, QPair<QString, int> > &value) {available_media_list = value;}
+    DownloadQueue *getDownloadQueue(){return MyDownloadQueue;}
 protected:
-    QStorageInfo    storage;
-    Network        *MyNetwork;
-    QString         cache_path;
-    QString         src_file_path, local_file_path;
-    QFileInfo       local_file_info;
-    DiscSpace       MyDiscSpace;
-    qint64          calculateNeededDiscSpace(qint64 size);
-    bool            freeDiscSpace(qint64 size_to_free);
-    void            checkForExtension();
-    bool            extractWgt();
-    QString         determineHashedFilePath();
-    qint64          getBytesAvailable(){return storage.bytesAvailable();}
-    bool            deleteFile(QString file_path);
-    bool            deleteDirectory(QString dir_path);
-    qint64          calculateDirectorySize(QString dir_path);
-protected slots:
-    void            saveToDisk(QIODevice *data);
-    void            emitPaths();
 
+    TConfiguration *MyConfiguration;
+    DownloadQueue  *MyDownloadQueue;
+    QString         cache_path;
+    DiscSpace       MyDiscSpace;
+    void            handleRemoteFile(QString src_file_path);
+    void            handleExistingLocalFile(QString src_file_path, QString local_file_path);
+    QString         determineCachePathByMediaExtension(QString src_file_path, QString local_file_path);
+    bool            saveToDisk(QString src_file_path, QString local_file_path, QIODevice *data);
+    QString         determineHashedFilePath(QString src_file_path);
+    QMap<QString, QPair<QString, int>>           available_media_list;
+    QMap<QString, QPair<QString, int>>::iterator i_available_media_list;
+protected slots:
+    void            doSucceed(QString src_file_path, QString local_file_path, QIODevice *data);
+    void            doNotCacheable(QString src_file_path);
 signals:
-    void            succeed(QString src, QString local);
-    void            failed(QString src);
+    void            newIndex(QString);
 
 };
 
