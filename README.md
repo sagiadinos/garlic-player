@@ -20,8 +20,10 @@ Compilations tested with:
  - Debian 8 Jessie
  - Rasperian Jessie/Stretch (rpi2/rpi3)
  - Tinker Board (Linaro OS 1.8) 
- - Android Armv7 (4.4.1, 5.0, 5.1 and 7.0)
+ - Android armv7 (4.4.1, 5.0, 5.1 and 7.0)
  - Windows 7 i64 (VS2015 Community Version)
+
+For android player-qml is needed, cause Multimedia-widgets are not supported is not. Do not use 5.9.1 for compile QML version of garlic cause there is a [mem leak](https://bugreports.qt.io/browse/QTBUG-61754) in Qt when using Image QML Type in QQuickItem.
 
 *garlic.sh [options] SMIL_INDEX*
 
@@ -35,15 +37,15 @@ Compilations tested with:
 Arguments:
 SMIL_INDEX        Path to SMIL index
 
-Binaries can be downloaded at http://garlic-player.com
+Binaries (Linux/Windows) of v0.1.0 can be downloaded at http://garlic-player.com
 
 ## Features
  - Support for multiple screens
- - Logging in file
- - Redirects
+ - Logging
+ - 301 redirect support
  - lot's of video formats 
  - Media Cache
- - SMIL3, HTML5 and HTML5-Widgets support
+ - SMIL3 subset, HTML5 and HTML5-Widgets support
 
 ## actual supported SMIL-Features
 
