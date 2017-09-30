@@ -20,8 +20,6 @@
 #define SMILPARSER_H
 
 #include <smilparser/factory.h>
-#include <QSet>
-
 /**
  * @brief   The TSmil class is the interface between container, media and
  *          the communication with the graphical output in mainwindow
@@ -33,7 +31,7 @@ class TSmil : public QObject
 {
     Q_OBJECT
 public:
-    TSmil(TFileManager *filemanager);
+    explicit TSmil(MediaManager *mm);
     ~TSmil();
     void                               init();
     void                               clearLists();
@@ -43,7 +41,7 @@ protected:
     QString                            index_path;
     TBody                             *MyBody;
     QHash<QString, TBaseTiming *>      ar_elements;
-    TFileManager                      *MyFileManager;
+    MediaManager                      *MyMediaManager;
 protected slots:
     void                               foundElement(TContainer *ParentContainer, QString type, QDomElement dom_element);
     void                               startElement(TContainer *parent, TBaseTiming *element);

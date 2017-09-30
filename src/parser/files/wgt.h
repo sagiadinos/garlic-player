@@ -4,6 +4,7 @@
 #include <QObject>
 #include "../ext/quazip/JlCompress.h"
 #include <logging_categories.h>
+#include "disc_space.h"
 
 class Wgt : public QObject
 {
@@ -13,8 +14,9 @@ public:
     ~Wgt();
     void         setFilePath(QString file_path);
     bool         isOpen();
+    QString      handleRealPath();
     bool         extract();
-    qint64       calculateSize();
+    qint64       calculateUncompressedSize();
 protected:
     QuaZip zip;
     QString local_file_path;

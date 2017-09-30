@@ -26,8 +26,20 @@ bool Wgt::isOpen()
     return zip.isOpen();
 }
 
+QString Wgt::handleRealPath()
+{
+    QString real_file_path = "";
+    if (!extract())
+        return "";
+    #if defined  Q_OS_WIN
+       real_file_path = "file:/"+local_file_path.mid(0, local_file_path.length()-4)+"/index.html"; // Windows needs file:// for opening absolute local_file_path in WebEngine
+    #else
+        real_file_path = "file://"+local_file_path.mid(0, local_file_path.length()-4)+"/index.html"; // Linux needs file:/// for opening absolute local_file_path in WebEngine
+    #endif
+    return real_file_path;
+}
 
-qint64 Wgt::calculateSize()
+qint64 Wgt::calculateUncompressedSize()
 {
     if (!isOpen())
         return 0;
@@ -41,7 +53,6 @@ qint64 Wgt::calculateSize()
         QuaZipFileInfo fi = *i;
         size = size + fi.uncompressedSize;
     }
-
     return (qint64) size;
 }
 
@@ -56,6 +67,14 @@ bool Wgt::extract()
         return false;
 
     QFileInfo fi(local_file_path);
+    DiscSpace MyDiscSpace(fi.absolutePath());
+    qint64 calc = MyDiscSpace.calculateNeededDiscSpaceToFree(calculateUncompressedSize());
+    if (calc > 0 && !MyDiscSpace.freeDiscSpace(calc))
+    {
+        qCritical(ContentManager) << local_file_path << " Widget was not extracted. Not enough space could be freeed";
+        return "";
+    }
+
     QString folder_path = fi.absolutePath()+"/"+fi.baseName();
     QDir dir(folder_path);
     if (dir.exists() && !dir.removeRecursively())

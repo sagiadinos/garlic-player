@@ -20,9 +20,11 @@
 #define TREGION_H
 
 #include <QQuickItem> // interates QQmlComponent
+
 #include <head.h>
 #include <smilparser.h>
-#include <file_manager.h>
+#include <media_manager.h>
+
 
 
 class TRegion : public QQuickItem
@@ -33,24 +35,37 @@ public:
     ~TRegion();
     void                setRootSize(int w, int h);
     void                setRegion(Region r, QQmlEngine *e);
-    void                playImage(TMedia *Media);
-    void                playVideo(TMedia *Media);
-    void                playAudio(TMedia *Media);
-    void                playWeb(TMedia *Media);
-    void                removeMedia();
+    void                playImage(TImage *Media);
+    void                playVideo(TVideo *Media);
+    void                playAudio(TAudio *Media);
+    void                playWeb(TWeb *Media);
+    void                removeImage();
+    void                removeVideo();
+    void                removeAudio();
+    void                removeWeb();
 
 protected:
     QQmlComponent        *media_component, *rectangle;
-    QQuickItem           *root_item, *rectangle_item, *media_item;
+    QQuickItem           *root_item, *rectangle_item, *image_item, *web_item, *audio_item, *video_item = NULL;
+//    QPointer<QQuickItem>  video_item;
     QQmlEngine           *engine;
-    TMedia               *MyMedia;
+    TVideo               *MyVideo;
+    TAudio               *MyAudio;
     qreal                 root_width_px, root_height_px = 0;
     Region                region;
+    QString               actual_media = "";
     void                  resizeGeometry();
     void                  handleMediaItem(QString str);
+    QQuickItem           *createMediaItem(QString str);
     QString               determineQmlFillMode(QString fill_mode);
 protected slots:
-    void                  finished();
+    void                  finishedVideo();
+    void                  finishedAudio();
+    void                  doDestroyVideo(QObject *oo);
+    void                  doDestroyAudio(QObject *oo);
+private:
+    mutable QMutex mutex;
+    qint64                getCurrentRSS();
 };
 
 #endif // TREGION_H

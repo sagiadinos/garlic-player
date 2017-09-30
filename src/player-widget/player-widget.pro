@@ -11,7 +11,7 @@ CONFIG += warn_on c++11
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 #Comment the next line in when you want to use QTMultimedia
-#CONFIG    += support_qtav
+CONFIG    += support_qtav
 
 support_qtav {
     DEFINES += SUPPORT_QTAV
@@ -25,8 +25,6 @@ TARGET = garlic-player
 TEMPLATE = app
 DESTDIR = ../bin
 INCLUDEPATH+=../ext/zlib/includes
-INCLUDEPATH+=../ext/quazip/includes
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     region.cpp \

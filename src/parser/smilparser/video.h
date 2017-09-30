@@ -24,7 +24,7 @@ class TVideo : public TAudio
 {
     Q_OBJECT
 public:
-    TVideo(TContainer *parent = 0);
+    explicit TVideo(TContainer *parent = 0);
 };
 
 #endif // TVIDEO_H

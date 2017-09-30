@@ -17,6 +17,7 @@ private Q_SLOTS:
     void cleanup();
     void testIsOpen();
     void testCalculateSize();
+    void testHandleRealPath();
     void testExtract();
     void testErrors();
 };
@@ -46,13 +47,32 @@ void TestWgt::testIsOpen()
     QVERIFY(MyWgt->isOpen());
 }
 
+void TestWgt::testHandleRealPath()
+{
+    QFile file(":/test.wgt");
+    file.copy("./cache/test.wgt");
+    Wgt *MyWgt = new Wgt;
+    MyWgt->setFilePath("./cache/test_not_existing.wgt");
+    QCOMPARE(MyWgt->handleRealPath(), QString(""));
+    QFileInfo wgt("./cache/test.wgt");
+    MyWgt->setFilePath(wgt.absoluteFilePath());
+    QString real = MyWgt->handleRealPath();
+
+#if defined  Q_OS_WIN
+    QVERIFY(real.contains("file://")); // Windows needs file:// for open absolute paths in WebEngine
+#else
+    QVERIFY(real.contains("file:///"));
+#endif
+    QVERIFY(real.contains("/cache/test/index.html"));
+}
+
 void TestWgt::testCalculateSize()
 {
     QFile file(":/test.wgt");
     file.copy("./cache/test.wgt");
     Wgt *MyWgt = new Wgt;
     MyWgt->setFilePath("./cache/test.wgt");
-    QCOMPARE(MyWgt->calculateSize(), 864);
+    QCOMPARE(MyWgt->calculateUncompressedSize(), 864);
     QFileInfo fi;
     fi.setFile("./cache/test/index.html");
     QVERIFY(!fi.exists());
@@ -63,9 +83,9 @@ void TestWgt::testExtract()
     QFile file(":/test.wgt");
     file.copy("./cache/test.wgt");
     Wgt *MyWgt = new Wgt;
-    MyWgt->setFilePath("./cache/test.wgt");
-
     QFileInfo wgt("./cache/test.wgt");
+    MyWgt->setFilePath(wgt.absoluteFilePath());
+
     MyWgt->extract();
     QFileInfo fi;
     fi.setFile("./cache/test/index.html");
@@ -85,7 +105,7 @@ void TestWgt::testErrors()
 {
     Wgt *MyWgt = new Wgt;
     QVERIFY(!MyWgt->isOpen());
-    QCOMPARE(MyWgt->calculateSize(), 0);
+    QCOMPARE(MyWgt->calculateUncompressedSize(), 0);
 
     MyWgt->extract();
     QFileInfo fi;

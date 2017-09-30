@@ -51,6 +51,8 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
 
 int main(int argc, char *argv[])
 {
+    QApplication app(argc, argv);
+
     TConfiguration *MyConfiguration = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
     QDir dir(".");
     int ret = 0;
@@ -58,12 +60,10 @@ int main(int argc, char *argv[])
     MyConfiguration->determineUserAgent();
     MyConfiguration->createDirectories();
 
-    QApplication app(argc, argv);
-
     // Set the logging file
     event_log.reset(new QFile(MyConfiguration->getPaths("logs") + "events.log"));
     event_log.data()->open(QFile::Append | QFile::Text);
-   // QLoggingCategory::setFilterRules("*.debug=false\n");
+    QLoggingCategory::setFilterRules("*.debug=true\n");
     qInstallMessageHandler(myMessageHandler);
 
     QApplication::setApplicationName(MyConfiguration->getAppName());
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
     bool is_index = true;
     TScreen    MyScreen(0, QApplication::desktop());
-    MainWindow w(new TFileManager(MyConfiguration), &MyScreen);
+    MainWindow w(MyConfiguration, &MyScreen);
 
     if (MyConfiguration->getIndexUri() == "")
     {

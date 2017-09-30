@@ -25,6 +25,7 @@
 #include <QFileInfo>
 
 #include <logging_categories.h>
+#include "disc_space.h"
 
 /**
  * @brief The Network class capsulates network accesses
@@ -35,43 +36,45 @@
 class Network : public QObject
 {
     Q_OBJECT
-public:
+    public:
 
-    Network(QByteArray agent);
+        explicit Network(QByteArray agent);
 
-    void       processFile(QUrl url, QFileInfo fi);
+        void       processFile(QUrl url, QFileInfo fi);
 
-    //Getter/Setter
-    QByteArray getUserAgent() const {return user_agent;}
-    void       setUserAgent(const QByteArray &value) {user_agent = value;}
-    QFileInfo  getLocalFileInfo() const {return local_file_info;}
-    void       setLocalFileInfo(const QFileInfo &value) {local_file_info = value;}
-    QUrl       getRemoteFileUrl() const {return remote_file_url;}
-    void       setRemoteFileUrl(const QUrl &value){remote_file_url = value;}
-public slots:
+        //Getter/Setter
+        QByteArray getUserAgent() const {return user_agent;}
+        void       setUserAgent(const QByteArray &value) {user_agent = value;}
+        QFileInfo  getLocalFileInfo() const {return local_file_info;}
+        void       setLocalFileInfo(const QFileInfo &value) {local_file_info = value;}
+        QUrl       getRemoteFileUrl() const {return remote_file_url;}
+        void       setRemoteFileUrl(const QUrl &value){remote_file_url = value;}
+    public slots:
 
-protected:
-    QHash<QString, QString> available_media;
-    QUrl                    remote_file_url;
-    QByteArray              user_agent;
-    QFileInfo               local_file_info;
-    QNetworkAccessManager  *manager_head, *manager_head_redirect, *manager_get;
-    void                    doHttpHeadRequest();
-    void                    doHttpGetRequest();
-    QNetworkRequest         prepareNetworkRequest(QUrl remote_url);
-    void                    checkStatusCode(QNetworkReply *reply, int status_code);
-    void                    checkHttpHeaders(QNetworkReply *reply);
-    bool                    validContentType(QString content_type);
-    void                    handleNetworkError(QNetworkReply *reply);
-protected slots:
-    void                    finishedHeadRequest(QNetworkReply *reply);
-    void                    finishedHeadRedirectRequest(QNetworkReply *reply);
-    void                    finishedGetRequest(QNetworkReply *reply);
-signals:
-    void                    succeed(QObject *, QIODevice *data);
-    void                    notmodified(QObject *);
-    void                    notcacheable(QObject *);
-    void                    failed(QObject *);
+    protected:
+        QByteArray              user_agent;
+        QUrl                    remote_file_url;
+        QFileInfo               local_file_info;
+        QNetworkAccessManager  *manager_head, *manager_head_redirect, *manager_get;
+        void                    doHttpHeadRequest();
+        void                    doHttpGetRequest();
+        QNetworkRequest         prepareNetworkRequest(QUrl remote_url);
+        void                    checkStatusCode(QNetworkReply *reply, int status_code);
+        void                    checkHttpHeaders(QNetworkReply *reply);
+        bool                    validContentType(QString content_type);
+        bool                    saveToDisc(QString src_file_path, QString local_file_path, QIODevice *data);
+        void                    handleNetworkError(QNetworkReply *reply);
+        bool                    saveToDisc(QIODevice *data);
+
+    protected slots:
+        void                    finishedHeadRequest(QNetworkReply *reply);
+        void                    finishedHeadRedirectRequest(QNetworkReply *reply);
+        void                    finishedGetRequest(QNetworkReply *reply);
+    signals:
+        void                    succeed(QObject *);
+        void                    notmodified(QObject *);
+        void                    notcacheable(QObject *);
+        void                    failed(QObject *);
 };
 
 #endif // NETWORK_H

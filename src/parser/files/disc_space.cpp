@@ -23,9 +23,14 @@ void DiscSpace::freedSpace(qint64 size_deleted)
     setBytesAvailable(getBytesAvailable() - size_deleted);
 }
 
-qint64 DiscSpace::calculateNeededDiscSpace(qint64 size_new_file)
+qint64 DiscSpace::calculateNeededDiscSpaceToFree(qint64 size_new_file)
 {
-    return -1*(getBytesAvailable() - size_new_file - 10);
+    qint64 ret = getBytesAvailable() - size_new_file - 10;
+
+    if (ret >= 0)
+        return 0;
+
+    return ret * -1; // when there is need to delete some files is negative so change the sign
 }
 
 bool DiscSpace::freeDiscSpace(qint64 size_to_free)
@@ -50,6 +55,7 @@ bool DiscSpace::freeDiscSpace(qint64 size_to_free)
             if (!deleteFile(dirList.at(i).absoluteFilePath()+".wgt"))
                 return false;
         }
+        qInfo(ContentManager) << "OBJECT_REMOVED resourceUri: " << dirList.at(i).absoluteFilePath() << " removed.";
         if (size_to_free < getBytesDeleted())
             break;
     }
@@ -59,7 +65,7 @@ bool DiscSpace::freeDiscSpace(qint64 size_to_free)
         qCritical(ContentManager) << "FAILED_FREEING_SPACE - Only " << getBytesDeleted() << "bytes from needed" << size_to_free << "bytes could be deleted";
         return false;
     }
-    qInfo(ContentManager) << "INFO " << getBytesDeleted() << " Bytes of old content were deleted";
+    qInfo(ContentManager) << "OBJECTS_REMOVED "<< getBytesDeleted() << " Bytes of old content were deleted";
     return true;
 }
 

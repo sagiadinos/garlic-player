@@ -20,20 +20,20 @@
 #define MEDIA_H
 
 #include "smilparser/container.h"
-#include "files/file_manager.h"
+#include "files/media_manager.h"
 
 class TMedia : public TBaseTiming
 {
     Q_OBJECT
 public:
-    TMedia(TBaseTiming * parent = 0);
+    explicit TMedia(TBaseTiming * parent = 0);
     QString           getRegion(){return region;}
     QString           getFit(){return fit;}
     QString           getSrc() {return src;}
     QString           getBaseType() {return "media";}
     bool              parse(QDomElement element);
     void              resume(){play();}
-    void              registerFile(TFileManager *FileManager);
+    void              registerFile(MediaManager *mm);
     bool              hasPlayingChilds(){return false;}
     TBaseTiming      *getChildElementFromList(){return this;}
     TContainer       *getParentContainer(){return parent_container;}
@@ -43,7 +43,7 @@ public:
 public slots:
     void              emitfinished();
 protected:
-    TFileManager     *MyFileManager;
+    MediaManager     *MyMediaManager;
     TContainer       *parent_container;
     QString           region = "screen";
     QString           src, exec, type, fit = "";

@@ -42,12 +42,12 @@ void TWeb::setDurationTimerBeforePlay()
     return;
 }
 
-void TWeb::registerFile(TFileManager *FileManager)
+void TWeb::registerFile(MediaManager *mm)
 {
     if (type.contains("application/widget"))
     {
-        MyFileManager = FileManager;
-        MyFileManager->registerFile(src);
+        MyMediaManager = mm;
+        MyMediaManager->registerFile(src);
     }
 }
 

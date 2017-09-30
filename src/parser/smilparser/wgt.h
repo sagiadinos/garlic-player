@@ -17,6 +17,6 @@ protected:
     QWebEngineView *browser;
     bool            loadMedia();
     void            setAttributes();
-};};
+};
 
 #endif // WGT_H

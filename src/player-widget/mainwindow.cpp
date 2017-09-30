@@ -18,16 +18,17 @@
 
 #include "mainwindow.h"
 
-MainWindow::MainWindow(TFileManager *FileManager, TScreen *screen)
+MainWindow::MainWindow(TConfiguration *config, TScreen *screen)
 {
     QWidget *centralWidget = new QWidget(this); // had to be there to get fullscreen simulation over multiple monitors
-    MyScreen        = screen;
+    MyScreen               = screen;
+    MyConfiguration        = config;
+    QByteArray user_agent(MyConfiguration->getUserAgent().toUtf8());
+    MyIndexManager         = new IndexManager(new IndexModel, MyConfiguration, new Network(user_agent));
+    connect(MyIndexManager, SIGNAL(availableIndex()), this, SLOT(setSmilIndex()));
+    MyMediaManager         = new MediaManager(new MediaModel, MyConfiguration, new NetworkQueue(user_agent));
 
-    MyFileManager   = FileManager;
-    MyIndexFile     = new TIndexManager(MyFileManager->getConfiguration());
-    connect(MyIndexFile, SIGNAL(isLoaded()), this, SLOT(setSmilIndex()));
-    MyHead          = new THead();
-    connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
+    MyIndexManager->init(MyConfiguration->getIndexUri());
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
     setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
@@ -51,13 +52,15 @@ void MainWindow::setSmilIndex()
         delete MySmil;
         deleteRegionsAndLayouts();
     }
-    MySmil = new TSmil(MyFileManager);
+    MyHead          = new THead();
+    connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
+    MySmil = new TSmil(MyMediaManager);
     connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     MySmil->init();
-    setRegions(MyIndexFile->getHead());
+    setRegions(MyIndexManager->getHead());
     setGeometry(0,0, width(), height());
-    MySmil->beginSmilParsing(MyIndexFile->getBody());
+    MySmil->beginSmilParsing(MyIndexManager->getBody());
 }
 
 /**
@@ -65,7 +68,7 @@ void MainWindow::setSmilIndex()
  */
 void MainWindow::checkForNewSmilIndex()
 {
-    MyIndexFile->load();
+    MyIndexManager->lookUpForIndex();
 }
 
 
@@ -100,33 +103,6 @@ QString MainWindow::selectRegion(QString region_name)
     return i.key();
 }
 
-void MainWindow::startShowMedia(TMedia *media)
-{
-    QString type   = media->objectName();
-
-   if (type == "TImage")
-        playImage(qobject_cast<TImage *>(media));
-    else if (type == "TVideo")
-        playVideo(qobject_cast<TVideo *>(media));
-    else if (type == "TAudio")
-        playAudio(qobject_cast<TAudio *>(media));
-    else if (type == "TWeb")
-        playWeb(qobject_cast<TWeb *>(media));
-    return;
-}
-
-void MainWindow::stopShowMedia(TMedia *media)
-{
-    QString type        = media->objectName();
-    if (type == "TImage")
-        removeImage(qobject_cast<TImage *>(media));
-    else if (type == "TVideo")
-        removeVideo(qobject_cast<TVideo *>(media));
-    else if (type == "TWeb")
-        removeWeb(qobject_cast<TWeb *>(media));
-    return;
-}
-
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
     if (!ke->modifiers().testFlag(Qt::ControlModifier))
@@ -159,12 +135,13 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 
 int MainWindow::openConfigDialog()
 {
-    ConfigDialog MyConfigDialog(0, MyFileManager->getConfiguration());
+    ConfigDialog MyConfigDialog(0, MyConfiguration);
     return MyConfigDialog.exec();
 }
 
 void MainWindow::resizeAsNormalFullScreen()
 {
+    setCursor(Qt::BlankCursor);
     screen_state = FULLSCREEN;
     move(MyScreen->getStartPointFromScreen());
     resize(MyScreen->getSizeFromScreen());
@@ -172,6 +149,7 @@ void MainWindow::resizeAsNormalFullScreen()
 
 void MainWindow::resizeAsBigFullScreen()
 {
+    setCursor(Qt::BlankCursor);
     screen_state = BIGFULLSCREEN;
     move(0, 0);
     resize(MyScreen->getWholeSize());
@@ -179,6 +157,7 @@ void MainWindow::resizeAsBigFullScreen()
 
 void MainWindow::resizeAsWindow()
 {
+    setCursor(Qt::BlankCursor);
     screen_state = WINDOWED;
     move(MyScreen->getStartPointFromScreen());
     resize(getMainWindowSize());
@@ -194,8 +173,6 @@ QSize MainWindow::getMainWindowSize()
     return mainwindow_size;
 }
 
-
-
 void MainWindow::resizeEvent(QResizeEvent * event)
 {
     if (ar_regions.size() > 0)
@@ -207,44 +184,38 @@ void MainWindow::resizeEvent(QResizeEvent * event)
     }
 }
 
-void MainWindow::playImage(TImage *MyImage)
+// =================== protected slots ====================================
+
+void MainWindow::startShowMedia(TMedia *media)
 {
-    QString region_name = selectRegion(MyImage->getRegion());
-    ar_regions[region_name]->playImage(MyImage);
-    ar_regions[region_name]->setRootSize(width(), height());
+    QString type   = media->objectName();
+    QString region_name = selectRegion(media->getRegion());
+
+    // ToDo change with something more elegant
+
+   if (type == "TImage")
+       ar_regions[region_name]->playImage(qobject_cast<TImage *>(media));
+    else if (type == "TVideo")
+       ar_regions[region_name]->playVideo(qobject_cast<TVideo *>(media));
+    else if (type == "TAudio")
+       ar_regions[region_name]->playAudio(qobject_cast<TAudio *>(media));
+    else if (type == "TWeb")
+       ar_regions[region_name]->playWeb(qobject_cast<TWeb *>(media));
+
+  if (type != "TAudio")
+      ar_regions[region_name]->setRootSize(width(), height());
+   return;
 }
 
-void MainWindow::playVideo(TVideo *MyVideo)
+void MainWindow::stopShowMedia(TMedia *media)
 {
-    QString region_name = selectRegion(MyVideo->getRegion());
-    ar_regions[region_name]->playVideo(MyVideo);
-    ar_regions[region_name]->setRootSize(width(), height());
+    QString type        = media->objectName();
+    QString region_name = selectRegion(media->getRegion());
+    if (type == "TImage")
+        ar_regions[region_name]->removeImage();
+    else if (type == "TVideo")
+        ar_regions[region_name]->removeVideo();
+    else if (type == "TWeb")
+        ar_regions[region_name]->removeWeb();
+    return;
 }
-
-void MainWindow::playAudio(TAudio *MyAudio)
-{
-    ar_regions[selectRegion(MyAudio->getRegion())]->playAudio(MyAudio);
-}
-
-void MainWindow::playWeb(TWeb *MyWeb)
-{
-    QString region_name = selectRegion(MyWeb->getRegion());
-    ar_regions[region_name]->playWeb(MyWeb);
-    ar_regions[region_name]->setRootSize(width(), height());
-}
-
-void MainWindow::removeImage(TImage *MyImage)
-{
-    ar_regions[selectRegion(MyImage->getRegion())]->removeImage();
-}
-
-void MainWindow::removeVideo(TVideo *MyVideo)
-{
-    ar_regions[selectRegion(MyVideo->getRegion())]->removeVideo();
-}
-
-void MainWindow::removeWeb(TWeb *MyWeb)
-{
-    ar_regions[selectRegion(MyWeb->getRegion())]->removeWeb();
-}
-

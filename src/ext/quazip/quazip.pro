@@ -1,7 +1,10 @@
 TEMPLATE = lib
 CONFIG += qt warn_on staticlib c++11
 QT -= gui
-DESTDIR = ../../lib/
+
+!android:DESTDIR = ../../lib/
+android:DESTDIR = ../../libandroid/
+
 
 # The ABI version.
 

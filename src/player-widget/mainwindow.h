@@ -21,25 +21,26 @@
 
 #include <QMainWindow>
 #include <QMap>
+
+#include "head.h"
 #include "region.h"
-#include <video.h>
-#include <index.h>
-#include <downloader.h>
+#include "video.h"
 #include "configdialog.h"
 #include "screen.h"
+#include "index_manager.h"
+#include "media_manager.h"
+#include "smilparser.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(TFileManager *FileManager, TScreen *screen);
+    MainWindow(TConfiguration *config, TScreen *screen);
     ~MainWindow();
 public slots:
     void                      setSmilIndex();
     void                      checkForNewSmilIndex();
-    void                      startShowMedia(TMedia *media);
-    void                      stopShowMedia(TMedia *media);
     void                      resizeEvent(QResizeEvent * event);
     void                      keyPressEvent(QKeyEvent *ke);
     int                       openConfigDialog();
@@ -56,22 +57,18 @@ protected:
     QMap<QString, TRegion *>  ar_regions;
     TSmil                    *MySmil          = NULL;
     THead                    *MyHead          = NULL;
-    TIndexManager            *MyIndexFile     = NULL;
-    TFileManager             *MyFileManager   = NULL;
+    IndexManager             *MyIndexManager  = NULL;
+    MediaManager             *MyMediaManager  = NULL;
+    TConfiguration           *MyConfiguration = NULL;
     TScreen                  *MyScreen;
-    QString                   smil_index_path;
     int                       screen_state = 0;
     void                      deleteRegionsAndLayouts();
     void                      loadIndex();
     void                      setRegions(QDomElement head);
     QString                   selectRegion(QString region_name);
-    void                      playImage(TImage *MyImage);
-    void                      playVideo(TVideo *MyVideo);
-    void                      playAudio(TAudio *MyAudio);
-    void                      playWeb(TWeb *MyWeb);
-    void                      removeImage(TImage *MyImage);
-    void                      removeVideo(TVideo *MyVideo);
-    void                      removeWeb(TWeb *MyWeb);
+protected slots:
+    void                      startShowMedia(TMedia *media);
+    void                      stopShowMedia(TMedia *media);
 };
 
 #endif // MAINWINDOW_H

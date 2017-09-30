@@ -1,8 +1,11 @@
 TEMPLATE = subdirs
 SUBDIRS += \
+         parser/files/base_manager \
          parser/files/disc_space \
-         parser/files/file_model \
+         parser/files/index_model \
+         parser/files/media_model \
          parser/files/network \
+         parser/files/network_queue \
          parser/files/wgt \
          parser/smilparser/base \
          parser/smilparser/base_timing \

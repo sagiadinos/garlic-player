@@ -41,19 +41,20 @@ QString TMedia::parseSrc(QDomElement element)
 
 bool TMedia::isDownloaded()
 {
-    return (MyFileManager->checkCacheStatus(src) > 0);
+    return (MyMediaManager->checkCacheStatus(src) > 0);
 }
 
 QString TMedia::getLoadablePath()
 {
-     return MyFileManager->getLoadablePath(src);
+    return MyMediaManager->requestLoadablePath(src);
 }
 
 
-void TMedia::registerFile(TFileManager *FileManager)
+void TMedia::registerFile(MediaManager *mm)
 {
-    MyFileManager = FileManager;
-    MyFileManager->registerFile(src);
+    MyMediaManager = mm;
+    MyMediaManager->registerFile(src);
+    qDebug(SmilParser) << src << " registered";
 }
 
 void TMedia::setBaseMediaAttributes()

@@ -23,7 +23,7 @@ public:
     void     init(QString path);
     void     freedSpace(qint64 size_deleted);
     bool     freeDiscSpace(qint64 size_to_free);
-    qint64   calculateNeededDiscSpace(qint64 size);
+    qint64   calculateNeededDiscSpaceToFree(qint64 size);
 
     // Getter/Setter
     qint64 getBytesDeleted() const {return bytes_deleted;}

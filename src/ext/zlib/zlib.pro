@@ -6,7 +6,9 @@ TEMPLATE = lib
 TARGET = zlib
 INCLUDEPATH += .
 CONFIG += staticlib c++11
-DESTDIR = ../../lib/
+
+!android:DESTDIR = ../../lib/
+android:DESTDIR = ../../libandroid/
 
 # Input
 HEADERS += crc32.h \

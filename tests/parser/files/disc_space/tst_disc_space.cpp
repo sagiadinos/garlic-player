@@ -30,6 +30,7 @@ public:
 private Q_SLOTS:
     void init();
     void cleanup();
+    void testCalculateNeededDiscSpaceToFree();
     void testCalculateDirectorySize();
     void testDeleteFile();
     void testDeleteDirectory();
@@ -42,7 +43,7 @@ private Q_SLOTS:
 
 void TestDiscSpace::init()
 {
-    //qInstallMessageHandler(noMessageOutput);
+    qInstallMessageHandler(noMessageOutput);
     cache_dir.setPath("./");
     if (cache_dir.mkpath("cache/test_dir"))
         cache_dir.setPath("./cache");
@@ -54,6 +55,18 @@ void TestDiscSpace::cleanup()
    cache_dir.removeRecursively();
 }
 
+void TestDiscSpace::testCalculateNeededDiscSpaceToFree()
+{
+    I_DiscSpace *MyDiscSpace = new I_DiscSpace(cache_dir.path());
+    MyDiscSpace->setBytesAvailable(1000);
+    QCOMPARE(MyDiscSpace->calculateNeededDiscSpaceToFree(1100), 110);
+
+    MyDiscSpace->setBytesAvailable(10000);
+    QCOMPARE(MyDiscSpace->calculateNeededDiscSpaceToFree(1100), 0);
+
+    QCOMPARE(MyDiscSpace->calculateNeededDiscSpaceToFree(9568), 0);
+
+}
 
 void TestDiscSpace::testDeleteFile()
 {
@@ -198,7 +211,6 @@ void TestDiscSpace::testFreeDiscSpaceAll()
     QCOMPARE(MyDiscSpace->getDeletedByteSize(),  7128);
 }
 
-
 void TestDiscSpace::testFreeDiscSpaceToMuch()
 {
     createFilesForDelete();
@@ -220,7 +232,6 @@ void TestDiscSpace::testFreeDiscSpaceToMuch()
 
     QCOMPARE(MyDiscSpace->getDeletedByteSize(),  7128);
 }
-
 
 void TestDiscSpace::createFilesForDelete()
 {

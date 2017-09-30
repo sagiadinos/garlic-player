@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-09-14T21:30:06
+# Project created by QtCreator 2017-09-22T16:10:19
 #
 #-------------------------------------------------
 include(../../../../src/defaults.pri)
@@ -12,8 +12,7 @@ CONFIG   += console testcase c++11
 CONFIG   -= app_bundle
 TEMPLATE = app
 
-TARGET = tst_file_model
-SOURCES += tst_file_model.cpp
+TARGET = tst_base_manager
+SOURCES += tst_base_manager.cpp
 
 include(../../../tests.pri)
-RESOURCES     = resources.qrc

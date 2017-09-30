@@ -1,24 +1,36 @@
-#include "download_queue.h"
+#include "network_queue.h"
 
-DownloadQueue::DownloadQueue(QByteArray ua)
+NetworkQueue::NetworkQueue(QByteArray ua)
 {
     setUserAgent(ua);
 }
 
-void DownloadQueue::insertQueue(QString src, QString local)
+NetworkQueue::~NetworkQueue()
+{
+    clearQueues();
+}
+
+void NetworkQueue::clearQueues()
+{
+    media_queue.clear();
+    download_slots.clear();
+}
+
+
+void NetworkQueue::insertQueue(QString src, QString local)
 {
     media_queue.enqueue(qMakePair(src, local));
     processQueue();
 }
 
-void DownloadQueue::processQueue()
+void NetworkQueue::processQueue()
 {
-    if (download_slots.size() <= _max_download_slots && media_queue.size() > 0)
+    if (download_slots.size() < _max_download_slots && media_queue.size() > 0)
     {
-        Network *MyNetwork = new Network(user_agent);
+        Network *MyNetwork = new Network(getUserAgent());
         QPair<QString, QString> paths = media_queue.dequeue();
         MyNetwork->processFile(QUrl(paths.first), QFileInfo(paths.second));
-        connect(MyNetwork, SIGNAL(succeed(QObject *, QIODevice *)), SLOT(doSucceed(QObject *, QIODevice *)));
+        connect(MyNetwork, SIGNAL(succeed(QObject *)), SLOT(doSucceed(QObject *)));
         connect(MyNetwork, SIGNAL(notcacheable(QObject*)), SLOT(doNotCacheable(QObject *)));
         connect(MyNetwork, SIGNAL(notmodified(QObject*)), SLOT(doNotModified(QObject *)));
         connect(MyNetwork, SIGNAL(failed(QObject *)), SLOT(doFailed(QObject *)));
@@ -26,15 +38,15 @@ void DownloadQueue::processQueue()
     }
 }
 
-void DownloadQueue::doSucceed(QObject *network, QIODevice *data)
+void NetworkQueue::doSucceed(QObject *network)
 {
     Network *MyNetwork = qobject_cast<Network *> (network);
-    emit succeed(MyNetwork->getRemoteFileUrl().toString(), MyNetwork->getLocalFileInfo().absoluteFilePath(), data);
+    emit succeed(MyNetwork->getRemoteFileUrl().toString(), MyNetwork->getLocalFileInfo().absoluteFilePath());
     download_slots.remove(MyNetwork);
     processQueue();
 }
 
-void DownloadQueue::doFailed(QObject *network)
+void NetworkQueue::doFailed(QObject *network)
 {
     Network *MyNetwork = qobject_cast<Network *> (network);
     emit failed(MyNetwork->getRemoteFileUrl().toString());
@@ -42,7 +54,7 @@ void DownloadQueue::doFailed(QObject *network)
     processQueue();
 }
 
-void DownloadQueue::doNotCacheable(QObject *network)
+void NetworkQueue::doNotCacheable(QObject *network)
 {
     Network *MyNetwork = qobject_cast<Network *> (network);
     emit notcacheable(MyNetwork->getRemoteFileUrl().toString());
@@ -51,7 +63,7 @@ void DownloadQueue::doNotCacheable(QObject *network)
 }
 
 
-void DownloadQueue::doNotModified(QObject *network)
+void NetworkQueue::doNotModified(QObject *network)
 {
     Network *MyNetwork = qobject_cast<Network *> (network);
     emit notmodified(MyNetwork->getRemoteFileUrl().toString());

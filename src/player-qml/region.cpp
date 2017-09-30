@@ -18,6 +18,7 @@
 
 #include "region.h"
 #include <QLayout>
+#include <unistd.h>
 
 TRegion::TRegion(QObject *parent)
 {
@@ -26,6 +27,13 @@ TRegion::TRegion(QObject *parent)
 
 TRegion::~TRegion()
 {
+//    video_item->deleteLater();
+//    audio_item->deleteLater();
+//    image_item->deleteLater();
+//    web_item->deleteLater();
+//    delete rectangle_item;
+//    delete rectangle;
+//    delete media_component;
 }
 
 /**
@@ -55,77 +63,92 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
     rectangle_item->setParentItem(root_item);
 }
 
-void TRegion::playImage(TMedia *Media)
+void TRegion::playImage(TImage *Media)
 {
-    MyMedia  = Media;
-    QString fill_mode = determineQmlFillMode(MyMedia->getFit());
+    QString fill_mode = determineQmlFillMode(Media->getFit());
     QString anchors   = "";
     if (fill_mode != "Pad")
         anchors = "anchors.fill: parent;\n";
-
     QString str(
                 "import QtQuick 2.7\n \
                     Image {\n " +
                             anchors+
                         "fillMode: Image."+fill_mode+";\n \
-                        source: \"file:"+MyMedia->getLoadablePath()+"\";\n \
+                        source: \"file:"+Media->getLoadablePath()+"\";\n \
                     }\n"
     );
-    handleMediaItem(str);
+    image_item = createMediaItem(str);
+    image_item->setParentItem(rectangle_item);
 }
 
-void TRegion::playVideo(TMedia *Media)
+void TRegion::playVideo(TVideo *Media)
 {
-    MyMedia  = Media;
-    QString fill_mode = determineQmlFillMode(MyMedia->getFit());
+    MyVideo  = Media;
+    QString fill_mode = determineQmlFillMode(MyVideo->getFit());
     QString anchors   = "";
     if (fill_mode != "Pad")
         anchors = "anchors.fill: parent;\n";
     QString str("import QtQuick 2.7\n \
-                 import QtMultimedia 5.7\n \
+                 import  QtMultimedia 5.7\n \
                     Video {\n " +
                         anchors+
                         "autoPlay: true;\n \
                         fillMode: VideoOutput."+fill_mode+";\n \
-                        source: \"file:"+MyMedia->getLoadablePath()+"\";\n \
+                        source: \"file:"+MyVideo->getLoadablePath()+"\";\n \
                    }\n"
     );
-    handleMediaItem(str);
-    connect(media_item, SIGNAL(stopped()), this, SLOT(finished()));
+    video_item = createMediaItem(str);
+    connect(video_item, SIGNAL(stopped()), this, SLOT(finishedVideo()));
+    connect(video_item, SIGNAL(destroyed(QObject*)), this, SLOT(doDestroyVideo(QObject *)));
+    video_item->setParentItem(rectangle_item);
 }
 
-void TRegion::playAudio(TMedia *Media)
+void TRegion::playAudio(TAudio *Media)
 {
-    MyMedia        = Media;
+    MyAudio  = Media;
     QString str("import QtQuick 2.7\n \
-                 import QtMultimedia 5.7\n \
+                 import  QtMultimedia 5.7\n \
                     Audio {\n \
                         autoPlay: true;\n \
-                        source: \"file:"+MyMedia->getLoadablePath()+"\";\n \
+                        source: \"file:"+MyAudio->getLoadablePath()+"\";\n \
                    }\n"
     );
-    handleMediaItem(str);
-    connect(media_item, SIGNAL(stopped()), this, SLOT(finished()));
+    audio_item = createMediaItem(str);
+    connect(audio_item, SIGNAL(stopped()), this, SLOT(finishedAudio()));
+    connect(audio_item, SIGNAL(destroyed(QObject*)), this, SLOT(doDestroyAudio(QObject *)));
+    audio_item->setParentItem(rectangle_item);
 }
 
-void TRegion::playWeb(TMedia *Media)
+void TRegion::playWeb(TWeb *Media)
 {
-    MyMedia        = Media;
     QString str("import QtQuick 2.7\n \
                  import QtWebView 1.1\n \
                     WebView {\n \
                         anchors.fill: parent;\n \
-                        url: \""+MyMedia->getLoadablePath()+"\";\n \
+                        url: \""+Media->getLoadablePath()+"\";\n \
                    }\n"
     );
-    handleMediaItem(str);
+    web_item = createMediaItem(str);
+    web_item->setParentItem(rectangle_item);
 }
 
-
-void TRegion::removeMedia()
+void TRegion::removeImage()
 {
-   media_item->disconnect();
-   media_item->deleteLater();
+     delete image_item;
+}
+
+void TRegion::removeVideo()
+{
+}
+
+void TRegion::removeAudio()
+{
+}
+
+void TRegion::removeWeb()
+{
+    web_item->setParentItem(NULL);
+    delete web_item;
 }
 
 void TRegion::resizeGeometry()
@@ -141,11 +164,12 @@ void TRegion::resizeGeometry()
     rectangle_item->setHeight(hr);
 }
 
-void TRegion::handleMediaItem(QString str)
+QQuickItem *TRegion::createMediaItem(QString str)
 {
     media_component->setData(str.toUtf8(), QUrl());
-    media_item = qobject_cast<QQuickItem *>(media_component->create());
-    media_item->setParentItem(rectangle_item);
+    double d = (double)getCurrentRSS() / (double)1048576;
+    qDebug() << QString( "%1" ).arg(d, 0, 'f', 2) << " MByte RAM used";
+    return qobject_cast<QQuickItem *>(media_component->create());
 }
 
 QString TRegion::determineQmlFillMode(QString fill_mode)
@@ -160,7 +184,51 @@ QString TRegion::determineQmlFillMode(QString fill_mode)
         return "Pad";
 }
 
-void TRegion::finished()
+void TRegion::finishedVideo()
 {
-   MyMedia->finishedSimpleDuration();
+    video_item->deleteLater();
+}
+
+void TRegion::finishedAudio()
+{
+    audio_item->deleteLater();
+}
+
+void TRegion::doDestroyVideo(QObject *oo)
+{
+    MyVideo->finishedSimpleDuration();
+}
+
+void TRegion::doDestroyAudio(QObject *oo)
+{
+    MyAudio->finishedSimpleDuration();
+}
+
+qint64 TRegion::getCurrentRSS()
+{
+#if defined Q_OS_WIN32
+    PROCESS_MEMORY_COUNTERS info;
+    GetProcessMemoryInfo( GetCurrentProcess( ), &info, sizeof(info) );
+    return (qint64)info.WorkingSetSize;
+
+#elif defined Q_OS_DARWIN
+    struct mach_task_basic_info info;
+    mach_msg_type_number_t infoCount = MACH_TASK_BASIC_INFO_COUNT;
+    if ( task_info( mach_task_self( ), MACH_TASK_BASIC_INFO,
+        (task_info_t)&info, &infoCount ) != KERN_SUCCESS )
+        return (qint64)0L;		/* Can't access? */
+    return (qint64)info.resident_size;
+
+#elif defined Q_OS_LINUX // work on Android too
+    QFile fp("/proc/self/statm");
+    if (!fp.open(QIODevice::ReadOnly))
+        return 0;		/* Can't open? */
+    QTextStream in(&fp);
+    QStringList fields = in.readLine().split(" ");
+    fp.close();
+    return fields.at(1).toLong() * (qint64)sysconf(_SC_PAGESIZE);
+#else
+    /* AIX, BSD, Solaris, and Unknown OS ------------------------ */
+    return (qint64)0L;			/* Unsupported. */
+#endif
 }

@@ -27,7 +27,6 @@ SOURCES += \
     smilparser/body.cpp \
     smilparser/par.cpp \
     smilparser/excl.cpp \
-    files/downloader.cpp \
     smilparser/timings/timing.cpp \
     smilparser/timings/clock_value.cpp \
     smilparser/priorityclass.cpp \
@@ -36,16 +35,19 @@ SOURCES += \
     smilparser/base.cpp \
     smilparser/base_timing.cpp \
     tools/configuration.cpp \
-    files/file_manager.cpp \
     smilparser.cpp \
     smilparser/prefetch.cpp \
     smilparser/tools/shuffle.cpp \
-    files/index.cpp \
     tools/logging_categories.cpp \
     files/network.cpp \
-    files/file_model.cpp \
-    files/file_list.cpp \
-    files/disc_space.cpp
+    files/disc_space.cpp \
+    files/wgt.cpp \
+    files/index_model.cpp \
+    files/media_manager.cpp \
+    files/network_queue.cpp \
+    files/media_model.cpp \
+    files/index_manager.cpp \
+    files/base_manager.cpp
 HEADERS += tools/configuration.h \
     smilparser.h \
     smilparser/head.h \
@@ -58,7 +60,6 @@ HEADERS += tools/configuration.h \
     smilparser/body.h \
     smilparser/par.h \
     smilparser/excl.h \
-    files/downloader.h \
     smilparser/timings/timing.h \
     smilparser/timings/clock_value.h \
     smilparser/priorityclass.h \
@@ -66,12 +67,18 @@ HEADERS += tools/configuration.h \
     smilparser/container.h \
     smilparser/base.h \
     smilparser/base_timing.h \
-    files/file_manager.h \
     smilparser/prefetch.h \
     smilparser/tools/shuffle.h \
-    files/index.h \
     tools/logging_categories.h \
     files/network.h \
-    files/file_model.h \
-    files/file_list.h \
-    files/disc_space.h
+    files/disc_space.h \
+    files/wgt.h \
+    files/index_model.h \
+    files/media_manager.h \
+    files/network_queue.h \
+    files/media_model.h \
+    files/index_manager.h \
+    files/base_manager.h
+
+DISTFILES += \
+    files/test.qmodel

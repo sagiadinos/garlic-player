@@ -15,12 +15,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
+#include <QApplication>
+#include <QQmlApplicationEngine>
 
 #include "mainwindow.h"
 #include "cmdparser.h"
 #if defined  Q_OS_ANDROID
     #include <QtAndroidExtras/QAndroidJniEnvironment>
     #include <QtAndroidExtras/QtAndroidExtras>
+#else
+    #include <qtwebengineglobal.h>
 #endif
 QScopedPointer<QFile>   event_log;
 
@@ -54,6 +58,11 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
 
 int main(int argc, char *argv[])
 {
+    qputenv("QML_DISABLE_DISK_CACHE", "true"); // due to https://bugreports.qt.io/browse/QTBUG-56935
+
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication app(argc, argv);
+
     TConfiguration *MyConfiguration = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
     QDir dir(".");
     int ret = 0;
@@ -61,13 +70,10 @@ int main(int argc, char *argv[])
     MyConfiguration->determineUserAgent();
     MyConfiguration->createDirectories();
 
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication app(argc, argv);
-
     // Set the logging file
     event_log.reset(new QFile(MyConfiguration->getPaths("logs") + "events.log"));
     event_log.data()->open(QFile::Append | QFile::Text);
-    QLoggingCategory::setFilterRules("*.debug=false\n");
+    // QLoggingCategory::setFilterRules("*.debug=true\n");
     qInstallMessageHandler(myMessageHandler);
 
     QApplication::setApplicationName(MyConfiguration->getAppName());
@@ -82,7 +88,7 @@ int main(int argc, char *argv[])
     TScreen    MyScreen(0, QApplication::desktop());
     MyConfiguration->determineIndexUri("http://indexes.smil-admin.com");
 
-    MainWindow w(new TFileManager(MyConfiguration), &MyScreen);
+    MainWindow w(MyConfiguration, &MyScreen);
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);
 
     if (MyConfiguration->getIndexUri() == "")
@@ -113,6 +119,8 @@ int main(int argc, char *argv[])
         }
         w.showFullScreen();
 #else
+        QtWebEngine::initialize();
+
         MyScreen.setActualScreenId(MyParser.getScreenSelect());
         w.show();
 

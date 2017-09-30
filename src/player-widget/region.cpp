@@ -30,7 +30,6 @@ TRegion::TRegion(QWidget *parent)
 
 TRegion::~TRegion()
 {
-
     if (actual_media == "image")
     {
         MyImage->stop();
@@ -104,7 +103,7 @@ void TRegion::playWeb(TWeb *structure)
 void TRegion::removeImage()
 {
     layout->removeWidget(ImageWidget);
-    ImageWidget->deleteLater();
+    delete ImageWidget;
 }
 
 void TRegion::removeVideo()

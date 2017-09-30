@@ -25,7 +25,7 @@ class TImage : public TMedia
 {
     Q_OBJECT
 public:
-    TImage(TContainer *parent = 0);
+    explicit TImage(TContainer *parent = 0);
     ~TImage();
     void     pause();
     void     stop();

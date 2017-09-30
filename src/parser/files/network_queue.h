@@ -11,19 +11,22 @@
  * @brief The DownloadQueue class
  *  handles downloads via Network
  */
-class DownloadQueue : public QObject
+class NetworkQueue : public QObject
 {
     Q_OBJECT
 public:
-    const int _max_download_slots   = 1;
-    explicit DownloadQueue(QByteArray ua);
+    const int _max_download_slots   = 5;
+    explicit NetworkQueue(QByteArray ua);
+    ~NetworkQueue();
     void     insertQueue(QString src, QString local);
+    void     clearQueues();
 
     //Getter/Setter
     QByteArray getUserAgent() const {return user_agent;}
     void       setUserAgent(const QByteArray &value) {user_agent = value;}
+    QQueue<QPair<QString, QString> >     getMediaQueue() {return media_queue;}
+    QSet<Network *>    getDownloadSlots(){return download_slots;}
 protected:
-    bool               working = false;
     QByteArray         user_agent;
     QQueue<QPair<QString, QString> >media_queue;
     QSet<Network *>    download_slots;
@@ -31,13 +34,13 @@ protected:
     void               emitPaths();
 
 public slots:
-    void               doSucceed(QObject *network, QIODevice *data);
+    void               doSucceed(QObject *network);
     void               doNotModified(QObject *network);
     void               doNotCacheable(QObject *network);
     void               doFailed(QObject *network);
 
 signals:
-    void               succeed(QString src, QString local, QIODevice *data);
+    void               succeed(QString src, QString local);
     void               notmodified(QString src);
     void               notcacheable(QString src);
     void               failed(QString src);

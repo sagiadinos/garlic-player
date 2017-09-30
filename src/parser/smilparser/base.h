@@ -34,7 +34,7 @@ class TBase : public QObject
 {
     Q_OBJECT
 public:
-            TBase(QObject *parent = 0);
+    explicit TBase(QObject *parent = 0);
     virtual bool          parse(QDomElement element) = 0;
             QString       getID(){return id;}
             QString       getTitle(){return title;}

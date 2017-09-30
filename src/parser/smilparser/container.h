@@ -32,7 +32,7 @@ class TContainer : public TBaseTiming
 {
     Q_OBJECT
 public:
-            TContainer(TBaseTiming * parent = 0);
+    explicit TContainer(TBaseTiming * parent = 0);
     virtual void                          next(TBaseTiming *ended_element) = 0;
             void                          insertContainerObject(QString id, TBaseTiming *obj_element);
             QHash<QString, TBaseTiming *> getContainerObjects();

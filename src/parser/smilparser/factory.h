@@ -32,7 +32,7 @@ class TFactory : public QObject
 {
     Q_OBJECT
 public:
-    TFactory(TBaseTiming *parent = 0);
+    explicit TFactory(TBaseTiming *parent = 0);
     static TBaseTiming    *createBase(QString type, TContainer *parent);
 };
 

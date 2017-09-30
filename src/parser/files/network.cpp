@@ -38,8 +38,7 @@ void Network::processFile(QUrl url, QFileInfo fi)
 
 void Network::doHttpHeadRequest()
 {
-    QNetworkRequest request = prepareNetworkRequest(remote_file_url);
-    manager_head->head(request);
+    manager_head->head(prepareNetworkRequest(remote_file_url));
     return;
 }
 
@@ -57,8 +56,8 @@ void Network::finishedHeadRequest(QNetworkReply *reply)
     else
     {
         // change remote_file_url with new redirect address
-        remote_file_url = QUrl(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString());
-        QNetworkRequest request = prepareNetworkRequest(remote_file_url);
+        QUrl remote_file_url_301(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString());
+        QNetworkRequest request = prepareNetworkRequest(remote_file_url_301);
         manager_head_redirect->head(request);
     }
     return;
@@ -94,7 +93,7 @@ void Network::checkStatusCode(QNetworkReply *reply, int status_code)
                 break;
         case 304:
         default:
-            qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url << " no need to refresh";
+            qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url.toString()  << " no need to refresh";
             emit notmodified(this);
         break;
     }
@@ -121,12 +120,12 @@ void Network::checkHttpHeaders(QNetworkReply *reply)
 
     if (reply->hasRawHeader("Last-Modified"))
     {
-        QLocale   locale(QLocale::English, QLocale::UnitedStates);
+        // we need to check for size and last Modified, cause a previous index smil on the server can have a older Date and would not be loaded
         if (local_file_info.exists() &&
-                local_file_info.size() == reply->rawHeader("Content-Length").toLong() &&
-                local_file_info.lastModified() > locale.toDateTime(reply->rawHeader("Last-Modified"), "ddd, dd MMM yyyy hh:mm:ss 'GMT'"))
+            local_file_info.size() ==  reply->header(QNetworkRequest::ContentLengthHeader).toInt() &&
+            local_file_info.lastModified().toUTC() > reply->header(QNetworkRequest::LastModifiedHeader).toDateTime())
         {
-            qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url << " no need for update";
+            qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url.toString() << " no need for update";
             emit notmodified(this);
         }
         else
@@ -134,7 +133,7 @@ void Network::checkHttpHeaders(QNetworkReply *reply)
     }
     else
     {
-        qWarning(ContentManager) << " FETCH_FAILED resourceURI:" << remote_file_url << " has no Last-Modified entry in header";
+        qWarning(ContentManager) << " FETCH_FAILED resourceURI:" << remote_file_url.toString() << " has no Last-Modified entry in header";
         emit failed(this);
     }
     return;
@@ -155,16 +154,43 @@ void Network::finishedGetRequest(QNetworkReply *reply)
         handleNetworkError(reply);
         return;
     }
-    emit succeed(this, reply); // reply is QIODevice
+
+    if (!saveToDisc(reply)) // reply is QIODevice
+         emit failed(this);
+
+    emit succeed(this);
     return;
 }
+
+bool Network::saveToDisc(QIODevice *data)
+{
+    QFile file(local_file_info.absoluteFilePath());
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) // Delete/Truncate previous content
+    {
+        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url.toString() << " could not be saved " << file.errorString();
+        return false;
+    }
+    DiscSpace MyDiscSpace(local_file_info.absolutePath());
+    qint64 calc = MyDiscSpace.calculateNeededDiscSpaceToFree(data->size());
+    if (calc > 0 && !MyDiscSpace.freeDiscSpace(calc))
+    {
+        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url.toString()  << " could not be saved " << file.errorString() << "cause space cannot be freed";
+        return false;
+    }
+
+    file.write(data->readAll()); // should overwrites automatic existing files
+    file.close();
+    qInfo(ContentManager) << "OBJECT_UPDATED resourceURI:" << remote_file_url.toString() << " contentLenght: " << local_file_info.size();
+    return true;
+}
+
 
 bool Network::validContentType(QString content_type)
 {
     // text/texmacs is "sophisticated" support for ts-files in old debian (squeeze) distros
     if (!content_type.contains("image/") && !content_type.contains("video/") && !content_type.contains("audio/") && !content_type.contains("text/texmacs") && !content_type.contains("application/smil") && !content_type.contains("application/widget"))
     {
-        qCritical() << "FETCH_FAILED resourceURI: " << remote_file_url << " has contentype " << content_type << " which is not supported.";
+        qCritical() << "FETCH_FAILED resourceURI: " << remote_file_url.toString()  << " has contentype " << content_type << " which is not supported.";
         return false;
     }
     return true;
@@ -173,8 +199,8 @@ bool Network::validContentType(QString content_type)
 void Network::handleNetworkError(QNetworkReply *reply)
 {
     if (local_file_info.exists())
-        qWarning(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url << " " << reply->errorString();
+        qWarning(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url.toString()  << " " << reply->errorString();
     else
-        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url << " " << reply->errorString();
+        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url.toString()  << " " << reply->errorString();
     emit failed(this);
 }

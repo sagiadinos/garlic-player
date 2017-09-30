@@ -18,14 +18,15 @@
 
 #include "mainwindow.h"
 
-MainWindow::MainWindow(TFileManager *FileManager, TScreen *screen)
+MainWindow::MainWindow(TConfiguration *config, TScreen *screen)
 {
-    MyScreen        = screen;
-    MyFileManager   = FileManager;
-    MyIndexFile     = new TIndexManager(MyFileManager->getConfiguration());
-    connect(MyIndexFile, SIGNAL(isLoaded()), this, SLOT(setSmilIndex()));
-    MyHead          = new THead();
-    connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
+    connect (this, SIGNAL(statusChanged(QQuickView::Status)), this, SLOT(doStatusChanged(QQuickView::Status)));
+    MyScreen               = screen;
+    MyConfiguration        = config;
+    QByteArray user_agent(MyConfiguration->getUserAgent().toUtf8());
+    MyIndexManager         = new IndexManager(new IndexModel, MyConfiguration, new Network(user_agent));
+    connect(MyIndexManager, SIGNAL(availableIndex()), this, SLOT(setSmilIndex()));
+    MyMediaManager         = new MediaManager(new MediaModel, MyConfiguration, new NetworkQueue(user_agent));
     setSource(QUrl(QStringLiteral("qrc:/root.qml")));
     setMainWindowSize(QSize(980, 540)); // set default
 }
@@ -44,17 +45,19 @@ void MainWindow::setSmilIndex()
         delete MySmil;
         deleteRegionsAndLayouts();
     }
-    MySmil = new TSmil(MyFileManager);
+    MyHead          = new THead();
+    connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
+    MySmil = new TSmil(MyMediaManager);
     connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     MySmil->init();
-    setRegions(MyIndexFile->getHead());
-    MySmil->beginSmilParsing(MyIndexFile->getBody());
+    setRegions(MyIndexManager->getHead());
+    MySmil->beginSmilParsing(MyIndexManager->getBody());
 }
 
 void MainWindow::checkForNewSmilIndex()
 {
-    MyIndexFile->load();
+    MyIndexManager->lookUpForIndex();
 }
 
 void MainWindow::deleteRegionsAndLayouts()
@@ -74,7 +77,6 @@ void MainWindow::setRegions(QDomElement head)
         j = ar_regions.insert(region_list.at(i).regionName, new TRegion(rootObject()));
         ar_regions[j.key()]->setRegion(region_list.at(i), engine());
         ar_regions[j.key()]->setRootSize(width(), height());
-//        ar_regions[j.key()]->show();
     }
     qDebug() << ar_regions.size() << " QML regions are created ";
 }
@@ -87,33 +89,6 @@ QString MainWindow::selectRegion(QString region_name)
     else
        i = ar_regions.find(region_name);
     return i.key();
-}
-
-void MainWindow::startShowMedia(TMedia *media)
-{
-    if (ar_regions.size() == 0)
-        return;
-
-    QString region_name = selectRegion(media->getRegion());
-    QString type        = media->objectName();
-    if (type == "TImage")
-       ar_regions[region_name]->playImage(media);
-    else if (type == "TVideo")
-       ar_regions[region_name]->playVideo(media);
-    else if (type == "TAudio")
-       ar_regions[region_name]->playAudio(media);
-    else if (type == "TWeb")
-       ar_regions[region_name]->playWeb(media);
-
-    ar_regions[region_name]->setRootSize(width(), height());
-    return;
-}
-
-void MainWindow::stopShowMedia(TMedia *media)
-{
-    if (ar_regions.size() == 0)
-        return;
-    ar_regions[selectRegion(media->getRegion())]->removeMedia();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
@@ -152,7 +127,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 
 int MainWindow::openConfigDialog()
 {
-    ConfigDialog MyConfigDialog(0, MyFileManager->getConfiguration());
+    ConfigDialog MyConfigDialog(0, MyConfiguration);
     return MyConfigDialog.exec();
 }
 
@@ -204,3 +179,71 @@ void MainWindow::resizeEvent(QResizeEvent * event)
             ar_regions[i.key()]->setRootSize(width(), height());
     }
 }
+
+
+void MainWindow::startShowMedia(TMedia *media)
+{
+    if (ar_regions.size() == 0)
+        return;
+
+    QString region_name = selectRegion(media->getRegion());
+    QString type        = media->objectName();
+    if (type == "TImage")
+        ar_regions[region_name]->playImage(qobject_cast<TImage *>(media));
+     else if (type == "TVideo")
+        ar_regions[region_name]->playVideo(qobject_cast<TVideo *>(media));
+     else if (type == "TAudio")
+        ar_regions[region_name]->playAudio(qobject_cast<TAudio *>(media));
+     else if (type == "TWeb")
+        ar_regions[region_name]->playWeb(qobject_cast<TWeb *>(media));
+
+    if (type != "TAudio")
+        ar_regions[region_name]->setRootSize(width(), height());
+    return;
+}
+
+void MainWindow::stopShowMedia(TMedia *media)
+{
+    if (ar_regions.size() == 0)
+        return;
+
+    QString type        = media->objectName();
+    QString region_name = selectRegion(media->getRegion());
+    if (type == "TImage")
+        ar_regions[region_name]->removeImage();
+    else if (type == "TVideo")
+        ar_regions[region_name]->removeVideo();
+    else if (type == "TAudio")
+        ar_regions[region_name]->removeAudio();
+    else if (type == "TWeb")
+        ar_regions[region_name]->removeWeb();
+    return;
+}
+
+
+void MainWindow::doStatusChanged(QQuickView::Status status)
+{
+    switch (status)
+    {
+        case QQuickView::Null:
+            qDebug(MediaPlayer) << "No QML source set";
+            break;
+        case QQuickView::Ready:
+            MyIndexManager->init(MyConfiguration->getIndexUri());
+            break;
+        case QQuickView::Loading:
+            qDebug(MediaPlayer) << "QML loaded/compiled... ";
+            break;
+        case QQuickView::Error:
+            QList<QQmlError> qml_errors = errors();
+            QList<QQmlError> ::iterator i;
+            for (i = qml_errors.begin(); i != qml_errors.end(); ++i)
+            {
+                QQmlError err = *i;
+                //qDebug(MediaPlayer) << err.messageType() << err.description() << err.line();
+            }
+            break;
+    }
+
+}
+

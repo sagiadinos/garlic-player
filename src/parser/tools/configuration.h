@@ -33,12 +33,14 @@ class TConfiguration  : public QObject
 {
     Q_OBJECT
 public:
-    TConfiguration(QSettings *UserConfig);
+    explicit TConfiguration(QSettings *UserConfig);
     QString         getVersion(){return "0.1.0";}
     void            setAppName(QString value){app_name = value;}
     QString         getAppName(){return app_name;}
     QString         getDescription() {return "SMIL Media Player for Digital Signage";}
 
+    QString         getLastPlayedIndexPath();
+    void            setLastPlayedIndexPath(const QString &value);
     QSettings      *getUserConfig() const;
     void            setUserConfig(QSettings *value);
     QString         getUserConfigByKey(QString key);

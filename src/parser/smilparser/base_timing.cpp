@@ -211,7 +211,7 @@ void TBaseTiming::setTimingAttributes()
 }
 
 /**
- * @brief  TBasePlaylist::checkRepeatCountStatus returns true, when playlist can be repeated
+ * @brief  TBaseTiming::checkRepeatCountStatus returns true, when playlist can be repeated
  * @return bool
  */
 bool TBaseTiming::checkRepeatCountStatus()

@@ -34,6 +34,16 @@ TConfiguration::TConfiguration(QSettings *UserConfig)
     determineOS();
 }
 
+QString TConfiguration::getLastPlayedIndexPath()
+{
+    return getUserConfigByKey("last_played_index_path");
+}
+
+void TConfiguration::setLastPlayedIndexPath(const QString &value)
+{
+    setUserConfigByKey("last_played_index_path", value);
+}
+
 QSettings *TConfiguration::getUserConfig() const
 {
     return UserConfig;
@@ -85,7 +95,6 @@ void TConfiguration::setUserAgent(const QString &value)
 {
     user_agent = value;
 }
-
 
 QString TConfiguration::getIndexUri()
 {
@@ -204,11 +213,16 @@ QString TConfiguration::getPaths(QString path_name)
 void TConfiguration::createDirectories()
 {
     if (getOS() == "windows") //QStandardPaths::CacheLocation in windows 7 is set to appdir (bin)
+    {
         cache_dir = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/cache/";
+        log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/logs/";
+    }
     else
-        cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/";
+    {
+        cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) + "/";
+        log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) + "/logs/";
+    }
     createDirectoryIfNotExist(cache_dir);
-    log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/logs/";
     createDirectoryIfNotExist(log_dir);
 }
 

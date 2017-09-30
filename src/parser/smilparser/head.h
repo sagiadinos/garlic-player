@@ -23,7 +23,6 @@
 #include <QFile>
 #include <QString>
 #include <QtXml>
-#include <QDebug>
 #include <QList>
 #include <QTimer>
 
@@ -49,7 +48,7 @@ class THead: public QObject
 {
     Q_OBJECT
 public:
-    THead(QObject *parent = 0);
+    explicit THead(QObject *parent = 0);
      ~THead();
     void           setDefaultValues();
     void           parse(QDomElement head);

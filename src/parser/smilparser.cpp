@@ -18,9 +18,9 @@
 
 #include "smilparser.h"
 
-TSmil::TSmil(TFileManager *filemanager)
+TSmil::TSmil(MediaManager *mm)
 {
-    MyFileManager   = filemanager;
+    MyMediaManager   = mm;
 }
 
 TSmil::~TSmil()
@@ -30,7 +30,6 @@ TSmil::~TSmil()
 
 void TSmil::init()
 {
-    MyFileManager->clearQueues();
     return;
 }
 
@@ -42,6 +41,7 @@ void TSmil::clearLists()
         stopPlayingElement(*i);
     }
     ar_elements.clear();
+    MyMediaManager->clearQueues();
     return;
 }
 
@@ -253,7 +253,7 @@ void TSmil::connectContainerSlots(TContainer *MyContainer)
 
 void TSmil::connectMediaSlots(TMedia *MyMedia)
 {
-    MyMedia->registerFile(MyFileManager);
+    MyMedia->registerFile(MyMediaManager);
     connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
     connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     return;

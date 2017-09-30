@@ -108,7 +108,7 @@ WallClock TTiming::parseWallclock(QString iso_date)
             wall_clock.datetime = analyseDate(tmp);
 
         tmp = ar.at(1);
-        if (tmp.at(0) > "0" && !wall_clock.datetime.isValid())
+        if (tmp.at(0) != 0 && !wall_clock.datetime.isValid())
             wall_clock.datetime = analyseDate(tmp);
         else
             wall_clock.period = analysePeriods(ar.at(2));

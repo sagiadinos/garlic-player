@@ -30,9 +30,8 @@
 #include <QStyleOption>
 #include <QWebEngineView>
 #include <QWebEngineSettings>
-#include <head.h>
-#include <smilparser.h>
-#include <file_manager.h>
+#include "head.h"
+#include "smilparser.h"
 #include "mediadecoderwrapper.h"
 #include "mediaviewwrapper.h"
 

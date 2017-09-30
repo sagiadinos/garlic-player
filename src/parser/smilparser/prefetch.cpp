@@ -38,13 +38,9 @@ void TPrefetch::stop()
 
 void TPrefetch::play()
 {
-    qDebug() << getID()  << "prefetch play (load)";
+    qDebug() << getID()  << "prefetch play => register file to check if changed";
+    MyMediaManager->registerFile(src);
     status = _playing;
-}
-
-bool TPrefetch::loadMedia()
-{
-    return true;
 }
 
 void TPrefetch::setDurationTimerBeforePlay()

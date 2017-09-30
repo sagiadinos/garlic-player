@@ -20,51 +20,55 @@
 #define MAINWINDOW_H
 
 #include <QMap>
-#include "region.h"
-#include <video.h>
-#include <index.h>
-#include <downloader.h>
-#include "configdialog.h"
-#include "screen.h"
 #include <QQmlEngine>
 #include <QQuickView>
+#include <region.h>
+#include <video.h>
+#include <configdialog.h>
+#include <screen.h>
+#include <index_manager.h>
+#include <media_manager.h>
+#include <smilparser.h>
 
 class MainWindow : public QQuickView
 {
     Q_OBJECT
-public:
-    MainWindow(TFileManager *FileManager, TScreen *screen);
-    ~MainWindow();
-public slots:
-    void                      setSmilIndex();
-    void                      checkForNewSmilIndex();
-    void                      startShowMedia(TMedia *media);
-    void                      stopShowMedia(TMedia *media);
-    void                      resizeEvent(QResizeEvent * event);
-    void                      keyPressEvent(QKeyEvent *ke);
-    int                       openConfigDialog();
-    void                      resizeAsNormalFullScreen();
-    void                      resizeAsBigFullScreen();
-    void                      resizeAsWindow();
-    void                      setMainWindowSize(QSize size);
-    QSize                     getMainWindowSize();
-protected:
-    const int                 WINDOWED      = 0;
-    const int                 FULLSCREEN    = 1;
-    const int                 BIGFULLSCREEN = 2;
-    QSize                     mainwindow_size;
-    QMap<QString, TRegion *>  ar_regions;
-    TSmil                    *MySmil          = NULL;
-    THead                    *MyHead          = NULL;
-    TIndexManager            *MyIndexFile     = NULL;
-    TFileManager             *MyFileManager   = NULL;
-    TScreen                  *MyScreen;
-    QString                   smil_index_path;
-    int                       screen_state = 0;
-    void                      deleteRegionsAndLayouts();
-    void                      loadIndex();
-    void                      setRegions(QDomElement head);
-    QString                   selectRegion(QString region_name);
+    public:
+        MainWindow(TConfiguration *config, TScreen *screen);
+        ~MainWindow();
+    public slots:
+        void                      setSmilIndex();
+        void                      checkForNewSmilIndex();
+        void                      resizeEvent(QResizeEvent * event);
+        void                      keyPressEvent(QKeyEvent *ke);
+        int                       openConfigDialog();
+        void                      resizeAsNormalFullScreen();
+        void                      resizeAsBigFullScreen();
+        void                      resizeAsWindow();
+        void                      setMainWindowSize(QSize size);
+        QSize                     getMainWindowSize();
+    protected:
+        const int                 WINDOWED      = 0;
+        const int                 FULLSCREEN    = 1;
+        const int                 BIGFULLSCREEN = 2;
+        QSize                     mainwindow_size;
+        QMap<QString, TRegion *>  ar_regions;
+        TSmil                    *MySmil          = NULL;
+        THead                    *MyHead          = NULL;
+        IndexManager             *MyIndexManager  = NULL;
+        MediaManager             *MyMediaManager  = NULL;
+        TConfiguration           *MyConfiguration = NULL;
+        TScreen                  *MyScreen;
+        QString                   smil_index_path;
+        int                       screen_state = 0;
+        void                      deleteRegionsAndLayouts();
+        void                      loadIndex();
+        void                      setRegions(QDomElement head);
+        QString                   selectRegion(QString region_name);
+    protected slots:
+        void                      startShowMedia(TMedia *media);
+        void                      stopShowMedia(TMedia *media);
+        void                      doStatusChanged(QQuickView::Status status);
 };
 
 #endif // MAINWINDOW_H
