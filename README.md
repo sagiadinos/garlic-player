@@ -23,7 +23,7 @@ Compilations tested with:
  - Android armv7 (4.4.1, 5.0, 5.1 and 7.0)
  - Windows 7 i64 (VS2015 Community Version)
 
-For android player-qml is needed, cause Multimedia-widgets are not supported is not. Do not use 5.9.1 for compile QML version of garlic cause there is a [mem leak](https://bugreports.qt.io/browse/QTBUG-61754) in Qt when using Image QML Type in QQuickItem.
+For android player-qml is needed, cause Multimedia-widgets are not supported. Attention! Do not use 5.9.1 for QML version of garlic cause there is a [mem leak](https://bugreports.qt.io/browse/QTBUG-61754) in Qt when using Image QML Type in QQuickItem.
 
 *garlic.sh [options] SMIL_INDEX*
 
