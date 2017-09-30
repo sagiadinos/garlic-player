@@ -1,14 +1,18 @@
 # garlic-player - Open Source SMIL Player for Digital Signage
 
 The goal is to create an as most as neccessary SMIL 3.0 and compatible and as most as possible platform independent free open source multimedia player to meet Digital Signage needs.
-Garlic should be used online with web-based content managment systems like [SmilControl](http://smil-control.com) or other.
+Garlic should be used online with web-based content managment systems like [SmilControl](https://smil-control.com) or other.
 Offline usage via command-line is also possible.
+
+## Libraries used
+ - [Qt5](https://www.qt.io) >= 5.7
+ - [QtAV](http://www.qtav.org) >= 1.11.0 as alternative to QtMultimedia
+ - [Quazip](http://quazip.sourceforge.net) 0.7.3 (included)
+ - [zlib](https://zlib.net) 1.2.11 (included in ./src/ext)
 
 ## OS targets:
 
 Linux, Windows, Raspberry Pi 3, Android, maybe later OSX
-
-Developing with Qt 5.9.1, QtAV 1.12.0/QtMultimedia and Quazip 0.7.3 for wgt (zipped html)
 
 Garlic actually is able to play local and remote (via http) SMIL Files with actual supported features.
 Compilations tested with:
@@ -16,12 +20,12 @@ Compilations tested with:
  - Debian 8 Jessie
  - Rasperian Jessie/Stretch (rpi2/rpi3)
  - Tinker Board (Linaro OS 1.8) 
- - Android 5.1 
+ - Android Armv7 (4.4.1, 5.0, 5.1 and 7.0)
  - Windows 7 i64 (VS2015 Community Version)
 
 *garlic.sh [options] SMIL_INDEX*
 
-Command line options:
+## Command line options
  - -h, --help          Displays this help.
  - -v, --version       Displays version information.
  - -m, --windows-mode  fullscreen, bigscreen (when multi monitor) or windowed mode
