@@ -20,7 +20,7 @@
 #define MEDIA_H
 
 #include "smilparser/container.h"
-#include "files/media_manager.h"
+#include <files/media_manager.h>
 
 class TMedia : public TBaseTiming
 {

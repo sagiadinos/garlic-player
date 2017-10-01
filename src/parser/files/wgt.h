@@ -25,4 +25,4 @@ signals:
 public slots:
 };
 
-#endif // WGT_H
+#endif // WGT_H 

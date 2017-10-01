@@ -7,7 +7,7 @@
 #include "configuration.h"
 #include "network_queue.h"
 #include "disc_space.h"
-#include "wgt.h"
+#include "files/wgt.h"
 
 /**
  * @brief The FileModel class handles the file management and use the DiscSpace-class as helper

@@ -17,16 +17,16 @@
 *************************************************************************************/
 #ifndef TFACTORY_H
 #define TFACTORY_H
-#include <smilparser/image.h>
-#include <smilparser/audio.h>
-#include <smilparser/video.h>
-#include <smilparser/web.h>
-#include <smilparser/prefetch.h>
+#include "smilparser/image.h"
+#include "smilparser/audio.h"
+#include "smilparser/video.h"
+#include "smilparser/web.h"
+#include "smilparser/prefetch.h"
 
-#include <smilparser/body.h>
-#include <smilparser/seq.h>
-#include <smilparser/par.h>
-#include <smilparser/excl.h>
+#include "smilparser/body.h"
+#include "smilparser/seq.h"
+#include "smilparser/par.h"
+#include "smilparser/excl.h"
 
 class TFactory : public QObject
 {

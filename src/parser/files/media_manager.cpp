@@ -1,10 +1,10 @@
 #include "media_manager.h"
 
-MediaManager::MediaManager(MediaModel *fm, TConfiguration *config, NetworkQueue *dq)
+MediaManager::MediaManager(MediaModel *mm, TConfiguration *config, NetworkQueue *dq)
 {
     MyConfiguration = config;
     MyNetworkQueue  = dq;
-    MyMediaModel    = fm;
+    MyMediaModel    = mm;
     connect(MyNetworkQueue, SIGNAL(succeed(QString, QString)), SLOT(doSucceed(QString, QString)));
     connect(MyNetworkQueue, SIGNAL(notcacheable(QString)), SLOT(doNotCacheable(QString)));
 }
@@ -50,13 +50,6 @@ QString MediaManager::requestLoadablePath(QString src)
 
 // ==================  protected methods =======================================
 
-bool MediaManager::isRemote(QString src)
-{
-    if (src.mid(0, 4) == "http" || src.mid(0,3) == "ftp")
-        return true;
-    else
-        return false;
-}
 
 // ==================  protected slots =======================================
 

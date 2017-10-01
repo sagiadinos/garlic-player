@@ -2,6 +2,7 @@
 #define MEDIA_MANAGER_H
 
 #include <QObject>
+#include "base_manager.h"
 #include "media_model.h"
 #include "configuration.h"
 #include "network_queue.h"
@@ -14,11 +15,11 @@
  * - transfer media files to MediaModel
  * - answers to a parser request with a playable filepath
  */
-class MediaManager : public QObject
+class MediaManager : public BaseManager
 {
     Q_OBJECT
 public:
-    explicit MediaManager(MediaModel *fm, TConfiguration *config, NetworkQueue *dq);
+    explicit MediaManager(MediaModel *mm, TConfiguration *config, NetworkQueue *dq);
     ~MediaManager();
     void                  clearQueues();
     void                  registerFile(QString src);
@@ -29,7 +30,6 @@ protected:
     TConfiguration       *MyConfiguration;
     NetworkQueue         *MyNetworkQueue;
     MediaModel           *MyMediaModel;
-    bool                  isRemote(QString src);
 protected slots:
     void                  doSucceed(QString src_file_path, QString local_file_path);
     void                  doNotCacheable(QString src_file_path);
