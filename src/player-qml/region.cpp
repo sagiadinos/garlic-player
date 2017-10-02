@@ -23,17 +23,34 @@
 TRegion::TRegion(QObject *parent)
 {
     root_item = qobject_cast<QQuickItem*>(parent);
+    parent_stub = new QObject;
+    image_item  = NULL;
+    web_item    = NULL;
+    audio_item  = NULL;
+    video_item  = NULL;
 }
 
 TRegion::~TRegion()
 {
-//    video_item->deleteLater();
-//    audio_item->deleteLater();
-//    image_item->deleteLater();
-//    web_item->deleteLater();
-//    delete rectangle_item;
-//    delete rectangle;
-//    delete media_component;
+    if (video_item != NULL)
+    {
+        QVariant returnedValue;
+        QMetaObject::invokeMethod(video_item, "stop",  Q_RETURN_ARG(QVariant, returnedValue));
+    }
+    if (audio_item != NULL)
+    {
+        QVariant returnedValue;
+        QMetaObject::invokeMethod(audio_item, "stop",  Q_RETURN_ARG(QVariant, returnedValue));
+    }
+    if (image_item != NULL)
+        removeImage();
+    if (web_item != NULL)
+        removeImage();
+
+    delete rectangle;
+    delete rectangle_item;
+    delete media_component;
+    delete parent_stub;
 }
 
 /**
@@ -79,6 +96,7 @@ void TRegion::playImage(TImage *Media)
     );
     image_item = createMediaItem(str);
     image_item->setParentItem(rectangle_item);
+    image_item->setParent(parent_stub);
 }
 
 void TRegion::playVideo(TVideo *Media)
@@ -101,6 +119,7 @@ void TRegion::playVideo(TVideo *Media)
     connect(video_item, SIGNAL(stopped()), this, SLOT(finishedVideo()));
     connect(video_item, SIGNAL(destroyed(QObject*)), this, SLOT(doDestroyVideo(QObject *)));
     video_item->setParentItem(rectangle_item);
+    video_item->setParent(parent_stub);
 }
 
 void TRegion::playAudio(TAudio *Media)
@@ -117,6 +136,7 @@ void TRegion::playAudio(TAudio *Media)
     connect(audio_item, SIGNAL(stopped()), this, SLOT(finishedAudio()));
     connect(audio_item, SIGNAL(destroyed(QObject*)), this, SLOT(doDestroyAudio(QObject *)));
     audio_item->setParentItem(rectangle_item);
+    audio_item->setParent(parent_stub);
 }
 
 void TRegion::playWeb(TWeb *Media)
@@ -130,11 +150,13 @@ void TRegion::playWeb(TWeb *Media)
     );
     web_item = createMediaItem(str);
     web_item->setParentItem(rectangle_item);
+    web_item->setParent(parent_stub);
 }
 
 void TRegion::removeImage()
 {
      delete image_item;
+    image_item = NULL;
 }
 
 void TRegion::removeVideo()
@@ -147,8 +169,8 @@ void TRegion::removeAudio()
 
 void TRegion::removeWeb()
 {
-    web_item->setParentItem(NULL);
     delete web_item;
+    web_item = NULL;
 }
 
 void TRegion::resizeGeometry()
@@ -187,20 +209,26 @@ QString TRegion::determineQmlFillMode(QString fill_mode)
 void TRegion::finishedVideo()
 {
     video_item->deleteLater();
+  //  delete video_item; // crashes
+    video_item = NULL;
 }
 
 void TRegion::finishedAudio()
 {
     audio_item->deleteLater();
+//    delete audio_item; // crashes
+    audio_item = NULL;
 }
 
 void TRegion::doDestroyVideo(QObject *oo)
 {
+    Q_UNUSED(oo);
     MyVideo->finishedSimpleDuration();
 }
 
 void TRegion::doDestroyAudio(QObject *oo)
 {
+    Q_UNUSED(oo);
     MyAudio->finishedSimpleDuration();
 }
 
