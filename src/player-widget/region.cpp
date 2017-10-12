@@ -19,35 +19,18 @@
 #include "region.h"
 #include <QLayout>
 
-TRegion::TRegion(QWidget *parent)
+TRegion::TRegion(QWidget *parent) : QWidget(parent)
 {
     setParent(parent);
-    layout = new QHBoxLayout;
+    layout = new QHBoxLayout(this);
     layout->setMargin(0);
     setLayout(layout);
-    connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
 }
 
 TRegion::~TRegion()
 {
-    if (actual_media == "image")
-    {
-        MyImage->stop();
-    }
-    else if (actual_media == "video")
-    {
-        MediaDecoder.stop();
-        MyVideo->stop();
-    }
-    else if (actual_media == "MyAudio")
-    {
-        MediaDecoder.stop();
-        MyAudio->stop();
-    }
-    else if (actual_media == "web")
-    {
-        MyWeb->stop();
-    }
+    delete layout;
+  // removeXYZ media is not neccessary here, cause there comes a signal from SmilParser directly
 }
 
 void TRegion::paintEvent(QPaintEvent *event)
@@ -59,68 +42,18 @@ void TRegion::paintEvent(QPaintEvent *event)
     style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
 
-void TRegion::playImage(TImage *structure)
+void TRegion::startShowMedia(TMedia *media)
 {
-    MyImage        = structure;
-    actual_media   = "image";
-    ImageWidget    = new QLabel;
-    ImageWidget->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    image.load(MyImage->getLoadablePath());
-    ImageWidget->setPixmap(image);
-    layout->addWidget(ImageWidget);
+    MyMedia  =  MediaFactory::createMedia(media);
+    MyMedia->init();
+    layout->addWidget(MyMedia->getView());
 }
 
-void TRegion::playVideo(TVideo *structure)
+void TRegion::stopShowMedia()
 {
-    MyVideo        = structure;
-    actual_media   = "video";
-    VideoWidget    = new MediaViewWrapper(this);
-    MediaDecoder.setVideoOutput(VideoWidget);
-    MediaDecoder.load(MyVideo->getLoadablePath());
-    MediaDecoder.play();
-    layout->addWidget(VideoWidget->getVideoWidget());
-}
-
-void TRegion::playAudio(TAudio *structure)
-{
-    MyAudio        = structure;
-    actual_media   = "audio";
-    MediaDecoder.load(MyAudio->getLoadablePath());
-    MediaDecoder.play();
-}
-
-void TRegion::playWeb(TWeb *structure)
-{
-    MyWeb        = structure;
-    actual_media = "web";
-    browser      = new QWebEngineView;
-    browser->load(QUrl(MyWeb->getLoadablePath()));
-    browser->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled,true);
-    browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled,true);
-    layout->addWidget(browser);
-}
-
-void TRegion::removeImage()
-{
-    layout->removeWidget(ImageWidget);
-    delete ImageWidget;
-}
-
-void TRegion::removeVideo()
-{
-    layout->removeWidget(VideoWidget->getVideoWidget());
-    delete VideoWidget;
-}
-
-void TRegion::removeAudio()
-{
-    return;
-}
-
-void TRegion::removeWeb()
-{
-    layout->removeWidget(browser);
-    delete browser;
+    layout->removeWidget(MyMedia->getView());
+    delete MyMedia;
+    MyMedia = Q_NULLPTR;
 }
 
 /**
@@ -152,47 +85,10 @@ void TRegion::resizeGeometry()
     wr = (root_width_px*region.width*1);
     hr = (root_height_px*region.height*1);
     setGeometry(qRound(xr), qRound(yr), qRound(wr), qRound(hr));
-    if (actual_media == "image")
-        resizeImage(qRound(wr), qRound(hr));
-    else if (actual_media == "video")
-        resizeVideo(qRound(wr), qRound(hr));
-    else if (actual_media == "web")
-        resizeWeb(qRound(wr), qRound(hr));
+    if (MyMedia != Q_NULLPTR)
+        MyMedia->changeSize(qRound(wr), qRound(hr));
 }
 
-void TRegion::resizeImage(int w, int h)
-{
-    if (MyImage->getFit() == "fill")
-       ImageWidget->setPixmap(image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
-    else if (MyImage->getFit() == "meet")
-        ImageWidget->setPixmap(image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
-    else if (MyImage->getFit() == "meetbest")
-        ImageWidget->setPixmap(image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    else
-        ImageWidget->setPixmap(image);
-}
 
-void TRegion::resizeVideo(int w, int h)
-{
-    Q_UNUSED(w);Q_UNUSED(h)
-    if (MyVideo->getFit() == "fill")
-        VideoWidget->setAspectRatioFill();
-    else if (MyVideo->getFit() == "meet")
-        VideoWidget->setAspectRatioMeet();
-    else if (MyVideo->getFit() == "meetbest")
-        VideoWidget->setAspectRatioMeetBest();
-}
 
-void TRegion::resizeWeb(int w, int h)
-{
-    browser->resize(w-2, h-2);
-}
-
-void TRegion::finished()
-{
-    if (actual_media == "video")
-        MyVideo->finishedSimpleDuration();
-    else if (actual_media == "audio")
-        MyAudio->finishedSimpleDuration();
-}
 

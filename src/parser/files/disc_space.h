@@ -19,7 +19,7 @@ class DiscSpace : public QObject
     Q_OBJECT
 public:
 
-    explicit DiscSpace(QString path = "./");
+    explicit DiscSpace(QString path = "./", QObject *parent=Q_NULLPTR);
     void     init(QString path);
     void     freedSpace(qint64 size_deleted);
     bool     freeDiscSpace(qint64 size_to_free);

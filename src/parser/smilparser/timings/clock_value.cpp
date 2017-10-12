@@ -20,7 +20,6 @@
 
 TClockValue::TClockValue(QObject *parent) : QObject(parent)
 {
-    Q_UNUSED(parent);
 }
 
 void TClockValue::parse(QString s_val)

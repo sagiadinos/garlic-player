@@ -18,9 +18,8 @@
 
 #include "body.h"
 
-TBody::TBody(TContainer * parent)
+TBody::TBody(QObject *parent) : TContainer(parent)
 {
-    Q_UNUSED(parent);
     setObjectName("TBody");
 }
 

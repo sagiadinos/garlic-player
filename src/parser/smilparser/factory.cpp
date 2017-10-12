@@ -17,30 +17,29 @@
 *************************************************************************************/
 #include "factory.h"
 
-TFactory::TFactory(TBaseTiming *parent)
+TFactory::TFactory(QObject *parent) : QObject(parent)
 {
-    Q_UNUSED(parent);
 }
 
-TBaseTiming* TFactory::createBase(QString type, TContainer *parent)
+TBaseTiming* TFactory::createBase(QString type, TContainer *parent_container, QObject *parent)
 {
     if (type == "img")
-        return new TImage(parent);
+        return new TImage(parent_container, parent);
     else if (type == "video")
-        return new TVideo(parent);
+        return new TVideo(parent_container, parent);
     else if (type == "audio")
-        return new TAudio(parent);
+        return new TAudio(parent_container, parent);
     else if (type == "text")
-        return new TWeb(parent);
+        return new TWeb(parent_container, parent);
     else if (type == "prefetch")
-        return new TPrefetch(parent);
+        return new TPrefetch(parent_container, parent);
     else if (type == "seq")
-        return new TSeq(parent);
+        return new TSeq(parent_container, parent);
     else if (type == "par")
-        return new TPar(parent);
+        return new TPar(parent_container, parent);
     else if (type == "excl")
-        return new TExcl(parent);
+        return new TExcl(parent_container, parent);
     else if (type == "body")
-        return new TBody();
+        return new TBody(parent);
     return NULL;
 }

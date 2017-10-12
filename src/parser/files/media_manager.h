@@ -19,7 +19,7 @@ class MediaManager : public BaseManager
 {
     Q_OBJECT
 public:
-    explicit MediaManager(MediaModel *mm, TConfiguration *config, NetworkQueue *dq);
+    explicit MediaManager(MediaModel *mm, TConfiguration *config, NetworkQueue *dq, QObject *parent=Q_NULLPTR);
     ~MediaManager();
     void                  clearQueues();
     void                  registerFile(QString src);

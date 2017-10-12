@@ -31,7 +31,7 @@ class TSmil : public QObject
 {
     Q_OBJECT
 public:
-    explicit TSmil(MediaManager *mm);
+    explicit TSmil(MediaManager *mm, QObject *parent = Q_NULLPTR);
     ~TSmil();
     void                               init();
     void                               clearLists();
@@ -43,21 +43,21 @@ protected:
     QHash<QString, TBaseTiming *>      ar_elements;
     MediaManager                      *MyMediaManager;
 protected slots:
-    void                               foundElement(TContainer *ParentContainer, QString type, QDomElement dom_element);
-    void                               startElement(TContainer *parent, TBaseTiming *element);
-    void                               finishElement(TContainer *parent, TBaseTiming *element);
+    void                               foundElement(TContainer *parent_container, QString type, QDomElement dom_element);
+    void                               startElement(TContainer *parent_container, TBaseTiming *element);
+    void                               finishElement(TContainer *parent_container, TBaseTiming *element);
 
     void                               resumeQueuedElement(TBaseTiming *element);
     void                               pausePlayingElement(TBaseTiming *element);
     void                               stopPlayingElement(TBaseTiming *element);
 private:
     QSet<TBaseTiming *>                ar_played_media;
-    QHash<QString, TBaseTiming *>::iterator  insertIntoObjectContainer(TBaseTiming *parent, TBaseTiming *child);
-    void                               emitStartShowMedia(TMedia *MyMedia);
+    QHash<QString, TBaseTiming *>::iterator  insertIntoObjectContainer(TBaseTiming *parent_container, TBaseTiming *child_container);
+    void                               emitStartShowMedia(TMedia *media);
     void                               stopElement(TBaseTiming *element);
     void                               killTimer(TBaseTiming *element);
     void                               emitStopShowMedia(TMedia *media);
-    void                               connectMediaSlots(TMedia *MyMedia);
+    void                               connectMediaSlots(TMedia *media);
     void                               connectContainerSlots(TContainer *MyContainer);
 
 signals:

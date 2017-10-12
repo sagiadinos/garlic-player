@@ -14,7 +14,7 @@ class MediaViewWrapper : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MediaViewWrapper(QWidget *parent);
+    explicit MediaViewWrapper(QWidget *parent = Q_NULLPTR);
     ~MediaViewWrapper();
 #ifdef SUPPORT_QTAV
     QtAV::WidgetRenderer *getVideoWidget();

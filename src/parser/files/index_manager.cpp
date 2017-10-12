@@ -1,6 +1,6 @@
 #include "index_manager.h"
 
-IndexManager::IndexManager(IndexModel *im, TConfiguration *config, Network *nw)
+IndexManager::IndexManager(IndexModel *im, TConfiguration *config, Network *nw, QObject *parent) : BaseManager(parent)
 {
     MyConfiguration = config;
     MyNetwork       = nw;

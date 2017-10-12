@@ -18,9 +18,9 @@
 
 #include "video.h"
 
-TVideo::TVideo(TContainer *parent)
+TVideo::TVideo(TContainer *pc, QObject *parent) : TAudio(pc, parent)
 {
-    parent_container = parent;
+    parent_container = pc;
     initTimer();
     setObjectName("TVideo");
 }

@@ -1,6 +1,6 @@
 #include "media_manager.h"
 
-MediaManager::MediaManager(MediaModel *mm, TConfiguration *config, NetworkQueue *dq)
+MediaManager::MediaManager(MediaModel *mm, TConfiguration *config, NetworkQueue *dq, QObject *parent) : BaseManager(parent)
 {
     MyConfiguration = config;
     MyNetworkQueue  = dq;

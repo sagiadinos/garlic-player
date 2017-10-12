@@ -18,9 +18,9 @@
 
 #include "image.h"
 
-TImage::TImage(TContainer *parent)
+TImage::TImage(TContainer *pc, QObject *parent) : TMedia(parent)
 {
-    parent_container = parent;
+    parent_container = pc;
     initTimer();
     setObjectName("TImage");
 }

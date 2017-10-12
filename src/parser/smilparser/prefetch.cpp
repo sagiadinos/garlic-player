@@ -17,9 +17,9 @@
 *************************************************************************************/
 #include "prefetch.h"
 
-TPrefetch::TPrefetch(TContainer *parent)
+TPrefetch::TPrefetch(TContainer *pc, QObject *parent) : TMedia(parent)
 {
-    parent_container = parent;
+    parent_container = pc;
     initTimer();
     setObjectName("TPrefetch");
 }

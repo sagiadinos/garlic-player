@@ -36,6 +36,7 @@ public:
 private Q_SLOTS:
     void cleanup();
     void initTestCase(){qInstallMessageHandler(noMessageOutput);}
+    void testObjectCreateAndDelete();
     void testAgentString();
     void testDownloadSmil();
     void testDownloadMedia();
@@ -56,6 +57,34 @@ void TestNetwork::cleanup()
     file.setFileName("./server.jpg");
     if (file.exists())
         file.remove();
+}
+
+void TestNetwork::testObjectCreateAndDelete()
+{
+    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+
+    Network *MyNetwork = new Network(agent);
+    Network *MyNetwork1 = new Network(agent);
+    Network *MyNetwork2 = new Network(agent);
+    Network *MyNetwork3 = new Network(agent);
+    Network *MyNetwork4 = new Network(agent);
+    Network *MyNetwork5 = new Network(agent);
+    delete MyNetwork;
+    delete MyNetwork1;
+    delete MyNetwork2;
+    delete MyNetwork3;
+    delete MyNetwork4;
+    delete MyNetwork5;
+
+    MyNetwork = new Network(agent);
+    QUrl url("http://garlic-player.com/downloads/garlic-player.deb");
+    QFileInfo fi("garlic-player.deb");
+    qRegisterMetaType<QObject *>();
+    QSignalSpy spy(MyNetwork, SIGNAL(succeed(QObject *)));
+    QVERIFY(spy.isValid());
+    MyNetwork->processFile(url, fi);
+    QCOMPARE(spy.count(), 0);
+    delete MyNetwork;
 }
 
 void TestNetwork::testAgentString()
@@ -84,6 +113,7 @@ void TestNetwork::testAgentString()
     file.open(QIODevice::ReadOnly);
     QCOMPARE(file.readAll(), agent);
     file.close();
+    delete MyNetwork;
 }
 
 void TestNetwork::testDownloadSmil()
@@ -157,6 +187,7 @@ void TestNetwork::testDownloadSmil()
 
     QFileInfo fi2(fi.absoluteFilePath()); // to make sure file exists
     QVERIFY(first_download > fi2.lastModified());
+    delete MyNetwork;
 }
 
 void TestNetwork::testDownloadMedia()
@@ -231,6 +262,7 @@ void TestNetwork::testDownloadMedia()
     QCOMPARE(spy4.count(), 1);
     QFileInfo fi2(fi.absoluteFilePath()); // to make sure file exists
     QVERIFY(first_download < fi2.lastModified());
+    delete MyNetwork;
 }
 
 void TestNetwork::testDownloadMediaDirect()
@@ -302,6 +334,7 @@ void TestNetwork::testDownloadFailed()
         i +=200;
     }
     QCOMPARE(spy2.count(), 1);
+    delete MyNetwork;
 }
 
 void TestNetwork::testDownloadWebSite()
@@ -323,6 +356,7 @@ void TestNetwork::testDownloadWebSite()
     QCOMPARE(spy1.count(), 1);
     QCOMPARE(qvariant_cast<QObject *>(spy1.at(0).at(0)), MyNetwork);
     QCOMPARE(MyNetwork->getRemoteFileUrl(), url);
+    delete MyNetwork;
 }
 
 void TestNetwork::testDownloadWebSiteWith301Redirect()
@@ -336,7 +370,7 @@ void TestNetwork::testDownloadWebSiteWith301Redirect()
     QVERIFY(spy1.isValid());
     MyNetwork->processFile(url, fi);
     int i = 0;
-    while (spy1.count() == 0 && i < 4000)
+    while (spy1.count() == 0 && i < 8000)
     {
         QTest::qWait(200);
         i +=200;
@@ -344,6 +378,7 @@ void TestNetwork::testDownloadWebSiteWith301Redirect()
     QCOMPARE(spy1.count(), 1);
     QCOMPARE(qvariant_cast<QObject *>(spy1.at(0).at(0)), MyNetwork);
     QCOMPARE(MyNetwork->getRemoteFileUrl(), url); // should not be something like https://heise.de
+    delete MyNetwork;
 }
 
 

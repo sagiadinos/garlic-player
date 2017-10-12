@@ -10,7 +10,7 @@ QT     += core gui xml widgets webenginewidgets
 CONFIG += warn_on c++11
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
-#Comment the next line in when you want to use QTMultimedia
+#Delete or comment out the next line when you want to use QTMultimedia
 CONFIG    += support_qtav
 
 support_qtav {
@@ -19,28 +19,40 @@ support_qtav {
 } else {
     QT += multimedia multimediawidgets
 }
+
 DEFINES += QUAZIP_STATIC
 
 TARGET = garlic-player
 TEMPLATE = app
 DESTDIR = ../bin
 INCLUDEPATH+=../ext/zlib/includes
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    region.cpp \
+
+include(../player-common/common.pri)
+
+SOURCES += \
+    media/base_media.cpp \
+    media/image.cpp \
+    media/video.cpp \
+    media/web.cpp \
+    media/audio.cpp \
+    media/media_factory.cpp \
+    main.cpp \
+    mainwindow.cpp \
     mediadecoderwrapper.cpp \
     mediaviewwrapper.cpp \
-    configdialog.cpp \
-    screen.cpp \
-    cmdparser.cpp
+    region.cpp
 
-HEADERS  += mainwindow.h \
-    region.h \
+HEADERS  += \
+    media/base_media.h \
+    media/image.h \
+    media/video.h \
+    media/web.h \
+    media/audio.h \
+    media/media_factory.h \
+    mainwindow.h \
     mediadecoderwrapper.h \
     mediaviewwrapper.h \
-    configdialog.h \
-    screen.h \
-    cmdparser.h
+    region.h
 
 unix{
     LIBS += -L../lib -lgarlic -lquazip -lzlib
@@ -52,5 +64,5 @@ win32 {
 
 DISTFILES +=
 
-FORMS += \
-    configdialog.ui
+SUBDIRS += \
+    player-widget.pro

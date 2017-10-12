@@ -18,7 +18,7 @@
 
 #include "smilparser.h"
 
-TSmil::TSmil(MediaManager *mm)
+TSmil::TSmil(MediaManager *mm, QObject *parent) : QObject(parent)
 {
     MyMediaManager   = mm;
 }
@@ -35,20 +35,23 @@ void TSmil::init()
 
 void TSmil::clearLists()
 {
-    QSet<TBaseTiming *> ar = ar_played_media;                               // to prevent crash when erasing from ar_played_media in emitStopShowMedia
-    for (QSet<TBaseTiming *>::iterator i = ar.begin(); i != ar.end(); i++)  // stop actual played media to get them out of QGraphicscene
+    QSet<TBaseTiming *>::iterator i;
+    while (ar_played_media.size() > 0) // stop actual played media
     {
+        i = ar_played_media.begin();
         stopPlayingElement(*i);
     }
+    qDeleteAll(ar_elements);
     ar_elements.clear();
-    MyMediaManager->clearQueues();
+    qDeleteAll(ar_played_media);
+    ar_played_media.clear();
     return;
 }
 
 
 void TSmil::beginSmilParsing(QDomElement body)
 {
-    MyBody = new TBody();
+    MyBody = new TBody(this);
     connect(MyBody, SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));
     connect(MyBody, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     if (MyBody->parse(body))
@@ -61,19 +64,19 @@ void TSmil::beginSmilParsing(QDomElement body)
  * @param parent
  * @param found_tag
  */
-void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement dom_element)
+void TSmil::foundElement(TContainer *parent_container, QString type, QDomElement dom_element)
 {
     TBaseTiming                              *MyBaseTiming;
     QHash<QString, TBaseTiming *>::iterator  ar_elements_iterator = ar_elements.find(TBase::parseID(dom_element));
     QString                                  base_type            = "";
     if (ar_elements_iterator == ar_elements.end())
     {
-        MyBaseTiming     = TFactory::createBase(type, ParentContainer);
+        MyBaseTiming     = TFactory::createBase(type, parent_container, this);
         base_type        = MyBaseTiming->getBaseType();
         MyBaseTiming->parse(dom_element);
         if (MyBaseTiming != NULL)
         {
-            ar_elements_iterator = insertIntoObjectContainer(ParentContainer, MyBaseTiming);
+            ar_elements_iterator = insertIntoObjectContainer(parent_container, MyBaseTiming);
             if (base_type == "media")
                 connectMediaSlots(qobject_cast<TMedia *> (MyBaseTiming));
             else if (base_type == "container")
@@ -90,10 +93,10 @@ void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement 
 
     MyBaseTiming->prepareTimerBeforePlaying();
 
-    QString object_name = ParentContainer->objectName();
+    QString object_name = parent_container->objectName();
     if (object_name == "TExcl")  // increment active child to determine end of a excl
     {
-        TExcl   *MyExclParent   = qobject_cast<TExcl *> (ParentContainer);
+        TExcl   *MyExclParent   = qobject_cast<TExcl *> (parent_container);
         MyExclParent->childStarted(*ar_elements_iterator);
     }
     return;
@@ -106,14 +109,14 @@ void TSmil::foundElement(TContainer *ParentContainer, QString type, QDomElement 
  * @param parent
  * @param element
  */
-void TSmil::startElement(TContainer *parent, TBaseTiming *element)
+void TSmil::startElement(TContainer *parent_container, TBaseTiming *element)
 {
     qDebug() << element->getID() << " startElement";
     bool         playable      = true;
-    if (parent->getBaseType() == "container")
+    if (parent_container->getBaseType() == "container")
     {
 
-        TContainer *MyContainer = qobject_cast<TContainer *> (parent);
+        TContainer *MyContainer = qobject_cast<TContainer *> (parent_container);
         playable                = MyContainer->isChildPlayable(element);
         if (playable)
             MyContainer->setPlayedElement(element);
@@ -136,7 +139,7 @@ void TSmil::startElement(TContainer *parent, TBaseTiming *element)
  * @param parent
  * @param element
  */
-void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
+void TSmil::finishElement(TContainer *parent_container, TBaseTiming *element)
 {
     qDebug() << element->getID() <<  " finishElement";
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
@@ -144,7 +147,7 @@ void TSmil::finishElement(TContainer *parent, TBaseTiming *element)
         qDebug()<< element->getID() << "Not kill Timer";
         stopElement(element);
 
-        parent->next(element);
+        parent_container->next(element);
     }
     else
     {
@@ -226,15 +229,15 @@ void TSmil::killTimer(TBaseTiming *element)
     return;
 }
 
-QHash<QString, TBaseTiming *>::iterator TSmil::insertIntoObjectContainer(TBaseTiming *parent, TBaseTiming *child)
+QHash<QString, TBaseTiming *>::iterator TSmil::insertIntoObjectContainer(TBaseTiming *parent_container, TBaseTiming *child_container)
 {
-    QString id   = child->getID();
-    if (parent->getBaseType() == "container")
+    QString id   = child_container->getID();
+    if (parent_container->getBaseType() == "container")
     {
-        TContainer *MyContainer  = qobject_cast<TContainer *> (parent);
-        MyContainer->insertContainerObject(id, child);
+        TContainer *MyContainer  = qobject_cast<TContainer *> (parent_container);
+        MyContainer->insertContainerObject(id, child_container);
     }
-    return ar_elements.insert(id, child);
+    return ar_elements.insert(id, child_container);
 }
 
 void TSmil::connectContainerSlots(TContainer *MyContainer)
@@ -251,30 +254,30 @@ void TSmil::connectContainerSlots(TContainer *MyContainer)
     return;
 }
 
-void TSmil::connectMediaSlots(TMedia *MyMedia)
+void TSmil::connectMediaSlots(TMedia *media)
 {
-    MyMedia->registerFile(MyMediaManager);
-    connect(MyMedia, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
-    connect(MyMedia, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
+    media->registerFile(MyMediaManager);
+    connect(media, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
+    connect(media, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
     return;
 }
 
-void TSmil::emitStartShowMedia(TMedia *MyMedia)
+void TSmil::emitStartShowMedia(TMedia *media)
 {
-    MyMedia->play();
-    qDebug() << MyMedia->getID() << "startShowMedia";
-    ar_played_media.insert(MyMedia);
-    emit startShowMedia(MyMedia);
+    media->play();
+    qDebug() << media->getID() << "startShowMedia";
+    ar_played_media.insert(media);
+    emit startShowMedia(media);
     return;
 }
 
-void TSmil::emitStopShowMedia(TMedia *MyMedia)
+void TSmil::emitStopShowMedia(TMedia *media)
 {
-    if (ar_played_media.find(MyMedia) != ar_played_media.end())
+    if (ar_played_media.find(media) != ar_played_media.end())
     {
-        ar_played_media.remove(MyMedia);
-        qDebug() << MyMedia->getID() << "stopShowMedia";
-        emit stopShowMedia(MyMedia);
+        ar_played_media.remove(media);
+        qDebug() << media->getID() << "stopShowMedia";
+        emit stopShowMedia(media);
     }
     return;
 }

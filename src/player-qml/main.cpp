@@ -19,7 +19,9 @@
 #include <QQmlApplicationEngine>
 
 #include "mainwindow.h"
-#include "cmdparser.h"
+#include "../player-common/cmdparser.h"
+#include "../player-common/screen.h"
+
 #if defined  Q_OS_ANDROID
     #include <QtAndroidExtras/QAndroidJniEnvironment>
     #include <QtAndroidExtras/QtAndroidExtras>
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
     MyParser.parse(&app);
 
     bool is_index = true;
-    TScreen    MyScreen(0, QApplication::desktop());
+    TScreen    MyScreen(QApplication::desktop(), 0);
     MyConfiguration->determineIndexUri("http://indexes.smil-admin.com");
 
     MainWindow w(MyConfiguration, &MyScreen);

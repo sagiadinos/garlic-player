@@ -42,7 +42,7 @@ public:
     const     int        _playing  = 2;
     const     int        _paused   = 3;
 
-    explicit              TBaseTiming(QObject * parent = 0);
+    explicit              TBaseTiming(QObject * parent = Q_NULLPTR);
             bool          prepareTimerBeforePlaying();      // what to do when parent sends an order to begin executions
             void          prepareTimerBeforePausing();
             void          prepareTimerBeforeStop();      // what to do when parent sends an order to begin executions

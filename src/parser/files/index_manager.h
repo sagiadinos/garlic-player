@@ -11,7 +11,7 @@ class IndexManager : public BaseManager
 {
         Q_OBJECT
     public:
-        explicit IndexManager(IndexModel *im, TConfiguration *config,  Network *nw);
+        explicit IndexManager(IndexModel *im, TConfiguration *config,  Network *nw, QObject *parent=Q_NULLPTR);
         void            init(QString src);
         void            lookUpForIndex();
         QDomElement     getHead();

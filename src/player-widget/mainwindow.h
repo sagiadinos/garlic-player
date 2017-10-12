@@ -25,8 +25,8 @@
 #include "head.h"
 #include "region.h"
 #include "video.h"
-#include "configdialog.h"
-#include "screen.h"
+#include "../player-common/configdialog.h"
+#include "../player-common/screen.h"
 #include "index_manager.h"
 #include "media_manager.h"
 #include "smilparser.h"
@@ -55,13 +55,17 @@ protected:
     const int                 BIGFULLSCREEN = 2;
     QSize                     mainwindow_size;
     QMap<QString, TRegion *>  ar_regions;
-    TSmil                    *MySmil          = NULL;
-    THead                    *MyHead          = NULL;
-    IndexManager             *MyIndexManager  = NULL;
-    MediaManager             *MyMediaManager  = NULL;
-    TConfiguration           *MyConfiguration = NULL;
+    TSmil                    *MySmil          = Q_NULLPTR;
+    Network                  *MyNetwork       = Q_NULLPTR;
+    NetworkQueue             *MyNetworkQueue  = Q_NULLPTR;
+    THead                    *MyHead          = Q_NULLPTR;
+    IndexManager             *MyIndexManager  = Q_NULLPTR;
+    MediaManager             *MyMediaManager  = Q_NULLPTR;
+    MediaModel               *MyMediaModel    = Q_NULLPTR;
+    TConfiguration           *MyConfiguration = Q_NULLPTR;
     TScreen                  *MyScreen;
     int                       screen_state = 0;
+    void                      cleanUp();
     void                      deleteRegionsAndLayouts();
     void                      loadIndex();
     void                      setRegions(QDomElement head);

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>root.qml</file>
+        <file>root_qtm.qml</file>
+        <file>root_qtav.qml</file>
     </qresource>
 </RCC>

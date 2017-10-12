@@ -22,19 +22,15 @@
 #include <QObject>
 #include <QWidget>
 #include <QHBoxLayout>
-#include <QLabel>
 #include <QPainter>
 #include <QPixmap>
 #include <QPaintEvent>
 #include <QStyle>
 #include <QStyleOption>
-#include <QWebEngineView>
-#include <QWebEngineSettings>
 #include "head.h"
-#include "smilparser.h"
-#include "mediadecoderwrapper.h"
-#include "mediaviewwrapper.h"
 
+
+#include "media/media_factory.h"
 
 class TRegion : public QWidget
 {
@@ -45,35 +41,16 @@ public:
     void                paintEvent(QPaintEvent *event);
     void                setRootSize(int w, int h);
     void                setRegion(Region region);
-    void                playImage(TImage *structure);
-    void                playVideo(TVideo *structure);
-    void                playAudio(TAudio *structure);
-    void                playWeb(TWeb *structure);
-    void                removeImage();
-    void                removeVideo();
-    void                removeAudio();
-    void                removeWeb();
+    void                startShowMedia(TMedia *media);
+    void                stopShowMedia();
 
 protected:
-    QLabel               *ImageWidget;
-    QPixmap               image;
-    QWebEngineView       *browser;
-    MediaViewWrapper     *VideoWidget;
-    MediaDecoderWrapper   MediaDecoder;
-    TImage               *MyImage;
-    TVideo               *MyVideo;
-    TAudio               *MyAudio;
-    TWeb                 *MyWeb;
     qreal                 root_width_px, root_height_px = 0;
     QString               actual_media = "";
     Region                region;
     QHBoxLayout          *layout;
+    BaseMedia            *MyMedia = Q_NULLPTR;
     void                  resizeGeometry();
-    void                  resizeImage(int w, int h);
-    void                  resizeVideo(int w, int h);
-    void                  resizeWeb(int w, int h);
-protected slots:
-    void                  finished();
 };
 
 #endif // TREGION_H

@@ -11,7 +11,7 @@ class IndexModel : public QObject
 {
         Q_OBJECT
     public:
-        explicit IndexModel();
+        explicit IndexModel(QObject *parent=Q_NULLPTR);
         QDomElement     getHead();
         QDomElement     getBody();
         bool            loadDocument(QString file_path);

@@ -18,9 +18,8 @@
 
 #include "container.h"
 
-TContainer::TContainer(TBaseTiming *parent)
+TContainer::TContainer(QObject *parent) : TBaseTiming(parent)
 {
-    Q_UNUSED(parent);
 }
 
 void TContainer::insertContainerObject(QString id, TBaseTiming *obj_element)

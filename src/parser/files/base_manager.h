@@ -7,7 +7,7 @@ class BaseManager : public QObject
 {
         Q_OBJECT
     public:
-        BaseManager();
+        BaseManager(QObject *parent = Q_NULLPTR);
 
     protected:
         bool     isRemote(QString src);

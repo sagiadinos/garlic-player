@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#ifndef MAGE_H
+#ifndef IMAGE_H
 #define IMAGE_H
 
 #include "media.h"
@@ -25,7 +25,7 @@ class TImage : public TMedia
 {
     Q_OBJECT
 public:
-    explicit TImage(TContainer *parent = 0);
+    explicit TImage(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TImage();
     void     pause();
     void     stop();

@@ -18,9 +18,8 @@
 
 #include "base_timing.h"
 
-TBaseTiming::TBaseTiming(QObject * parent)
+TBaseTiming::TBaseTiming(QObject * parent) : TBase(parent)
 {
-    Q_UNUSED(parent);
 }
 
 bool TBaseTiming::prepareTimerBeforePlaying()

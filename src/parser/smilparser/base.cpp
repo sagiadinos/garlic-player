@@ -18,9 +18,8 @@
 
 #include "base.h"
 
-TBase::TBase(QObject * parent)
+TBase::TBase(QObject * parent) : QObject(parent)
 {
-    Q_UNUSED(parent);
 }
 
 QString TBase::parseID(QDomElement element)

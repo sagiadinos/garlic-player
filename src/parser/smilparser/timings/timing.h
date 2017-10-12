@@ -60,7 +60,7 @@ class TTiming : public TClockValue
 {
     Q_OBJECT
 public:
-    explicit TTiming(QObject *parent = 0);
+    explicit TTiming(QObject *parent = Q_NULLPTR);
     ~TTiming();
     void       calculate();
     void       parse(QString svalue);

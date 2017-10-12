@@ -47,7 +47,7 @@ SOURCES += \
     smilparser/web.cpp \
     tools/configuration.cpp \
     tools/logging_categories.cpp \
-    smilparser.cpp \
+    smilparser.cpp
 
 HEADERS += \
     files/base_manager.h \
@@ -80,7 +80,7 @@ HEADERS += \
     smilparser/web.h \
     tools/configuration.h \
     tools/logging_categories.h \
-    smilparser.h \
+    smilparser.h
 
 DISTFILES += \
     reports/system.xml

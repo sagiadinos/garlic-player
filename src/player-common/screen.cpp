@@ -1,6 +1,6 @@
 #include "screen.h"
 
-TScreen::TScreen(QObject *parent, QDesktopWidget *dw) : QObject(parent)
+TScreen::TScreen(QDesktopWidget *dw, QObject *parent) : QObject(parent)
 {
      desktop_widget   = dw;
      setActualScreenId(desktop_widget->primaryScreen());

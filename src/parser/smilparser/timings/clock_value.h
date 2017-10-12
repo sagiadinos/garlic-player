@@ -28,7 +28,7 @@ class TClockValue : public QObject
 {
     Q_OBJECT
 public:
-    explicit TClockValue(QObject *parent = 0);
+    explicit TClockValue(QObject *parent = Q_NULLPTR);
     void     parse(QString s_value);
     QString  getStatus();
     qint64   getMilliseconds();

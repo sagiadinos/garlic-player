@@ -18,9 +18,9 @@
 
 #include "audio.h"
 
-TAudio::TAudio(TContainer *parent)
+TAudio::TAudio(TContainer *pc, QObject *parent)  : TMedia(parent)
 {
-    parent_container = parent;
+    parent_container = pc;
     initTimer();
     setObjectName("TAudio");
 }

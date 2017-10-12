@@ -25,7 +25,7 @@ class TAudio : public TMedia
 {
     Q_OBJECT
 public:
-    explicit TAudio(TContainer * parent = 0);
+    explicit TAudio(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TAudio();
     QString                 getSoundLevel(){return soundLevel;}
     void                    pause();

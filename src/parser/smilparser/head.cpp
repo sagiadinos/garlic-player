@@ -18,9 +18,8 @@
 
 #include "head.h"
 
-THead::THead(QObject *parent)
+THead::THead(QObject *parent) : QObject(parent)
 {
-    Q_UNUSED(parent);
     refresh_timer  = new QTimer(this);
     connect(refresh_timer, SIGNAL(timeout()), this, SLOT(emitCheckForNewIndex()));
     setDefaultValues();

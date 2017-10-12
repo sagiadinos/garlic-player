@@ -18,9 +18,9 @@
 
 #include "seq.h"
 
-TSeq::TSeq(TContainer * parent)
+TSeq::TSeq(TContainer *pc, QObject *parent) : TContainer(parent)
 {
-    parent_container = parent;
+    parent_container = pc;
     initTimer();
     setObjectName("TSeq");
 }
@@ -36,7 +36,7 @@ bool TSeq::parse(QDomElement element)
         setPlaylist();
         if (active_element.tagName() == "metadata")
         {
-            MyShuffle = new TShuffle(dom_list);
+            MyShuffle = new TShuffle(dom_list, this);
             MyShuffle->parse(active_element);
             shuffle = true;
         }

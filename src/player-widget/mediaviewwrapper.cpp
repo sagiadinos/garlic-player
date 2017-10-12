@@ -1,10 +1,9 @@
 #include "mediaviewwrapper.h"
 
-MediaViewWrapper::MediaViewWrapper(QWidget *parent)
+MediaViewWrapper::MediaViewWrapper(QWidget *parent) :QWidget(parent)
 {
-    Q_UNUSED(parent);
 #ifdef SUPPORT_QTAV
-    VideoWidget = new QtAV::WidgetRenderer;
+    VideoWidget = new QtAV::WidgetRenderer(this);
 #else
     VideoWidget = new  QVideoWidget;
 #endif
@@ -12,7 +11,7 @@ MediaViewWrapper::MediaViewWrapper(QWidget *parent)
 
 MediaViewWrapper::~MediaViewWrapper()
 {
-    delete VideoWidget;
+   delete VideoWidget;
 }
 
 #ifdef SUPPORT_QTAV

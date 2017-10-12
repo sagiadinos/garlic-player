@@ -1,6 +1,6 @@
 #include "wgt.h"
 
-Wgt::Wgt(QString file_path)
+Wgt::Wgt(QString file_path, QObject *parent) : QObject(parent)
 {
     setFilePath(file_path);
 }

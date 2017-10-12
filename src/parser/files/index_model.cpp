@@ -1,6 +1,6 @@
 #include "index_model.h"
 
-IndexModel::IndexModel()
+IndexModel::IndexModel(QObject *parent) : QObject(parent)
 {
 
 }

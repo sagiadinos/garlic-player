@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "network.h"
 
-Network::Network(QByteArray agent)
+Network::Network(QByteArray agent, QObject *parent) :QObject(parent)
 {
     setUserAgent(agent);
     manager_get           = new QNetworkAccessManager(this);
@@ -26,6 +26,13 @@ Network::Network(QByteArray agent)
     connect(manager_get, SIGNAL(finished(QNetworkReply*)), SLOT(finishedGetRequest(QNetworkReply*)));
     connect(manager_head, SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRequest(QNetworkReply*)));
     connect(manager_head_redirect, SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRedirectRequest(QNetworkReply*)));
+}
+
+Network::~Network()
+{
+    delete manager_get;
+    delete manager_head;
+    delete manager_head_redirect;
 }
 
 void Network::processFile(QUrl url, QFileInfo fi)

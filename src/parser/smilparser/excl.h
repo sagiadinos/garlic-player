@@ -25,7 +25,7 @@ class TExcl : public TContainer
 {
     Q_OBJECT
 public:
-    explicit TExcl(TContainer * parent = 0);
+    explicit TExcl(TContainer *pc, QObject *parent = Q_NULLPTR);
 
     const       int         _stop_new          = 0; // never
     const       int         _stop_active       = 1;

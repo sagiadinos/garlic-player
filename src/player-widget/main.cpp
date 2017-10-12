@@ -17,7 +17,8 @@
 *************************************************************************************/
 
 #include "mainwindow.h"
-#include "cmdparser.h"
+#include "../player-common/cmdparser.h"
+#include "../player-common/screen.h"
 
 QScopedPointer<QFile>   event_log;
 
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
     TConfiguration *MyConfiguration = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
     QDir dir(".");
     int ret = 0;
-    MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator
+    MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
     MyConfiguration->determineUserAgent();
     MyConfiguration->createDirectories();
 
@@ -75,7 +76,7 @@ int main(int argc, char *argv[])
     MyParser.parse(&app);
 
     bool is_index = true;
-    TScreen    MyScreen(0, QApplication::desktop());
+    TScreen    MyScreen(QApplication::desktop());
     MainWindow w(MyConfiguration, &MyScreen);
 
     if (MyConfiguration->getIndexUri() == "")

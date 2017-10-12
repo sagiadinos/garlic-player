@@ -23,11 +23,17 @@ MainWindow::MainWindow(TConfiguration *config, TScreen *screen)
     connect (this, SIGNAL(statusChanged(QQuickView::Status)), this, SLOT(doStatusChanged(QQuickView::Status)));
     MyScreen               = screen;
     MyConfiguration        = config;
-    QByteArray user_agent(MyConfiguration->getUserAgent().toUtf8());
-    MyIndexManager         = new IndexManager(new IndexModel, MyConfiguration, new Network(user_agent));
+    MyNetwork              = new Network(MyConfiguration->getUserAgent().toUtf8());
+    MyIndexManager         = new IndexManager(new IndexModel(this), MyConfiguration, MyNetwork, this);
     connect(MyIndexManager, SIGNAL(availableIndex()), this, SLOT(setSmilIndex()));
-    MyMediaManager         = new MediaManager(new MediaModel, MyConfiguration, new NetworkQueue(user_agent));
-    setSource(QUrl(QStringLiteral("qrc:/root.qml")));
+
+    MyIndexManager->init(MyConfiguration->getIndexUri());
+
+#ifdef SUPPORT_QTAV
+    setSource(QUrl(QStringLiteral("qrc:/root_qtav.qml")));
+#else
+    setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
+#endif
     setMainWindowSize(QSize(980, 540)); // set default
 }
 
@@ -41,17 +47,22 @@ void MainWindow::setSmilIndex()
 {
     qDebug(SmilParser) << "clear MySmil";
     if (ar_regions.size() > 0)
-    {
-        delete MySmil;
-        deleteRegionsAndLayouts();
-    }
-    MyHead          = new THead();
+        cleanUp();
+
+    MyMediaModel    = new MediaModel(this);
+    MyNetworkQueue  = new NetworkQueue(MyConfiguration->getUserAgent().toUtf8(), this);
+    MyMediaManager  = new MediaManager(MyMediaModel, MyConfiguration, MyNetworkQueue , this);
+
+    MyHead          = new THead(this);
     connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
-    MySmil = new TSmil(MyMediaManager);
+
+    MySmil = new TSmil(MyMediaManager, this);
     connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     MySmil->init();
+
     setRegions(MyIndexManager->getHead());
+    setGeometry(0,0, width(), height());
     MySmil->beginSmilParsing(MyIndexManager->getBody());
 }
 
@@ -181,24 +192,27 @@ void MainWindow::resizeEvent(QResizeEvent * event)
 }
 
 
+// =================== protected slots ====================================
+
+void MainWindow::cleanUp()
+{
+    delete MySmil;
+    delete MyMediaManager;
+    delete MyMediaModel;
+    delete MyNetworkQueue;
+    delete MyHead;
+    deleteRegionsAndLayouts(); // region should be deleted last
+}
+
 void MainWindow::startShowMedia(TMedia *media)
 {
     if (ar_regions.size() == 0)
         return;
 
     QString region_name = selectRegion(media->getRegion());
-    QString type        = media->objectName();
-    if (type == "TImage")
-        ar_regions[region_name]->playImage(qobject_cast<TImage *>(media));
-     else if (type == "TVideo")
-        ar_regions[region_name]->playVideo(qobject_cast<TVideo *>(media));
-     else if (type == "TAudio")
-        ar_regions[region_name]->playAudio(qobject_cast<TAudio *>(media));
-     else if (type == "TWeb")
-        ar_regions[region_name]->playWeb(qobject_cast<TWeb *>(media));
 
-    if (type != "TAudio")
-        ar_regions[region_name]->setRootSize(width(), height());
+    ar_regions[region_name]->startShowMedia(media);
+    ar_regions[region_name]->setRootSize(width(), height());
     return;
 }
 
@@ -207,16 +221,8 @@ void MainWindow::stopShowMedia(TMedia *media)
     if (ar_regions.size() == 0)
         return;
 
-    QString type        = media->objectName();
     QString region_name = selectRegion(media->getRegion());
-    if (type == "TImage")
-        ar_regions[region_name]->removeImage();
-    else if (type == "TVideo")
-        ar_regions[region_name]->removeVideo();
-    else if (type == "TAudio")
-        ar_regions[region_name]->removeAudio();
-    else if (type == "TWeb")
-        ar_regions[region_name]->removeWeb();
+    ar_regions[region_name]->stopShowMedia();
     return;
 }
 

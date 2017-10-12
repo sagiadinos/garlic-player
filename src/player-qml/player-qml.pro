@@ -6,11 +6,19 @@
 include(../defaults.pri)
 INCLUDEPATH += ../parser/smilparser
 
-QT     += core widgets gui xml quick qml
+QT     += core widgets gui xml quick qml av
 CONFIG += warn_on c++11
+Release:DEFINES += QT_NO_DEBUG_OUTPUT
+
+#Delete or comment out the next line when you want to use QTMultimedia
+CONFIG    += support_qtav
+
+support_qtav {
+    DEFINES += SUPPORT_QTAV
+    QT      += av
+}
 
 DEFINES += QUAZIP_STATIC
-Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 TARGET = garlic-player
 TEMPLATE = app
@@ -18,18 +26,28 @@ DESTDIR = ../bin
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    region.cpp \
-    configdialog.cpp \
-    screen.cpp \
-    cmdparser.cpp
+include(../player-common/common.pri)
 
-HEADERS  += mainwindow.h \
-    region.h \
-    configdialog.h \
-    screen.h \
-    cmdparser.h
+SOURCES += \
+    media/base_media.cpp \
+    media/image.cpp \
+    media/video.cpp \
+    media/web.cpp \
+    media/audio.cpp \
+    media/media_factory.cpp \
+    main.cpp\
+    mainwindow.cpp \
+    region.cpp
+
+HEADERS  += \
+    media/base_media.h \
+    media/image.h \
+    media/video.h \
+    media/web.h \
+    media/audio.h \
+    media/media_factory.h \
+    mainwindow.h \
+    region.h
 
 unix:!android {
     QT += webengine
@@ -45,9 +63,6 @@ win32 {
 }
 
 RESOURCES += qml.qrc
-
-FORMS += \
-    configdialog.ui
 
 DISTFILES += \
     android/AndroidManifest.xml \

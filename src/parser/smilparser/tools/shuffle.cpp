@@ -19,7 +19,6 @@
 
 TShuffle::TShuffle(QList<QDomElement> list, QObject *parent) : QObject(parent)
 {
-    Q_UNUSED(parent);
     dom_list   = list;
 }
 

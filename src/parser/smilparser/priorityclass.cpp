@@ -1,8 +1,7 @@
 #include "priorityclass.h"
 
-TPriorityClass::TPriorityClass(QObject *parent)
+TPriorityClass::TPriorityClass(QObject *parent) : TBase(parent)
 {
-    Q_UNUSED(parent);
     setObjectName("TPriorityClass");
 }
 

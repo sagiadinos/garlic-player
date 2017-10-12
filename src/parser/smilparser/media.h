@@ -26,7 +26,7 @@ class TMedia : public TBaseTiming
 {
     Q_OBJECT
 public:
-    explicit TMedia(TBaseTiming * parent = 0);
+    explicit TMedia(QObject *parent = Q_NULLPTR);
     QString           getRegion(){return region;}
     QString           getFit(){return fit;}
     QString           getSrc() {return src;}

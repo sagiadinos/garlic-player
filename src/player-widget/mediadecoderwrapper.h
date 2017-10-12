@@ -17,24 +17,24 @@ class MediaDecoderWrapper : public QObject
 {
     Q_OBJECT
 public:
-    explicit MediaDecoderWrapper();
+    explicit MediaDecoderWrapper(QObject *parent = Q_NULLPTR);
     ~MediaDecoderWrapper();
     void                setVideoOutput(MediaViewWrapper *renderer);
     void                removeVideoOutput(MediaViewWrapper *renderer);
     bool                load(QString file_path);
+    void                unload();
 
 signals:
     void                finished();
 public slots:
     void                play();
-    void                pause();
-    void                stop();
 
 protected:
+    QString             actual_media_path;
 #ifdef SUPPORT_QTAV
-   QtAV::AVPlayer      MediaDecoder;
+   QtAV::AVPlayer      *MediaDecoder;
 #else
-    QMediaPlayer       MediaDecoder;
+    QMediaPlayer       *MediaDecoder;
 #endif
 
 protected slots:

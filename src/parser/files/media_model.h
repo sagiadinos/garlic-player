@@ -24,7 +24,7 @@ class MediaModel : public QObject
         const     int        _reloadable = 2;
         const     int        _uncachable = 3;
 
-        explicit MediaModel();
+        explicit MediaModel(QObject *parent=Q_NULLPTR);
         ~MediaModel();
         void     clearQueue();
         QString  findLocalBySrcPath(QString src_file_path);

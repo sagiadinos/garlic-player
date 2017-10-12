@@ -6,7 +6,6 @@ class I_BaseManager : public BaseManager
 {
     Q_OBJECT
 public:
-    I_BaseManager(){}
     bool   test_isRemote(QString src){return isRemote(src);}
 };
 

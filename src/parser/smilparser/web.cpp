@@ -18,9 +18,9 @@
 
 #include "web.h"
 
-TWeb::TWeb(TContainer *parent)
+TWeb::TWeb(TContainer *pc, QObject *parent) : TMedia(parent)
 {
-    parent_container = parent;
+    parent_container = pc;
     initTimer();
     setObjectName("TWeb");
 }

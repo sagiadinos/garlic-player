@@ -10,7 +10,7 @@ class TScreen : public QObject
 {
     Q_OBJECT
 public:
-    explicit TScreen(QObject *parent, QDesktopWidget *dw);
+    explicit TScreen(QDesktopWidget *dw, QObject *parent = Q_NULLPTR);
     QPoint   getWholeStartPoint();
     QSize    getWholeSize();
     QPoint   getStartPointFromScreen();

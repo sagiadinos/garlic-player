@@ -1,13 +1,13 @@
 #include "media_model.h"
 
-MediaModel::MediaModel()
+MediaModel::MediaModel(QObject *parent) :QObject(parent)
 {
     available_media_list.clear();
 }
 
 MediaModel::~MediaModel()
 {
-    available_media_list.clear();
+    clearQueue();
 }
 
 void MediaModel::clearQueue()

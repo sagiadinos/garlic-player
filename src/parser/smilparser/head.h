@@ -48,7 +48,7 @@ class THead: public QObject
 {
     Q_OBJECT
 public:
-    explicit THead(QObject *parent = 0);
+    explicit THead(QObject *parent = Q_NULLPTR);
      ~THead();
     void           setDefaultValues();
     void           parse(QDomElement head);

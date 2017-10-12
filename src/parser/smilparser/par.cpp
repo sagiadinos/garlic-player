@@ -18,10 +18,10 @@
 
 #include "par.h"
 
-TPar::TPar(TContainer *parent)
+TPar::TPar(TContainer *pc, QObject *parent) : TContainer(parent)
 {
     initTimer();
-    parent_container = parent;
+    parent_container = pc;
     setObjectName("TPar");
 }
 

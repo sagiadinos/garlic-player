@@ -24,7 +24,7 @@ class TPrefetch : public TMedia
 {
     Q_OBJECT
 public:
-    explicit TPrefetch(TContainer *parent = 0);
+    explicit TPrefetch(TContainer *pc, QObject *parent = Q_NULLPTR);
     void     pause();
     void     stop();
     void     play();

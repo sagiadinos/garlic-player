@@ -25,7 +25,7 @@ class TBody : public TContainer
 {
     Q_OBJECT
 public:
-    explicit TBody(TContainer * parent = 0);
+    explicit TBody(QObject *parent = Q_NULLPTR);
     ~TBody();
     bool      parse(QDomElement element);
     void      prepareTimerBeforePlaying();

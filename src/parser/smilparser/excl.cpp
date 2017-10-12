@@ -18,9 +18,9 @@
 
 #include "excl.h"
 
-TExcl::TExcl(TContainer *parent)
+TExcl::TExcl(TContainer *pc, QObject *parent) : TContainer(parent)
 {
-    parent_container        = parent;
+    parent_container       = pc;
     ActivePriorityClass    = NULL;
     NewActivePriorityClass = NULL;
     initTimer();

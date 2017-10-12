@@ -18,9 +18,8 @@
 
 #include "media.h"
 
-TMedia::TMedia(TBaseTiming * parent)
+TMedia::TMedia(QObject *parent) : TBaseTiming(parent)
 {
-    Q_UNUSED(parent);
 }
 
 bool TMedia::parse(QDomElement element)

@@ -10,7 +10,7 @@ class Wgt : public QObject
 {
     Q_OBJECT
 public:
-    explicit Wgt(QString file_path = "");
+    explicit Wgt(QString file_path = "", QObject *parent=Q_NULLPTR);
     ~Wgt();
     void         setFilePath(QString file_path);
     bool         isOpen();

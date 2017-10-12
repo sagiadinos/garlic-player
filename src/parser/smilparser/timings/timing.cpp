@@ -18,9 +18,8 @@
 
 #include "timing.h"
 
-TTiming::TTiming(QObject *parent)
+TTiming::TTiming(QObject *parent) : TClockValue(parent)
 {
-    Q_UNUSED(parent);
     period            = 0;
     status            = "";
     remaining_repeats = 0;

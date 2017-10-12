@@ -29,7 +29,7 @@ class TSeq : public TContainer
 {
     Q_OBJECT
 public:
-    explicit TSeq(TContainer *parent = 0);
+    explicit TSeq(TContainer *pc, QObject *parent = Q_NULLPTR);
     bool         parse(QDomElement element);
     void         next(TBaseTiming *ended_element);
     void         pause();

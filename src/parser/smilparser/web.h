@@ -25,7 +25,7 @@ class TWeb : public TMedia
 {
     Q_OBJECT
 public:
-    explicit TWeb(TContainer *parent = 0);
+    explicit TWeb(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TWeb();
     void            pause();
     void            stop();

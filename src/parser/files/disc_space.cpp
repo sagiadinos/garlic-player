@@ -1,6 +1,6 @@
 #include "disc_space.h"
 
-DiscSpace::DiscSpace(QString path)
+DiscSpace::DiscSpace(QString path, QObject *parent) : QObject(parent)
 {
     init(path);
 }

@@ -26,7 +26,7 @@
  * @brief TConfiguration::TConfiguration
  * @param UserConfig
  */
-TConfiguration::TConfiguration(QSettings *UserConfig)
+TConfiguration::TConfiguration(QSettings *UserConfig, QObject *parent) : QObject(parent)
 {
     setUserConfig(UserConfig);
     determineUuid();
@@ -219,8 +219,8 @@ void TConfiguration::createDirectories()
     }
     else
     {
-        cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) + "/";
-        log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) + "/logs/";
+        cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory);
+        log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) + "logs/";
     }
     createDirectoryIfNotExist(cache_dir);
     createDirectoryIfNotExist(log_dir);

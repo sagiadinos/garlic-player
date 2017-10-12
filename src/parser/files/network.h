@@ -38,7 +38,8 @@ class Network : public QObject
     Q_OBJECT
     public:
 
-        explicit Network(QByteArray agent);
+        explicit Network(QByteArray agent, QObject *parent=Q_NULLPTR);
+        ~Network();
 
         void       processFile(QUrl url, QFileInfo fi);
 

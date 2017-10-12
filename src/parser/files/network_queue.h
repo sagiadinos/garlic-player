@@ -16,7 +16,7 @@ class NetworkQueue : public QObject
     Q_OBJECT
 public:
     const int _max_download_slots   = 5;
-    explicit NetworkQueue(QByteArray ua);
+    explicit NetworkQueue(QByteArray ua, QObject *parent=Q_NULLPTR);
     ~NetworkQueue();
     void     insertQueue(QString src, QString local);
     void     clearQueues();
