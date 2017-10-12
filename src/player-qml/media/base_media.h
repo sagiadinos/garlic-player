@@ -4,6 +4,8 @@
 #include <QQuickItem> // interates QQmlComponent
 #include "smilparser/media.h"
 
+#include <unistd.h>
+
     class BaseMedia : public QObject
     {
             Q_OBJECT
