@@ -16,14 +16,17 @@ Linux, Windows, Raspberry Pi 3, Android, maybe later OSX
 
 Garlic actually is able to play local and remote (via http) SMIL Files with actual supported features.
 Compilations tested with:
- - Kde Neon
+ - Kde Neon Ubuntu 16.04 based (Attention when using QtMultimedia cause gstreamer 1.8 seems to have a mem leak)
  - Debian 8 Jessie
- - Rasperian Jessie/Stretch (rpi2/rpi3)
+ - Rasperian Jessie/Stretch (rpi2/rpi3 without video hw acceleration) 
  - Tinker Board (Linaro OS 1.8) 
- - Android armv7 (4.4.1, 5.0, 5.1 and 7.0)
+ - Android armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2 and 7.0)
  - Windows 7 i64 (VS2015 Community Version)
 
-For Android player-qml is needed, cause QtMultimedia-Widgets are not supported. Attention! Do not use 5.9.1 for QML version of garlic cause the QML Image Type has a [mem leak](https://bugreports.qt.io/browse/QTBUG-61754).
+For Android player-qml is needed, cause QtMultimedia-Widgets are not supported.
+
+Attention! Do not use 5.9.1 for garlic-qml cause the QML Image Type has an extremly [mem leak](https://bugreports.qt.io/browse/QTBUG-61754)
+which make it useable for a continous playing media player.
 
 *garlic.sh [options] SMIL_INDEX*
 
@@ -45,7 +48,7 @@ Binaries (Linux/Windows) of v0.1.0 can be downloaded at http://garlic-player.com
  - 301 redirect support
  - lot's of video formats 
  - Media Cache
- - SMIL3 subset, HTML5 and HTML5-Widgets support
+ - SMIL3 subset, HTML5, HTML5-Widgets and (depending on device) WebGL support
 
 ## actual supported SMIL-Features
 
@@ -102,27 +105,28 @@ Binaries (Linux/Windows) of v0.1.0 can be downloaded at http://garlic-player.com
 
 ## additional features supported not in w3c standard
 - **shuffle play** in seq container via metadata
+- **automatic refresh** via metatags in SMIL header
 
 ## actual supported remote features via downloader
-- http downloads and caching
-- caching of remote SMIL index file
-- caching of remote media files
-- refresh via meta tag in cyclic timer periods
-- http 301 redirects for index and media
+ - http downloads and caching
+ - caching of remote SMIL index file
+ - caching of remote media files
+ - refresh via meta tag in cyclic timer periods
+ - http 301 redirects for index and media
 
 ## HotKeys
-- toogle fullscreen with Ctrl-F
-- toogle bigscreen with Ctrl-B
-- quit app with Ctrl-Q
-- open configuration dialog with Ctrl-C
+ - toogle fullscreen with Ctrl-F
+ - toogle bigscreen with Ctrl-B
+ - quit app with Ctrl-Q
+ - open configuration dialog with Ctrl-C
 
 ## Actual Working
-- deployment Linux and Windows for first binary release
+ - deployment Linux and Windows for first binary release
 
 ## future ToDo's
-- change config.xml during plaback
-- **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
-- **logs and reports** as described in [a-smil.org reporting](http://www.a-smil.org/index.php/Reporting)
-- **administration functions** as described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)
+ - change config.xml during plaback
+ - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
+ - **logs and reports** as described in [a-smil.org reporting](http://www.a-smil.org/index.php/Reporting)
+ - **administration functions** as described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)

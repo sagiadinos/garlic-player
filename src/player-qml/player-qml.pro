@@ -6,7 +6,7 @@
 include(../defaults.pri)
 INCLUDEPATH += ../parser/smilparser
 
-QT     += core widgets gui xml quick qml av
+QT     += core widgets gui xml quick qml
 CONFIG += warn_on c++11
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
