@@ -66,3 +66,5 @@ DISTFILES +=
 
 SUBDIRS += \
     player-widget.pro
+
+FORMS +=

@@ -18,8 +18,7 @@ MediaDecoderWrapper::~MediaDecoderWrapper()
 #ifdef SUPPORT_QTAV
     MediaDecoder->clearVideoRenderers();
 #endif
-
-    //delete MediaDecoder;
+    delete MediaDecoder;
 }
 
 void MediaDecoderWrapper::setVideoOutput(MediaViewWrapper *renderer)

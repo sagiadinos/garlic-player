@@ -30,7 +30,7 @@ TRegion::TRegion(QWidget *parent) : QWidget(parent)
 TRegion::~TRegion()
 {
     delete layout;
-  // removeXYZ media is not neccessary here, cause there comes a signal from SmilParser directly
+  // delete media is not neccessary here, cause there get stop signal from garlic-lib directly and deleted in stopShowMedia
 }
 
 void TRegion::paintEvent(QPaintEvent *event)
@@ -44,7 +44,7 @@ void TRegion::paintEvent(QPaintEvent *event)
 
 void TRegion::startShowMedia(TMedia *media)
 {
-    MyMedia  =  MediaFactory::createMedia(media);
+    MyMedia = MediaFactory::createMedia(media);
     MyMedia->init();
     layout->addWidget(MyMedia->getView());
 }

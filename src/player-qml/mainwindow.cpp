@@ -18,16 +18,14 @@
 
 #include "mainwindow.h"
 
-MainWindow::MainWindow(TConfiguration *config, TScreen *screen)
+MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 {
     connect (this, SIGNAL(statusChanged(QQuickView::Status)), this, SLOT(doStatusChanged(QQuickView::Status)));
     MyScreen               = screen;
-    MyConfiguration        = config;
-    MyNetwork              = new Network(MyConfiguration->getUserAgent().toUtf8());
-    MyIndexManager         = new IndexManager(new IndexModel(this), MyConfiguration, MyNetwork, this);
-    connect(MyIndexManager, SIGNAL(availableIndex()), this, SLOT(setSmilIndex()));
-
-    MyIndexManager->init(MyConfiguration->getIndexUri());
+    MyLibFacade            = lib_facade;
+    connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
+    connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
+    connect(MyLibFacade, SIGNAL(newIndex(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
 
 #ifdef SUPPORT_QTAV
     setSource(QUrl(QStringLiteral("qrc:/root_qtav.qml")));
@@ -39,36 +37,7 @@ MainWindow::MainWindow(TConfiguration *config, TScreen *screen)
 
 MainWindow::~MainWindow()
 {
-    delete MySmil;
     deleteRegionsAndLayouts(); // region must be deleted at last, cause media pointer had to be deleted
-}
-
-void MainWindow::setSmilIndex()
-{
-    qDebug(SmilParser) << "clear MySmil";
-    if (ar_regions.size() > 0)
-        cleanUp();
-
-    MyMediaModel    = new MediaModel(this);
-    MyNetworkQueue  = new NetworkQueue(MyConfiguration->getUserAgent().toUtf8(), this);
-    MyMediaManager  = new MediaManager(MyMediaModel, MyConfiguration, MyNetworkQueue , this);
-
-    MyHead          = new THead(this);
-    connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
-
-    MySmil = new TSmil(MyMediaManager, this);
-    connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
-    connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
-    MySmil->init();
-
-    setRegions(MyIndexManager->getHead());
-    setGeometry(0,0, width(), height());
-    MySmil->beginSmilParsing(MyIndexManager->getBody());
-}
-
-void MainWindow::checkForNewSmilIndex()
-{
-    MyIndexManager->lookUpForIndex();
 }
 
 void MainWindow::deleteRegionsAndLayouts()
@@ -77,19 +46,20 @@ void MainWindow::deleteRegionsAndLayouts()
     ar_regions.clear();
 }
 
-void MainWindow::setRegions(QDomElement head)
+
+void MainWindow::setRegions(QList<Region> *region_list)
 {
-    MyHead->parse(head);
-    //setStyleSheet("background-color:"+MyHead->getRootBackgroundColor()+";");
-    QList<Region>  region_list = MyHead->getLayout();
+    deleteRegionsAndLayouts();
+//    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
     QMap<QString, TRegion *>::iterator j;
-    for (int i = 0; i < region_list.length(); i++)
+    for (int i = 0; i < region_list->length(); i++)
     {
-        j = ar_regions.insert(region_list.at(i).regionName, new TRegion(rootObject()));
-        ar_regions[j.key()]->setRegion(region_list.at(i), engine());
+        j = ar_regions.insert(region_list->at(i).regionName, new TRegion(rootObject()));
+        ar_regions[j.key()]->setRegion(region_list->at(i), engine());
         ar_regions[j.key()]->setRootSize(width(), height());
     }
-    qDebug() << ar_regions.size() << " QML regions are created ";
+    qDebug() << ar_regions.size() << " regions are created ";
+    MyLibFacade->beginSmilParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
 
 QString MainWindow::selectRegion(QString region_name)
@@ -120,12 +90,15 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             else
                 resizeAsWindow();
         break;
+        case Qt::Key_D:
+            setCursor(Qt::ArrowCursor);
+            openDebugInfos();
+            setCursor(Qt::BlankCursor);
+            break;
         case Qt::Key_C:
             setCursor(Qt::ArrowCursor);
             if (openConfigDialog() == QDialog::Accepted)
-            {
-                checkForNewSmilIndex();
-            }
+                MyLibFacade->checkForNewSmilIndex();
             setCursor(Qt::BlankCursor);
         break;
 
@@ -135,10 +108,15 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
     }
 }
 
+void MainWindow::openDebugInfos()
+{
+    DebugInfos MyDebugInfos(MyLibFacade);
+    MyDebugInfos.exec();
+}
 
 int MainWindow::openConfigDialog()
 {
-    ConfigDialog MyConfigDialog(0, MyConfiguration);
+    ConfigDialog MyConfigDialog(0, MyLibFacade->getConfiguration());
     return MyConfigDialog.exec();
 }
 
@@ -194,16 +172,6 @@ void MainWindow::resizeEvent(QResizeEvent * event)
 
 // =================== protected slots ====================================
 
-void MainWindow::cleanUp()
-{
-    delete MySmil;
-    delete MyMediaManager;
-    delete MyMediaModel;
-    delete MyNetworkQueue;
-    delete MyHead;
-    deleteRegionsAndLayouts(); // region should be deleted last
-}
-
 void MainWindow::startShowMedia(TMedia *media)
 {
     if (ar_regions.size() == 0)
@@ -226,7 +194,6 @@ void MainWindow::stopShowMedia(TMedia *media)
     return;
 }
 
-
 void MainWindow::doStatusChanged(QQuickView::Status status)
 {
     switch (status)
@@ -235,7 +202,7 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             qDebug(MediaPlayer) << "No QML source set";
             break;
         case QQuickView::Ready:
-            MyIndexManager->init(MyConfiguration->getIndexUri());
+            MyLibFacade->checkForNewSmilIndex(); // load index when QML comiled complete
             break;
         case QQuickView::Loading:
             qDebug(MediaPlayer) << "QML loaded/compiled... ";
@@ -246,7 +213,7 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             for (i = qml_errors.begin(); i != qml_errors.end(); ++i)
             {
                 QQmlError err = *i;
-                //qDebug(MediaPlayer) << err.messageType() << err.description() << err.line();
+                qDebug(MediaPlayer) << err.messageType() << err.description() << err.line();
             }
             break;
     }

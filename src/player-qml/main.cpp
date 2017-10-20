@@ -15,9 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include <QApplication>
 #include <QQmlApplicationEngine>
-
 #include "mainwindow.h"
 #include "../player-common/cmdparser.h"
 #include "../player-common/screen.h"
@@ -64,41 +62,41 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
-
     TConfiguration *MyConfiguration = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
-    QDir dir(".");
-    int ret = 0;
-    MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator
-    MyConfiguration->determineUserAgent();
-    MyConfiguration->createDirectories();
-
-    // Set the logging file
-    event_log.reset(new QFile(MyConfiguration->getPaths("logs") + "events.log"));
-    event_log.data()->open(QFile::Append | QFile::Text);
-    // QLoggingCategory::setFilterRules("*.debug=true\n");
-    qInstallMessageHandler(myMessageHandler);
 
     QApplication::setApplicationName(MyConfiguration->getAppName());
     QApplication::setApplicationVersion(MyConfiguration->getVersion());
     QApplication::setApplicationDisplayName(MyConfiguration->getAppName());
+    MyConfiguration->determineIndexUri("http://indexes.smil-admin.com");
+
+    QDir dir(".");
+    MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator
+    MyConfiguration->determineUserAgent();
+    MyConfiguration->createDirectories();
 
     TCmdParser MyParser(MyConfiguration);
     MyParser.addOptions();
     MyParser.parse(&app);
 
+    LibFacade      *MyLibFacade     = new LibFacade(MyConfiguration);
+
+    // Set the logging file
+    event_log.reset(new QFile(MyConfiguration->getPaths("logs") + "events.log"));
+    event_log.data()->open(QFile::Append | QFile::Text);
+    QLoggingCategory::setFilterRules("*.debug=true\n");
+    qInstallMessageHandler(myMessageHandler);
+
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop(), 0);
-    MyConfiguration->determineIndexUri("http://indexes.smil-admin.com");
-
-    MainWindow w(MyConfiguration, &MyScreen);
+    MainWindow w(&MyScreen, MyLibFacade);
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);
-
     if (MyConfiguration->getIndexUri() == "")
     {
         if (w.openConfigDialog() == QDialog::Rejected)
             is_index = false;
     }
 
+    int ret = 0;
     if (is_index)
     {
 
@@ -106,14 +104,15 @@ int main(int argc, char *argv[])
         // preserve android screensaver https://stackoverflow.com/questions/44100627/how-to-disable-screensaver-on-qt-android-app
         // https://forum.qt.io/topic/57625/solved-keep-android-5-screen-on
         QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
-        if (activity.isValid()) {
+        if (activity.isValid())
+        {
             QAndroidJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
-            if (window.isValid()) {
+            if (window.isValid())
+            {
                 const int FLAG_KEEP_SCREEN_ON = 128;
                 window.callMethod<void>("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
             }
         }
-
         // not to crash in Android > 5.x Clear any possible pending exceptions.
         QAndroidJniEnvironment env;
         if (env->ExceptionCheck()) {
@@ -122,7 +121,6 @@ int main(int argc, char *argv[])
         w.showFullScreen();
 #else
         QtWebEngine::initialize();
-
         MyScreen.setActualScreenId(MyParser.getScreenSelect());
         w.show();
 
@@ -138,7 +136,7 @@ int main(int argc, char *argv[])
         }
 #endif
 
-        w.checkForNewSmilIndex();
+        MyLibFacade->initIndex();
         ret = app.exec();
     }
     return ret;

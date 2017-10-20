@@ -2,10 +2,10 @@
 #define CMDPARSER_H
 
 #include <QObject>
+#include <QApplication>
 #include <QCommandLineOption>
 #include <QCommandLineParser>
-#include <QApplication>
-#include "configuration.h"
+#include "tools/configuration.h"
 class TCmdParser : public QObject
 
 {

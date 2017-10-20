@@ -16,7 +16,7 @@ CONFIG    += support_qtav
 support_qtav {
     DEFINES += SUPPORT_QTAV
     QT      += av
-}
+}r
 
 DEFINES += QUAZIP_STATIC
 
@@ -71,6 +71,13 @@ DISTFILES += \
     android/res/values/libs.xml \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat
+    android/gradlew.bat \
+    AndroidManifest.xml \
+    gradle/wrapper/gradle-wrapper.jar \
+    gradlew \
+    res/values/libs.xml \
+    build.gradle \
+    gradle/wrapper/gradle-wrapper.properties \
+    gradlew.bat
 
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD

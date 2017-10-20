@@ -12,7 +12,7 @@ class MediaFactory : public QObject
         Q_OBJECT
     public:
         explicit MediaFactory(QObject *parent = nullptr);
-        static   BaseMedia *createMedia(TMedia *media);
+        static   BaseMedia *createMedia(TMedia *media, QObject *parent = nullptr);
     signals:
 
     public slots:

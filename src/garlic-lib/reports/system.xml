@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report>
+	<date>{CREATE_DATE}</date>
+	<version>1.0</version>
+	<player id="{PLAYER_ID}">
+		<systemInfo>
+			<systemStartTime>{START_TIME}</systemStartTime>
+			<systemTimeZone>{TIME_ZONE}</systemTimeZone>
+			<totalCapacity>{TOTAL_CAPACITY}</totalCapacity>
+			<totalFreeSpace>{TOTAL_FREE_SPACE}</totalFreeSpace>
+			<cpuUsage>{CPU_USAGE}</cpuUsage>
+			<memoryTotal>{MEMORY_TOTAL}</memoryTotal>
+			<memoryUsed>{MEMORY_USED}</memoryUsed>
+			<hdmiOutput>{HDMI_OUTPUT}</hdmiOutput>
+			<network>
+				<interface id="{INTERFACE_ID}">
+									<type>{NET_TYPE}</type>
+					<mac>{MAC_ADDRESS}</mac>
+					<ip>{IP_ADDRESS}</ip>
+					<netmask>{NETMASK}</netmask>
+				</interface>
+			</network>
+			<configuration>
+				<modelInfo>
+					<prop name="PCB" value="{MODEL_INFO}"/>
+					<prop name="PCBRevision" value="{PCB_REVISION}}"/>
+					<prop name="operatingSystem" value="{OPERATING_SYSTEM}"/>
+					<prop name="manufacturer" value=""/>
+					<prop name="manufacturerURL" value=""/>
+					<prop name="modelDescription" value=""/>
+					<prop name="modelName" value="{MODEL_NAME}"/>
+					<prop name="modelURL" value=""/>
+					<prop name="option" value=""/>
+				</modelInfo>			
+				<factoryDefault>
+					<variant></variant>
+				</factoryDefault>
+				<userPref>
+					<prop name="info.playerName" value="{PLAYER_NAME}"/>
+					<prop name="info.playGroup" value=""/>
+					<prop name="info.playGroupMaster" value=""/>
+					<prop name="system.locale" value="{SYSTEM_LOCALE}"/>
+					<prop name="net.proxy.type" value="{NET_PROXY_TYPE}"/>
+					<prop name="net.proxy.host" value="{NET_PROXY_HOST}"/>
+					<prop name="net.proxy.port" value="{NET_PROXY_TYPE}"/>
+					<prop name="hardware.videoOut.0.format" value="auto"/>
+					<prop name="hardware.videoOut.0.margin" value="auto"/>
+					<prop name="hardware.videoOut.0.rotation" value="auto"/>
+					<prop name="schedule.reboot.days" value="{SCHEDULE_REBOOT_DAYS}"/>
+					<prop name="schedule.reboot.time" value="{SCHEDULE_REBOOT_TIME}"/>
+					<prop name="hardware.audioOut.0.masterSoundLevel" value="{AUDIO_MASTER_SOUNDLEVEL}"/>
+					<prop name="hardware.hdmi.audio.samplingrate" value="{HDMI_SAMPLING_RATE}"/>
+					<prop name="net.wifi.enabled" value=""/>
+					<prop name="net.wifi.dhcp.enabled" value=""/>
+					<prop name="net.ethernet.enabled" value=""/>
+					<prop name="net.ethernet.dhcp.enabled" value=""/>
+					<prop name="net.ethernet.ip" value=""/>
+					<prop name="net.ethernet.netmask" value=""/>
+					<prop name="net.ethernet.gateway" value=""/>
+					<prop name="net.ethernet.dnsServers" value=""/>
+					<prop name="net.mobile.apn" value=""/>
+					<prop name="net.mobile.user" value=""/>
+					<prop name="net.mobile.preferredNetwork" value="AUTO"/>
+					<prop name="time.timeZone" value="{TIMEZONE}"/>
+					<prop name="time.autoTime.enabled" value="true"/>
+					<prop name="time.autoTime.server" value="default"/>
+					<prop name="usb.updateSmil.enabled" value="true"/>
+					<prop name="content.serverUrl" value="{CONTENT_SERVER_URL}"/>
+					<prop name="content.serverUrlFallback" value="{CONTENT_SERVER_URL_FALLBACK}"/>
+				</userPref>
+			</configuration>
+		</systemInfo>
+		<hardwareInfo>
+			<hardware id="display:0">
+				<prop name="modelName" value="{string}"/>
+				<prop name="productId" value="{string}"/>
+				<prop name="serialNumber" value="{string}"/>
+				<prop name="vendorId" value="{string}"/>
+			</hardware>
+		</hardwareInfo>
+	</player>
+</report> 

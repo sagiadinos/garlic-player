@@ -52,39 +52,41 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
-    TConfiguration *MyConfiguration = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
-    QDir dir(".");
-    int ret = 0;
-    MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
-    MyConfiguration->determineUserAgent();
-    MyConfiguration->createDirectories();
-
-    // Set the logging file
-    event_log.reset(new QFile(MyConfiguration->getPaths("logs") + "events.log"));
-    event_log.data()->open(QFile::Append | QFile::Text);
-    QLoggingCategory::setFilterRules("*.debug=true\n");
-    qInstallMessageHandler(myMessageHandler);
-
+    TConfiguration *MyConfiguration   = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
     QApplication::setApplicationName(MyConfiguration->getAppName());
     QApplication::setApplicationVersion(MyConfiguration->getVersion());
     QApplication::setApplicationDisplayName(MyConfiguration->getAppName());
+
+    QDir dir(".");
+    MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
+    MyConfiguration->determineUserAgent();
+    MyConfiguration->createDirectories();
 
     TCmdParser MyParser(MyConfiguration);
     MyParser.addOptions();
     MyParser.parse(&app);
 
+    LibFacade      *MyLibFacade     = new LibFacade(MyConfiguration);
+
+    // Set the logging file
+    event_log.reset(new QFile(MyLibFacade->getConfiguration()->getPaths("logs") + "events.log"));
+    event_log.data()->open(QFile::Append | QFile::Text);
+    QLoggingCategory::setFilterRules("*.debug=true\n");
+    qInstallMessageHandler(myMessageHandler);
+
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop());
-    MainWindow w(MyConfiguration, &MyScreen);
-
+    MainWindow w(&MyScreen, MyLibFacade);
     if (MyConfiguration->getIndexUri() == "")
     {
         if (w.openConfigDialog() == QDialog::Rejected)
             is_index = false;
     }
 
+    int ret = 0;
     if (is_index)
     {
         MyScreen.setActualScreenId(MyParser.getScreenSelect());
@@ -101,7 +103,8 @@ int main(int argc, char *argv[])
             w.resizeAsWindow();
         }
 
-        w.checkForNewSmilIndex();
+        MyLibFacade->initIndex();
+        MyLibFacade->checkForNewSmilIndex();
         ret = app.exec();
     }
     return ret;

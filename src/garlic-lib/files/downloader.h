@@ -1,0 +1,67 @@
+/*************************************************************************************
+    garlic-player: SMIL Player for Digital Signage
+    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
+    This file is part of the garlic-player source code
+
+    This program is free software: you can redistribute it and/or  modify
+    it under the terms of the GNU Affero General Public License, version 3,
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************************/
+#ifndef DOWNLOADER_H
+#define DOWNLOADER_H
+
+#include <QObject>
+#include <QFileInfo>
+#include "files/network_access.h"
+
+#include "disc_space.h"
+
+/**
+ * @brief The Downloader class capsulates Download accesses
+ * - handles head, get and redirect requests
+ * - emit a signal with QIODevioce for download when succeeded
+ * - logs success (info) and error notifications
+ */
+class Downloader : public TNetworkAccess
+{
+    Q_OBJECT
+    public:
+
+        explicit Downloader(QByteArray agent, QObject *parent=Q_NULLPTR);
+        ~Downloader();
+
+        void       processFile(QUrl url, QFileInfo fi);
+
+        //Getter/Setter
+        QFileInfo  getLocalFileInfo() const {return local_file_info;}
+        void       setLocalFileInfo(const QFileInfo &value) {local_file_info = value;}
+
+    protected:
+        QFileInfo               local_file_info;
+        QNetworkAccessManager  *manager_head, *manager_head_redirect, *manager_get;
+        void                    doHttpHeadRequest();
+        void                    doHttpGetRequest();
+        void                    checkStatusCode(QNetworkReply *reply, int status_code);
+        void                    checkHttpHeaders(QNetworkReply *reply);
+        bool                    validContentType(QString content_type);
+        void                    handleNetworkError(QNetworkReply *reply);
+        bool                    saveToDisc(QIODevice *data);
+
+    protected slots:
+        void                    finishedHeadRequest(QNetworkReply *reply);
+        void                    finishedHeadRedirectRequest(QNetworkReply *reply);
+        void                    finishedGetRequest(QNetworkReply *reply);
+    signals:
+        void                    notmodified(TNetworkAccess *);
+        void                    notcacheable(TNetworkAccess *);
+};
+
+#endif // DOWNLOADER_H

@@ -18,17 +18,14 @@
 
 #include "mainwindow.h"
 
-MainWindow::MainWindow(TConfiguration *config, TScreen *screen)
+MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 {
-    QWidget *centralWidget = new QWidget(this); // had to be there to get fullscreen simulation over multiple monitors
+    centralWidget          = new QWidget(this); // had to be there to get fullscreen simulation over multiple monitors
     MyScreen               = screen;
-    MyConfiguration        = config;
-    MyNetwork              = new Network(MyConfiguration->getUserAgent().toUtf8());
-    MyIndexManager         = new IndexManager(new IndexModel(this), MyConfiguration, MyNetwork, this);
-    connect(MyIndexManager, SIGNAL(availableIndex()), this, SLOT(setSmilIndex()));
-
-    MyIndexManager->init(MyConfiguration->getIndexUri());
-
+    MyLibFacade            = lib_facade;
+    connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
+    connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
+    connect(MyLibFacade, SIGNAL(newIndex(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
     setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
@@ -37,43 +34,10 @@ MainWindow::MainWindow(TConfiguration *config, TScreen *screen)
 
 MainWindow::~MainWindow()
 {
-    cleanUp();
-    delete MyNetwork;
+    deleteRegionsAndLayouts();
+    delete centralWidget;
 }
 
-/**
- * @briegetIndexPathsetSmilIndex is a slot which is activated, when an indexfile is ready on local hard disc for reading
- */
-void MainWindow::setSmilIndex()
-{
-    qDebug(SmilParser) << "clear MySmil";
-    if (ar_regions.size() > 0)
-        cleanUp();
-
-    MyMediaModel    = new MediaModel(this);
-    MyNetworkQueue  = new NetworkQueue(MyConfiguration->getUserAgent().toUtf8(), this);
-    MyMediaManager  = new MediaManager(MyMediaModel, MyConfiguration, MyNetworkQueue , this);
-
-    MyHead          = new THead(this);
-    connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
-
-    MySmil = new TSmil(MyMediaManager, this);
-    connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
-    connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
-    MySmil->init();
-
-    setRegions(MyIndexManager->getHead());
-    setGeometry(0,0, width(), height());
-    MySmil->beginSmilParsing(MyIndexManager->getBody());
-}
-
-/**
- * @brief MainWindow::refreshSmilIndex is a slot which is called when THead send a signal to check for a new Smil-Index (refresh)
- */
-void MainWindow::checkForNewSmilIndex()
-{
-    MyIndexManager->lookUpForIndex();
-}
 
 void MainWindow::deleteRegionsAndLayouts()
 {
@@ -81,19 +45,20 @@ void MainWindow::deleteRegionsAndLayouts()
     ar_regions.clear();
 }
 
-void MainWindow::setRegions(QDomElement head)
+void MainWindow::setRegions(QList<Region> *region_list)
 {
-    MyHead->parse(head);
-    setStyleSheet("background-color:"+MyHead->getRootBackgroundColor()+";");
-    QList<Region>  region_list = MyHead->getLayout();
+    deleteRegionsAndLayouts();
+    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
     QMap<QString, TRegion *>::iterator j;
-    for (int i = 0; i < region_list.length(); i++)
+    for (int i = 0; i < region_list->length(); i++)
     {
-        j = ar_regions.insert(region_list.at(i).regionName, new TRegion(this));
-        ar_regions[j.key()]->setRegion(region_list.at(i));
+        j = ar_regions.insert(region_list->at(i).regionName, new TRegion(this));
+        ar_regions[j.key()]->setRegion(region_list->at(i));
         ar_regions[j.key()]->setRootSize(width(), height());
         ar_regions[j.key()]->show();
     }
+    qDebug() << ar_regions.size() << " regions are created ";
+    MyLibFacade->beginSmilParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
 
 QString MainWindow::selectRegion(QString region_name)
@@ -118,27 +83,38 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             else
                 resizeAsWindow();
         break;
-    case Qt::Key_B:
-        if (screen_state != BIGFULLSCREEN)
-             resizeAsBigFullScreen();
-        else
-            resizeAsWindow();
-    break;
-    case Qt::Key_C:
-        setCursor(Qt::ArrowCursor);
-        if (openConfigDialog() == QDialog::Accepted)
-            checkForNewSmilIndex();
-        setCursor(Qt::BlankCursor);
+        case Qt::Key_B:
+            if (screen_state != BIGFULLSCREEN)
+                 resizeAsBigFullScreen();
+            else
+                resizeAsWindow();
         break;
+        case Qt::Key_D:
+            setCursor(Qt::ArrowCursor);
+            openDebugInfos();
+            setCursor(Qt::BlankCursor);
+            break;
+        case Qt::Key_C:
+            setCursor(Qt::ArrowCursor);
+            if (openConfigDialog() == QDialog::Accepted)
+                MyLibFacade->checkForNewSmilIndex();
+            setCursor(Qt::BlankCursor);
+            break;
         case Qt::Key_Q:
-            exit(0);
+             exit(0);
         break;
     }
 }
 
+void MainWindow::openDebugInfos()
+{
+    DebugInfos MyDebugInfos(MyLibFacade);
+    MyDebugInfos.exec();
+}
+
 int MainWindow::openConfigDialog()
 {
-    ConfigDialog MyConfigDialog(0, MyConfiguration);
+    ConfigDialog MyConfigDialog(0, MyLibFacade->getConfiguration());
     return MyConfigDialog.exec();
 }
 
@@ -176,7 +152,6 @@ QSize MainWindow::getMainWindowSize()
     return mainwindow_size;
 }
 
-
 void MainWindow::resizeEvent(QResizeEvent * event)
 {
     if (ar_regions.size() > 0)
@@ -190,21 +165,9 @@ void MainWindow::resizeEvent(QResizeEvent * event)
 
 // =================== protected slots ====================================
 
-void MainWindow::cleanUp()
-{
-    delete MySmil;
-    delete MyMediaManager;
-    delete MyMediaModel;
-    delete MyNetworkQueue;
-    delete MyHead;
-    deleteRegionsAndLayouts(); // region should be deleted last
-}
-
 void MainWindow::startShowMedia(TMedia *media)
 {
-    QString type   = media->objectName();
     QString region_name = selectRegion(media->getRegion());
-
     ar_regions[region_name]->startShowMedia(media);
     ar_regions[region_name]->setRootSize(width(), height());
     return;
@@ -212,7 +175,6 @@ void MainWindow::startShowMedia(TMedia *media)
 
 void MainWindow::stopShowMedia(TMedia *media)
 {
-    QString type        = media->objectName();
     QString region_name = selectRegion(media->getRegion());
     ar_regions[region_name]->stopShowMedia();
     return;
