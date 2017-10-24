@@ -13,11 +13,10 @@ class Video : public BaseMedia
         void              init(QQmlComponent *mc);
         void              setParentItem(QQuickItem *parent);
     protected:
-        TVideo               *MyVideo;
-        QQuickItem           *video_item = Q_NULLPTR;
-    protected slots:
+        TVideo                     *MyVideo;
+        QScopedPointer<QQuickItem>  video_item;
+    public slots:
         void                  finished();
-        void                  doDestroy();
 };
 
 #endif // VIDEO_H

@@ -1,4 +1,4 @@
-/*************************************************************************************
+﻿/*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
     Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
@@ -17,14 +17,11 @@
 *************************************************************************************/
 #include "lib_facade.h"
 
-LibFacade::LibFacade(TConfiguration *config, QObject *parent) : QObject(parent)
+LibFacade::LibFacade(QObject *parent) : QObject(parent)
 {
-    MyConfiguration   = config;
-    MyIndexManager    = new IndexManager(new IndexModel(this),
-                                         MyConfiguration,
-                                         new Downloader(MyConfiguration->getUserAgent().toUtf8()),
-                                         this);
-    connect(MyIndexManager, SIGNAL(availableIndex()), this, SLOT(setSmilIndex()));
+    MyConfiguration.reset(new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player")));
+    MyIndexManager.reset(new IndexManager(MyConfiguration.data(), this));
+    connect(MyIndexManager.data(), SIGNAL(availableIndexLoaded()), this, SLOT(emitNewIndexLoaded()));
 
 #ifdef QT_DEBUG
     timer_id = startTimer(20000); // every 20s
@@ -36,39 +33,10 @@ LibFacade::~LibFacade()
 #ifdef QT_DEBUG
     killTimer(timer_id);
 #endif
-    deleteParsingObjects();
-    delete MyIndexManager;
+
+    MyIndexManager->deactivateRefresh();
 }
 
-void LibFacade::initIndex()
-{
-    MyIndexManager->init(MyConfiguration->getIndexUri());
-}
-
-
-void LibFacade::createParsingObjects()
-{
-
-    MyHead   = new THead(MyConfiguration, this);
-    connect(MyHead, SIGNAL(checkForNewIndex()), this, SLOT(checkForNewSmilIndex()));
-    MediaModel    *media_model    = new MediaModel(this);
-    DownloadQueue *download_queue = new DownloadQueue(MyConfiguration->getUserAgent().toUtf8(), this);
-    MediaManager  *media_manager  = new MediaManager(media_model, MyConfiguration, download_queue, this);
-
-    MySmil  = new TSmil(media_manager, this);
-    connect(MySmil, SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
-    connect(MySmil, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
-
-}
-
-void LibFacade::deleteParsingObjects()
-{
-    delete MyHead;
-    MyHead = Q_NULLPTR;
-    delete MySmil;
-    MySmil = Q_NULLPTR;
-
-}
 
 #ifdef QT_DEBUG
 void LibFacade::timerEvent(QTimerEvent *event)
@@ -87,7 +55,7 @@ void LibFacade::timerEvent(QTimerEvent *event)
         max_memory_used = current_rss;
     double d_current = (double)current_rss / (double)1048576;
     double d_max = (double)max_memory_used / (double)1048576;
-    qInfo() << QString("App Memory use: <b>%1" ).arg(d_current, 0, 'f', 2) + " MiB" << QString("Max Memory App used: %1" ).arg(d_max, 0, 'f', 2) + " MiB";
+    qInfo() << QString("App Memory use: %1" ).arg(d_current, 0, 'f', 2) + " MiB" << QString("Max Memory App used: %1" ).arg(d_max, 0, 'f', 2) + " MiB";
 
     qint64  current_threads = MyGeneralInfos.countThreads();
     if (current_threads > max_threads_used)
@@ -98,42 +66,51 @@ void LibFacade::timerEvent(QTimerEvent *event)
 
 TConfiguration *LibFacade::getConfiguration() const
 {
-    return MyConfiguration;
+    return MyConfiguration.data();
+}
+
+void LibFacade::initIndex()
+{
+    MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
 }
 
 void LibFacade::checkForNewSmilIndex()
 {
-    MyIndexManager->lookUpForIndex();
+    MyIndexManager.data()->lookUpForIndex();
 }
 
 THead *LibFacade::getHead() const
 {
-    return MyHead;
+    return MyHead.data();
 }
 
-void LibFacade::beginSmilParsing()
+void LibFacade::beginSmilBodyParsing()
 {
     MySmil->beginSmilParsing(MyIndexManager->getBody());
 }
 
-TMedia *LibFacade::getCurrentMedia()
+void LibFacade::prepareNewLoadedIndex()
 {
-    return current_media;
-}
+    // Start with this only when it is absolutly sure that in the player component is no activity anymore.
+    MyIndexManager->deactivateRefresh();
+    MyHead.reset(new THead(MyConfiguration.data(), this));
+    MyHead.data()->parse(MyIndexManager->getHead());
+    MyIndexManager.data()->activateRefresh(MyHead->getRefreshTime());
 
-void LibFacade::setSmilIndex()
-{
-    if (MySmil != Q_NULLPTR)
-        deleteParsingObjects();
-    createParsingObjects();
-    MySmil->init();
-    MyHead->parse(MyIndexManager->getHead());
-    emitNewIndex(MyHead->getLayout());
+    MyMediaModel.reset(new MediaModel(this));
+    MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data()->getUserAgent().toUtf8(), this));
+    MyMediaManager.reset(new MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
+
+    MySmil.reset(new TSmil(MyMediaManager.data(), this));
+
+    connect(MySmil.data(), SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
+    connect(MySmil.data(), SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
+
+    emit newIndexPrepared(MyHead->getLayout());
 }
 
 void LibFacade::emitStartShowMedia(TMedia *media)
 {
-    current_media = media;
     emit startShowMedia(media);
 }
 
@@ -142,7 +119,7 @@ void LibFacade::emitStopShowMedia(TMedia *media)
     emit stopShowMedia(media);
 }
 
-void LibFacade::emitNewIndex(QList<Region> *region)
+void LibFacade::emitNewIndexLoaded()
 {
-    emit newIndex(region);
+    emit newIndexLoaded();
 }

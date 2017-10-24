@@ -44,9 +44,6 @@ class MainWindow : public QQuickView
         void                      setMainWindowSize(QSize size);
         QSize                     getMainWindowSize();
 
-    public slots:
-        void                      resizeEvent(QResizeEvent * event);
-        void                      keyPressEvent(QKeyEvent *ke);
 
     protected:
         const int                 WINDOWED      = 0;
@@ -54,15 +51,17 @@ class MainWindow : public QQuickView
         const int                 BIGFULLSCREEN = 2;
 
         LibFacade                *MyLibFacade      = Q_NULLPTR;
-        TScreen                  *MyScreen;
+        TScreen                 *MyScreen;
         QMap<QString, TRegion *>  ar_regions;
         QSize                     mainwindow_size;
-        int                       screen_state = 0;
+        int                       screen_state, num_touched = 0;
         void                      openDebugInfos();
-        void                      deleteRegionsAndLayouts();
         QString                   selectRegion(QString region_name);
-
+        void                      resizeEvent(QResizeEvent * event);
+        void                      keyPressEvent(QKeyEvent *ke);
+        bool                      event(QEvent *event);
     protected slots:
+        void                      deleteRegionsAndLayouts();
         void                      setRegions(QList<Region> *region_list);
         void                      startShowMedia(TMedia *media);
         void                      stopShowMedia(TMedia *media);

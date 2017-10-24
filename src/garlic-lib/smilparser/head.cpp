@@ -21,26 +21,13 @@
 THead::THead(TConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
-    refresh_timer  = new QTimer(this);
-    connect(refresh_timer, SIGNAL(timeout()), this, SLOT(emitCheckForNewIndex()));
-    system_report_timer  = new QTimer(this);
-    connect(system_report_timer, SIGNAL(timeout()), this, SLOT(sendSystemReport()));
-    inventory_report_timer  = new QTimer(this);
-    connect(inventory_report_timer, SIGNAL(timeout()), this, SLOT(sendInventoryReport()));
-    play_log_timer  = new QTimer(this);
-    connect(play_log_timer, SIGNAL(timeout()), this, SLOT(sendPlayLog()));
-    event_log_timer  = new QTimer(this);
-    connect(event_log_timer, SIGNAL(timeout()), this, SLOT(sendEventLog()));
-
-    MyWebDav = new WebDav(MyConfiguration->getUserAgent().toUtf8(), this);
-
+    MySystemReportManager = new Reporting::SystemReportManager(config);
     setDefaultValues();
 }
 
 THead::~THead()
 {
     setDefaultValues();
-    delete MyWebDav;
 }
 
 void THead::setDefaultValues()
@@ -59,16 +46,6 @@ void THead::setDefaultValues()
     default_region.z_index         = 0;
     default_region.backgroundColor = "transparent";
     region_list.append(default_region);
-    if (refresh_timer->isActive())
-        refresh_timer->stop();
-    if (system_report_timer->isActive())
-        system_report_timer->stop();
-    if (inventory_report_timer->isActive())
-        inventory_report_timer->stop();
-    if (play_log_timer->isActive())
-        play_log_timer->stop();
-    if (event_log_timer->isActive())
-        event_log_timer->stop();
 }
 
 QString THead::getTitle()
@@ -113,16 +90,6 @@ void THead::setRootLayout(int w, int h)
     return;
 }
 
-
-/**
- * @brief THead::emitRefreshIndex is a slot
- */
-void THead::emitCheckForNewIndex()
-{
-    emit checkForNewIndex();
-    return;
-}
-
 void THead::parseMeta(QDomElement element)
 {
     if (element.hasAttribute("name") && element.attribute("name") == "title" && element.hasAttribute("content"))
@@ -130,7 +97,10 @@ void THead::parseMeta(QDomElement element)
     else if (element.hasAttribute("http-equiv") && element.attribute("http-equiv") == "Refresh" && element.hasAttribute("content"))
     {
         refresh = element.attribute("content").toInt();
-        setRefreshTimer();
+        #ifdef QT_NO_DEBUG
+            if (refresh < 31) // make sure that impaciently clients do not stress the cms too much but only in release mode
+                refresh = 30;
+        #endif
     }
 }
 
@@ -138,34 +108,23 @@ void THead::parseMetaData(QDomElement element)
 {
     QDomNodeList node_list = element.elementsByTagName("subscription");
     SubScription *subscription = new SubScription(this);
-    // ToDo find a bedder way to fullfill SRP!
+
     for(int i = 0; i < node_list.size(); i++)
     {
         subscription->parse(node_list.at(i).toElement());
         if (subscription->getType() == "SystemReport")
         {
-            system_report = subscription;
-            sendSystemReport();
-            system_report_timer->start(system_report->getRefreshInterval()*1000);
-
+            MySystemReport.reset(subscription);
+            MySystemReportManager->init(MySystemReport.data());
         }
         else if (subscription->getType() == "InventoryReport")
         {
-            inventory_report = subscription;
-            sendInventoryReport();
-            inventory_report_timer->start(inventory_report->getRefreshInterval()*1000);
         }
         else if (subscription->getType() == "PlaylogCollection")
         {
-            play_log = subscription;
-            sendPlayLog();
-            play_log_timer->start(play_log->getRefreshInterval()*1000);
         }
         else if (subscription->getType() == "EventlogCollection")
         {
-            event_log = subscription;
-            sendEventLog();
-            event_log_timer->start(event_log->getRefreshInterval()*1000);
         }
     }
 }
@@ -199,50 +158,38 @@ void THead::parseRegions(QDomNodeList childs)
     {
         Region region = default_region; // init with default values
         element = childs.item(i).toElement();
-        if (element.tagName() == "region")
+        if (element.tagName() != "region")
+            continue;
+        if (element.hasAttribute("regionName"))
         {
-            if (element.hasAttribute("regionName"))
-            {
-                region.regionName      = element.attribute("regionName");
-                if (element.hasAttribute("top"))
-                    region.top             = calculatePercentBasedOnRoot(element.attribute("top"), height);
-                if (element.hasAttribute("left"))
-                    region.left            = calculatePercentBasedOnRoot(element.attribute("left"), width);
-                if (element.hasAttribute("width"))
-                    region.width           = calculatePercentBasedOnRoot(element.attribute("width"), width);
-                if (element.hasAttribute("height"))
-                    region.height          = calculatePercentBasedOnRoot(element.attribute("height"), height);
-                if (element.hasAttribute("z-index"))
-                    region.z_index         = element.attribute("z-index").toInt();
-                if (element.hasAttribute("backgroundColor"))
-                    region.backgroundColor = element.attribute("backgroundColor");
-                region_list.append(region);
-                std::sort(region_list.begin(), region_list.end()); // sort z-indexes ascending to plaace Widgets coorect in mainwindow
-            }
-            else // when one region-tag has no regionName break the loop delete QList and put the default_region 100% region as multizone
-            {
-                region_list.clear();
-                region_list.append(default_region);
-                break;
-            }
-
+            region.regionName      = element.attribute("regionName");
+            if (element.hasAttribute("top"))
+                region.top             = calculatePercentBasedOnRoot(element.attribute("top"), height);
+            if (element.hasAttribute("left"))
+                region.left            = calculatePercentBasedOnRoot(element.attribute("left"), width);
+            if (element.hasAttribute("width"))
+                region.width           = calculatePercentBasedOnRoot(element.attribute("width"), width);
+            if (element.hasAttribute("height"))
+                region.height          = calculatePercentBasedOnRoot(element.attribute("height"), height);
+            if (element.hasAttribute("z-index"))
+                region.z_index         = element.attribute("z-index").toInt();
+            if (element.hasAttribute("backgroundColor"))
+                region.backgroundColor = element.attribute("backgroundColor");
+            region_list.append(region);
+            std::sort(region_list.begin(), region_list.end()); // sort z-indexes ascending to place Widgets corect in mainwindow
         }
+        else // when one region-tag has no regionName break the loop delete QList and put the default_region 100% region as multizone
+        {
+            region_list.clear();
+            region_list.append(default_region);
+            break;
+        }
+
     }
     qDebug() << childs.length() << "regions found in SMIL layout-tag and " << region_list.length() << " regions were initialized ";
 }
 
-void THead::setRefreshTimer()
-{
-    if (refresh == 0) // not refresh timer when refresh is 0
-        return;
 
-#ifdef QT_NO_DEBUG
-    if (refresh < 31) // make sure that impaciently clients do not stress the cms too much but only in release mode
-        refresh = 30;
-#endif
-
-    refresh_timer->start(refresh*1000);
-}
 
 qreal THead::calculatePercentBasedOnRoot(QString value, qreal root)
 {
@@ -262,29 +209,3 @@ qreal THead::calculatePercentBasedOnRoot(QString value, qreal root)
     return ret/100; // to have a easy calculatable value for resize zones
 }
 
-void THead::sendSystemReport()
-{
-    Reporting::SystemReport *MySystemReport = new Reporting::SystemReport(new DiscSpace(MyConfiguration->getPaths("cache"), this),
-                                                                           new SystemInfos::Memory(this),
-                                                                           new SystemInfos::Network(this),
-                                                                           MyConfiguration,
-                                                                           this);
-    MySystemReport->process();
-    MyWebDav->processPutData(system_report->getAction(), MySystemReport->asXMLString().toUtf8());
-    delete MySystemReport;
-}
-
-void THead::sendInventoryReport()
-{
-
-}
-
-void THead::sendPlayLog()
-{
-
-}
-
-void THead::sendEventLog()
-{
-
-}

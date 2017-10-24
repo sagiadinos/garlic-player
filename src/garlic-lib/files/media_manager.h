@@ -36,7 +36,7 @@ class MediaManager : public BaseManager
 {
     Q_OBJECT
 public:
-    explicit MediaManager(MediaModel *mm, TConfiguration *config, DownloadQueue *dq, QObject *parent=Q_NULLPTR);
+    explicit MediaManager(MediaModel *mm, DownloadQueue *dq, TConfiguration *config, QObject *parent=Q_NULLPTR);
     ~MediaManager();
     void                  clearQueues();
     void                  registerFile(QString src);
@@ -44,8 +44,9 @@ public:
     int                   checkCacheStatus(QString src);
 
 protected:
+    int                   timer_id;
     TConfiguration       *MyConfiguration;
-    DownloadQueue         *MyDownloadQueue;
+    DownloadQueue        *MyDownloadQueue;
     MediaModel           *MyMediaModel;
 protected slots:
     void                  doSucceed(QString src_file_path, QString local_file_path);

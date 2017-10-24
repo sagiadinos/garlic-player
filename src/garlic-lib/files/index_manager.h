@@ -19,6 +19,7 @@
 #define INDEX_MANAGER_H
 
 #include <QObject>
+#include <QTimerEvent>
 #include "base_manager.h"
 #include "index_model.h"
 #include "configuration.h"
@@ -28,22 +29,29 @@ class IndexManager : public BaseManager
 {
         Q_OBJECT
     public:
-        explicit IndexManager(IndexModel *im, TConfiguration *config,  Downloader *nw, QObject *parent=Q_NULLPTR);
+        explicit IndexManager(TConfiguration *config, QObject *parent=Q_NULLPTR);
         void            init(QString src);
-        void            lookUpForIndex();
+        void            activateRefresh(int value);
+        void            deactivateRefresh();
         QDomElement     getHead();
         QDomElement     getBody();
+        void            lookUpForIndex();
+
     protected:
+
+        int             refresh_time;
+        int             timer_id;
         TConfiguration *MyConfiguration;
         IndexModel     *MyIndexModel;
         Downloader     *MyDownloader;
         QString         src_index_path;
         void            loadLocal(QString local_path);
+        void            timerEvent(QTimerEvent *event);
 
     protected slots:
         void doSucceed(TNetworkAccess *downloader);
     signals:
-        void availableIndex();
+        void availableIndexLoaded();
 
 };
 

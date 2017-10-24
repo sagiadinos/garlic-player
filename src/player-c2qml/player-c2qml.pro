@@ -16,7 +16,7 @@ CONFIG    += support_qtav
 support_qtav {
     DEFINES += SUPPORT_QTAV
     QT      += av
-}r
+}
 
 DEFINES += QUAZIP_STATIC
 

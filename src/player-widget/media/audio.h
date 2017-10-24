@@ -19,7 +19,6 @@ class Audio : public BaseMedia
     protected:
         TAudio               *MyAudio;
         MediaDecoderWrapper   MediaDecoder;
-        QLabel               *ImageWidget;
     protected slots:
         void                  finished();
 };

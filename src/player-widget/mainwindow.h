@@ -44,10 +44,6 @@ class MainWindow : public QMainWindow
         void                      setMainWindowSize(QSize size);
         QSize                     getMainWindowSize();
 
-    public slots:
-        void                      resizeEvent(QResizeEvent * event);
-        void                      keyPressEvent(QKeyEvent *ke);
-
     protected:
         const int                 WINDOWED      = 0;
         const int                 FULLSCREEN    = 1;
@@ -58,12 +54,17 @@ class MainWindow : public QMainWindow
         QMap<QString, TRegion *>  ar_regions;
         QSize                     mainwindow_size;
         int                       screen_state = 0;
+        void                      resizeEvent(QResizeEvent * event);
+        void                      keyPressEvent(QKeyEvent *ke);
         void                      openDebugInfos();
-        void                      deleteRegionsAndLayouts();
         QString                   selectRegion(QString region_name);    protected slots:
+
+    public slots:
+        void                      deleteRegionsAndLayouts();
         void                      setRegions(QList<Region> *region_list);
         void                      startShowMedia(TMedia *media);
         void                      stopShowMedia(TMedia *media);
+
 };
 
 #endif // MAINWINDOW_H

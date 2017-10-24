@@ -66,7 +66,6 @@ QList<QDomElement> TPriorityClass::getChildList()
     return ar_dom_childs;
 }
 
-
 void TPriorityClass::setAttributes()
 {
     setBaseAttributes();

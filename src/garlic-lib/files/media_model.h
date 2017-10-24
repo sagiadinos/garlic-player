@@ -44,11 +44,11 @@ class MediaModel : public QObject
         explicit MediaModel(QObject *parent=Q_NULLPTR);
         ~MediaModel();
 
-        void     clearQueue();
-        QString  findLocalBySrcPath(QString src_file_path);
-        int      findStatusBySrcPath(QString src_file_path);
-        void     insertAvaibleLink(QString src_file_path);
-        void     insertAvaibleFile(QString src_file_path, QString local_file_path);
+        void                                          clearQueue();
+        QString                                       findLocalBySrcPath(QString src_file_path);
+        int                                           findStatusBySrcPath(QString src_file_path);
+        void                                          insertAvaibleLink(QString src_file_path);
+        void                                          insertAvaibleFile(QString src_file_path, QString local_file_path);
 
         //Getter/Setter
         QMap<QString, QPair<QString, int> >           getAvailableMediaList() const {return available_media_list;}

@@ -29,7 +29,7 @@ Downloader::Downloader(QByteArray agent, QObject *parent) : TNetworkAccess(agent
 
 Downloader::~Downloader()
 {
-    // not neccesary, but to be clear!
+    // not neccesary, cause it is a Qt Class, which was creatret with this, bbut to get sure!
     delete manager_get;
     delete manager_head;
     delete manager_head_redirect;

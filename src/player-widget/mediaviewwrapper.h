@@ -27,9 +27,9 @@ public:
 signals:
 protected:
 #ifdef SUPPORT_QTAV
-    QtAV::WidgetRenderer *VideoWidget;
+    QScopedPointer<QtAV::WidgetRenderer> VideoWidget;
 #else
-    QVideoWidget        *VideoWidget;
+    QScopedPointer<QVideoWidget>         VideoWidget;
 #endif
 };
 

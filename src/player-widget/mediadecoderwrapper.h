@@ -32,9 +32,9 @@ public slots:
 protected:
     QString             actual_media_path;
 #ifdef SUPPORT_QTAV
-   QtAV::AVPlayer      *MediaDecoder;
+   QScopedPointer<QtAV::AVPlayer>  MediaDecoder;
 #else
-    QMediaPlayer       *MediaDecoder;
+    QScopedPointer<QMediaPlayer>   MediaDecoder;
 #endif
 
 protected slots:

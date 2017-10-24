@@ -13,8 +13,8 @@
             void          init(QQmlComponent *mc);
             void          setParentItem(QQuickItem *parent);
         protected:
-            TImage        *ParserImage;
-            QQuickItem    *image_item = Q_NULLPTR;
+            TImage     *MyImage;
+            QScopedPointer<QQuickItem>  image_item;
     };
 
 

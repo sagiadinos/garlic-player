@@ -26,38 +26,37 @@ TSmil::TSmil(MediaManager *mm, QObject *parent) : QObject(parent)
 TSmil::~TSmil()
 {
     clearLists();
-    delete MyMediaManager;
-}
-
-void TSmil::init()
-{
-    return;
 }
 
 void TSmil::clearLists()
 {
-    QSet<TBaseTiming *>::iterator i;
-    while (ar_played_media.size() > 0) // stop actual played media
-    {
-        i = ar_played_media.begin();
-        stopPlayingElement(*i);
-    }
-    qDeleteAll(ar_elements);
-    ar_elements.clear();
-    qDeleteAll(ar_played_media);
-    ar_played_media.clear();
+    stopAllPlayingMedia();
+    qDeleteAll(all_elements_list);
+    all_elements_list.clear();
     return;
 }
 
 
 void TSmil::beginSmilParsing(QDomElement body)
 {
-    MyBody = new TBody(this);
-    connect(MyBody, SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));
-    connect(MyBody, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
-    if (MyBody->parse(body))
-        MyBody->prepareTimerBeforePlaying();
+    MyBody.reset(new TBody(this));
+    connect(MyBody.data(), SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));
+    connect(MyBody.data(), SIGNAL(finishedContainer(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
+    if (MyBody.data()->parse(body))
+        MyBody.data()->prepareTimerBeforePlaying();
     return;
+}
+
+void TSmil::stopAllPlayingMedia()
+{
+    // Used while cause every stopped element will removed from QSet in QSmil::emitStopShowMedia()
+    // so ar_played_media will decrease after every
+    QSet<TBaseTiming *>::iterator i;
+    while (current_played_media_list.size() > 0) // stop actual played media
+    {
+        i = current_played_media_list.begin();
+        stopPlayingElement(*i);
+    }
 }
 
 /**
@@ -67,30 +66,33 @@ void TSmil::beginSmilParsing(QDomElement body)
  */
 void TSmil::foundElement(TContainer *parent_container, QString type, QDomElement dom_element)
 {
-    TBaseTiming                              *MyBaseTiming;
-    QHash<QString, TBaseTiming *>::iterator  ar_elements_iterator = ar_elements.find(TBase::parseID(dom_element));
-    QString                                  base_type            = "";
-    if (ar_elements_iterator == ar_elements.end())
+    TBaseTiming *MyBaseTiming;
+    QString      base_type            = "";
+
+    QHash<QString, TBaseTiming *>::iterator  ar_elements_iterator = all_elements_list.find(TBase::parseID(dom_element));
+    if (ar_elements_iterator == all_elements_list.end())
     {
         MyBaseTiming     = TFactory::createBase(type, parent_container, this);
+        if (MyBaseTiming == NULL)
+        {
+            qWarning(SmilParser) << type << " is an unknown type/tag";
+            return;
+        }
         base_type        = MyBaseTiming->getBaseType();
         MyBaseTiming->parse(dom_element);
-        if (MyBaseTiming != NULL)
-        {
-            ar_elements_iterator = insertIntoObjectContainer(parent_container, MyBaseTiming);
-            if (base_type == "media")
-                connectMediaSlots(qobject_cast<TMedia *> (MyBaseTiming));
-            else if (base_type == "container")
-                connectContainerSlots(qobject_cast<TContainer *> (MyBaseTiming));
-        }
+        ar_elements_iterator = all_elements_list.insert(MyBaseTiming->getID(), MyBaseTiming);
+
+        if (base_type == "media")
+            connectMediaSlots(qobject_cast<TMedia *> (MyBaseTiming));
+        else if (base_type == "container")
+            connectContainerSlots(qobject_cast<TContainer *> (MyBaseTiming));
+
     }
     else
     {
-        MyBaseTiming     = *ar_elements_iterator;
-        base_type        = MyBaseTiming->getBaseType();
+        MyBaseTiming = *ar_elements_iterator;
+        base_type    = MyBaseTiming->getBaseType();
     }
-
-    qDebug() << MyBaseTiming->getID() << " foundElement";
 
     MyBaseTiming->prepareTimerBeforePlaying();
 
@@ -127,8 +129,7 @@ void TSmil::startElement(TContainer *parent_container, TBaseTiming *element)
     {
         if (element->getBaseType() == "media")
             emitStartShowMedia(qobject_cast<TMedia *> (element));
-        else
-            element->play();
+        element->play();
     }
     return;
 }
@@ -136,7 +137,7 @@ void TSmil::startElement(TContainer *parent_container, TBaseTiming *element)
 /**
  * @brief TSmil::finishedElement slot get called when emit finishedMedia finishedContainer active duration (finish playing)
  *        finishElement should kill the timer (TSmil::stopElement(TBase *element)) of his child elements not his own
- *        except in the case is in an excl container and stpped by a peer
+ *        except in the case is in an excl container and stopped by a peer
  * @param parent
  * @param element
  */
@@ -145,15 +146,10 @@ void TSmil::finishElement(TContainer *parent_container, TBaseTiming *element)
     qDebug() << element->getID() <<  " finishElement";
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
     {
-        qDebug()<< element->getID() << "Not kill Timer";
+        // Not kill a Timer here
         stopElement(element);
 
         parent_container->next(element);
-    }
-    else
-    {
-        ar_elements.clear();
-        delete MyBody;
     }
     return;
 }
@@ -202,7 +198,7 @@ void TSmil::resumeQueuedElement(TBaseTiming *element)
  */
 void TSmil::stopPlayingElement(TBaseTiming *element)
 {
-    killTimer(element);
+    element->prepareTimerBeforeStop();
     stopElement(element);
     return;
 }
@@ -224,22 +220,6 @@ void TSmil::stopElement(TBaseTiming *element)
     return;
 }
 
-void TSmil::killTimer(TBaseTiming *element)
-{
-    element->prepareTimerBeforeStop();
-    return;
-}
-
-QHash<QString, TBaseTiming *>::iterator TSmil::insertIntoObjectContainer(TBaseTiming *parent_container, TBaseTiming *child_container)
-{
-    QString id   = child_container->getID();
-    if (parent_container->getBaseType() == "container")
-    {
-        TContainer *MyContainer  = qobject_cast<TContainer *> (parent_container);
-        MyContainer->insertContainerObject(id, child_container);
-    }
-    return ar_elements.insert(id, child_container);
-}
 
 void TSmil::connectContainerSlots(TContainer *MyContainer)
 {
@@ -265,20 +245,16 @@ void TSmil::connectMediaSlots(TMedia *media)
 
 void TSmil::emitStartShowMedia(TMedia *media)
 {
-    media->play();
-    qDebug() << media->getID() << "startShowMedia";
-    ar_played_media.insert(media);
+    current_played_media_list.insert(media);
     emit startShowMedia(media);
+    qDebug() << media->getID() << "startShowMedia";
     return;
 }
 
 void TSmil::emitStopShowMedia(TMedia *media)
 {
-    if (ar_played_media.find(media) != ar_played_media.end())
-    {
-        ar_played_media.remove(media);
-        qDebug() << media->getID() << "stopShowMedia";
-        emit stopShowMedia(media);
-    }
+    current_played_media_list.remove(media);
+    emit stopShowMedia(media);
+    qDebug() << media->getID() << "stopShowMedia";
     return;
 }

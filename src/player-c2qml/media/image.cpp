@@ -2,17 +2,17 @@
 
 Image::Image(TMedia *media, QObject *parent) : BaseMedia(parent)
 {
-    ParserImage  = qobject_cast<TImage *>(media);
+    // should stay a raw pointer cause it belongs to Parser
+    MyImage = qobject_cast<TImage *>(media);
 }
 
 Image::~Image()
 {
-    delete image_item;
 }
 
 void Image::init(QQmlComponent *mc)
 {
-    QString fill_mode = determineQmlFillMode(ParserImage->getFit());
+    QString fill_mode = determineQmlFillMode(MyImage->getFit());
     QString anchors   = "";
     if (fill_mode != "Pad")
         anchors = "anchors.fill: parent;\n";
@@ -21,13 +21,13 @@ void Image::init(QQmlComponent *mc)
                     Image {\n " +
                             anchors+
                         "fillMode: Image."+fill_mode+";\n \
-                        source: \"file:"+ParserImage->getLoadablePath()+"\";\n \
+                        source: \"file:"+MyImage->getLoadablePath()+"\";\n \
                     }\n"
     );
-    image_item = createMediaItem(mc, str);
+    image_item.reset(createMediaItem(mc, str));
 }
 
 void Image::setParentItem(QQuickItem *parent)
 {
-    image_item->setParentItem(parent);
+    image_item.data()->setParentItem(parent);
 }

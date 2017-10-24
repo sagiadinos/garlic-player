@@ -28,12 +28,13 @@ class MainWindow : public QMainWindow
     public:
         explicit MainWindow(LibFacade *lib_facade, QWidget *parent = 0);
         ~MainWindow();
+        void                      openDebugInfos();
     protected:
         LibFacade                *MyLibFacade      = Q_NULLPTR;
         QPointer<TMedia>          MyMedia;
         void                      outputResourcesUsage();
-        void                      openDebugInfos();
     protected slots:
+        void                      deleteRegionsAndLayouts();
         void                      setRegions(QList<Region> *region_list);
         void                      startShowMedia(TMedia *media);
         void                      stopShowMedia(TMedia *media);

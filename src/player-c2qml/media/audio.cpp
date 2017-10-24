@@ -2,7 +2,8 @@
 
 Audio::Audio(TMedia *media, QObject *parent) : BaseMedia(parent)
 {
-    MyAudio  = qobject_cast<TAudio *>(media);
+    // should stay a raw pointer cause it belongs to Parser
+    MyAudio = qobject_cast<TAudio *>(media);
 }
 
 Audio::~Audio()
@@ -23,22 +24,16 @@ void Audio::init(QQmlComponent *mc)
                         source: \"file:"+MyAudio->getLoadablePath()+"\";\n \
                    }\n"
     );
-    audio_item = createMediaItem(mc, str);
-    connect(audio_item, SIGNAL(stopped()), this, SLOT(finishedAudio()));
-    connect(audio_item, SIGNAL(destroyed(QObject*)), this, SLOT(doDestroy()));
+    audio_item.reset(createMediaItem(mc, str));
+    connect(audio_item.data(), SIGNAL(stopped()), this, SLOT(finishedAudio()));
 }
 
 void Audio::setParentItem(QQuickItem *parent)
 {
-    audio_item->setParentItem(parent);
+    audio_item.data()->setParentItem(parent);
 }
 
 void Audio::finished()
-{
-    audio_item->deleteLater();
-}
-
-void Audio::doDestroy()
 {
     MyAudio->finishedSimpleDuration();
 }

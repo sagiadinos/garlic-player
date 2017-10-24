@@ -17,13 +17,12 @@
 *************************************************************************************/
 #include "index_manager.h"
 
-IndexManager::IndexManager(IndexModel *im, TConfiguration *config, Downloader *nw, QObject *parent) : BaseManager(parent)
+IndexManager::IndexManager(TConfiguration *config, QObject *parent) : BaseManager(parent)
 {
     MyConfiguration = config;
-    MyDownloader    = nw;
-    MyIndexModel    = im;
+    MyDownloader    = new Downloader(MyConfiguration->getUserAgent().toUtf8(), this);
+    MyIndexModel    = new IndexModel(this);
     connect(MyDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
-
 }
 
 void IndexManager::init(QString src)
@@ -37,13 +36,27 @@ void IndexManager::lookUpForIndex()
     // if nothing is loaded look first at cache if there is an Index
     if (src_index_path == "")
     {
-        qDebug(ContentManager) << "set index path first";
+        qWarning(ContentManager) << "set index path first";
         return;
     }
     if (isRemote(src_index_path))
         MyDownloader->processFile(src_index_path, MyConfiguration->getPaths("cache")+"index.smil");
     else
         loadLocal(src_index_path); // src and local path are identically if src path local
+}
+
+void IndexManager::activateRefresh(int value)
+{
+    refresh_time   = value;
+    timer_id       = startTimer(refresh_time*1000);
+}
+
+void IndexManager::deactivateRefresh()
+{
+    if (timer_id == 0)
+        return;
+    refresh_time   = 0;
+    killTimer(timer_id);
 }
 
 QDomElement IndexManager::getHead()
@@ -63,7 +76,13 @@ void IndexManager::loadLocal(QString local_path)
     if (!MyIndexModel->loadDocument(local_path))
         return;
     MyConfiguration->setLastPlayedIndexPath(local_path);
-    emit availableIndex();
+    emit availableIndexLoaded();
+}
+
+void IndexManager::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == timer_id)
+        lookUpForIndex();
 }
 
 // ==================  protected slots =======================================

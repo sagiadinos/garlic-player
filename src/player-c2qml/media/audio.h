@@ -13,11 +13,10 @@ class Audio : public BaseMedia
         void          init(QQmlComponent *mc);
         void          setParentItem(QQuickItem *parent);
      protected:
-        TAudio           *MyAudio;
-        QQuickItem       *audio_item = Q_NULLPTR;
+        TAudio                     *MyAudio;
+        QScopedPointer<QQuickItem>  audio_item;
     protected slots:
-        void                  finished();
-        void                  doDestroy();
+        void                        finished();
 };
 
 #endif // AUDIO_H

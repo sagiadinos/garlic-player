@@ -17,11 +17,11 @@
 *************************************************************************************/
 #include "media_manager.h"
 
-MediaManager::MediaManager(MediaModel *mm, TConfiguration *config, DownloadQueue *dq, QObject *parent) : BaseManager(parent)
+MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, TConfiguration *config, QObject *parent) : BaseManager(parent)
 {
-    MyConfiguration = config;
+    MyConfiguration  = config;
     MyDownloadQueue  = dq;
-    MyMediaModel    = mm;
+    MyMediaModel     = mm;
     connect(MyDownloadQueue, SIGNAL(succeed(QString, QString)), SLOT(doSucceed(QString, QString)));
     connect(MyDownloadQueue, SIGNAL(notcacheable(QString)), SLOT(doNotCacheable(QString)));
 }
@@ -32,10 +32,8 @@ MediaManager::~MediaManager()
 
 void MediaManager::clearQueues()
 {
-    MyMediaModel->clearQueue();
-    MyDownloadQueue->clearQueues();
-    delete MyMediaModel;
     delete MyDownloadQueue;
+    delete MyMediaModel;
     return;
 }
 

@@ -15,45 +15,37 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include "prefetch.h"
 
-TPrefetch::TPrefetch(TContainer *pc, QObject *parent) : TMedia(parent)
-{
-    parent_container = pc;
-    initTimer();
-    setObjectName("TPrefetch");
-}
+#ifndef TREGION_H
+#define TREGION_H
 
-TPrefetch::~TPrefetch()
-{
-    deleteTimer();
-}
+#include <QQuickItem> // interates QQmlComponent
 
-void TPrefetch::pause()
-{
-    qDebug() << getID() << "paused ";
-    status = _paused;
-}
+#include "head.h"
+#include "media/media_factory.h"
 
-void TPrefetch::stop()
+class TRegion : public QQuickItem
 {
-    qDebug() << getID() << "stopped";
-    status = _stopped;
-}
+    Q_OBJECT
+public:
+    explicit TRegion(QObject *parent);
+    ~TRegion();
+    void                setRootSize(int w, int h);
+    void                setRegion(Region r, QQmlEngine *e);
+    void                startShowMedia(TMedia *media);
+    void                stopShowMedia();
 
-void TPrefetch::play()
-{
-    qDebug() << getID()  << "prefetch play";
-    MyMediaManager->registerFile(src); // register file to check if changed";
-    status = _playing;
-}
+protected:
+    QQuickItem           *root_item;
+    QQmlEngine           *engine;
+    Region                region;
+    QScopedPointer<BaseMedia>           MyMedia;
+    QScopedPointer<QQmlComponent>       rectangle;
+    QScopedPointer<QQmlComponent>       media_component;
+    QScopedPointer<QQuickItem>          rectangle_item;
 
-void TPrefetch::setDurationTimerBeforePlay()
-{
-    setInternalDefaultDur();
-}
+    qreal                 root_width_px, root_height_px = 0;
+    void                  resizeGeometry();
+};
 
-void TPrefetch::setAttributes()
-{
-    setBaseMediaAttributes();
-}
+#endif // TREGION_H

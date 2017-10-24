@@ -25,7 +25,8 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     MyLibFacade            = lib_facade;
     connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
-    connect(MyLibFacade, SIGNAL(newIndex(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
+    connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(deleteRegionsAndLayouts()));
+    connect(MyLibFacade, SIGNAL(newIndexPrepared(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
     setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
@@ -38,28 +39,6 @@ MainWindow::~MainWindow()
     delete centralWidget;
 }
 
-
-void MainWindow::deleteRegionsAndLayouts()
-{
-    qDeleteAll(ar_regions);
-    ar_regions.clear();
-}
-
-void MainWindow::setRegions(QList<Region> *region_list)
-{
-    deleteRegionsAndLayouts();
-    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
-    QMap<QString, TRegion *>::iterator j;
-    for (int i = 0; i < region_list->length(); i++)
-    {
-        j = ar_regions.insert(region_list->at(i).regionName, new TRegion(this));
-        ar_regions[j.key()]->setRegion(region_list->at(i));
-        ar_regions[j.key()]->setRootSize(width(), height());
-        ar_regions[j.key()]->show();
-    }
-    qDebug() << ar_regions.size() << " regions are created ";
-    MyLibFacade->beginSmilParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
-}
 
 QString MainWindow::selectRegion(QString region_name)
 {
@@ -165,17 +144,44 @@ void MainWindow::resizeEvent(QResizeEvent * event)
 
 // =================== protected slots ====================================
 
+void MainWindow::deleteRegionsAndLayouts()
+{
+    // Must be done first to be clear that no media is loaded played anymore
+    qDeleteAll(ar_regions);
+    ar_regions.clear();
+    MyLibFacade->prepareNewLoadedIndex();
+}
+
+void MainWindow::setRegions(QList<Region> *region_list)
+{
+    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
+    QMap<QString, TRegion *>::iterator j;
+    for (int i = 0; i < region_list->length(); i++)
+    {
+        j = ar_regions.insert(region_list->at(i).regionName, new TRegion(this));
+        ar_regions[j.key()]->setRegion(region_list->at(i));
+        ar_regions[j.key()]->setRootSize(width(), height());
+        ar_regions[j.key()]->show();
+    }
+    qDebug() << ar_regions.size() << " regions are created ";
+    MyLibFacade->beginSmilBodyParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+}
+
 void MainWindow::startShowMedia(TMedia *media)
 {
-    QString region_name = selectRegion(media->getRegion());
-    ar_regions[region_name]->startShowMedia(media);
-    ar_regions[region_name]->setRootSize(width(), height());
+    if (ar_regions.size() > 0) // prevent to call function of nonexisting regions
+    {
+        QString region_name = selectRegion(media->getRegion());
+        ar_regions[region_name]->startShowMedia(media);
+        ar_regions[region_name]->setRootSize(width(), height());
+    }
     return;
 }
 
 void MainWindow::stopShowMedia(TMedia *media)
 {
-    QString region_name = selectRegion(media->getRegion());
-    ar_regions[region_name]->stopShowMedia();
+    if (ar_regions.size() > 0)// prevent to call function of nonexisting regions
+        ar_regions[selectRegion(media->getRegion())]->stopShowMedia();
+
     return;
 }

@@ -27,22 +27,22 @@ class TPar : public TContainer
 public:
     explicit TPar(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TPar();
-    bool          parse(QDomElement element);
-    void          next(TBaseTiming *ended_element);
+    bool                parse(QDomElement element);
+    void                next(TBaseTiming *ended_element);
     TBaseTiming        *getChildElementFromList();
-    void          pause();
-    void          stop();
-    void          play();
-    void          resume();
-    bool          isChildPlayable(TBaseTiming *element);
+    void                pause();
+    void                stop();
+    void                play();
+    void                resume();
+    bool                isChildPlayable(TBaseTiming *element);
 protected slots:
-    void          setDurationTimerBeforePlay();
+    void                setDurationTimerBeforePlay();
 private:
     QSet<TBaseTiming *> activatable_childs;
-    QString       endsync            = "last";
-    QDomNodeList  childs;
-    void          setPlaylist();
-    int           count_childs       = 0;
+    QString             endsync            = "last";
+    QDomNodeList        childs;
+    void                setPlaylist();
+    int                 count_childs       = 0;
 
 };
 

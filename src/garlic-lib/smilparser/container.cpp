@@ -22,20 +22,9 @@ TContainer::TContainer(QObject *parent) : TBaseTiming(parent)
 {
 }
 
-void TContainer::insertContainerObject(QString id, TBaseTiming *obj_element)
-{
-    ar_elements.insert(id, obj_element);
-    return;
-}
-
 QString TContainer::getIdOfActiveElement()
 {
     return parseID(active_element);
-}
-
-QHash<QString, TBaseTiming *> TContainer::getContainerObjects()
-{
-    return ar_elements;
 }
 
 TBaseTiming *TContainer::getChildElementFromList()

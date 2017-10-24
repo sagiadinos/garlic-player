@@ -13,8 +13,8 @@ class Web : public BaseMedia
         void          init(QQmlComponent *mc);
         void          setParentItem(QQuickItem *parent);
     protected:
-        TWeb             *MyWeb;
-        QQuickItem       *web_item = Q_NULLPTR;
+        TWeb          *MyWeb;
+        QScopedPointer<QQuickItem>   web_item;
 };
 
 #endif // WEB_H

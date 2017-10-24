@@ -24,6 +24,7 @@ TBaseTiming::TBaseTiming(QObject * parent) : TBase(parent)
 
 TBaseTiming::~TBaseTiming()
 {
+    qDebug()<< "delete " << objectName();
 }
 
 

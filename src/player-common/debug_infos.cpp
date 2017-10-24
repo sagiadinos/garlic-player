@@ -6,7 +6,7 @@ DebugInfos::DebugInfos(LibFacade *lib_facade, QWidget *parent) :  QDialog(parent
     MyLibFacade = lib_facade;
     ui->setupUi(this);
     timer_id = startTimer(500);
-    setWindowOpacity(0.8);
+    setWindowOpacity(0.9);
 }
 
 
@@ -46,8 +46,6 @@ void DebugInfos::outputResourcesUsage()
         max_threads_used = current_threads;
     ui->ThreadsNumber->setText("Threads: " + QString::number(current_threads));
     ui->MaxThreadsNumber->setText("Max Threads: " + QString::number(max_threads_used));
-
-    ui->CurrentFileInUse->setText("playing: "+MyLibFacade->getCurrentMedia()->getLoadablePath());
     ui->PlaylistTitle->setText(MyLibFacade->getHead()->getTitle());
 
 }

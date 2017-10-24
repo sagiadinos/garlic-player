@@ -25,13 +25,15 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     MyLibFacade            = lib_facade;
     connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
-    connect(MyLibFacade, SIGNAL(newIndex(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
+    connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(deleteRegionsAndLayouts()));
+    connect(MyLibFacade, SIGNAL(newIndexPrepared(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
 
 #ifdef SUPPORT_QTAV
     setSource(QUrl(QStringLiteral("qrc:/root_qtav.qml")));
 #else
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
 #endif
+
     setMainWindowSize(QSize(980, 540)); // set default
 }
 
@@ -44,12 +46,11 @@ void MainWindow::deleteRegionsAndLayouts()
 {
     qDeleteAll(ar_regions);
     ar_regions.clear();
+    MyLibFacade->prepareNewLoadedIndex();
 }
-
 
 void MainWindow::setRegions(QList<Region> *region_list)
 {
-    deleteRegionsAndLayouts();
 //    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
     QMap<QString, TRegion *>::iterator j;
     for (int i = 0; i < region_list->length(); i++)
@@ -59,7 +60,7 @@ void MainWindow::setRegions(QList<Region> *region_list)
         ar_regions[j.key()]->setRootSize(width(), height());
     }
     qDebug() << ar_regions.size() << " regions are created ";
-    MyLibFacade->beginSmilParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+    MyLibFacade->beginSmilBodyParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
 
 QString MainWindow::selectRegion(QString region_name)
@@ -106,6 +107,23 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             exit(0);
         break;
     }
+}
+
+
+bool MainWindow::event(QEvent *event)
+{
+    event->accept();
+    if(event->type() == QEvent::TouchBegin)
+    {
+//        QTouchEvent *touchEvent = static_cast<QTouchEvent*>(event);
+        num_touched++;
+        if (num_touched > 4)
+        {
+            openDebugInfos();
+            num_touched = 0;
+        }
+    }
+    return QQuickView::event(event);
 }
 
 void MainWindow::openDebugInfos()
@@ -185,8 +203,7 @@ void MainWindow::startShowMedia(TMedia *media)
 }
 
 void MainWindow::stopShowMedia(TMedia *media)
-{
-    if (ar_regions.size() == 0)
+{    if (ar_regions.size() == 0)
         return;
 
     QString region_name = selectRegion(media->getRegion());
@@ -202,6 +219,7 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             qDebug(MediaPlayer) << "No QML source set";
             break;
         case QQuickView::Ready:
+            MyLibFacade->initIndex();
             MyLibFacade->checkForNewSmilIndex(); // load index when QML comiled complete
             break;
         case QQuickView::Loading:

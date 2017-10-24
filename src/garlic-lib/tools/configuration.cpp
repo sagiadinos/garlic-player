@@ -36,6 +36,7 @@ TConfiguration::TConfiguration(QSettings *UserConfig, QObject *parent) : QObject
     // ugly workaround from https://stackoverflow.com/questions/21976264/qt-isodate-formatted-date-time-including-timezone
     // cause otherwise we get no time zone in date string
     setStartTime(QDateTime::currentDateTime().toOffsetFromUtc(QDateTime::currentDateTime().offsetFromUtc()).toString(Qt::ISODate));
+    determineUserAgent();
 }
 
 QString TConfiguration::getLastPlayedIndexPath()

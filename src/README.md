@@ -20,7 +20,11 @@ A Smil player based on Qt's Widget technologie
 
 ## garlic-qml
 
-A Smil player based on Qt's QML technologie (needed for android
+A Smil player technology study based on pure QML technologie (needed for android)
+
+## garlic-c2qml
+
+A Smil player based on Qt's QML technologie controlled by C++ (needed for android)
 
 ## garlic-dummy
 

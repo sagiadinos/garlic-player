@@ -45,7 +45,6 @@ qint64 TClockValue::getMilliseconds()
     return ms;
 }
 
-
 /**
  * @brief TTiming::calculateDuration converts clock or timecount values to milliseconds
  *

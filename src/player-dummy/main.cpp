@@ -23,27 +23,26 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    TConfiguration *MyConfiguration   = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
-    QApplication::setApplicationName(MyConfiguration->getAppName());
-    QApplication::setApplicationVersion(MyConfiguration->getVersion());
-    QApplication::setApplicationDisplayName(MyConfiguration->getAppName());
+    LibFacade      *MyLibFacade     = new LibFacade();
+    QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
+    QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());
+    QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName());
 
     QDir dir(".");
-    MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
-    MyConfiguration->determineUserAgent();
-    MyConfiguration->createDirectories();
+    MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
+    MyLibFacade->getConfiguration()->determineUserAgent();
+    MyLibFacade->getConfiguration()->createDirectories();
 
-    TCmdParser MyParser(MyConfiguration);
+    TCmdParser MyParser(MyLibFacade->getConfiguration());
     MyParser.addOptions();
     MyParser.parse(&app);
 
-    LibFacade      *MyLibFacade     = new LibFacade(MyConfiguration);
 
     MainWindow w(MyLibFacade);
-    w.show();
-
     MyLibFacade->initIndex();
     MyLibFacade->checkForNewSmilIndex();
+
+    w.openDebugInfos();
 
     return app.exec();
 }

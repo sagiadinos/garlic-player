@@ -2,13 +2,13 @@
 
 Web::Web(TMedia *media, QObject *parent) : BaseMedia(parent)
 {
-    MyWeb  = qobject_cast<TWeb *>(media);
-
+    // should stay a raw pointer cause it belongs to Parser
+    MyWeb = qobject_cast<TWeb *>(media);
 }
 
 Web::~Web()
 {
-    delete web_item;
+
 }
 
 void Web::init(QQmlComponent *mc)
@@ -20,10 +20,10 @@ void Web::init(QQmlComponent *mc)
                         url: \""+MyWeb->getLoadablePath()+"\";\n \
                    }\n"
     );
-    web_item = createMediaItem(mc, str);
+    web_item.reset(createMediaItem(mc, str));
 }
 
 void Web::setParentItem(QQuickItem *parent)
 {
-    web_item->setParentItem(parent);
+    web_item.data()->setParentItem(parent);
 }

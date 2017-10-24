@@ -3,26 +3,25 @@
 MediaViewWrapper::MediaViewWrapper(QWidget *parent) :QWidget(parent)
 {
 #ifdef SUPPORT_QTAV
-    VideoWidget = new QtAV::WidgetRenderer(this);
+    VideoWidget.reset(new QtAV::WidgetRenderer(this));
 #else
-    VideoWidget = new  QVideoWidget;
+    VideoWidget.reset(new  QVideoWidget);
 #endif
 }
 
 MediaViewWrapper::~MediaViewWrapper()
 {
-   delete VideoWidget;
 }
 
 #ifdef SUPPORT_QTAV
 QtAV::WidgetRenderer *MediaViewWrapper::getVideoWidget()
 {
-    return VideoWidget;
+    return VideoWidget.data();
 }
 #else
 QVideoWidget *MediaViewWrapper::getVideoWidget()
 {
-    return VideoWidget;
+    return VideoWidget.data();
 }
 #endif
 
@@ -30,27 +29,27 @@ QVideoWidget *MediaViewWrapper::getVideoWidget()
 void MediaViewWrapper::setAspectRatioFill()
 {
 #ifdef SUPPORT_QTAV
-    VideoWidget->setOutAspectRatioMode(QtAV::VideoRenderer::RendererAspectRatio);
+    VideoWidget.data()->setOutAspectRatioMode(QtAV::VideoRenderer::RendererAspectRatio);
 #else
-    VideoWidget->setAspectRatioMode(Qt::IgnoreAspectRatio);
+    VideoWidget.data()->setAspectRatioMode(Qt::IgnoreAspectRatio);
 #endif
 }
 
 void MediaViewWrapper::setAspectRatioMeet()
 {
 #ifdef SUPPORT_QTAV
-    VideoWidget->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
+    VideoWidget.data()->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
 #else
-    VideoWidget->setAspectRatioMode(Qt::KeepAspectRatioByExpanding);
+    VideoWidget.data()->setAspectRatioMode(Qt::KeepAspectRatioByExpanding);
 #endif
 }
 
 void MediaViewWrapper::setAspectRatioMeetBest()
 {
 #ifdef SUPPORT_QTAV
-    VideoWidget->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
+    VideoWidget.data()->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
 #else
-    VideoWidget->setAspectRatioMode(Qt::KeepAspectRatio);
+    VideoWidget.data()->setAspectRatioMode(Qt::KeepAspectRatio);
 #endif
 }
 

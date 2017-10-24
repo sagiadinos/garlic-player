@@ -3,37 +3,36 @@
 MediaDecoderWrapper::MediaDecoderWrapper(QObject *parent) : QObject(parent)
 {
 #ifdef SUPPORT_QTAV
-    MediaDecoder = new QtAV::AVPlayer(this);
-   connect(MediaDecoder, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)), this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
-//    connect(MediaDecoder, SIGNAL(error(QtAV::AVError)), this, SLOT(displayErrorMessage(QtAV::AVError)));
+    MediaDecoder.reset(new QtAV::AVPlayer(this));
+   connect(MediaDecoder.data(), SIGNAL(mediaStatusChanged(QtAV::MediaStatus)), this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
+//    connect(MediaDecoder.data(), SIGNAL(error(QtAV::AVError)), this, SLOT(displayErrorMessage(QtAV::AVError)));
 #else
-    MediaDecoder = new QMediaPlayer(this);
-    connect(MediaDecoder, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus)));
-//    connect(MediaDecoder, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
+    MediaDecoder.reset(new QMediaPlayer(this));
+    connect(MediaDecoder.data(), SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus)));
+//    connect(MediaDecoder.data(), SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 #endif
 }
 
 MediaDecoderWrapper::~MediaDecoderWrapper()
 {
 #ifdef SUPPORT_QTAV
-    MediaDecoder->clearVideoRenderers();
+    MediaDecoder.data()->clearVideoRenderers();
 #endif
-    delete MediaDecoder;
 }
 
 void MediaDecoderWrapper::setVideoOutput(MediaViewWrapper *renderer)
 {
 #ifdef SUPPORT_QTAV
-    MediaDecoder->setRenderer(renderer->getVideoWidget());
+    MediaDecoder.data()->setRenderer(renderer->getVideoWidget());
 #else
-    MediaDecoder->setVideoOutput(renderer->getVideoWidget());
+    MediaDecoder.data()->setVideoOutput(renderer->getVideoWidget());
 #endif
 }
 
 void MediaDecoderWrapper::removeVideoOutput(MediaViewWrapper *renderer)
 {
 #ifdef SUPPORT_QTAV
-    MediaDecoder->removeVideoRenderer(renderer->getVideoWidget());
+    MediaDecoder.data()->removeVideoRenderer(renderer->getVideoWidget());
 #else
     Q_UNUSED(renderer);
 #endif
@@ -44,12 +43,12 @@ bool MediaDecoderWrapper::load(QString file_path)
 {
     actual_media_path = file_path;
 #ifdef SUPPORT_QTAV
-    MediaDecoder->setAsyncLoad(false);
-    MediaDecoder->setFile(actual_media_path);
-    return MediaDecoder->load();
+    MediaDecoder.data()->setAsyncLoad(false);
+    MediaDecoder.data()->setFile(actual_media_path);
+    return MediaDecoder.data()->load();
 #else
-    MediaDecoder->setMedia(QMediaContent(QUrl::fromLocalFile(actual_media_path)));
-    return (MediaDecoder->mediaStatus() != QMediaPlayer::NoMedia && MediaDecoder->mediaStatus() != QMediaPlayer::InvalidMedia);
+    MediaDecoder.data()->setMedia(QMediaContent(QUrl::fromLocalFile(actual_media_path)));
+    return (MediaDecoder.data()->mediaStatus() != QMediaPlayer::NoMedia && MediaDecoder.data()->mediaStatus() != QMediaPlayer::InvalidMedia);
 #endif
 }
 
@@ -57,9 +56,9 @@ void MediaDecoderWrapper::unload()
 {
     actual_media_path = "";
 #ifdef SUPPORT_QTAV
-    MediaDecoder->setFile("");
+    MediaDecoder.data()->setFile("");
 #else
-    MediaDecoder->setMedia(QMediaContent());
+    MediaDecoder.data()->setMedia(QMediaContent());
 #endif
 }
 
@@ -152,5 +151,5 @@ void MediaDecoderWrapper::displayErrorMessage()
 
 void MediaDecoderWrapper::play()
 {
-    MediaDecoder->play();
+    MediaDecoder.data()->play();
 }

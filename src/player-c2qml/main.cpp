@@ -21,8 +21,8 @@
 #include "../player-common/screen.h"
 
 #if defined  Q_OS_ANDROID
-    #include <QtAndroidExtras/QAndroidJniEnvironment>
-    #include <QtAndroidExtras/QtAndroidExtras>
+//    #include <QtAndroidExtras/QAndroidJniEnvironment>
+//    #include <QtAndroidExtras/QtAndroidExtras>
 #else
     #include <qtwebengineglobal.h>
 #endif
@@ -62,35 +62,34 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
-    TConfiguration *MyConfiguration = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
 
-    QApplication::setApplicationName(MyConfiguration->getAppName());
-    QApplication::setApplicationVersion(MyConfiguration->getVersion());
-    QApplication::setApplicationDisplayName(MyConfiguration->getAppName());
-    MyConfiguration->determineIndexUri("http://indexes.smil-admin.com");
+    LibFacade      *MyLibFacade     = new LibFacade();
+    QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
+    QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());
+    QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName());
+    MyLibFacade->getConfiguration()->determineIndexUri("http://indexes.smil-admin.com");
 
     QDir dir(".");
-    MyConfiguration->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator
-    MyConfiguration->determineUserAgent();
-    MyConfiguration->createDirectories();
+    MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator
+    MyLibFacade->getConfiguration()->createDirectories();
 
-    TCmdParser MyParser(MyConfiguration);
+    TCmdParser MyParser(MyLibFacade->getConfiguration());
     MyParser.addOptions();
     MyParser.parse(&app);
 
-    LibFacade      *MyLibFacade     = new LibFacade(MyConfiguration);
 
     // Set the logging file
-    event_log.reset(new QFile(MyConfiguration->getPaths("logs") + "events.log"));
+    event_log.reset(new QFile(MyLibFacade->getConfiguration()->getPaths("logs") + "events.log"));
     event_log.data()->open(QFile::Append | QFile::Text);
-    QLoggingCategory::setFilterRules("*.debug=true\n");
+    QLoggingCategory::setFilterRules("*.debug=true");
+    QLoggingCategory::setFilterRules("qt.scenegraph.*=false"); // remove annoying flodding debug messages
     qInstallMessageHandler(myMessageHandler);
 
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop(), 0);
     MainWindow w(&MyScreen, MyLibFacade);
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);
-    if (MyConfiguration->getIndexUri() == "")
+    if (MyLibFacade->getConfiguration()->getIndexUri() == "")
     {
         if (w.openConfigDialog() == QDialog::Rejected)
             is_index = false;
@@ -103,21 +102,22 @@ int main(int argc, char *argv[])
 #if defined  Q_OS_ANDROID
         // preserve android screensaver https://stackoverflow.com/questions/44100627/how-to-disable-screensaver-on-qt-android-app
         // https://forum.qt.io/topic/57625/solved-keep-android-5-screen-on
-        QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
-        if (activity.isValid())
-        {
-            QAndroidJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
-            if (window.isValid())
-            {
-                const int FLAG_KEEP_SCREEN_ON = 128;
-                window.callMethod<void>("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
-            }
-        }
-        // not to crash in Android > 5.x Clear any possible pending exceptions.
-        QAndroidJniEnvironment env;
-        if (env->ExceptionCheck()) {
-            env->ExceptionClear();
-        }
+
+//        QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
+//        if (activity.isValid())
+//        {
+//            QAndroidJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
+//            if (window.isValid())
+//            {
+//                const int FLAG_KEEP_SCREEN_ON = 128;
+//                window.callMethod<void>("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
+//            }
+//        }
+//        // not to crash in Android > 5.x Clear any possible pending exceptions.
+//        QAndroidJniEnvironment env;
+//        if (env->ExceptionCheck()) {
+//            env->ExceptionClear();
+//        }
         w.showFullScreen();
 #else
         QtWebEngine::initialize();
@@ -136,7 +136,6 @@ int main(int argc, char *argv[])
         }
 #endif
 
-        MyLibFacade->initIndex();
         ret = app.exec();
     }
     return ret;

@@ -23,7 +23,8 @@ MainWindow::MainWindow(LibFacade *lib_facade, QWidget *parent) :   QMainWindow(p
     MyLibFacade            = lib_facade;
     connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
-    connect(MyLibFacade, SIGNAL(newIndex(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
+    connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(deleteRegionsAndLayouts()));
+    connect(MyLibFacade, SIGNAL(newIndexPrepared(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
 }
 
 MainWindow::~MainWindow()
@@ -40,11 +41,16 @@ void MainWindow::openDebugInfos()
 
 // =================== protected slots ====================================
 
+void MainWindow::deleteRegionsAndLayouts()
+{
+    MyLibFacade->prepareNewLoadedIndex();
+}
+
+
 void MainWindow::setRegions(QList<Region> *region_list)
 {
     Q_UNUSED(region_list);
-    MyLibFacade->beginSmilParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
-    openDebugInfos();
+    MyLibFacade->beginSmilBodyParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
 
 

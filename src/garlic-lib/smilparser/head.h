@@ -24,11 +24,9 @@
 #include <QString>
 #include <QtXml>
 #include <QList>
-#include <QTimer>
 
 #include "head/subscription.h"
-#include "reports/system_report.h"
-#include "files/webdav.h"
+#include "reports/system_report_manager.h"
 
 /**
  * @brief The Region struct
@@ -60,33 +58,23 @@ class THead: public QObject
         QString         getTitle();
         QList<Region>  *getLayout();
         void            setRootLayout(int w, int h);
-    public slots:
-        void            emitCheckForNewIndex();
     protected:
         Region          default_region;
         QString         title;
         int             refresh, width, height;
         QString         backgroundColor;
         QDomElement     head;
-        SubScription   *system_report, *inventory_report, *play_log, *event_log;
-        QList<Region>   region_list;
-        QTimer         *refresh_timer, *system_report_timer, *inventory_report_timer, *play_log_timer, *event_log_timer;
-        TConfiguration *MyConfiguration;
-        WebDav         *MyWebDav = Q_NULLPTR;
-        void            parseMeta(QDomElement element);
-        void            parseMetaData(QDomElement element);
-        void            parseLayout(QDomElement layout);
-        void            parseRootLayout(QDomElement root_layout);
-        void            parseRegions(QDomNodeList childs);
-        void            setRefreshTimer();
-        qreal           calculatePercentBasedOnRoot(QString value, qreal root);
-    protected slots:
-        void            sendSystemReport();
-        void            sendInventoryReport();
-        void            sendPlayLog();
-        void            sendEventLog();
-    signals:
-        void            checkForNewIndex();
+        QList<Region>         region_list;
+        TConfiguration       *MyConfiguration;
+
+        QScopedPointer<SubScription>    MySystemReport;
+        Reporting::SystemReportManager *MySystemReportManager;
+        void                 parseMeta(QDomElement element);
+        void                 parseMetaData(QDomElement element);
+        void                 parseLayout(QDomElement layout);
+        void                 parseRootLayout(QDomElement root_layout);
+        void                 parseRegions(QDomNodeList childs);
+        qreal                calculatePercentBasedOnRoot(QString value, qreal root);
 };
 
 #endif // HEAD_H

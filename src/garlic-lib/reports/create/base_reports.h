@@ -15,34 +15,31 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
+#ifndef REPORTING_BASE_H
+#define REPORTING_BASE_H
 
-#ifndef TREGION_H
-#define TREGION_H
+#include <QObject>
+#include <QDomDocument>
+#include <QDomElement>
+#include "tools/configuration.h"
 
-#include <QQuickItem> // interates QQmlComponent
-
-#include "head.h"
-#include "media/media_factory.h"
-
-class TRegion : public QQuickItem
+namespace Reporting
 {
-    Q_OBJECT
-public:
-    explicit TRegion(QObject *parent);
-    ~TRegion();
-    void                setRootSize(int w, int h);
-    void                setRegion(Region r, QQmlEngine *e);
-    void                startShowMedia(TMedia *media);
-    void                stopShowMedia();
+    class CreateBase : public QObject
+    {
+            Q_OBJECT
+        public:
+            explicit CreateBase(TConfiguration *config, QObject *parent = nullptr);
+            void     init();
 
-protected:
-    BaseMedia            *MyMedia = Q_NULLPTR;
-    QQmlComponent        *media_component, *rectangle;
-    QQuickItem           *root_item, *rectangle_item = NULL;
-    QQmlEngine           *engine;
-    qreal                 root_width_px, root_height_px = 0;
-    Region                region;
-    void                  resizeGeometry();
-};
+        protected:
+            TConfiguration       *MyConfiguration;
+            QDomDocument          document;
+            QDomElement           root, player;
+            QDomElement           createTagWithTextValue(QString tag_name, QString tag_value);
+            QDomElement           createPropTag(QString name, QString value);
 
-#endif // TREGION_H
+    };
+}
+
+#endif // REPORTING_BASE_H

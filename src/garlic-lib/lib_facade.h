@@ -28,34 +28,47 @@
     #include "system_infos/memory.h"
     #include "system_infos/general.h"
 #endif
-
+/**
+ * @brief The LibFacade class is the interface for a player component to the garlic parser
+ *
+ * It emits 4 signals:
+ * Two for begin an start a meida playback
+ *       void                startShowMedia(TMedia *media);
+ *       void                stopShowMedia(TMedia *media);
+ *
+ * and two for let the player component clear
+ *       void                newIndexLoaded();
+ *       void                newIndexPrepared(QList<Region> *region);
+ *
+ */
 class LibFacade : public QObject
 {
         Q_OBJECT
     public:
-        explicit LibFacade(TConfiguration *config, QObject *parent = nullptr);
+        explicit LibFacade(QObject *parent = nullptr);
         ~LibFacade();
         void               initIndex();
         TConfiguration    *getConfiguration() const;
         THead             *getHead() const;
-        void               beginSmilParsing();
+        void               beginSmilBodyParsing();
         TMedia            *getCurrentMedia();
+        void               prepareNewLoadedIndex();
 
     public slots:
         void               checkForNewSmilIndex();
         void               emitStartShowMedia(TMedia *media);
         void               emitStopShowMedia(TMedia *media);
-        void               emitNewIndex(QList<Region> *region);
+        void               emitNewIndexLoaded();
 
     protected:
         int                 timer_id;
-        TMedia             *current_media;
-        TConfiguration     *MyConfiguration = Q_NULLPTR;
-        IndexManager       *MyIndexManager  = Q_NULLPTR;
-        THead              *MyHead          = Q_NULLPTR;
-        TSmil              *MySmil          = Q_NULLPTR;
-        void                createParsingObjects();
-        void                deleteParsingObjects();
+        QScopedPointer<TConfiguration>  MyConfiguration;
+        QScopedPointer<MediaModel>      MyMediaModel;
+        QScopedPointer<DownloadQueue>   MyDownloadQueue;
+        QScopedPointer<IndexManager>    MyIndexManager ;
+        QScopedPointer<MediaManager>    MyMediaManager;
+        QScopedPointer<THead>           MyHead;
+        QScopedPointer<TSmil>           MySmil;
 #ifdef QT_DEBUG
         qint64               max_memory_used = 0;
         qint64               max_threads_used = 0;
@@ -66,9 +79,8 @@ class LibFacade : public QObject
     signals:
         void                startShowMedia(TMedia *media);
         void                stopShowMedia(TMedia *media);
-        void                newIndex(QList<Region> *region);
-    protected slots:
-        void setSmilIndex();
+        void                newIndexLoaded();
+        void                newIndexPrepared(QList<Region> *region);
 };
 
 #endif // LIB_FACADE_H

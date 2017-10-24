@@ -2,6 +2,7 @@
 #define BASE_MEDIA_H
 
 #include <QQuickItem> // interates QQmlComponent
+#include <QScopedPointer>
 #include "smilparser/media.h"
 
 #include <unistd.h>

@@ -48,8 +48,8 @@ protected:
     qreal                 root_width_px, root_height_px = 0;
     QString               actual_media = "";
     Region                region;
-    QHBoxLayout          *layout;
-    BaseMedia            *MyMedia = Q_NULLPTR;
+    QScopedPointer<QHBoxLayout>          layout;
+    QScopedPointer<BaseMedia>            MyMedia;
     void                  resizeGeometry();
 };
 

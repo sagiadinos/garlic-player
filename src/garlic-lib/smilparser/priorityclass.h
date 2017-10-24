@@ -26,7 +26,7 @@ class TPriorityClass : public TBase
 {
     Q_OBJECT
 public:
-    explicit TPriorityClass(QObject * parent = 0);
+    explicit TPriorityClass(QObject *parent = 0);
     ~TPriorityClass();
     bool                          parse(QDomElement dom_element);
     QString                       getPeers(){return peers;}

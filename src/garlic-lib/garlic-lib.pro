@@ -25,9 +25,9 @@ SOURCES += \
     files/index_model.cpp \
     files/media_manager.cpp \
     files/media_model.cpp \
+    files/network_access.cpp \
     files/webdav.cpp \
     files/wgt.cpp \
-    reports/system_report.cpp \
     smilparser/timings/clock_value.cpp \
     smilparser/timings/timing.cpp \
     smilparser/tools/shuffle.cpp \
@@ -54,10 +54,11 @@ SOURCES += \
     system_infos/memory.cpp \
     system_infos/network.cpp \
     system_infos/cpu.cpp \
-    reports/base_reports.cpp \
     system_infos/general.cpp \
     lib_facade.cpp \
-    files/network_access.cpp
+    reports/create/base_reports.cpp \
+    reports/create/system_report.cpp \
+    reports/system_report_manager.cpp
 
 HEADERS += \
     files/base_manager.h \
@@ -68,9 +69,9 @@ HEADERS += \
     files/index_model.h \
     files/media_manager.h \
     files/media_model.h \
+    files/network_access.h \
     files/webdav.h \
     files/wgt.h \
-    reports/system_report.h \
     smilparser/timings/clock_value.h \
     smilparser/timings/timing.h \
     smilparser/tools/shuffle.h \
@@ -97,8 +98,9 @@ HEADERS += \
     system_infos/memory.h \
     system_infos/network.h \
     system_infos/cpu.h \
-    reports/base_reports.h \
     system_infos/general.h \
     lib_facade.h \
-    files/network_access.h
+    reports/create/base_reports.h \
+    reports/create/system_report.h \
+    reports/system_report_manager.h
 

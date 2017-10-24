@@ -34,7 +34,6 @@ class TContainer : public TBaseTiming
 public:
     explicit TContainer(QObject *parent = Q_NULLPTR);
     virtual void                          next(TBaseTiming *ended_element) = 0;
-            void                          insertContainerObject(QString id, TBaseTiming *obj_element);
             QHash<QString, TBaseTiming *> getContainerObjects();
             QString                       getIdOfActiveElement();
     virtual bool                          isChildPlayable(TBaseTiming *element) = 0;
@@ -56,7 +55,6 @@ protected:
             TBaseTiming                  *played_element;
             QList<QDomElement>            dom_list;
             QList<QDomElement>::iterator  iterator;
-            QHash<QString, TBaseTiming *> ar_elements;
             QDomElement                   active_element;
             QString                       reactByTag();
             void                          setBaseContainerAttributes();

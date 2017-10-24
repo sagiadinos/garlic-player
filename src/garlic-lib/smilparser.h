@@ -33,14 +33,14 @@ class TSmil : public QObject
 public:
     explicit TSmil(MediaManager *mm, QObject *parent = Q_NULLPTR);
     ~TSmil();
-    void                               init();
     void                               clearLists();
     void                               beginSmilParsing(QDomElement body);
+    void                               stopAllPlayingMedia();
 protected:
     QDomElement                        parser;
     QString                            index_path;
-    TBody                             *MyBody;
-    QHash<QString, TBaseTiming *>      ar_elements;
+    QScopedPointer<TBody>              MyBody;
+    QHash<QString, TBaseTiming *>      all_elements_list;
     MediaManager                      *MyMediaManager;
 protected slots:
     void                               foundElement(TContainer *parent_container, QString type, QDomElement dom_element);
@@ -51,11 +51,9 @@ protected slots:
     void                               pausePlayingElement(TBaseTiming *element);
     void                               stopPlayingElement(TBaseTiming *element);
 private:
-    QSet<TBaseTiming *>                ar_played_media;
-    QHash<QString, TBaseTiming *>::iterator  insertIntoObjectContainer(TBaseTiming *parent_container, TBaseTiming *child_container);
+    QSet<TBaseTiming *>                current_played_media_list;
     void                               emitStartShowMedia(TMedia *media);
     void                               stopElement(TBaseTiming *element);
-    void                               killTimer(TBaseTiming *element);
     void                               emitStopShowMedia(TMedia *media);
     void                               connectMediaSlots(TMedia *media);
     void                               connectContainerSlots(TContainer *MyContainer);

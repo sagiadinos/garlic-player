@@ -27,9 +27,6 @@ TRegion::TRegion(QObject *parent)
 
 TRegion::~TRegion()
 {
-    delete rectangle;
-    delete rectangle_item;
-    delete media_component;
 }
 
 /**
@@ -51,25 +48,26 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
 {
     region = r;
     engine = e;
-    rectangle       = new QQmlComponent(engine);
-    media_component = new QQmlComponent(engine);
+    rectangle.reset(new QQmlComponent(engine));
+    media_component.reset(new QQmlComponent(engine));
+
     QString str("import QtQuick 2.7\nRectangle {color: \""+region.backgroundColor+"\"}");
-    rectangle->setData(str.toUtf8(), QUrl());
-    rectangle_item  = qobject_cast<QQuickItem *>(rectangle->create());
-    rectangle_item->setParentItem(root_item);
+    rectangle.data()->setData(str.toUtf8(), QUrl());
+
+    rectangle_item.reset(qobject_cast<QQuickItem *>(rectangle->create()));
+    rectangle_item.data()->setParentItem(root_item);
 }
 
 void TRegion::startShowMedia(TMedia *media)
 {
-    MyMedia  =  MediaFactory::createMedia(media);
-    MyMedia->init(media_component);
-    MyMedia->setParentItem(rectangle_item);
+    MyMedia.reset(MediaFactory::createMedia(media));
+    MyMedia.data()->init(media_component.data());
+    MyMedia.data()->setParentItem(rectangle_item.data());
 }
 
 void TRegion::stopShowMedia()
 {
-    delete MyMedia;
-    MyMedia = Q_NULLPTR;
+    // stop video/here here
 }
 
 void TRegion::resizeGeometry()
@@ -79,8 +77,8 @@ void TRegion::resizeGeometry()
     yr = (root_height_px*region.top);
     wr = (root_width_px*region.width*1);
     hr = (root_height_px*region.height*1);
-    rectangle_item->setX(xr);
-    rectangle_item->setY(yr);
-    rectangle_item->setWidth(wr);
-    rectangle_item->setHeight(hr);
+    rectangle_item.data()->setX(xr);
+    rectangle_item.data()->setY(yr);
+    rectangle_item.data()->setWidth(wr);
+    rectangle_item.data()->setHeight(hr);
 }
