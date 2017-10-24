@@ -18,7 +18,7 @@ Garlic actually is able to play local and remote (via http) SMIL Files with actu
 Compilations tested with:
  - Kde Neon Ubuntu 16.04 based (Attention when using QtMultimedia cause gstreamer 1.8 seems to have a mem leak)
  - Debian 8 Jessie
- - Rasperian Jessie/Stretch (rpi2/rpi3 without video hw acceleration) 
+ - Rasperian Jessie/Stretch (rpi-zero/rpi2/rpi3 with poor video hw acceleration) 
  - Tinker Board (Linaro OS 1.8) 
  - Android armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2 and 7.0)
  - Windows 7 i64 (VS2015 Community Version)
