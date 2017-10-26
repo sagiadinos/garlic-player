@@ -51,7 +51,7 @@ class MainWindow : public QQuickView
         const int                 BIGFULLSCREEN = 2;
 
         LibFacade                *MyLibFacade      = Q_NULLPTR;
-        TScreen                 *MyScreen;
+        TScreen                  *MyScreen;
         QMap<QString, TRegion *>  ar_regions;
         QSize                     mainwindow_size;
         int                       screen_state, num_touched = 0;

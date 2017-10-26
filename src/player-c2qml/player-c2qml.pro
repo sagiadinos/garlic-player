@@ -18,7 +18,7 @@ support_qtav {
     QT      += av
 }
 
-DEFINES += QUAZIP_STATIC
+DEFINES += QT_DEPRECATED_WARNINGS QUAZIP_STATIC
 
 TARGET = garlic-player
 TEMPLATE = app

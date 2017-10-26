@@ -40,7 +40,7 @@ which make it useable for a continous playing media player.
 Arguments:
 SMIL_INDEX        Path to SMIL index
 
-Binaries (Linux/Windows) of v0.1.0 can be downloaded at http://garlic-player.com
+Binaries (Linux/Windows) of v0.1.0 can be downloaded at [garlic-player.com](https://garlic-player.com)
 
 ## Features
  - Support for multiple screens

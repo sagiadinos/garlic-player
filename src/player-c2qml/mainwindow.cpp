@@ -42,26 +42,6 @@ MainWindow::~MainWindow()
     deleteRegionsAndLayouts(); // region must be deleted at last, cause media pointer had to be deleted
 }
 
-void MainWindow::deleteRegionsAndLayouts()
-{
-    qDeleteAll(ar_regions);
-    ar_regions.clear();
-    MyLibFacade->prepareNewLoadedIndex();
-}
-
-void MainWindow::setRegions(QList<Region> *region_list)
-{
-//    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
-    QMap<QString, TRegion *>::iterator j;
-    for (int i = 0; i < region_list->length(); i++)
-    {
-        j = ar_regions.insert(region_list->at(i).regionName, new TRegion(rootObject()));
-        ar_regions[j.key()]->setRegion(region_list->at(i), engine());
-        ar_regions[j.key()]->setRootSize(width(), height());
-    }
-    qDebug() << ar_regions.size() << " regions are created ";
-    MyLibFacade->beginSmilBodyParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
-}
 
 QString MainWindow::selectRegion(QString region_name)
 {
@@ -189,6 +169,27 @@ void MainWindow::resizeEvent(QResizeEvent * event)
 
 
 // =================== protected slots ====================================
+
+void MainWindow::deleteRegionsAndLayouts()
+{
+    qDeleteAll(ar_regions);
+    ar_regions.clear();
+    MyLibFacade->prepareNewLoadedIndex();
+}
+
+void MainWindow::setRegions(QList<Region> *region_list)
+{
+//    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
+    QMap<QString, TRegion *>::iterator j;
+    for (int i = 0; i < region_list->length(); i++)
+    {
+        j = ar_regions.insert(region_list->at(i).regionName, new TRegion(rootObject()));
+        ar_regions[j.key()]->setRegion(region_list->at(i), engine());
+        ar_regions[j.key()]->setRootSize(width(), height());
+    }
+    qDebug() << ar_regions.size() << " regions are created ";
+    MyLibFacade->beginSmilBodyParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+}
 
 void MainWindow::startShowMedia(TMedia *media)
 {

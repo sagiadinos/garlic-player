@@ -20,7 +20,7 @@ support_qtav {
     QT += multimedia multimediawidgets
 }
 
-DEFINES += QUAZIP_STATIC
+DEFINES += QT_DEPRECATED_WARNINGS QUAZIP_STATIC
 
 TARGET = garlic-player
 TEMPLATE = app
@@ -61,10 +61,3 @@ win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
     Debug:LIBS += -L../lib -lgarlic -lquazipd -lzlib
 }
-
-DISTFILES +=
-
-SUBDIRS += \
-    player-widget.pro
-
-FORMS +=
