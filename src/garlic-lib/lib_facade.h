@@ -80,7 +80,6 @@ class LibFacade : public QObject
         void                startShowMedia(TMedia *media);
         void                stopShowMedia(TMedia *media);
         void                newIndexLoaded();
-        void                newIndexPrepared(QList<Region> *region);
 };
 
 #endif // LIB_FACADE_H

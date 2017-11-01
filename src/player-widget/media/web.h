@@ -12,14 +12,15 @@ class Web : public BaseMedia
 {
         Q_OBJECT
     public:
-        Web(TMedia *media, QObject *parent = nullptr);
+        Web(QObject *parent = nullptr);
         ~Web();
-        void            init();
+        void            init(TMedia *media);
+        void            deinit();
         void            changeSize(int w, int h);
         QWidget        *getView();
     protected:
-        TWeb             *MyWeb;
-        QWebEngineView   *browser;
+        TWeb           *ParserWeb;
+        QWebEngineView  *browser; // needed when opointer deleteLater not to crash
 };
 
 #endif // WEB_H

@@ -17,43 +17,51 @@
 *************************************************************************************/
 #include "video.h"
 
-Video::Video(TMedia *media, QObject *parent) : BaseMedia(parent)
+Video::Video(QObject *parent) : BaseMedia(parent)
 {
-    MyVideo  = qobject_cast<TVideo *>(media);
-    connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
+    MediaDecoder.reset(new MediaDecoderWrapper(this));
+    connect(MediaDecoder.data(), SIGNAL(finished()), this, SLOT(finished()));
+
+    VideoWidget.reset(new MediaViewWrapper);
+    MediaDecoder.data()->setVideoOutput(VideoWidget.data());
 }
 
 Video::~Video()
 {
-    MediaDecoder.unload();
-    delete VideoWidget;
+    MediaDecoder.reset();
+    VideoWidget.reset();
 }
 
-void Video::init()
+void Video::init(TMedia *media)
 {
-   VideoWidget    = new MediaViewWrapper;
-   MediaDecoder.setVideoOutput(VideoWidget);
-   MediaDecoder.load(MyVideo->getLoadablePath());
-   MediaDecoder.play();
+   ParserVideo  = qobject_cast<TVideo *>(media);
+   MediaDecoder.data()->load(ParserVideo->getLoadablePath());
+   MediaDecoder.data()->play();}
+
+void Video::deinit()
+{
+    MediaDecoder.data()->stop();
+    MediaDecoder.data()->unload();
 }
+
 
 void Video::changeSize(int w, int h)
 {
     Q_UNUSED(w);Q_UNUSED(h)
-    if (MyVideo->getFit() == "fill")
-        VideoWidget->setAspectRatioFill();
-    else if (MyVideo->getFit() == "meet")
-        VideoWidget->setAspectRatioMeet();
-    else if (MyVideo->getFit() == "meetbest")
-        VideoWidget->setAspectRatioMeetBest();
+    if (ParserVideo->getFit() == "fill")
+        VideoWidget.data()->setAspectRatioFill();
+    else if (ParserVideo->getFit() == "meet")
+        VideoWidget.data()->setAspectRatioMeet();
+    else if (ParserVideo->getFit() == "meetbest")
+        VideoWidget.data()->setAspectRatioMeetBest();
 }
 
 QWidget *Video::getView()
 {
-    return VideoWidget->getVideoWidget();
+    return VideoWidget.data()->getVideoWidget();
 }
 
 void Video::finished()
 {
-   MyVideo->finishedSimpleDuration();
+   ParserVideo->finishedSimpleDuration();
 }

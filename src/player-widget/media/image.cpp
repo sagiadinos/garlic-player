@@ -17,39 +17,43 @@
 *************************************************************************************/
 #include "media/image.h"
 
-Image::Image(TMedia *media, QObject *parent) : BaseMedia(parent)
+Image::Image(QObject *parent) : BaseMedia(parent)
 {
-    ParserImage  = qobject_cast<TImage *>(media);
+    ImageWidget.reset(new QLabel);
 }
 
 Image::~Image()
 {
-    loaded_image.load("");
-    delete ImageWidget;
 }
 
-void Image::init()
+void Image::init(TMedia *media)
 {
-    QString path = ParserImage->getLoadablePath();
+    ParserImage = qobject_cast<TImage *>(media);
+
+    QString path = media->getLoadablePath();
     loaded_image.load(path);
-    ImageWidget    = new QLabel;
-    ImageWidget->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ImageWidget->setPixmap(loaded_image);
+    ImageWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    ImageWidget.data()->setPixmap(loaded_image);
+}
+
+void Image::deinit()
+{
+    loaded_image.load("");
 }
 
 void Image::changeSize(int w, int h)
 {
     if (ParserImage->getFit() == "fill")
-       ImageWidget->setPixmap(loaded_image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+       ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     else if (ParserImage->getFit() == "meet")
-        ImageWidget->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
     else if (ParserImage->getFit() == "meetbest")
-        ImageWidget->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     else
-        ImageWidget->setPixmap(loaded_image);
+        ImageWidget.data()->setPixmap(loaded_image);
 }
 
 QWidget *Image::getView()
 {
-    return ImageWidget;
+    return ImageWidget.data();
 }

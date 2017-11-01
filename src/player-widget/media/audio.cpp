@@ -17,23 +17,28 @@
 *************************************************************************************/
 #include "audio.h"
 
-Audio::Audio(TMedia *media, QObject *parent) : BaseMedia(parent)
+Audio::Audio( QObject *parent) : BaseMedia(parent)
 {
-    MyAudio  = qobject_cast<TAudio *>(media);
-    connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
+    MediaDecoder.reset(new MediaDecoderWrapper(this));
+    connect(MediaDecoder.data(), SIGNAL(finished()), this, SLOT(finished()));
 }
 
 Audio::~Audio()
 {
-    MediaDecoder.unload();
 }
 
-void Audio::init()
+void Audio::init(TMedia *media)
 {
-    MediaDecoder.load(MyAudio->getLoadablePath());
-    MediaDecoder.play();
+    ParserAudio  = qobject_cast<TAudio *>(media);
+    MediaDecoder.data()->load(ParserAudio->getLoadablePath());
+    MediaDecoder.data()->play();
 }
 
+void Audio::deinit()
+{
+    MediaDecoder.data()->stop();
+    MediaDecoder.data()->unload();
+}
 
 void Audio::changeSize(int w, int h)
 {
@@ -48,5 +53,5 @@ QWidget *Audio::getView()
 
 void Audio::finished()
 {
-   MyAudio->finishedSimpleDuration();
+   ParserAudio->finishedSimpleDuration();
 }

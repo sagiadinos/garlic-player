@@ -27,7 +27,7 @@ public:
 signals:
 protected:
 #ifdef SUPPORT_QTAV
-    QScopedPointer<QtAV::WidgetRenderer> VideoWidget;
+    QScopedPointer<QtAV::WidgetRenderer> VideoWidget;  // a deleteLater leads to a crash on playlistchange!
 #else
     QScopedPointer<QVideoWidget>         VideoWidget;
 #endif

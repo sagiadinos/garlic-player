@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QMap>
 
-#include "configuration.h"
+#include "tools/configuration.h"
 #include "download_queue.h"
 #include "disc_space.h"
 #include "files/wgt.h"

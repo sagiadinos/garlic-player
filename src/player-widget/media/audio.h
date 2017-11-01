@@ -11,14 +11,15 @@ class Audio : public BaseMedia
 {
         Q_OBJECT
     public:
-        explicit Audio(TMedia *media, QObject *parent = nullptr);
+        explicit Audio(QObject *parent = nullptr);
         ~Audio();
-        void          init();
+        void          init(TMedia *media);
+        void          deinit();
         QWidget      *getView();
         void          changeSize(int w, int h);
     protected:
-        TAudio               *MyAudio;
-        MediaDecoderWrapper   MediaDecoder;
+        TAudio               *ParserAudio;
+        QScopedPointer<MediaDecoderWrapper, QScopedPointerDeleteLater>   MediaDecoder;
     protected slots:
         void                  finished();
 };

@@ -49,7 +49,8 @@ protected:
     QString               actual_media = "";
     Region                region;
     QScopedPointer<QHBoxLayout>          layout;
-    QScopedPointer<BaseMedia>            MyMedia;
+    BaseMedia             *MyMedia = Q_NULLPTR;
+    MediaFactory          MyMediaFactory;
     void                  resizeGeometry();
 };
 

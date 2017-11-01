@@ -19,20 +19,35 @@
 
 MediaFactory::MediaFactory(QObject *parent) : QObject(parent)
 {
-
+    MyImage.reset(new Image(this));
+    MyVideo.reset(new Video(this));
+    MyAudio.reset(new Audio(this));
+    MyWeb.reset(new Web(this));
 }
 
-BaseMedia *MediaFactory::createMedia(TMedia *media, QObject *parent)
+BaseMedia *MediaFactory::initMedia(TMedia *media)
 {
     QString type   = media->objectName();
     if (type == "TImage")
-        return new Image(media, parent);
+    {
+        MyImage.data()->init(media);
+        return MyImage.data();
+    }
     else if (type == "TVideo")
-        return new Video(media, parent);
+    {
+        MyVideo.data()->init(media);
+        return MyVideo.data();
+    }
     else if (type == "TAudio")
-        return new Audio(media, parent);
+    {
+        MyAudio.data()->init(media);
+        return MyAudio.data();
+    }
     else if (type == "TWeb")
-        return new Web(media, parent);
+    {
+        MyWeb.data()->init(media);
+        return MyWeb.data();
+    }
     else
         return Q_NULLPTR;
 }

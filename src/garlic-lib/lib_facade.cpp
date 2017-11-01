@@ -105,8 +105,6 @@ void LibFacade::prepareNewLoadedIndex()
 
     connect(MySmil.data(), SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
     connect(MySmil.data(), SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
-
-    emit newIndexPrepared(MyHead->getLayout());
 }
 
 void LibFacade::emitStartShowMedia(TMedia *media)
@@ -121,5 +119,11 @@ void LibFacade::emitStopShowMedia(TMedia *media)
 
 void LibFacade::emitNewIndexLoaded()
 {
+    // to make sure player component cannot get signals
+    if (!MySmil.isNull())
+    {
+        disconnect(MySmil.data(), SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
+        disconnect(MySmil.data(), SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
+    }
     emit newIndexLoaded();
 }

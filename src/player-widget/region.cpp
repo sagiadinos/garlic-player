@@ -25,11 +25,11 @@ TRegion::TRegion(QWidget *parent) : QWidget(parent)
     layout.reset(new QHBoxLayout(this));
     layout.data()->setMargin(0);
     setLayout(layout.data());
-}
+ }
 
 TRegion::~TRegion()
 {
-  // delete media is not neccessary here, cause there get stop signal from garlic-lib directly and deleted in stopShowMedia
+    stopShowMedia();
 }
 
 void TRegion::paintEvent(QPaintEvent *event)
@@ -43,14 +43,14 @@ void TRegion::paintEvent(QPaintEvent *event)
 
 void TRegion::startShowMedia(TMedia *media)
 {
-    MyMedia.reset(MediaFactory::createMedia(media));
-    MyMedia.data()->init();
-    layout->addWidget(MyMedia.data()->getView());
+    MyMedia = MyMediaFactory.initMedia(media);
+    layout->addWidget(MyMedia->getView());
 }
 
 void TRegion::stopShowMedia()
 {
-    layout.data()->removeWidget(MyMedia.data()->getView());
+    layout.data()->removeWidget(MyMedia->getView());
+    MyMedia->deinit();
 }
 
 /**
@@ -82,7 +82,7 @@ void TRegion::resizeGeometry()
     wr = (root_width_px*region.width*1);
     hr = (root_height_px*region.height*1);
     setGeometry(qRound(xr), qRound(yr), qRound(wr), qRound(hr));
-    if (!MyMedia.isNull())
+    if (MyMedia != Q_NULLPTR)
         MyMedia->changeSize(qRound(wr), qRound(hr));
 }
 

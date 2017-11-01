@@ -20,7 +20,7 @@
 
 #include <QObject>
 #include "../ext/quazip/JlCompress.h"
-#include <logging_categories.h>
+#include "tools/logging_categories.h"
 #include "disc_space.h"
 
 class Wgt : public QObject

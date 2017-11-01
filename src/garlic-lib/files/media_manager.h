@@ -21,7 +21,7 @@
 #include <QObject>
 #include "base_manager.h"
 #include "media_model.h"
-#include "configuration.h"
+#include "tools/configuration.h"
 #include "download_queue.h"
 
 /**

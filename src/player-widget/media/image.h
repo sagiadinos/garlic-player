@@ -10,16 +10,16 @@
     class Image : public BaseMedia
     {
             Q_OBJECT
-        public:
-            explicit      Image(TMedia *media, QObject *parent = nullptr);
+        public:            explicit      Image(QObject *parent = nullptr);
             ~Image();
-            void          init();
+            void          init(TMedia *media);
+            void          deinit();
             void          changeSize(int w, int h);
             QWidget      *getView();
         protected:
-            TImage        *ParserImage;
-            QPixmap        loaded_image;
-            QLabel        *ImageWidget;
+            TImage                 *ParserImage;
+            QPixmap                 loaded_image;
+            QScopedPointer<QLabel, QScopedPointerDeleteLater>  ImageWidget;
     };
 
 

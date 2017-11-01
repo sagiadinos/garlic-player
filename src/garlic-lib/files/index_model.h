@@ -22,7 +22,7 @@
 #include <QFile>
 #include <QDomDocument>
 #include <QDomElement>
-#include "logging_categories.h"
+#include "tools/logging_categories.h"
 
 class IndexModel : public QObject
 {

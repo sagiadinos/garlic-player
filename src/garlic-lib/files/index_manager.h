@@ -22,8 +22,8 @@
 #include <QTimerEvent>
 #include "base_manager.h"
 #include "index_model.h"
-#include "configuration.h"
-#include "downloader.h"
+#include "tools/configuration.h"
+#include "files/downloader.h"
 
 class IndexManager : public BaseManager
 {

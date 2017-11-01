@@ -12,10 +12,16 @@ class MediaFactory : public QObject
         Q_OBJECT
     public:
         explicit MediaFactory(QObject *parent = nullptr);
-        static   BaseMedia *createMedia(TMedia *media, QObject *parent = nullptr);
+        BaseMedia *initMedia(TMedia *media);
+
     signals:
 
     public slots:
+
+    protected:
+        QScopedPointer<BaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb;
+
+
 };
 
 #endif // MEDIA_FACTORY_H

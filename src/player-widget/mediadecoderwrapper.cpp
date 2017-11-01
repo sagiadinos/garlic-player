@@ -4,8 +4,9 @@ MediaDecoderWrapper::MediaDecoderWrapper(QObject *parent) : QObject(parent)
 {
 #ifdef SUPPORT_QTAV
     MediaDecoder.reset(new QtAV::AVPlayer(this));
-   connect(MediaDecoder.data(), SIGNAL(mediaStatusChanged(QtAV::MediaStatus)), this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
-//    connect(MediaDecoder.data(), SIGNAL(error(QtAV::AVError)), this, SLOT(displayErrorMessage(QtAV::AVError)));
+    MediaDecoder.data()->audio()->setBufferSamples(64); // prevent stuttering
+    connect(MediaDecoder.data(), SIGNAL(mediaStatusChanged(QtAV::MediaStatus)), this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
+    connect(MediaDecoder.data(), SIGNAL(error(QtAV::AVError)), this, SLOT(displayErrorMessage(QtAV::AVError)));
 #else
     MediaDecoder.reset(new QMediaPlayer(this));
     connect(MediaDecoder.data(), SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus)));
@@ -41,20 +42,20 @@ void MediaDecoderWrapper::removeVideoOutput(MediaViewWrapper *renderer)
 
 bool MediaDecoderWrapper::load(QString file_path)
 {
-    actual_media_path = file_path;
+    current_media_path = file_path;
 #ifdef SUPPORT_QTAV
     MediaDecoder.data()->setAsyncLoad(false);
-    MediaDecoder.data()->setFile(actual_media_path);
+    MediaDecoder.data()->setFile(current_media_path);
     return MediaDecoder.data()->load();
 #else
-    MediaDecoder.data()->setMedia(QMediaContent(QUrl::fromLocalFile(actual_media_path)));
+    MediaDecoder.data()->setMedia(QMediaContent(QUrl::fromLocalFile(current_media_path)));
     return (MediaDecoder.data()->mediaStatus() != QMediaPlayer::NoMedia && MediaDecoder.data()->mediaStatus() != QMediaPlayer::InvalidMedia);
 #endif
 }
 
 void MediaDecoderWrapper::unload()
 {
-    actual_media_path = "";
+    current_media_path = "";
 #ifdef SUPPORT_QTAV
     MediaDecoder.data()->setFile("");
 #else
@@ -69,31 +70,32 @@ void MediaDecoderWrapper::onMediaStatusChanged(QtAV::MediaStatus status)
      switch (status)
     {
         case UnknownMediaStatus:
-            qWarning(MediaPlayer) << "Unknown media status! Media:" << actual_media_path;
+            qWarning(MediaPlayer) << "Unknown media status! Media:" << current_media_path;
             break;
         case QtAV::NoMedia:
-            qWarning(MediaPlayer) << "No Media " << actual_media_path;
+            qWarning(MediaPlayer) << "No Media " << current_media_path;
             break;
         case QtAV::LoadedMedia:
-            qInfo(MediaPlayer) << "Loaded media " << actual_media_path;
+            qInfo(MediaPlayer) << "Loaded media " << current_media_path;
             break;
         case QtAV::BufferedMedia:
-            qInfo(MediaPlayer) << "Buffered media " << actual_media_path;
+            qInfo(MediaPlayer) << "Buffered media " << current_media_path;
             break;
         case QtAV::BufferingMedia:
-            qInfo(MediaPlayer) << "Buffering media " << actual_media_path;
+            qInfo(MediaPlayer) << "Buffering media " << current_media_path;
             break;
         case QtAV::LoadingMedia:
-            qInfo(MediaPlayer) << "Loading media " << actual_media_path;
+            qInfo(MediaPlayer) << "Loading media " << current_media_path;
             break;
         case QtAV::StalledMedia:
-            qWarning(MediaPlayer) << "Stalled media " << actual_media_path;
+            qWarning(MediaPlayer) << "Stalled media " << current_media_path;
             break;
         case QtAV::EndOfMedia:
+             qInfo(MediaPlayer) << "End of media " << current_media_path;
             emit finished();
             break;
         case QtAV::InvalidMedia:
-            qWarning(MediaPlayer) << "invalid Media " << actual_media_path;
+            qWarning(MediaPlayer) << "invalid Media " << current_media_path;
             break;
     }
 }
@@ -111,32 +113,32 @@ void MediaDecoderWrapper::onMediaStatusChanged(QMediaPlayer::MediaStatus status)
     switch (status)
     {
         case QMediaPlayer::UnknownMediaStatus:
-            qWarning(MediaPlayer) << "Unknown media status! Media:" << actual_media_path;
+            qWarning(MediaPlayer) << "Unknown media status! Media:" << current_media_path;
             break;
         case QMediaPlayer::NoMedia:
-            qWarning(MediaPlayer) << "No Media " << actual_media_path;
+            qWarning(MediaPlayer) << "No Media " << current_media_path;
             break;
         case QMediaPlayer::LoadedMedia:
-            qInfo(MediaPlayer) << "Loaded media " << actual_media_path;
+            qInfo(MediaPlayer) << "Loaded media " << current_media_path;
             break;
         case QMediaPlayer::BufferedMedia:
-            qInfo(MediaPlayer) << "Buffered media " << actual_media_path;
+            qInfo(MediaPlayer) << "Buffered media " << current_media_path;
             break;
         case QMediaPlayer::BufferingMedia:
-            qInfo(MediaPlayer) << "Buffering media " << actual_media_path;
+            qInfo(MediaPlayer) << "Buffering media " << current_media_path;
             break;
         case QMediaPlayer::LoadingMedia:
-            qInfo(MediaPlayer) << "Loading media " << actual_media_path;
+            qInfo(MediaPlayer) << "Loading media " << current_media_path;
             break;
         case QMediaPlayer::StalledMedia:
-            qWarning(MediaPlayer) << "Stalled media " << actual_media_path;
+            qWarning(MediaPlayer) << "Stalled media " << current_media_path;
             break;
         case QMediaPlayer::EndOfMedia:
-            qInfo(MediaPlayer) << "End of media " << actual_media_path;
+            qInfo(MediaPlayer) << "End of media " << current_media_path;
             emit finished();
             break;
         case QMediaPlayer::InvalidMedia:
-            qWarning(MediaPlayer) << "invalid Media " << actual_media_path;
+            qWarning(MediaPlayer) << "invalid Media " << current_media_path;
             break;
     }
 }
@@ -152,4 +154,9 @@ void MediaDecoderWrapper::displayErrorMessage()
 void MediaDecoderWrapper::play()
 {
     MediaDecoder.data()->play();
+}
+
+void MediaDecoderWrapper::stop()
+{
+    MediaDecoder.data()->stop();
 }

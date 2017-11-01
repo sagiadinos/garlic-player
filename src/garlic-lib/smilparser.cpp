@@ -220,7 +220,6 @@ void TSmil::stopElement(TBaseTiming *element)
     return;
 }
 
-
 void TSmil::connectContainerSlots(TContainer *MyContainer)
 {
     connect(MyContainer, SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));

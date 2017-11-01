@@ -11,7 +11,7 @@
 
 #include <QObject>
 #include "mediaviewwrapper.h"
-#include "logging_categories.h"
+#include "tools/logging_categories.h"
 
 class MediaDecoderWrapper : public QObject
 {
@@ -28,13 +28,14 @@ signals:
     void                finished();
 public slots:
     void                play();
+    void                stop();
 
 protected:
-    QString             actual_media_path;
+    QString             current_media_path;
 #ifdef SUPPORT_QTAV
-   QScopedPointer<QtAV::AVPlayer>  MediaDecoder;
+   QScopedPointer<QtAV::AVPlayer, QScopedPointerDeleteLater>  MediaDecoder;
 #else
-    QScopedPointer<QMediaPlayer>   MediaDecoder;
+    QScopedPointer<QMediaPlayer, QScopedPointerDeleteLater>   MediaDecoder;
 #endif
 
 protected slots:

@@ -12,15 +12,16 @@ class Video : public BaseMedia
 {
         Q_OBJECT
     public:
-        Video(TMedia *media, QObject *parent = nullptr);
+        Video(QObject *parent = nullptr);
         ~Video();
-        void              init();
+        void              init(TMedia *media);
+        void              deinit();
         void              changeSize(int w, int h);
         QWidget          *getView();
     protected:
-        TVideo    *MyVideo;
-        MediaViewWrapper     *VideoWidget;
-        MediaDecoderWrapper   MediaDecoder;
+        TVideo           *ParserVideo;
+        QScopedPointer<MediaViewWrapper>     VideoWidget;
+        QScopedPointer<MediaDecoderWrapper, QScopedPointerDeleteLater>   MediaDecoder;
     protected slots:
         void                  finished();
 };

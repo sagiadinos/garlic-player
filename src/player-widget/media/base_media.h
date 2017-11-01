@@ -10,7 +10,8 @@
             Q_OBJECT
         public:
             explicit BaseMedia(QObject *parent = nullptr);
-            virtual void          init()   = 0;
+            virtual void          init(TMedia *media)   = 0;
+            virtual void          deinit() = 0;
             virtual QWidget      *getView()= 0;
             virtual void          changeSize(int w, int h) = 0;
 

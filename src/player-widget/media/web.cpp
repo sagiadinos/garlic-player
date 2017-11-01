@@ -17,24 +17,34 @@
 *************************************************************************************/
 #include "web.h"
 
-Web::Web(TMedia *media, QObject *parent) : BaseMedia(parent)
+Web::Web(QObject *parent) : BaseMedia(parent)
 {
-    MyWeb  = qobject_cast<TWeb *>(media);
-
+    browser = new QWebEngineView;
 }
 
 Web::~Web()
 {
-    delete browser;
+    // FIX THIS! delete or deleteLater for browser crashes,
+    // when playliste changed and browser was used method init/deinit
+    // it crashes even as stack variable or QScopedPointer
+    // do nothing is scrappy, but QwebEngineView anyway seems to have memory leaks
+
+    // Info: delete crashes cause this destructor invoked two times
+    // deleteLater crashes someone else deep in assembler
+
+//    Debug() << "delete browser";
+//  delete  browser;
 }
 
-void Web::init()
+void Web::init(TMedia *media)
 {
-    browser      = new QWebEngineView;
-    QUrl url(MyWeb->getLoadablePath());
+    QUrl url(media->getLoadablePath());
     browser->load(url);
-    browser->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled,true);
-    browser->settings()->setAttribute(QWebEngineSettings::PluginsEnabled,true);
+}
+
+void Web::deinit()
+{
+    browser->load(QUrl(""));
 }
 
 void Web::changeSize(int w, int h)
