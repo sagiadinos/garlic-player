@@ -8,9 +8,10 @@
     {
             Q_OBJECT
         public:
-            explicit      Image(TMedia *media, QObject *parent = nullptr);
+            explicit      Image(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
             ~Image();
-            void          init(QQmlComponent *mc);
+            void          init(TMedia *media);
+            void          deinit();
             void          setParentItem(QQuickItem *parent);
         protected:
             TImage     *MyImage;

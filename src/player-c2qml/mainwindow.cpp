@@ -25,8 +25,7 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     MyLibFacade            = lib_facade;
     connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
-    connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(deleteRegionsAndLayouts()));
-    connect(MyLibFacade, SIGNAL(newIndexPrepared(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
+    connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
 
 #ifdef SUPPORT_QTAV
     setSource(QUrl(QStringLiteral("qrc:/root_qtav.qml")));
@@ -39,17 +38,17 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 
 MainWindow::~MainWindow()
 {
-    deleteRegionsAndLayouts(); // region must be deleted at last, cause media pointer had to be deleted
+    prepareParsing(); // region must be deleted at last, cause media pointer had to be deleted
 }
 
 
 QString MainWindow::selectRegion(QString region_name)
 {
     QMap<QString, TRegion *>::iterator i;
-    if (!ar_regions.contains(region_name))
-        i = ar_regions.begin();
+    if (!regions_list.contains(region_name))
+        i = regions_list.begin();
     else
-       i = ar_regions.find(region_name);
+       i = regions_list.find(region_name);
     return i.key();
 }
 
@@ -158,57 +157,67 @@ QSize MainWindow::getMainWindowSize()
 
 void MainWindow::resizeEvent(QResizeEvent * event)
 {
-    if (ar_regions.size() > 0)
+    if (regions_list.size() > 0)
     {
         Q_UNUSED(event);
         QMap<QString, TRegion *>::iterator i;
-        for (i = ar_regions.begin(); i != ar_regions.end(); ++i)
-            ar_regions[i.key()]->setRootSize(width(), height());
+        for (i = regions_list.begin(); i != regions_list.end(); ++i)
+            regions_list[i.key()]->setRootSize(width(), height());
     }
 }
 
-
-// =================== protected slots ====================================
-
-void MainWindow::deleteRegionsAndLayouts()
+void MainWindow::createRegions()
 {
-    qDeleteAll(ar_regions);
-    ar_regions.clear();
-    MyLibFacade->prepareNewLoadedIndex();
-}
-
-void MainWindow::setRegions(QList<Region> *region_list)
-{
+    QList<Region> *region_list = MyLibFacade->getHead()->getLayout();
 //    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
     QMap<QString, TRegion *>::iterator j;
     for (int i = 0; i < region_list->length(); i++)
     {
-        j = ar_regions.insert(region_list->at(i).regionName, new TRegion(rootObject()));
-        ar_regions[j.key()]->setRegion(region_list->at(i), engine());
-        ar_regions[j.key()]->setRootSize(width(), height());
+        j = regions_list.insert(region_list->at(i).regionName, new TRegion(rootObject()));
+        regions_list[j.key()]->setRegion(region_list->at(i), engine());
+        regions_list[j.key()]->setRootSize(width(), height());
     }
-    qDebug() << ar_regions.size() << " regions are created ";
-    MyLibFacade->beginSmilBodyParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+    qDebug() << regions_list.size() << " regions are created ";
 }
+
+void MainWindow::deleteRegions()
+{
+    int size = regions_list.size();
+    qDeleteAll(regions_list);
+    regions_list.clear();
+    qDebug() << size << " region(s) deleted";
+}
+
+// =================== protected slots ====================================
+
+void MainWindow::prepareParsing()
+{
+    deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
+    MyLibFacade->prepareNewLoadedIndex();
+    createRegions();
+    MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+}
+
 
 void MainWindow::startShowMedia(TMedia *media)
 {
-    if (ar_regions.size() == 0)
+    if (regions_list.size() == 0)
         return;
 
     QString region_name = selectRegion(media->getRegion());
 
-    ar_regions[region_name]->startShowMedia(media);
-    ar_regions[region_name]->setRootSize(width(), height());
+    regions_list[region_name]->startShowMedia(media);
+    regions_list[region_name]->setRootSize(width(), height());
     return;
 }
 
 void MainWindow::stopShowMedia(TMedia *media)
-{    if (ar_regions.size() == 0)
+{
+    if (regions_list.size() == 0)
         return;
 
     QString region_name = selectRegion(media->getRegion());
-    ar_regions[region_name]->stopShowMedia();
+    regions_list[region_name]->stopShowMedia();
     return;
 }
 

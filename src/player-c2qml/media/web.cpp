@@ -1,26 +1,33 @@
 #include "web.h"
 
-Web::Web(TMedia *media, QObject *parent) : BaseMedia(parent)
+Web::Web(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r_id, parent)
 {
-    // should stay a raw pointer cause it belongs to Parser
-    MyWeb = qobject_cast<TWeb *>(media);
+    setRegionId(r_id);
+    QString str("import QtQuick 2.7\n \
+                 import QtWebView 1.1\n \
+                    WebView {\n \
+                        id: "+getRegionId()+"_web;\n \
+                        anchors.fill: parent;\n \
+                   }\n"
+    );
+    web_item.reset(createMediaItem(mc, str));
 }
 
 Web::~Web()
 {
-
+    web_item.reset();
 }
 
-void Web::init(QQmlComponent *mc)
+void Web::init(TMedia *media)
 {
-    QString str("import QtQuick 2.7\n \
-                 import QtWebView 1.1\n \
-                    WebView {\n \
-                        anchors.fill: parent;\n \
-                        url: \""+MyWeb->getLoadablePath()+"\";\n \
-                   }\n"
-    );
-    web_item.reset(createMediaItem(mc, str));
+    MyWeb = qobject_cast<TWeb *>(media);
+    QString source = MyWeb->getLoadablePath();
+    web_item.data()->setProperty("url", source);
+}
+
+void Web::deinit()
+{
+    web_item.data()->setProperty("source", "");
 }
 
 void Web::setParentItem(QQuickItem *parent)

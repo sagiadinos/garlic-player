@@ -11,12 +11,16 @@
     {
             Q_OBJECT
         public:
-            explicit BaseMedia(QObject *parent = nullptr);
-            virtual void          init(QQmlComponent *mc)   = 0;
+            explicit BaseMedia(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
+            virtual void          init(TMedia *media)   = 0;
+            virtual void          deinit()   = 0;
             virtual void          setParentItem(QQuickItem *parent)   = 0;
-        protected:
-            QQuickItem           *createMediaItem(QQmlComponent *mc, QString str);
+            QString               getRegionId() const;
+            void                  setRegionId(const QString &value);
+
+    protected:
+        QString               region_id;
+        QQuickItem           *createMediaItem(QQmlComponent *mc, QString str);
             QString               determineQmlFillMode(QString fill_mode);
-            qint64                getCurrentRSS();
     };
 #endif // BASE_MEDIA_H

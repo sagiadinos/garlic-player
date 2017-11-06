@@ -1,17 +1,19 @@
-#-------------------------------------------------
+-------------------------------------------------
 #
 # Project created by QtCreator 2017-09-09T19:59:00
 #
 #-------------------------------------------------
 include(../defaults.pri)
-INCLUDEPATH += ../parser/smilparser
+INCLUDEPATH += ../garlic-lib/
+INCLUDEPATH += ../garlic-lib/smilparser
+
 
 QT     += core widgets gui xml quick qml
 CONFIG += warn_on c++11
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 #Delete or comment out the next line when you want to use QTMultimedia
-CONFIG    += support_qtav
+#CONFIG    += support_qtav
 
 support_qtav {
     DEFINES += SUPPORT_QTAV

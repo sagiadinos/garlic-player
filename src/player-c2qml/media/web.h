@@ -8,9 +8,10 @@ class Web : public BaseMedia
 {
         Q_OBJECT
     public:
-        Web(TMedia *media, QObject *parent = nullptr);
+        Web(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
         ~Web();
-        void          init(QQmlComponent *mc);
+        void          init(TMedia *media);
+        void          deinit();
         void          setParentItem(QQuickItem *parent);
     protected:
         TWeb          *MyWeb;

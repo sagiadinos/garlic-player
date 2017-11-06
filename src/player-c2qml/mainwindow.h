@@ -19,7 +19,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QQmlEngine>
 #include <QQuickView>
 #include <QMap>
 
@@ -27,8 +26,8 @@
 #include "../player-common/configdialog.h"
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
-#include "index_manager.h"
-#include "media_manager.h"
+#include "files/index_manager.h"
+#include "files/media_manager.h"
 #include "lib_facade.h"
 
 class MainWindow : public QQuickView
@@ -52,7 +51,7 @@ class MainWindow : public QQuickView
 
         LibFacade                *MyLibFacade      = Q_NULLPTR;
         TScreen                  *MyScreen;
-        QMap<QString, TRegion *>  ar_regions;
+        QMap<QString, TRegion *>  regions_list;
         QSize                     mainwindow_size;
         int                       screen_state, num_touched = 0;
         void                      openDebugInfos();
@@ -60,9 +59,10 @@ class MainWindow : public QQuickView
         void                      resizeEvent(QResizeEvent * event);
         void                      keyPressEvent(QKeyEvent *ke);
         bool                      event(QEvent *event);
+        void                      createRegions();
+        void                      deleteRegions();
     protected slots:
-        void                      deleteRegionsAndLayouts();
-        void                      setRegions(QList<Region> *region_list);
+        void                      prepareParsing();
         void                      startShowMedia(TMedia *media);
         void                      stopShowMedia(TMedia *media);
         void                      doStatusChanged(QQuickView::Status status);

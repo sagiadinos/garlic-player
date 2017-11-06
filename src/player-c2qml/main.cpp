@@ -21,8 +21,8 @@
 #include "../player-common/screen.h"
 
 #if defined  Q_OS_ANDROID
-//    #include <QtAndroidExtras/QAndroidJniEnvironment>
-//    #include <QtAndroidExtras/QtAndroidExtras>
+    #include <QtAndroidExtras/QAndroidJniEnvironment>
+    #include <QtAndroidExtras/QtAndroidExtras>
 #else
     #include <qtwebengineglobal.h>
 #endif
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     event_log.data()->open(QFile::Append | QFile::Text);
     QLoggingCategory::setFilterRules("*.debug=true");
     QLoggingCategory::setFilterRules("qt.scenegraph.*=false"); // remove annoying flodding debug messages
-    qInstallMessageHandler(myMessageHandler);
+ //   qInstallMessageHandler(myMessageHandler);
 
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop(), 0);
@@ -103,21 +103,21 @@ int main(int argc, char *argv[])
         // preserve android screensaver https://stackoverflow.com/questions/44100627/how-to-disable-screensaver-on-qt-android-app
         // https://forum.qt.io/topic/57625/solved-keep-android-5-screen-on
 
-//        QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
-//        if (activity.isValid())
-//        {
-//            QAndroidJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
-//            if (window.isValid())
-//            {
-//                const int FLAG_KEEP_SCREEN_ON = 128;
-//                window.callMethod<void>("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
-//            }
-//        }
-//        // not to crash in Android > 5.x Clear any possible pending exceptions.
-//        QAndroidJniEnvironment env;
-//        if (env->ExceptionCheck()) {
-//            env->ExceptionClear();
-//        }
+        QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
+        if (activity.isValid())
+        {
+            QAndroidJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
+            if (window.isValid())
+            {
+                const int FLAG_KEEP_SCREEN_ON = 128;
+                window.callMethod<void>("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
+            }
+        }
+        // not to crash in Android > 5.x Clear any possible pending exceptions.
+        QAndroidJniEnvironment env;
+        if (env->ExceptionCheck()) {
+            env->ExceptionClear();
+        }
         w.showFullScreen();
 #else
         QtWebEngine::initialize();

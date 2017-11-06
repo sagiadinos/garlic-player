@@ -23,7 +23,7 @@
 TRegion::TRegion(QObject *parent)
 {
     root_item = qobject_cast<QQuickItem*>(parent);
- }
+}
 
 TRegion::~TRegion()
 {
@@ -56,18 +56,18 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
 
     rectangle_item.reset(qobject_cast<QQuickItem *>(rectangle->create()));
     rectangle_item.data()->setParentItem(root_item);
+    MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, this));
 }
 
 void TRegion::startShowMedia(TMedia *media)
 {
-    MyMedia.reset(MediaFactory::createMedia(media));
-    MyMedia.data()->init(media_component.data());
-    MyMedia.data()->setParentItem(rectangle_item.data());
+    MyMedia = MyMediaFactory.data()->initMedia(media);
+    MyMedia->setParentItem(rectangle_item.data());
 }
 
 void TRegion::stopShowMedia()
 {
-    // stop video/here here
+ //   MyMedia->setParentItem(NULL);
 }
 
 void TRegion::resizeGeometry()

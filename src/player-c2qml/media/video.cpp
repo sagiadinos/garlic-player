@@ -1,42 +1,48 @@
 #include "video.h"
 
-Video::Video(TMedia *media, QObject *parent) : BaseMedia(parent)
+Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r_id, parent)
 {
-    // should stay a raw pointer cause it belongs to Parser
-    MyVideo = qobject_cast<TVideo *>(media);
+    setRegionId(r_id);
+#ifdef SUPPORT_QTAV
+    QString module = "import  QtAV 1.7\n";
+#else
+    QString module = "import  QtMultimedia 5.7\n";
+#endif
+    QString str("import QtQuick 2.7\n"+
+                    module +
+                    "Video { \
+                        id: "+getRegionId()+"_video; \
+                        anchors.fill: parent; \
+                        autoPlay: true; \
+                        property var video_fill_mode: \"\";  \
+                        source: \"file:\";  \
+                        onStatusChanged:  \
+                        {    \
+                            parent.parent.fitVideo(this, video_fill_mode); \
+                        }  \
+                   }\n"
+    );
+// onSourceChanged: gc(); \n
+    video_item.reset(createMediaItem(mc, str));
+    connect(video_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
 }
 
 Video::~Video()
 {
-
+    video_item.reset();
 }
 
-void Video::init(QQmlComponent *mc)
+void Video::init(TMedia *media)
 {
-    QString fill_mode = determineQmlFillMode(MyVideo->getFit());
-    QString anchors   = "";
-    if (fill_mode != "Pad")
-        anchors = "anchors.fill: parent;\n";
-#ifdef SUPPORT_QTAV
-    QString module = "import  QtAV 1.7\n";
-    QString codec = "videoCodecPriority: [\"MediaCodec\", \"FFmpeg\"]; \n \
-                    opengl: true; \n \"";
-#else
-    QString module = "import  QtMultimedia 5.7\n";
-    QString codec = "";
-#endif
-    QString str("import QtQuick 2.7\n"+
-                    module +
-                    "Video {\n " +
-                        anchors+
-                        "autoPlay: true;\n \
-                        fillMode: VideoOutput."+fill_mode+";\n \
-                        source: \"file:"+MyVideo->getLoadablePath()+"\";\n \
-                        onSourceChanged: gc(); \n \
-                   }\n"
-    );
-    video_item.reset(createMediaItem(mc, str));
-    connect(video_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
+    MyVideo = qobject_cast<TVideo *>(media);
+    video_item.data()->setProperty("video_fill_mode", MyVideo->getFit());
+    QString source = "file:"+MyVideo->getLoadablePath();
+    video_item.data()->setProperty("source", source);
+}
+
+void Video::deinit()
+{
+    video_item.data()->setProperty("source", "");
 }
 
 void Video::setParentItem(QQuickItem *parent)

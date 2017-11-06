@@ -8,15 +8,16 @@ class Video : public BaseMedia
 {
         Q_OBJECT
     public:
-        Video(TMedia *media, QObject *parent = nullptr);
+        Video(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
         ~Video();
-        void              init(QQmlComponent *mc);
-        void              setParentItem(QQuickItem *parent);
+        void                        init(TMedia *media);
+        void                        deinit();
+        void                        setParentItem(QQuickItem *parent);
     protected:
         TVideo                     *MyVideo;
         QScopedPointer<QQuickItem>  video_item;
     public slots:
-        void                  finished();
+        void                        finished();
 };
 
 #endif // VIDEO_H

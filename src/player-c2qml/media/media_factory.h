@@ -1,6 +1,7 @@
 #ifndef MEDIA_FACTORY_H
 #define MEDIA_FACTORY_H
 
+#include <QQmlEngine>
 #include <QObject>
 #include "media/image.h"
 #include "media/web.h"
@@ -11,11 +12,15 @@ class MediaFactory : public QObject
 {
         Q_OBJECT
     public:
-        explicit MediaFactory(QObject *parent = nullptr);
-        static   BaseMedia *createMedia(TMedia *media);
+        explicit MediaFactory(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
+        BaseMedia *initMedia(TMedia *media);
     signals:
 
     public slots:
+
+    protected:
+        QScopedPointer<BaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb;
+
 };
 
 #endif // MEDIA_FACTORY_H

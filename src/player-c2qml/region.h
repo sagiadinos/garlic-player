@@ -39,11 +39,12 @@ protected:
     QQuickItem           *root_item;
     QQmlEngine           *engine;
     Region                region;
-    QScopedPointer<BaseMedia>           MyMedia;
+    BaseMedia            *MyMedia = Q_NULLPTR;
     QScopedPointer<QQmlComponent>       rectangle;
     QScopedPointer<QQmlComponent>       media_component;
     QScopedPointer<QQuickItem>          rectangle_item;
 
+    QScopedPointer<MediaFactory>        MyMediaFactory;
     qreal                 root_width_px, root_height_px = 0;
     void                  resizeGeometry();
 };
