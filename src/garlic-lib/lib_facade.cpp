@@ -52,10 +52,13 @@ void LibFacade::timerEvent(QTimerEvent *event)
 
     qint64  current_rss = MyMemoryInfos.getRSS();
     if (current_rss > max_memory_used)
+    {
         max_memory_used = current_rss;
+        max_memory_time = QTime::currentTime().toString();
+    }
     double d_current = (double)current_rss / (double)1048576;
     double d_max = (double)max_memory_used / (double)1048576;
-    qInfo() << QString("App Memory use: %1" ).arg(d_current, 0, 'f', 2) + " MiB" << QString("Max Memory App used: %1" ).arg(d_max, 0, 'f', 2) + " MiB";
+    qInfo() << QString("App Memory use: %1" ).arg(d_current, 0, 'f', 2) + " MiB" << QString("Max Memory App used: %1" ).arg(d_max, 0, 'f', 2) + " MiB at" << max_memory_time;
 
     qint64  current_threads = MyGeneralInfos.countThreads();
     if (current_threads > max_threads_used)

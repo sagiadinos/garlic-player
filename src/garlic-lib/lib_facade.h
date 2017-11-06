@@ -71,6 +71,7 @@ class LibFacade : public QObject
         QScopedPointer<TSmil>           MySmil;
 #ifdef QT_DEBUG
         qint64               max_memory_used = 0;
+        QString              max_memory_time = "";
         qint64               max_threads_used = 0;
         SystemInfos::Memory  MyMemoryInfos;
         SystemInfos::General MyGeneralInfos;
