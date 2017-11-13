@@ -78,7 +78,10 @@ void SystemInfos::Memory::detectGlobal()
 
 #if defined Q_OS_WIN32
     MEMORYSTATUSEX memory_status;
-    SecureZeroMemory(&memory_status, sizeof(MEMORYSTATUSEX));
+
+    memory_status.dwLength = sizeof (memory_status);
+    GlobalMemoryStatusEx (&memory_status);
+
     setFree((qint64)memory_status.ullAvailPhys);
     setTotal((qint64)memory_status.ullTotalPhys);
 
@@ -88,7 +91,7 @@ void SystemInfos::Memory::detectGlobal()
         return;
     QTextStream in(&fp);
     QRegularExpression rx("[0-9]+");                            // match only the numbers from a string
-    QRegularExpressionMatch match = rx.match(in.readLine(500)); // first line ist MemTotal
+    QRegularExpressionMatch match = rx.match(in.readLine(500)); // first line is MemTotal
     setTotal(match.captured(0).toLong() * 1024);                // * 1024 to get Bytes even if return kB
 
     match = rx.match(in.readLine(500));                         // second line ist MemFree

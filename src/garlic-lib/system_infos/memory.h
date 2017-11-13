@@ -22,7 +22,14 @@
 #include <QRegularExpression>
 #include <QFile>
 #include <QTextStream>
-#include <unistd.h>
+
+#if defined Q_OS_WIN32
+    #define NOMINMAX   // must defined before windows.h else AVPlayer.h runs in errors about ::max
+    #include <windows.h>
+    #include <psapi.h>
+#elif defined Q_OS_LINUX
+    #include <unistd.h>
+#endif
 
 namespace SystemInfos
 {

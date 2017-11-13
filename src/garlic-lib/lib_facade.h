@@ -51,7 +51,6 @@ class LibFacade : public QObject
         TConfiguration    *getConfiguration() const;
         THead             *getHead() const;
         void               beginSmilBodyParsing();
-        TMedia            *getCurrentMedia();
         void               prepareNewLoadedIndex();
 
     public slots:

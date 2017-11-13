@@ -3,6 +3,7 @@ include(../defaults.pri)
 QT       += core network xml widgets
 TEMPLATE  = lib
 CONFIG    += warn_on staticlib c++11 stl
+
 DEFINES += QUAZIP_STATIC
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
@@ -60,7 +61,8 @@ SOURCES += \
     lib_facade.cpp \
     reports/create/base_reports.cpp \
     reports/create/system_report.cpp \
-    reports/system_report_manager.cpp
+    reports/system_report_manager.cpp \
+    files/file_downloader.cpp
 
 HEADERS += \
     files/base_manager.h \
@@ -104,5 +106,6 @@ HEADERS += \
     lib_facade.h \
     reports/create/base_reports.h \
     reports/create/system_report.h \
-    reports/system_report_manager.h
+    reports/system_report_manager.h \
+    files/file_downloader.h
 

@@ -19,9 +19,8 @@
 #define DOWNLOADER_H
 
 #include <QObject>
-#include <QFileInfo>
-#include "files/network_access.h"
-
+#include "file_downloader.h"
+#include "tools/logging_categories.h"
 #include "disc_space.h"
 
 /**
@@ -46,19 +45,18 @@ class Downloader : public TNetworkAccess
 
     protected:
         QFileInfo               local_file_info;
-        QNetworkAccessManager  *manager_head, *manager_head_redirect, *manager_get;
-        void                    doHttpHeadRequest();
-        void                    doHttpGetRequest();
+        QScopedPointer <QNetworkAccessManager>  manager_head, manager_head_redirect, manager_get;
+        QScopedPointer <FileDownloader>         MyFileDownloader;
         void                    checkStatusCode(QNetworkReply *reply, int status_code);
         void                    checkHttpHeaders(QNetworkReply *reply);
+        void                    startDownload();
         bool                    validContentType(QString content_type);
         void                    handleNetworkError(QNetworkReply *reply);
-        bool                    saveToDisc(QIODevice *data);
-
     protected slots:
         void                    finishedHeadRequest(QNetworkReply *reply);
         void                    finishedHeadRedirectRequest(QNetworkReply *reply);
-        void                    finishedGetRequest(QNetworkReply *reply);
+        void                    doDownloadSuccessFul();
+        void                    doDownloadError(QString error_message);
     signals:
         void                    notmodified(TNetworkAccess *);
         void                    notcacheable(TNetworkAccess *);

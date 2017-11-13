@@ -21,6 +21,11 @@
 #include <QObject>
 #include <QFile>
 #include <QTextStream>
+#if defined Q_OS_WIN32
+    #define NOMINMAX   // must defined before windows.h else AVPlayer.h runs in errors about ::max
+    #include <windows.h>
+    #include <tlhelp32.h>
+#endif
 
 namespace SystemInfos
 {
