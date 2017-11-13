@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMainWindow>
 #include <QDesktopWidget>
-#include "logging_categories.h"
+#include "tools/logging_categories.h"
 
 class TScreen : public QObject
 {
