@@ -17,6 +17,8 @@ Image::Image(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
                     }\n"
     );
     image_item.reset(createMediaItem(mc, str));
+// if problems with hammering                             if (this.status == Image.Ready) \
+
 }
 
 Image::~Image()

@@ -67,7 +67,7 @@ void TRegion::startShowMedia(TMedia *media)
 
 void TRegion::stopShowMedia()
 {
- //   MyMedia->setParentItem(NULL);
+  //  MyMedia->setParentItem(NULL);
 }
 
 void TRegion::resizeGeometry()
