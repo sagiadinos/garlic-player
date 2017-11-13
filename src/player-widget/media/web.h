@@ -19,7 +19,7 @@ class Web : public BaseMedia
         void            changeSize(int w, int h);
         QWidget        *getView();
     protected:
-        TWeb           *ParserWeb;
+        TWeb            *ParserWeb;
         QWebEngineView  *browser; // needed when opointer deleteLater not to crash
 };
 

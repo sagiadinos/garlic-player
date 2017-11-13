@@ -49,7 +49,7 @@ void Web::deinit()
     delete  browser;
 }
 
-void Web::changeSize(int w, int h)
+void Web::changeize(int w, int h)
 {
     browser->resize(w-2, h-2);
 }
