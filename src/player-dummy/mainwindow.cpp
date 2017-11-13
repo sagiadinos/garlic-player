@@ -23,8 +23,8 @@ MainWindow::MainWindow(LibFacade *lib_facade, QWidget *parent) :   QMainWindow(p
     MyLibFacade            = lib_facade;
     connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
-    connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(deleteRegionsAndLayouts()));
-    connect(MyLibFacade, SIGNAL(newIndexPrepared(QList<Region> *)), this, SLOT(setRegions(QList<Region> *)));
+    connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
+    MyDebugInfos = new  DebugInfos(MyLibFacade);
 }
 
 MainWindow::~MainWindow()
@@ -34,28 +34,39 @@ MainWindow::~MainWindow()
 
 void MainWindow::openDebugInfos()
 {
-    DebugInfos MyDebugInfos(MyLibFacade);
-    if (MyDebugInfos.exec() == QDialog::Rejected)
+    if (MyDebugInfos->exec() == QDialog::Rejected)
         exit(0);
 }
 
 // =================== protected slots ====================================
 
-void MainWindow::deleteRegionsAndLayouts()
+void MainWindow::deleteRegions()
 {
     MyLibFacade->prepareNewLoadedIndex();
 }
 
 
-void MainWindow::setRegions(QList<Region> *region_list)
+void MainWindow::createRegions()
 {
-    Q_UNUSED(region_list);
-    MyLibFacade->beginSmilBodyParsing(); // parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+    // dummy
 }
+
+// =================== protected slots ====================================
+
+
+void MainWindow::prepareParsing()
+{
+    deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
+    MyLibFacade->prepareNewLoadedIndex();
+    createRegions();
+    MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+}
+
 
 
 void MainWindow::startShowMedia(TMedia *media)
 {
+    MyDebugInfos->setCurrentFilePlayed(media);
     if (media->objectName() == "TVideo" || media->objectName() == "TAudio")
     {
         MyMedia = media;

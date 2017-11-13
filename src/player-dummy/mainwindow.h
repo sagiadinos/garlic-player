@@ -31,11 +31,14 @@ class MainWindow : public QMainWindow
         void                      openDebugInfos();
     protected:
         LibFacade                *MyLibFacade      = Q_NULLPTR;
+        DebugInfos               *MyDebugInfos;
         QPointer<TMedia>          MyMedia;
         void                      outputResourcesUsage();
+        void                      createRegions();
+        void                      deleteRegions();
+
     protected slots:
-        void                      deleteRegionsAndLayouts();
-        void                      setRegions(QList<Region> *region_list);
+        void                      prepareParsing();
         void                      startShowMedia(TMedia *media);
         void                      stopShowMedia(TMedia *media);
         void                      finishMedia();
