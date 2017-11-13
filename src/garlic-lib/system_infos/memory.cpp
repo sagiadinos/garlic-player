@@ -91,7 +91,7 @@ void SystemInfos::Memory::detectGlobal()
         return;
     QTextStream in(&fp);
     QRegularExpression rx("[0-9]+");                            // match only the numbers from a string
-    QRegularExpressionMatch match = rx.match(in.readLine(500)); // first line is MemTotal
+    QRegularExpressionMatch match = rx.match(in.readLine(500)); // first line ist MemTotal
     setTotal(match.captured(0).toLong() * 1024);                // * 1024 to get Bytes even if return kB
 
     match = rx.match(in.readLine(500));                         // second line ist MemFree
@@ -108,7 +108,6 @@ void SystemInfos::Memory::detectProcess()
 {
     setRSS(0);
 #if defined Q_OS_WIN32
-    // #include <psapi.h>
     PROCESS_MEMORY_COUNTERS info;
     GetProcessMemoryInfo( GetCurrentProcess( ), &info, sizeof(info) );
     setRSS((qint64)info.WorkingSetSize);

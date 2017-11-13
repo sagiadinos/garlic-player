@@ -40,8 +40,7 @@ int SystemInfos::General::countThreads()
      // get the first process info.
      BOOL  is_ret = true;
      is_ret = Process32First( snapshot, &entry );
-     while( is_ret && entry.th32ProcessID != id )
-     {
+     while( is_ret && entry.th32ProcessID != id ) {
          is_ret = Process32Next( snapshot, &entry );
      }
      CloseHandle( snapshot );
