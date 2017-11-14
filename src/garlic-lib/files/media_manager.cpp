@@ -41,32 +41,59 @@ void MediaManager::registerFile(QString src)
 {
     if (isRemote(src))
     {
-        // check if Media is already available in Cache and load to get sure Player wok even if network is broken
-        QString local_path = MyConfiguration->getPaths("cache")+MyMediaModel->determineHashedFilePath(src);
-        QFileInfo fi(local_path);
-        if (fi.exists())
-            MyMediaModel->insertAvaibleFile(src, local_path); // src and local path are identically if src path local
-
-        MyDownloadQueue->insertQueue(src, local_path);
+        handleRemoteFile(src);
+        return;
     }
-    else
-        MyMediaModel->insertAvaibleFile(src, src); // src and local path are identically if src path local
 
+    if (isRelative(src)) // when media is relative we need the Indexpath set in front
+    {
+        src = MyConfiguration->getIndexPath() + src;
+        if (isRemote(src)) // check if new media path could be on remote server
+        {
+            handleRemoteFile(src);
+            return;
+        }
+    }
+
+    MyMediaModel->insertAvaibleFile(src, src); // src and local path are identically if src path is local
 }
 
 int MediaManager::checkCacheStatus(QString src)
 {
+    if (isRemote(src))
+        return MyMediaModel->findStatusBySrcPath(src);
+
+    if (isRelative(src)) // when media is relative we need the Indexpath set in front
+        src = MyConfiguration->getIndexPath() + src;
+
     return MyMediaModel->findStatusBySrcPath(src);
 }
 
+
 QString MediaManager::requestLoadablePath(QString src)
 {
+    if (isRemote(src))
+        return MyMediaModel->findLocalBySrcPath(src);
+
+    if (isRelative(src)) // when media is relative we need the Indexpath set in front
+        src = MyConfiguration->getIndexPath() + src;
+
     return MyMediaModel->findLocalBySrcPath(src);
 }
 
 
 // ==================  protected methods =======================================
 
+void MediaManager::handleRemoteFile(QString src)
+{
+    // check if Media is already available in Cache and load to get sure Player wok even if network is broken
+    QString local_path = MyConfiguration->getPaths("cache")+MyMediaModel->determineHashedFilePath(src);
+    QFileInfo fi(local_path);
+    if (fi.exists())
+        MyMediaModel->insertAvaibleFile(src, local_path);
+
+    MyDownloadQueue->insertQueue(src, local_path);
+}
 
 // ==================  protected slots =======================================
 

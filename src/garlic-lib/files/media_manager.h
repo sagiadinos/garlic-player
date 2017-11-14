@@ -48,6 +48,7 @@ protected:
     TConfiguration       *MyConfiguration;
     DownloadQueue        *MyDownloadQueue;
     MediaModel           *MyMediaModel;
+    void                  handleRemoteFile(QString src);
 protected slots:
     void                  doSucceed(QString src_file_path, QString local_file_path);
     void                  doNotCacheable(QString src_file_path);
