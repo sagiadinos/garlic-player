@@ -139,7 +139,11 @@ void TConfiguration::setIndexPath(const QString &value)
 {
     index_path = value;
 }
-
+/**
+ * @brief TConfiguration::determineIndexPath
+ * determine the clean index path
+ * e.g only the scheme://domain.tld/path_to/
+ */
 void TConfiguration::determineIndexPath()
 {
     if (index_uri.mid(0, 4) == "http" || index_uri.mid(0, 3) == "ftp")

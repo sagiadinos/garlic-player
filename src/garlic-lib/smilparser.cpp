@@ -36,7 +36,6 @@ void TSmil::clearLists()
     return;
 }
 
-
 void TSmil::beginSmilParsing(QDomElement body)
 {
     MyBody.reset(new TBody(this));
