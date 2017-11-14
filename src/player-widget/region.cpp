@@ -29,7 +29,6 @@ TRegion::TRegion(QWidget *parent) : QWidget(parent)
 
 TRegion::~TRegion()
 {
-    stopShowMedia();
 }
 
 void TRegion::paintEvent(QPaintEvent *event)
