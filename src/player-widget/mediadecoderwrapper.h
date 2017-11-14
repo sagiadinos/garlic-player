@@ -41,7 +41,7 @@ protected:
 protected slots:
 #ifdef SUPPORT_QTAV
     void onMediaStatusChanged(QtAV::MediaStatus status);
-    void displayErrorMessage(const AVError &e);
+    void displayErrorMessage(QtAV::AVError e);
 #else
     void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
     void displayErrorMessage();
