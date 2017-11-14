@@ -1,6 +1,6 @@
 #include <QString>
 #include <QtTest>
-#include "base_manager.h"
+#include "files/base_manager.h"
 
 class I_BaseManager : public BaseManager
 {

@@ -39,13 +39,7 @@ private Q_SLOTS:
 void TestTConfiguration::cleanup()
 {
     QDir             dir;
-    dir.setPath("var");
-    dir.removeRecursively(); // clean up
-
-    dir.setPath("configuration");
-    dir.removeRecursively(); // clean up
-
-    dir.setPath("logs");
+    dir.setPath(QDir::homePath()+"/.qttest");
     dir.removeRecursively(); // clean up
     QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
     QFile file(Settings->fileName());
@@ -127,18 +121,17 @@ void TestTConfiguration::test_determineBasePath()
 
 void TestTConfiguration::test_createDirectories()
 {
-    QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    TConfiguration *MyConfig = new TConfiguration(Settings);
-    MyConfig->setAppName("garlic-player-test");
+    QStandardPaths::setTestModeEnabled(true);
+    TConfiguration *MyConfig = new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test"));
+    QCoreApplication::setApplicationName("garlic-player-test"); // to make sure a folder in Standradpath is set
     QDir             dir;
     MyConfig->createDirectories();
-    dir.setPath(QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory) + "garlic-player-test/");
-    QCOMPARE(dir.exists(), true);
-    dir.removeRecursively(); // clean up
+    dir.setPath(QDir::homePath()+"/.qttest/cache/garlic-player-test/");
+    QVERIFY(dir.exists());
 
-    dir.setPath(QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) + "garlic-player-test/logs/");
+    dir.setPath(QDir::homePath()+"/.qttest/share/garlic-player-test/logs/");
     QCOMPARE(dir.exists(), true);
-    dir.removeRecursively(); // clean up
+
 }
 
 
@@ -156,6 +149,6 @@ void TestTConfiguration::test_determineUserAgent()
 }
 
 
-QTEST_APPLESS_MAIN(TestTConfiguration)
+QTEST_APPLESS_MAIN(TestTConfiguration) // appless do not wor with cachedir
 
 #include "tst_configuration.moc"

@@ -1,3 +1,4 @@
+
 var qml_region_name;
 var MyMedia;
 
@@ -33,6 +34,7 @@ function destroyRegion()
 
 function startShowMedia(media)
 {
+    MyMedia = media;
     var fill_mode      = determineQmlFillMode(media.fill_mode);
     var anchors_fill   = null;
     if (fill_mode != "Pad")
@@ -61,7 +63,7 @@ function startShowMedia(media)
 
 function stoppedVideo()
 {
-
+    backend.finishedMedia(MyMedia.loadable_path)
 }
 
 function stopShowMedia(media)
@@ -69,14 +71,48 @@ function stopShowMedia(media)
 
 }
 
-function determineQmlFillMode(fill_mode)
+function fitImage(image_id, fit_value)
 {
-    if (fill_mode == "fill")
-       return "Stretch";
-    else if (fill_mode == "meet")
-        return "PreserveAspectCrop";
-    else if (fill_mode == "meetbest")
-        return "PreserveAspectFit";
-    else
-        return "Pad";
+    switch (fit_value)
+    {
+        case "fill":
+             image_id.anchors.fill = the_image.parent
+             image_id.fillMode = Image.Stretch
+             break
+        case "meet":
+             image_id.anchors.fill = the_image.parent;
+             image_id.fillMode = Image.PreserveAspectCrop;
+             break
+        case "meetbest":
+             image_id.anchors.fill = the_image.parent;
+             image_id.fillMode = Image.PreserveAspectFit;
+             break
+         default:
+             image_id.anchors.fill = null;
+             image_id.fillMode = Image.Pad;
+             break
+    }
+}
+
+function fitVideo(video_id, fit_value)
+{
+    switch (fit_value)
+    {
+        case "fill":
+             video_id.anchors.fill = video_id.parent;
+             video_id.fillMode = VideoOut.Stretch
+             break
+        case "meet":
+             video_id.anchors.fill = video_id.parent;
+             video_id.fillMode = VideoOut.PreserveAspectCrop;
+             break
+        case "meetbest":
+             video_id.anchors.fill = video_id.parent;
+             video_id.fillMode = VideoOut.PreserveAspectFit;
+             break
+         default:
+             video_id.anchors.fill = video_id.parent;
+             video_id.fillMode = VideoOut.Stretch
+             break
+    }
 }

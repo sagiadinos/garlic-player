@@ -23,7 +23,10 @@ class InhertitedTSeq : public TSeq
 {
     Q_OBJECT
 public:
-    InhertitedTSeq(TContainer * parent = 0){Q_UNUSED(parent);setObjectName("TSeq");}
+    InhertitedTSeq(TContainer *pc, QObject *parent = 0)  : TSeq(pc, parent)
+    {
+        Q_UNUSED(parent);setObjectName("TSeq");
+    }
     QDomElement test_getNextItem(){return getNextItem();}
     bool        test_canGetNextItem(){return canGetNextItem();}
 };
@@ -48,7 +51,7 @@ void TestTSeq::testEmptyWithDuration()
     QDomDocument document;
     document.setContent(QString("<seq xml:id=\"seq_time\" dur=\"0.5\" />"));
     QDomElement element = document.firstChild().toElement();
-    TSeq       *MySeq   = new TSeq;
+    TSeq       *MySeq   = new TSeq(Q_NULLPTR);
     MySeq->parse(element);
     MySeq->prepareTimerBeforePlaying();
     MySeq->play();
@@ -70,7 +73,7 @@ void TestTSeq::testNormalPlay()
     QDomDocument document;
     document.setContent(QString("<seq xml:id=\"normal\"><img xml:id=\"img0001\" /><img xml:id=\"img0002\" /><img xml:id=\"img0003\" /><img xml:id=\"img0004\" /><img xml:id=\"img0005\" /></seq>"));
     QDomElement     element = document.firstChild().toElement();
-    InhertitedTSeq *MySeq   = new InhertitedTSeq;
+    InhertitedTSeq *MySeq   = new InhertitedTSeq(Q_NULLPTR);
     MySeq->parse(element);
     QCOMPARE(MySeq->parseID(MySeq->test_getNextItem()), QString("img0001"));
     QCOMPARE(MySeq->test_canGetNextItem(), true);
@@ -99,7 +102,7 @@ void TestTSeq::testRepeatedPlay()
     QDomDocument document;
     document.setContent(QString("<seq xml:id=\"repeat\" repeatCount=\"3\"><img xml:id=\"img0001\" /><img xml:id=\"img0002\" /><img xml:id=\"img0003\" /><img xml:id=\"img0004\" /><img xml:id=\"img0005\" /></seq>"));
     QDomElement     element = document.firstChild().toElement();
-    InhertitedTSeq *MySeq   = new InhertitedTSeq;
+    InhertitedTSeq *MySeq   = new InhertitedTSeq(Q_NULLPTR);
     MySeq->parse(element);
     QCOMPARE(MySeq->parseID(MySeq->test_getNextItem()), QString("img0001"));
     QCOMPARE(MySeq->test_canGetNextItem(), true);

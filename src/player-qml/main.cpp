@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
 
     QGuiApplication app(argc, argv);
-   // qmlRegisterType<LibFacade>("com.sagiadinos.smilcontrol.libfaccade", 1, 0, "LibFacade");
+    qmlRegisterType<Backend>("com.sagiadinos.backend", 1, 0, "Backend");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

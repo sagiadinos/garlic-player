@@ -27,27 +27,27 @@
  */
 class TSeq : public TContainer
 {
-    Q_OBJECT
-public:
-    explicit TSeq(TContainer *pc, QObject *parent = Q_NULLPTR);
-            ~TSeq();
-    bool         parse(QDomElement element);
-    void         next(TBaseTiming *ended_element);
-    void         pause();
-    void         stop();
-    void         play();
-    void         resume();
-    bool         isChildPlayable(TBaseTiming *element);
-public slots:
-    void         setDurationTimerBeforePlay();
-protected:
-    TShuffle    *MyShuffle;
-    bool         shuffle           = false;
-    int          count             = 0;
-    bool         canGetNextItem();
-    QDomElement  getNextItem();
-    void         handlePossibleRepeat();
-    void         setPlaylist();
+        Q_OBJECT
+    public:
+        explicit TSeq(TContainer *pc, QObject *parent = Q_NULLPTR);
+                ~TSeq();
+        bool         parse(QDomElement element);
+        void         next(TBaseTiming *ended_element);
+        void         pause();
+        void         stop();
+        void         play();
+        void         resume();
+        bool         isChildPlayable(TBaseTiming *element);
+    public slots:
+        void         setDurationTimerBeforePlay();
+    protected:
+        TShuffle    *MyShuffle;
+        bool         shuffle           = false;
+        int          count             = 0;
+        bool         canGetNextItem();
+        QDomElement  getNextItem();
+        void         handlePossibleRepeat();
+        void         setPlaylist();
 };
 
 #endif // SEQ_H

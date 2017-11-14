@@ -5,6 +5,7 @@
 #-------------------------------------------------
 include(../../../../src/defaults.pri)
 
+
 QT       += network testlib
 QT       -= gui
 

@@ -19,12 +19,13 @@
 #include <QtTest>
 #include "smilparser/excl.h"
 
-class InhertitedTExcl : public TExcl
+class I_TExcl : public TExcl
 {
     Q_OBJECT
 public:
-    InhertitedTExcl(TContainer * parent = 0)
+    I_TExcl(TContainer *pc,  QObject *parent = 0) : TExcl(pc, parent)
     {
+        Q_UNUSED(pc);
         Q_UNUSED(parent);
         ActivePriorityClass    = NULL;
         NewActivePriorityClass = NULL;
@@ -57,7 +58,7 @@ private Q_SLOTS:
     void test_createPriorityClasses();
     void test_findInPriorityClasses();
 private:
-    void        investigateTestList(InhertitedTExcl *MyExcl, QDomElement child);
+    void        investigateTestList(I_TExcl *MyExcl, QDomElement child);
     QDomElement getTestSmilFile();
 };
 
@@ -65,15 +66,15 @@ void TestTExcl::test_createPriorityClasses()
 {
     QDomElement  body          = getTestSmilFile();
     QDomNodeList dom_node_list = body.elementsByTagName("excl");
-    InhertitedTExcl *MyExcl1         = new InhertitedTExcl();
+    I_TExcl *MyExcl1         = new I_TExcl(Q_NULLPTR);
     MyExcl1->parse(dom_node_list.item(0).toElement());
     QCOMPARE(MyExcl1->test_countPriorityClassList(), 4);
 
-    InhertitedTExcl *MyExcl2         = new InhertitedTExcl();
+    I_TExcl *MyExcl2         = new I_TExcl(Q_NULLPTR);
     MyExcl2->parse(dom_node_list.item(1).toElement());
     QCOMPARE(MyExcl2->test_countPriorityClassList(), 1);
 
-    InhertitedTExcl *MyExcl3         = new InhertitedTExcl();
+    I_TExcl *MyExcl3         = new I_TExcl(Q_NULLPTR);
     MyExcl3->parse(dom_node_list.item(2).toElement());
     QCOMPARE(MyExcl3->test_countPriorityClassList(), 2);
 }
@@ -82,7 +83,7 @@ void TestTExcl::test_findInPriorityClasses()
 {
     QDomElement         body          = getTestSmilFile();
     QDomNodeList        dom_node_list = body.elementsByTagName("excl");
-    InhertitedTExcl          *MyExcl       = new InhertitedTExcl();
+    I_TExcl          *MyExcl       = new I_TExcl(Q_NULLPTR);
     MyExcl->parse(dom_node_list.item(0).toElement());
     QList<QDomElement>  list          = MyExcl->test_getPriorityChilds();
     QCOMPARE(list.size(), 4);
@@ -95,7 +96,7 @@ void TestTExcl::test_findInPriorityClasses()
 
 // ===================  private methods ====================================
 
-void TestTExcl::investigateTestList(InhertitedTExcl *MyExcl, QDomElement child)
+void TestTExcl::investigateTestList(I_TExcl *MyExcl, QDomElement child)
 {
     TPriorityClass     *priority_class;
     if (child.attribute("xml:id") == "imgA0010")

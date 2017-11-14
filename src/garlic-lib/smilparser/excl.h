@@ -23,42 +23,42 @@
 
 class TExcl : public TContainer
 {
-    Q_OBJECT
-public:
-    explicit TExcl(TContainer *pc, QObject *parent = Q_NULLPTR);
-            ~TExcl();
-    const       int         _stop_new          = 0; // never
-    const       int         _stop_active       = 1;
-    const       int         _play_this         = 2;
-    const       int         _pause_active      = 3;
-    const       int         _pause_new         = 4; // defer
+        Q_OBJECT
+    public:
+        explicit TExcl(TContainer *pc, QObject *parent = Q_NULLPTR);
+                ~TExcl();
+        const       int         _stop_new          = 0; // never
+        const       int         _stop_active       = 1;
+        const       int         _play_this         = 2;
+        const       int         _pause_active      = 3;
+        const       int         _pause_new         = 4; // defer
 
-    bool                 parse(QDomElement element);
-    void                 next(TBaseTiming *ended_element);
-    int                  interruptActualPlaying(QDomElement started_element, TBaseTiming *element);
-    bool                 isChildPlayable(TBaseTiming *element);
-    void                 pause();
-    void                 stop();
-    void                 play();
-    void                 resume();
-public slots:
-    void      setDurationTimerBeforePlay();
-protected:
-    QDomElement                           played_dom_element;
-    TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
-    QHash<int, TPriorityClass *>          ar_priorities;
-    TPriorityClass                       *findPriorityClass(QDomElement dom_element);
-    void                                  setPlaylist();
-    void                                  parsePriorityClass(QDomElement element);
-    int                                   priorityStop(QDomElement dom_element, TBaseTiming *element);
-    int                                   priorityPause(QDomElement dom_element, TBaseTiming *element);
-    int                                   priorityNever(QDomElement dom_element, TBaseTiming *element);
-    int                                   priorityDefer(QDomElement dom_element, TBaseTiming *element);
+        bool                 parse(QDomElement element);
+        void                 next(TBaseTiming *ended_element);
+        int                  interruptActualPlaying(QDomElement started_element, TBaseTiming *element);
+        bool                 isChildPlayable(TBaseTiming *element);
+        void                 pause();
+        void                 stop();
+        void                 play();
+        void                 resume();
+    public slots:
+        void      setDurationTimerBeforePlay();
+    protected:
+        QDomElement                           played_dom_element;
+        TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
+        QHash<int, TPriorityClass *>          ar_priorities;
+        TPriorityClass                       *findPriorityClass(QDomElement dom_element);
+        void                                  setPlaylist();
+        void                                  parsePriorityClass(QDomElement element);
+        int                                   priorityStop(QDomElement dom_element, TBaseTiming *element);
+        int                                   priorityPause(QDomElement dom_element, TBaseTiming *element);
+        int                                   priorityNever(QDomElement dom_element, TBaseTiming *element);
+        int                                   priorityDefer(QDomElement dom_element, TBaseTiming *element);
 
-signals:
-    void resumeElement(TBaseTiming *element);
-    void stopElement(TBaseTiming *element);
-    void pauseElement(TBaseTiming *element);
+    signals:
+        void resumeElement(TBaseTiming *element);
+        void stopElement(TBaseTiming *element);
+        void pauseElement(TBaseTiming *element);
 };
 
 #endif // TEXCL_H

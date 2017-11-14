@@ -32,6 +32,7 @@ void Backend::init(LibFacade *lib_facade, QQmlApplicationEngine *engine)
     MyLibFacade->checkForNewSmilIndex();
 }
 
+
 void Backend::deleteRegionsAndLayouts()
 {
  //   qDeleteAll(region_list_for_qml);
@@ -57,10 +58,6 @@ void Backend::setRegions(QList<Region> *region_list)
 
 void Backend::startShowMedia(TMedia *media)
 {
-}
-
-void Backend::startShowMedia(TMedia *media)
-{
     if (region_list_for_qml.size() == 0 )
         return;
 
@@ -70,6 +67,9 @@ void Backend::startShowMedia(TMedia *media)
     MyMedia.insert("region_name", media->getRegion());
     MyMedia.insert("loadable_path", media->getLoadablePath());
     MyMedia.insert("fill_mode", media->getFit());
+
+    // Mediapath can be multiple time used, so let it multiple time in map
+    active_media_list.insert(media->getLoadablePath(), media);
 
     QVariant returned_value;
     QMetaObject::invokeMethod(root_item, "startShowMedia", Q_RETURN_ARG(QVariant, returned_value),  Q_ARG(QVariant, MyMedia));
@@ -90,5 +90,16 @@ void Backend::stopShowMedia(TMedia *media)
 
     QVariant returned_value;
     QMetaObject::invokeMethod(root_item, "stopShowMedia", Q_RETURN_ARG(QVariant, returned_value),  Q_ARG(QVariant, MyMedia));
+    active_media_list.remove(media->getLoadablePath()); // Fix if multiple times same path
 }
 
+
+void Backend::finishedMedia(QString path)
+{
+    QMap<QString, TMedia *>::iterator i = active_media_list.find(path);
+    if (i != active_media_list.end())
+    {
+        TMedia *media = i.value();
+        media->finishedSimpleDuration();
+    }
+}

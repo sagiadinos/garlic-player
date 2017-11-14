@@ -1,5 +1,6 @@
 include(../defaults.pri)
-INCLUDEPATH += ../parser/smilparser
+INCLUDEPATH += ../garlic-lib
+INCLUDEPATH += ../garlic-lib/smilparser
 
 QT += quick network xml
 CONFIG += warn_on  c++11
@@ -39,8 +40,13 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-unix{
+unix:!android {
+    QT += webengine
     LIBS += -L../lib -lgarlic -lquazip -lzlib
+}
+android {
+    QT += androidextras
+    LIBS += -L../libandroid -lgarlic -lquazip -lzlib
 }
 win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib

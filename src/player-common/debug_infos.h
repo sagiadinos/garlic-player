@@ -6,6 +6,7 @@
 
 #include "system_infos/memory.h"
 #include "system_infos/general.h"
+#include "media.h"
 
 namespace Ui
 {
@@ -20,6 +21,8 @@ class DebugInfos : public QDialog
 
     public:
         explicit DebugInfos(LibFacade *lib_facade, QWidget *parent = Q_NULLPTR);
+        void     setCurrentFilePlayed(TMedia *media);
+        void     setLibFacade(LibFacade *lib_facade);
         ~DebugInfos();
         void outputResourcesUsage();
     protected:

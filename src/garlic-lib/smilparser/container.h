@@ -31,37 +31,37 @@
 class TContainer : public TBaseTiming
 {
     Q_OBJECT
-public:
-    explicit TContainer(QObject *parent = Q_NULLPTR);
-    virtual void                          next(TBaseTiming *ended_element) = 0;
-            QHash<QString, TBaseTiming *> getContainerObjects();
-            QString                       getIdOfActiveElement();
-    virtual bool                          isChildPlayable(TBaseTiming *element) = 0;
-            bool                          hasPlayingChilds();
-            void                          childStarted(TBaseTiming *element);
-            void                          childEnded(TBaseTiming *element);
-            QString                       getBaseType() {return "container";}
-            TBaseTiming                  *getChildElementFromList();
-            void                          setPlayedElement(TBaseTiming *element);
-            TBaseTiming                  *getPlayedElement();
-            void                          setChildActive(bool active);
-public slots:
-            void                          emitfinished();
-protected:
-            TContainer                   *parent_container;
-            QSet<TBaseTiming *>           activatable_childs;
-            QSet<TBaseTiming *>::iterator childs_iterator;
-            bool                          is_child_active    = false;
-            TBaseTiming                  *played_element;
-            QList<QDomElement>            dom_list;
-            QList<QDomElement>::iterator  iterator;
-            QDomElement                   active_element;
-            QString                       reactByTag();
-            void                          setBaseContainerAttributes();
-signals:
-            void                          foundElement(TContainer *, QString, QDomElement);
-            void                          startedContainer(TContainer * , TBaseTiming *);
-            void                          finishedContainer(TContainer * , TBaseTiming *);
+    public:
+        explicit TContainer(QObject *parent = Q_NULLPTR);
+        virtual void                          next(TBaseTiming *ended_element) = 0;
+                QHash<QString, TBaseTiming *> getContainerObjects();
+                QString                       getIdOfActiveElement();
+        virtual bool                          isChildPlayable(TBaseTiming *element) = 0;
+                bool                          hasPlayingChilds();
+                void                          childStarted(TBaseTiming *element);
+                void                          childEnded(TBaseTiming *element);
+                QString                       getBaseType() {return "container";}
+                TBaseTiming                  *getChildElementFromList();
+                void                          setPlayedElement(TBaseTiming *element);
+                TBaseTiming                  *getPlayedElement();
+                void                          setChildActive(bool active);
+    public slots:
+                void                          emitfinished();
+    protected:
+                TContainer                   *parent_container;
+                QSet<TBaseTiming *>           activatable_childs;
+                QSet<TBaseTiming *>::iterator childs_iterator;
+                bool                          is_child_active    = false;
+                TBaseTiming                  *played_element;
+                QList<QDomElement>            dom_list;
+                QList<QDomElement>::iterator  iterator;
+                QDomElement                   active_element;
+                QString                       reactByTag();
+                void                          setBaseContainerAttributes();
+    signals:
+                void                          foundElement(TContainer *, QString, QDomElement);
+                void                          startedContainer(TContainer * , TBaseTiming *);
+                void                          finishedContainer(TContainer * , TBaseTiming *);
 
 };
 

@@ -1,18 +1,19 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-09-22T17:36:25
+# Project created by QtCreator 2016-02-28T06:11:21
 #
 #-------------------------------------------------
 include(../../../../src/defaults.pri)
 
-QT       += network testlib
+QT       += xml network testlib
 QT       -= gui
 
 CONFIG   += console testcase c++11
 CONFIG   -= app_bundle
 TEMPLATE = app
 
-TARGET = tst_network_queue
-SOURCES += tst_network_queue.cpp
+TARGET = tst_head
+SOURCES += tst_head.cpp
 
 include(../../../tests.pri)
+RESOURCES += head_complex.smil head_simple.smil

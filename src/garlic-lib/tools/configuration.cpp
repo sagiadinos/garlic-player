@@ -217,12 +217,12 @@ QString TConfiguration::getPaths(QString path_name)
 
 void TConfiguration::createDirectories()
 {
-#if defined Q_OS_WIN32  //QStandardPaths::CacheLocation in windows 7 is set to appdir (bin)
+#if defined Q_OS_WIN32  // QStandardPaths::CacheLocation in windows 7 is set to appdir (bin), which should not be writable after installation in Program Files
     cache_dir = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/cache/";
     log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/logs/";
 #else
-    cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory);
-    log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) + "logs/";
+    cache_dir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    log_dir   = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/logs/";
 #endif
     createDirectoryIfNotExist(cache_dir);
     createDirectoryIfNotExist(log_dir);

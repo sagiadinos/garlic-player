@@ -32,7 +32,6 @@ public:
     void                    stop();
     void                    play();
 protected:
-    TBaseTiming            *parent_object;
     QString                 soundLevel = "100%";
     void                    setAttributes();
     bool                    loadMedia();

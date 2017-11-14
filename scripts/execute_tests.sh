@@ -4,9 +4,10 @@
 # config your paths
 # ===============================================
 
-export QT_VERSION=								# The Qt Version 5.7, 5.8, 5.9.2 etc
-export QT_API_VERSION=							# The api version gcc_64 android_armv7 etc
-export QT_BASE_PATH=							# path to your qt base directory
+export QT_VERSION=                            # The Qt Version 5.7, 5.8, 5.9.2 etc
+export QT_API_VERSION=                        # The api version gcc_64 android_armv7 etc
+export QT_BASE_PATH=                          # path to your qt base directory
+export DEV_JOBS=$(grep -c "^processor" /proc/cpuinfo)
 
 QT_PATH=$QT_BASE_PATH/$QT_VERSION/$QT_API_VERSION
 if [ -z "$QT_BASE_PATH" ]; then
@@ -14,21 +15,15 @@ if [ -z "$QT_BASE_PATH" ]; then
 	exit 1;
 fi
 
+mkdir -p execute_tests
+cd execute_tests
+
 # =============================================== 
 # create garlic lib first
 # ===============================================
 
-mkdir -p execute_tests
-cd execute_tests
-
-$QT_PATH/bin/qmake ../src/complete.pro "CONFIG+=release"
+$QT_PATH/bin/qmake ../src/libs_only.pro "CONFIG+=debug"
 make -j $DEV_JOBS --silent
-
-# check if binary was created 
-if [ ! -f bin/garlic-player ]; then
-	echo Binary was not created!
-    exit 1;
-fi
 
 # =============================================== 
 # execute tests

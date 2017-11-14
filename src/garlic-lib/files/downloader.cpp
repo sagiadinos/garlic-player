@@ -116,9 +116,10 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         return;
     }
 
+    qint64 remote_size = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
     // we need to check for size and last Modified, cause a previous index smil on the server can have a older Date and would not be loaded
     if (local_file_info.exists() &&
-        local_file_info.size() ==  reply->header(QNetworkRequest::ContentLengthHeader).toInt() &&
+        local_file_info.size() ==  remote_size &&
         local_file_info.lastModified().toUTC() > reply->header(QNetworkRequest::LastModifiedHeader).toDateTime())
     {
         qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url.toString() << " no need for update";
@@ -127,7 +128,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
     }
 
     DiscSpace MyDiscSpace(local_file_info.absolutePath());
-    qint64 calc = MyDiscSpace.calculateNeededDiscSpaceToFree(reply->header(QNetworkRequest::ContentLengthHeader).toInt());
+    qint64 calc = MyDiscSpace.calculateNeededDiscSpaceToFree(remote_size);
     if (calc > 0 && !MyDiscSpace.freeDiscSpace(calc))
     {
         qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url.toString()  << " could not be saved cause" << reply->header(QNetworkRequest::ContentLengthHeader).toString() << "space cannot be freed";
