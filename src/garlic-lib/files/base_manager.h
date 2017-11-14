@@ -28,6 +28,7 @@ class BaseManager : public QObject
 
     protected:
         bool     isRemote(QString src);
+        bool     isRelative(QString src);
 
 
 };

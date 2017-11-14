@@ -33,3 +33,9 @@ bool BaseManager::isRemote(QString src)
     else
         return false;
 }
+
+
+bool BaseManager::isRelative(QString src)
+{
+    return (src.at(0) != '/');
+}

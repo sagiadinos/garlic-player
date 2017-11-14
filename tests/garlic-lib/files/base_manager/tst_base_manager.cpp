@@ -4,9 +4,10 @@
 
 class I_BaseManager : public BaseManager
 {
-    Q_OBJECT
-public:
-    bool   test_isRemote(QString src){return isRemote(src);}
+        Q_OBJECT
+    public:
+        bool   test_isRemote(QString src){return isRemote(src);}
+        bool   test_isRelative(QString src){return isRelative(src);}
 };
 
 
@@ -18,6 +19,7 @@ class TestBaseManager : public QObject
 
     private Q_SLOTS:
         void testIsRemote();
+        void testIsRelative();
 };
 
 
@@ -31,6 +33,16 @@ void TestBaseManager::testIsRemote()
     QVERIFY(!MyBaseManager->test_isRemote("/google.de"));
     QVERIFY(!MyBaseManager->test_isRemote("google.de"));
 }
+
+void TestBaseManager::testIsRelative()
+{
+    I_BaseManager   *MyBaseManager  = new I_BaseManager();
+    QVERIFY(MyBaseManager->test_isRelative("path_to/tralala"));
+    QVERIFY(MyBaseManager->test_isRelative("./path_to/tralala"));
+    QVERIFY(!MyBaseManager->test_isRelative("/path_to/tralala"));
+    QVERIFY(!MyBaseManager->test_isRelative("//path_to/tralala"));
+}
+
 
 QTEST_APPLESS_MAIN(TestBaseManager)
 
