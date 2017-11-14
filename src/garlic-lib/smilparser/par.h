@@ -35,8 +35,6 @@ class TPar : public TContainer
         void                play();
         void                resume();
         bool                isChildPlayable(TBaseTiming *element);
-    protected:
-        TContainer                   *parent_container;
     protected slots:
         void                setDurationTimerBeforePlay();
     private:
