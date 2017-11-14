@@ -221,7 +221,7 @@ void TConfiguration::createDirectories()
     cache_dir = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/cache/";
     log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/logs/";
 #else
-    cache_dir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    cache_dir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)+ "/";
     log_dir   = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/logs/";
 #endif
     createDirectoryIfNotExist(cache_dir);
