@@ -1,7 +1,7 @@
-INCLUDEPATH += $$PWD/parser
-INCLUDEPATH += $$PWD/parser/files
-INCLUDEPATH += $$PWD/parser/tools
-INCLUDEPATH += $$PWD/parser/smilparser
-INCLUDEPATH += $$PWD/parser/smilparser/timings
-INCLUDEPATH += $$PWD/parser/smilparser/tools
+INCLUDEPATH += $$PWD/garlic-lib
+INCLUDEPATH += $$PWD/garlic-lib/files
+INCLUDEPATH += $$PWD/garlic-lib/tools
+INCLUDEPATH += $$PWD/garlic-lib/smilparser
+INCLUDEPATH += $$PWD/garlic-lib/smilparser/timings
+INCLUDEPATH += $$PWD/garlic-lib/smilparser/tools
 SRC_DIR = $$PWD
