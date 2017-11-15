@@ -10,25 +10,25 @@ It integrates
 - reports to generate reports and send to an WebDav directory current only systemreports work 
 - configuration and loggings tools
 
+## garlic-common
+
+Some common classes which are needed for all the player
+
 ## garlic-widget
 
-Classes which are needed for all the player
-
-## garlic-widget
-
-A Smil player based on Qt's Widget technologie
-
-## garlic-qml
-
-A Smil player technology study based on pure QML technologie (needed for android)
+A Smil player based on Qt's widget technologie (Windows, Linux, OS/X)
 
 ## garlic-c2qml
 
-A Smil player based on Qt's QML technologie controlled by C++ (needed for android)
+A Smil player based on Qt's QML technologie controlled by C++ objects (Android and iOS)
+
+## garlic-qml
+
+A Smil player feasibility study based on pure QML technologie with javascript objects. Not reconnomed for production
 
 ## garlic-dummy
 
-Only a minimal "client" for testing the garlic-lib (mem leaks etc..)
+Only a minimal "client" for testing the garlic-lib (e.g. responisbilitym memory leaks, etc)
 
 
 
