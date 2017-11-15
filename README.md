@@ -23,7 +23,7 @@ Compilations tested with:
  - Android armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2 and 7.0)
  - Windows 7 i64 (VS2015 Community Version)
 
-For Android player-qml is needed, cause QtMultimedia-Widgets are not supported.
+For Android player-c2qml is needed, cause QtMultimedia-Widgets are not supported.
 
 Attention! Do not use 5.9.1 for garlic-c2qml cause the QML Image Type has an extremly [mem leak](https://bugreports.qt.io/browse/QTBUG-61754)
 which make it useable for a continous playing media player.
