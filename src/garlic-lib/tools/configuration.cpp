@@ -224,6 +224,11 @@ void TConfiguration::createDirectories()
 #if defined Q_OS_WIN32  // QStandardPaths::CacheLocation in windows 7 is set to appdir (bin), which should not be writable after installation in Program Files
     cache_dir = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/cache/";
     log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/logs/";
+#elif defined  Q_OS_ANDROID
+    // Using CacheLocation in Android is dangerous, cause that is limited App-Storage which flooding soon and crash the Player
+    // GenericDataLocation should be /sdcard
+    cache_dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" +getAppName() + "/cache/";
+    log_dir   = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + getAppName() + "/logs/";
 #else
     cache_dir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)+ "/";
     log_dir   = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/logs/";
@@ -270,6 +275,8 @@ void TConfiguration::setStartTime(const QString &value)
     start_time = value;
 }
 
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /e
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /e
 QString TConfiguration::getTimeZone() const
 {
     return time_zone;

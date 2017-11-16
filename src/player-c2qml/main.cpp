@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     event_log.data()->open(QFile::Append | QFile::Text);
     QLoggingCategory::setFilterRules("*.debug=true");
     QLoggingCategory::setFilterRules("qt.scenegraph.*=false"); // remove annoying flodding debug messages
- //   qInstallMessageHandler(myMessageHandler);
+    qInstallMessageHandler(myMessageHandler);
 
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop(), 0);
