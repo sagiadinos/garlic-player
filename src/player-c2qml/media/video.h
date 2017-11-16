@@ -8,6 +8,9 @@ class Video : public BaseMedia
 {
         Q_OBJECT
     public:
+        const int STRETCH            = 0;
+        const int PRESERVEASPECTFIT  = 1;
+        const int PRESERVEASPECTCROP = 2;
         Video(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
         ~Video();
         void                        init(TMedia *media);
@@ -16,6 +19,7 @@ class Video : public BaseMedia
     protected:
         TVideo                     *MyVideo;
         QScopedPointer<QQuickItem>  video_item;
+        int                         determineFillMode(QString smil_fit);
     public slots:
         void                        finished();
 };

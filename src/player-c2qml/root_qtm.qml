@@ -8,6 +8,10 @@ Item
     width: 800
     height: 600
 
+/*
+    works in Linux or Windows from Image/Video with parent.parent.fitImage / parent.parent.fitVideo
+    crappy qt/android cannot use this functions like in
+    but let there here maybe there comes a miracle ;)
     function fitImage(image_id, fit_value)
     {
         switch (fit_value)
@@ -53,4 +57,5 @@ Item
                  break
         }
     }
+    */
 }

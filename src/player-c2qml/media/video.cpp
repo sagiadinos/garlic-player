@@ -16,13 +16,13 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
                         autoPlay: true; \
                         property var video_fill_mode: \"\";  \
                         source: \"file:\";  \
-                        onStatusChanged:  \
-                        {    \
-                            parent.parent.fitVideo(this, video_fill_mode); \
-                        }  \
                    }\n"
     );
-// onSourceChanged: gc(); \n
+// do not work in Android cause parent and this is NULL
+//onStatusChanged:
+//{
+//    parent.parent.fitVideo(this, video_fill_mode);
+//}
     video_item.reset(createMediaItem(mc, str));
     connect(video_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
 }
@@ -35,9 +35,9 @@ Video::~Video()
 void Video::init(TMedia *media)
 {
     MyVideo = qobject_cast<TVideo *>(media);
-    video_item.data()->setProperty("video_fill_mode", MyVideo->getFit());
     QString source = "file:"+MyVideo->getLoadablePath();
     video_item.data()->setProperty("source", source);
+    video_item.data()->setProperty("fillMode", determineFillMode(MyVideo->getFit()));
 }
 
 void Video::deinit()
@@ -48,6 +48,19 @@ void Video::deinit()
 void Video::setParentItem(QQuickItem *parent)
 {
     video_item.data()->setParentItem(parent);
+}
+
+int Video::determineFillMode(QString smil_fit)
+{
+    // FIXME Look if this code can set in Base Class
+    if (smil_fit == "fill")
+        return STRETCH;
+    else if (smil_fit == "meet")
+        return PRESERVEASPECTCROP;
+    else if (smil_fit == "meetbest")
+        return PRESERVEASPECTFIT;
+    else
+        return STRETCH;
 }
 
 void Video::finished()

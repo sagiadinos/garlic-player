@@ -7,7 +7,6 @@ include(../defaults.pri)
 INCLUDEPATH += ../garlic-lib/
 INCLUDEPATH += ../garlic-lib/smilparser
 
-
 QT     += core widgets gui xml quick qml
 CONFIG += warn_on c++11
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
@@ -37,7 +36,7 @@ SOURCES += \
     media/web.cpp \
     media/audio.cpp \
     media/media_factory.cpp \
-    main.cpp\
+    main.cpp \
     mainwindow.cpp \
     region.cpp
 
