@@ -49,7 +49,6 @@ protected:
     DownloadQueue        *MyDownloadQueue;
     MediaModel           *MyMediaModel;
     void                  handleRemoteFile(QString src);
-    void                  removeReadyPrefix(QString file_path);
 protected slots:
     void                  doSucceed(QString src_file_path, QString local_file_path);
     void                  doNotCacheable(QString src_file_path);

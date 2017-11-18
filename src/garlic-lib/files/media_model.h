@@ -36,10 +36,10 @@ class MediaModel : public QObject
 {
     Q_OBJECT
     public:
-        const     int        _no_exist   = 0;
-        const     int        _exist      = 1;
-        const     int        _reloadable = 2;
-        const     int        _uncachable = 3;
+        const     int        NOT_EXISTS   = 0;
+        const     int        EXISTS      = 1;
+        const     int        RELOADABLE = 2;
+        const     int        UNCACHABLE = 3;
 
         explicit MediaModel(QObject *parent=Q_NULLPTR);
         ~MediaModel();
