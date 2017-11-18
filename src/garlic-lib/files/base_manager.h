@@ -19,7 +19,7 @@
 #define BASE_MANAGER_H
 
 #include <QObject>
-
+#include <QFile>
 class BaseManager : public QObject
 {
         Q_OBJECT
@@ -29,8 +29,6 @@ class BaseManager : public QObject
     protected:
         bool     isRemote(QString src);
         bool     isRelative(QString src);
-
-
 };
 
 #endif // BASE_MANAGER_H

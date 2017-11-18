@@ -27,7 +27,7 @@
 #include "files/wgt.h"
 
 /**
- * @brief The FileModel class handles the file management and use the DiscSpace-class as helper
+ * @brief The FileModel class handles the file management list
  *
  * - handles different media files eg extracting of wgt
  * - organize a Map of available Files with their "real" path and statuses

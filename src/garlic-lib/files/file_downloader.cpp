@@ -13,14 +13,14 @@ FileDownloader::~FileDownloader()
     }
 }
 
-void FileDownloader::startDownload(QUrl url, QString fileName)
+void FileDownloader::startDownload(QUrl url, QString file_name)
 {
     if(network_reply)
         return;
+    original_file_name = file_name;
+    destination_file.setFileName(file_name+".tmp"); // add suffix to prevent overwriting
 
-    destinationFile.setFileName(fileName);
-
-    if(!destinationFile.open(QIODevice::WriteOnly))
+    if(!destination_file.open(QIODevice::WriteOnly))
         return;
 
     emit goingBusy();
@@ -43,7 +43,7 @@ void FileDownloader::cancelDownload()
 void FileDownloader::readData()
 {
     QByteArray data= network_reply->readAll();
-    destinationFile.write(data);
+    destination_file.write(data);
 }
 
 void FileDownloader::finishDownload()
@@ -55,9 +55,11 @@ void FileDownloader::finishDownload()
     }
     else
     {
-        destinationFile.write(network_reply->readAll());
-        destinationFile.close();
+        destination_file.write(network_reply->readAll());
+        destination_file.close();
+        destination_file.rename(original_file_name+".tmp", original_file_name); // remove tmp;
         network_reply->deleteLater();
+
         emit downloadSuccessful();
     }
     emit backReady();
@@ -67,6 +69,6 @@ void FileDownloader::cleanupDownload()
 {
     network_reply->abort();
     network_reply->deleteLater();
-    destinationFile.close();
-    destinationFile.remove();
+    destination_file.close();
+    destination_file.remove();
 }

@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "media_manager.h"
+#include "media_manager.h"
 
 MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, TConfiguration *config, QObject *parent) : BaseManager(parent)
 {
@@ -60,10 +61,7 @@ void MediaManager::registerFile(QString src)
 
 int MediaManager::checkCacheStatus(QString src)
 {
-    if (isRemote(src))
-        return MyMediaModel->findStatusBySrcPath(src);
-
-    if (isRelative(src)) // when media is relative we need the Indexpath set in front
+    if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
         src = MyConfiguration->getIndexPath() + src;
 
     return MyMediaModel->findStatusBySrcPath(src);
@@ -72,13 +70,13 @@ int MediaManager::checkCacheStatus(QString src)
 
 QString MediaManager::requestLoadablePath(QString src)
 {
-    if (isRemote(src))
-        return MyMediaModel->findLocalBySrcPath(src);
-
-    if (isRelative(src)) // when media is relative we need the Indexpath set in front
+    if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
         src = MyConfiguration->getIndexPath() + src;
 
-    return MyMediaModel->findLocalBySrcPath(src);
+    QString ret = MyMediaModel->findLocalBySrcPath(src);
+    removeReadyPrefix(ret);
+
+    return ret;
 }
 
 
@@ -86,13 +84,24 @@ QString MediaManager::requestLoadablePath(QString src)
 
 void MediaManager::handleRemoteFile(QString src)
 {
-    // check if Media is already available in Cache and load to get sure Player wok even if network is broken
-    QString local_path = MyConfiguration->getPaths("cache")+MyMediaModel->determineHashedFilePath(src);
+    QString hashed_file_name = MyMediaModel->determineHashedFilePath(src);
+
+    QString local_path = MyConfiguration->getPaths("cache") + hashed_file_name;
     QFileInfo fi(local_path);
-    if (fi.exists())
+    if (fi.exists()) // use cached, cause network could be unreachable
         MyMediaModel->insertAvaibleFile(src, local_path);
 
-    MyDownloadQueue->insertQueue(src, local_path);
+    // "ready_" as prefix prevents overwriting of files which could be accessed in same time
+    MyDownloadQueue->insertQueue(src, MyConfiguration->getPaths("cache") + "ready_"+hashed_file_name);
+}
+
+void MediaManager::removeReadyPrefix(QString file_path)
+{
+    QFileInfo fi(file_path);
+    QFile     file_ready(fi.dir().absolutePath()+ "/ready_" + fi.fileName());
+
+    if (file_ready.exists())
+        file_ready.rename(file_path);
 }
 
 // ==================  protected slots =======================================
@@ -104,5 +113,9 @@ void MediaManager::doNotCacheable(QString src_file_path)
 
 void MediaManager::doSucceed(QString src_file_path, QString local_file_path)
 {
-    MyMediaModel->insertAvaibleFile(src_file_path, local_file_path);
+    QFileInfo fi(local_file_path);
+    // remove ready_prefix
+    QString real_local_file_path = fi.dir().absolutePath()+ "/" + fi.fileName().mid(6); // ready_   has 6 characters;
+
+    MyMediaModel->insertAvaibleFile(src_file_path, real_local_file_path);
 }
