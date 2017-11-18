@@ -275,8 +275,6 @@ void TConfiguration::setStartTime(const QString &value)
     start_time = value;
 }
 
-25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /e
-25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /e
 QString TConfiguration::getTimeZone() const
 {
     return time_zone;

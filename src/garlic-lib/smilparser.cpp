@@ -71,6 +71,8 @@ void TSmil::foundElement(TContainer *parent_container, QString type, QDomElement
     QHash<QString, TBaseTiming *>::iterator  ar_elements_iterator = all_elements_list.find(TBase::parseID(dom_element));
     if (ar_elements_iterator == all_elements_list.end())
     {
+        // all_elements_list contains total smil elements (contaner + media) to establish the neccessary connects
+        // So media had to be 2x in this container. As media-tag and as prefetch!
         MyBaseTiming     = TFactory::createBase(type, parent_container, this);
         if (MyBaseTiming == NULL)
         {

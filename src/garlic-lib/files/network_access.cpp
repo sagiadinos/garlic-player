@@ -42,7 +42,6 @@ void TNetworkAccess::setRemoteFileUrl(QUrl value)
     remote_file_url = value;
 }
 
-
 QNetworkRequest TNetworkAccess::prepareNetworkRequest(QUrl remote_url)
 {
     QNetworkRequest request(remote_url);
