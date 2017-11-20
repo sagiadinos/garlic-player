@@ -20,10 +20,8 @@
 
 #include <QObject>
 #include <QMap>
-
+#include <QCryptographicHash>
 #include "tools/configuration.h"
-#include "download_queue.h"
-#include "disc_space.h"
 #include "files/wgt.h"
 
 /**

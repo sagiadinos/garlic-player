@@ -20,7 +20,7 @@ class Video : public BaseMedia
         TVideo                     *MyVideo;
         QScopedPointer<QQuickItem>  video_item;
         int                         determineFillMode(QString smil_fit);
-    public slots:
+    protected slots:
         void                        finished();
 };
 

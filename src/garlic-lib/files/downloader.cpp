@@ -38,6 +38,11 @@ void Downloader::processFile(QUrl url, QFileInfo fi)
     return;
 }
 
+QFileInfo Downloader::getLocalFileInfo()
+{
+    return local_file_info;
+}
+
 void Downloader::finishedHeadRequest(QNetworkReply *reply)
 {
     if (reply->error() != QNetworkReply::NoError)
@@ -153,6 +158,7 @@ void Downloader::startDownload()
 
 void Downloader::doDownloadSuccessFul()
 {
+    qInfo() << "OBJECT_UPDATED resourceURI: " << remote_file_url.toString()  << " contentLength: " << local_file_info.size() << " lastModifiedTime: " << local_file_info.lastModified();
     emit succeed(this);
 }
 

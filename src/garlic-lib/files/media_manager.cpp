@@ -89,6 +89,7 @@ void MediaManager::handleRemoteFile(QString src)
         MyMediaModel->insertAvaibleFile(src, local_path);
 
     MyDownloadQueue->insertQueue(src, local_path);
+
 }
 
 // ==================  protected slots =======================================

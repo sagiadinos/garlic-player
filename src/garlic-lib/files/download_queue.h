@@ -42,11 +42,11 @@ public:
     QByteArray                          getUserAgent() const {return user_agent;}
     void                                setUserAgent(const QByteArray &value) {user_agent = value;}
     QQueue<QPair<QString, QString>>     getMediaQueue() {return media_queue;}
-    QSet<Downloader *>                  getDownloadSlots(){return download_slots;}
+    QHash<QString, Downloader *>        getDownloadSlots(){return download_slots;}
 protected:
     QByteArray                          user_agent;
     QQueue<QPair<QString, QString>>     media_queue;
-    QSet<Downloader *>                  download_slots;
+    QHash<QString, Downloader *>        download_slots;
     void               processQueue();
     void               emitPaths();
 

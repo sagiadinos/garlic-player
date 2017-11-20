@@ -46,17 +46,21 @@ void DownloadQueue::processQueue()
 {
     if (download_slots.size() < _max_download_slots && media_queue.size() > 0)
     {
-        Downloader *MyDownloader = new Downloader(getUserAgent(), this);
-        connect(MyDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
-        connect(MyDownloader, SIGNAL(notcacheable(TNetworkAccess*)), SLOT(doNotCacheable(TNetworkAccess *)));
-        connect(MyDownloader, SIGNAL(notmodified(TNetworkAccess*)), SLOT(doNotModified(TNetworkAccess *)));
-        connect(MyDownloader, SIGNAL(failed(TNetworkAccess *)), SLOT(doFailed(TNetworkAccess *)));
-
-        download_slots.insert(MyDownloader);
-
         QPair<QString, QString> paths = media_queue.dequeue();
 
-        MyDownloader->processFile(QUrl(paths.first), QFileInfo(paths.second));
+        // queue only unique values, otherways we get trouble with overwriting files in file_downloader.cpp!
+        // have in mind, that there could be a also prefetch
+        // or the same file more than one time in playlist
+        if (download_slots.find(paths.second) == download_slots.end())
+        {
+            Downloader *MyDownloader = new Downloader(getUserAgent(), this);
+            connect(MyDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
+            connect(MyDownloader, SIGNAL(notcacheable(TNetworkAccess*)), SLOT(doNotCacheable(TNetworkAccess *)));
+            connect(MyDownloader, SIGNAL(notmodified(TNetworkAccess*)), SLOT(doNotModified(TNetworkAccess *)));
+            connect(MyDownloader, SIGNAL(failed(TNetworkAccess *)), SLOT(doFailed(TNetworkAccess *)));
+            download_slots.insert(paths.second, MyDownloader);
+            MyDownloader->processFile(QUrl(paths.first), QFileInfo(paths.second));
+        }
     }
 }
 
@@ -64,7 +68,7 @@ void DownloadQueue::doSucceed(TNetworkAccess *downloader)
 {
     Downloader *MyDownloader = qobject_cast<Downloader *> (downloader);
     emit succeed(MyDownloader->getRemoteFileUrl().toString(), MyDownloader->getLocalFileInfo().absoluteFilePath());
-    download_slots.remove(MyDownloader);
+    download_slots.remove(MyDownloader->getLocalFileInfo().absoluteFilePath());
     MyDownloader->deleteLater();
     processQueue();
 }
@@ -73,7 +77,7 @@ void DownloadQueue::doFailed(TNetworkAccess *downloader)
 {
     Downloader *MyDownloader = qobject_cast<Downloader *> (downloader);
     emit failed(MyDownloader->getRemoteFileUrl().toString());
-    download_slots.remove(MyDownloader);
+    download_slots.remove(MyDownloader->getLocalFileInfo().absoluteFilePath());
     MyDownloader->deleteLater();
     processQueue();
 }
@@ -82,7 +86,7 @@ void DownloadQueue::doNotCacheable(TNetworkAccess *downloader)
 {
     Downloader *MyDownloader = qobject_cast<Downloader *> (downloader);
     emit notcacheable(MyDownloader->getRemoteFileUrl().toString());
-    download_slots.remove(MyDownloader);
+    download_slots.remove(MyDownloader->getLocalFileInfo().absoluteFilePath());
     MyDownloader->deleteLater();
     processQueue();
 }
@@ -91,7 +95,7 @@ void DownloadQueue::doNotModified(TNetworkAccess *downloader)
 {
     Downloader *MyDownloader = qobject_cast<Downloader *> (downloader);
     emit notmodified(MyDownloader->getRemoteFileUrl().toString());
-    download_slots.remove(MyDownloader);
+    download_slots.remove(MyDownloader->getLocalFileInfo().absoluteFilePath());
     MyDownloader->deleteLater();
     processQueue();
 }

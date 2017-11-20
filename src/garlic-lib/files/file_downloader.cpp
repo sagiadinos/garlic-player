@@ -40,6 +40,24 @@ void FileDownloader::cancelDownload()
     emit backReady();
 }
 
+void FileDownloader::renameAfterDownload()
+{
+    // Because Qt really likes to makes my life hard and QFile::rename cannot overwrite
+    QFile original_file(original_file_name);
+    if (original_file.exists())
+        original_file.remove();
+    destination_file.rename(original_file_name);
+}
+
+void FileDownloader::cleanupDownload()
+{
+    network_reply->abort();
+    network_reply->deleteLater();
+    destination_file.close();
+    destination_file.remove();
+}
+
+
 void FileDownloader::readData()
 {
     QByteArray data= network_reply->readAll();
@@ -57,7 +75,8 @@ void FileDownloader::finishDownload()
     {
         destination_file.write(network_reply->readAll());
         destination_file.close();
-        destination_file.rename(original_file_name+".tmp", original_file_name); // remove tmp;
+
+        renameAfterDownload();
         network_reply->deleteLater();
 
         emit downloadSuccessful();
@@ -65,10 +84,3 @@ void FileDownloader::finishDownload()
     emit backReady();
 }
 
-void FileDownloader::cleanupDownload()
-{
-    network_reply->abort();
-    network_reply->deleteLater();
-    destination_file.close();
-    destination_file.remove();
-}

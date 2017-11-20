@@ -32,6 +32,7 @@ class FileDownloader : public TNetworkAccess
         QFile                   destination_file;
         QString                 original_file_name;
         QPointer<QNetworkReply> network_reply;
+        void renameAfterDownload();
         void cleanupDownload();
     protected slots:
         void readData();

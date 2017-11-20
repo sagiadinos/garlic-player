@@ -16,7 +16,7 @@ class Audio : public BaseMedia
     protected:
         TAudio                     *MyAudio;
         QScopedPointer<QQuickItem>  audio_item;
-    public slots:
+    protected slots:
         void                        finished();
 };
 

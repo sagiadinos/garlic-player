@@ -40,7 +40,7 @@ class Downloader : public TNetworkAccess
         void       processFile(QUrl url, QFileInfo fi);
 
         //Getter/Setter
-        QFileInfo  getLocalFileInfo() const {return local_file_info;}
+        QFileInfo  getLocalFileInfo();
         void       setLocalFileInfo(const QFileInfo &value) {local_file_info = value;}
 
     protected:
