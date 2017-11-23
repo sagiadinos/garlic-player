@@ -94,6 +94,7 @@ void LibFacade::beginSmilBodyParsing()
 
 void LibFacade::prepareNewLoadedIndex()
 {
+    qDebug(ContentManager) << "start " << Q_FUNC_INFO;
     // Start with this only when it is absolutly sure that in the player component is no activity anymore.
     MyIndexManager->deactivateRefresh();
     MyHead.reset(new THead(MyConfiguration.data(), this));
@@ -108,6 +109,7 @@ void LibFacade::prepareNewLoadedIndex()
 
     connect(MySmil.data(), SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
     connect(MySmil.data(), SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
+    qDebug(ContentManager) << "end " << Q_FUNC_INFO;
 }
 
 void LibFacade::emitStartShowMedia(TMedia *media)

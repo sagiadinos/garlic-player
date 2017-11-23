@@ -15,8 +15,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef LOGGING_CATEGORIES_H
+#define LOGGING_CATEGORIES_H
 
 #include <QLoggingCategory>
 
@@ -28,5 +28,6 @@ Q_DECLARE_LOGGING_CATEGORY(MediaControl)
 Q_DECLARE_LOGGING_CATEGORY(System)
 Q_DECLARE_LOGGING_CATEGORY(TimeService)
 Q_DECLARE_LOGGING_CATEGORY(PlayLog)
+Q_DECLARE_LOGGING_CATEGORY(EventLog)
 
-#endif // LOGGER_H
+#endif // LOGGING_CATEGORIES_H

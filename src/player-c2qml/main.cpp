@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include <QQmlApplicationEngine>
+
+#include "tools/logger.h"
 #include "mainwindow.h"
 #include "../player-common/cmdparser.h"
 #include "../player-common/screen.h"
@@ -26,34 +28,11 @@
 #else
     #include <qtwebengineglobal.h>
 #endif
-QScopedPointer<QFile>   event_log;
 
-void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void handleMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    QTextStream out(event_log.data());
-
-    out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz ");
-    switch (type)
-    {
-        case QtInfoMsg:
-            out << "INFO ";
-            break;
-        case QtDebugMsg:
-            out << "DEBUG ";
-            break;
-        case QtWarningMsg:
-            out << "WARNING ";
-            break;
-        case QtCriticalMsg:
-            out << "ERROR ";
-            break;
-        case QtFatalMsg:
-            out << "FATAL ";
-            abort();
-            break;
-    }
-    out << context.category << " " << msg << endl;
-    out.flush();    // Clear the buffered data
+    Logger& MyLogger = Logger::getInstance();
+    MyLogger.dispatchMessages(type, context, msg);
 }
 
 int main(int argc, char *argv[])
@@ -62,6 +41,8 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
+
+    qInstallMessageHandler(handleMessage);
 
     LibFacade      *MyLibFacade     = new LibFacade();
     QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
@@ -78,12 +59,10 @@ int main(int argc, char *argv[])
     MyParser.parse(&app);
 
 
-    // Set the logging file
-    event_log.reset(new QFile(MyLibFacade->getConfiguration()->getPaths("logs") + "events.log"));
-    event_log.data()->open(QFile::Append | QFile::Text);
     QLoggingCategory::setFilterRules("*.debug=true");
-    QLoggingCategory::setFilterRules("qt.scenegraph.*=false"); // remove annoying flodding debug messages
-    // qInstallMessageHandler(myMessageHandler);
+    // Attention! This removes scenegraph.renderloop and other massive annoying flooding messages, but kills
+    // also qml's console.log and console.debug, so you have to use console.info
+    QLoggingCategory::setFilterRules("qt.scenegraph.*=false");
 
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop(), 0);

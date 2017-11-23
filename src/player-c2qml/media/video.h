@@ -17,7 +17,6 @@ class Video : public BaseMedia
         void                        deinit();
         void                        setParentItem(QQuickItem *parent);
     protected:
-        TVideo                     *MyVideo;
         QScopedPointer<QQuickItem>  video_item;
         int                         determineFillMode(QString smil_fit);
     protected slots:

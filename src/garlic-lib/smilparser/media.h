@@ -30,6 +30,9 @@ class TMedia : public TBaseTiming
         QString           getRegion(){return region;}
         QString           getFit(){return fit;}
         QString           getSrc() {return src;}
+        QString           getLogContentId() {return log_content_id;}
+        QString           getFileName() {return filename;}
+        QString           getCacheControl() {return cache_control;}
         QString           getBaseType() {return "media";}
         bool              parse(QDomElement element);
         void              resume(){play();}

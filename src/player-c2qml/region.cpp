@@ -61,6 +61,7 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
 
 void TRegion::startShowMedia(TMedia *media)
 {
+    qDebug(MediaControl) << "start " << Q_FUNC_INFO;
     MyMedia = MyMediaFactory.data()->initMedia(media);
     MyMedia->setParentItem(rectangle_item.data());
 }
@@ -68,6 +69,7 @@ void TRegion::startShowMedia(TMedia *media)
 void TRegion::stopShowMedia()
 {
     MyMedia->setParentItem(NULL);
+    MyMedia->deinit();
 }
 
 void TRegion::resizeGeometry()

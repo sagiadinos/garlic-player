@@ -6,19 +6,18 @@ Image::Image(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
     QString str(
                 "import QtQuick 2.7\n \
                     Image {\n  \
-                        id: "+getRegionId()+"_image;\n \
-                        source: \"file:\"; \n \
+                        id: "+getRegionId()+"_image; \
                         anchors.fill: parent; \n \
+                        signal qmlSignal(string msg); \n \
+                        onStatusChanged: qmlSignal("+getRegionId()+"_image.status); \n \
                     }\n"
     );
     image_item.reset(createMediaItem(mc, str));
-    // do not work in Android cause parent and this are NULL
-    // unfortunately anchors.fill cannot be accessed from C++ so it has to initialized
+
+    connect(image_item.data(), SIGNAL(qmlSignal(QString)), this, SLOT(doStateChanged(QString)));
+    // set anchors.fill via Javascript do not work in Android cause parent and this are NULL
+    // unfortunately anchors.fill cannot be accessed from C++ so it has to initialized static via
     // property var img_fill_mode: ""; \n
-    // onStatusChanged:
-    // {
-    //    parent.parent.fitImage(this, video_fill_mode);
-    // }
 }
 
 Image::~Image()
@@ -28,15 +27,16 @@ Image::~Image()
 
 void Image::init(TMedia *media)
 {
-    MyImage = qobject_cast<TImage *>(media);
-    QString source = "file:"+MyImage->getLoadablePath();
-    image_item.data()->setProperty("source", source);
-    image_item.data()->setProperty("fillMode", determineFillMode(MyImage->getFit()));
+    MyMedia = media;
+    if (load(image_item.data()))
+    {
+        image_item.data()->setProperty("fillMode", determineFillMode(MyMedia->getFit()));
+    }
 }
 
 void Image::deinit()
 {
-    image_item.data()->setProperty("source", QUrl());
+    image_item.data()->setProperty("source","");
 }
 
 void Image::setParentItem(QQuickItem *parent)
@@ -58,4 +58,9 @@ int Image::determineFillMode(QString smil_fit)
         return PRESERVEASPECTFIT;
     else
         return STRETCH;
+}
+
+void Image::doStateChanged(QString state)
+{
+    qDebug() << state << "from c++";
 }

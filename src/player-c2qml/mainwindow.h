@@ -28,6 +28,7 @@
 #include "../player-common/debug_infos.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
+
 #include "lib_facade.h"
 
 class MainWindow : public QQuickView

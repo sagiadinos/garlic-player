@@ -22,6 +22,10 @@
 #include <memory>
 #include <mutex>
 
+// need to define static variable
+QString TConfiguration::log_directory = "";
+
+
 /**
  * @brief TConfiguration::TConfiguration
  * @param UserConfig
@@ -37,6 +41,16 @@ TConfiguration::TConfiguration(QSettings *UserConfig, QObject *parent) : QObject
     // cause otherwise we get no time zone in date string
     setStartTime(QDateTime::currentDateTime().toOffsetFromUtc(QDateTime::currentDateTime().offsetFromUtc()).toString(Qt::ISODate));
     determineUserAgent();
+}
+
+QString TConfiguration::getLogDir()
+{
+    return TConfiguration::log_directory;
+}
+
+void TConfiguration::setLogDir(QString path)
+{
+    TConfiguration::log_directory = path;
 }
 
 QString TConfiguration::getLastPlayedIndexPath()
@@ -235,6 +249,7 @@ void TConfiguration::createDirectories()
 #endif
     createDirectoryIfNotExist(cache_dir);
     createDirectoryIfNotExist(log_dir);
+    setLogDir(log_dir);
 }
 
 void TConfiguration::determineUserAgent()

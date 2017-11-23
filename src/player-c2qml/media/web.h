@@ -14,7 +14,6 @@ class Web : public BaseMedia
         void          deinit();
         void          setParentItem(QQuickItem *parent);
     protected:
-        TWeb          *MyWeb;
         QScopedPointer<QQuickItem>   web_item;
 };
 

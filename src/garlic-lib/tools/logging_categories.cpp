@@ -8,3 +8,5 @@ Q_LOGGING_CATEGORY(MediaControl, "MediaControl")
 Q_LOGGING_CATEGORY(System, "System")
 Q_LOGGING_CATEGORY(TimeService, "TimeService")
 Q_LOGGING_CATEGORY(PlayLog, "PlayLog")
+Q_LOGGING_CATEGORY(EventLog, "EventLog")
+

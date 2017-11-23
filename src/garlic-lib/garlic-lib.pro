@@ -62,13 +62,15 @@ SOURCES += \
     reports/create/base_reports.cpp \
     reports/create/system_report.cpp \
     reports/system_report_manager.cpp \
-    files/file_downloader.cpp
+    files/file_downloader.cpp \
+    tools/logger.cpp
 
 HEADERS += \
     files/base_manager.h \
     files/disc_space.h \
     files/downloader.h \
     files/download_queue.h \
+    files/file_downloader.h \
     files/index_manager.h \
     files/index_model.h \
     files/media_manager.h \
@@ -95,8 +97,6 @@ HEADERS += \
     smilparser/seq.h \
     smilparser/video.h \
     smilparser/web.h \
-    tools/configuration.h \
-    tools/logging_categories.h \
     smilparser.h \
     smilparser/head/subscription.h \
     system_infos/memory.h \
@@ -107,5 +107,7 @@ HEADERS += \
     reports/create/base_reports.h \
     reports/create/system_report.h \
     reports/system_report_manager.h \
-    files/file_downloader.h
+    tools/configuration.h \
+    tools/logging_categories.h \
+    tools/logger.h
 

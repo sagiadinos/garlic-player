@@ -4,20 +4,23 @@ Audio::Audio(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
 {
     setRegionId(r_id);
 #ifdef SUPPORT_QTAV
-    QString module = "import  QtAV 1.7\n";
+    QString module = "import QtAV 1.7\n";
 #else
-    QString module = "import  QtMultimedia 5.7\n";
+    QString module = "import QtMultimedia 5.7\n";
 #endif
     QString str("import QtQuick 2.7\n"+
                     module +
                     "Audio {\n \
-                        id: "+getRegionId()+"_audio;\n \
-                        autoPlay: true;\n \
+                        id: "+getRegionId()+"_audio; \n \
+                        autoPlay: true; \n \
                    }\n"
     );
-// onSourceChanged: gc(); \n
+    // FIXIT! Audio QML cannot be created => Report Qt Bug?
     audio_item.reset(createMediaItem(mc, str));
-    connect(audio_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
+    if (!audio_item.isNull())
+        connect(audio_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
+    else
+        qCritical(MediaControl) << "audio item is Null";
 }
 
 Audio::~Audio()
@@ -27,9 +30,12 @@ Audio::~Audio()
 
 void Audio::init(TMedia *media)
 {
-    MyAudio = qobject_cast<TAudio *>(media);
-    QString source = "file:"+MyAudio->getLoadablePath();
-    audio_item.data()->setProperty("source", source);
+    MyMedia = qobject_cast<TAudio *>(media);
+    QString source = MyMedia->getLoadablePath();
+    if (isFileExists(source))
+    {
+        audio_item.data()->setProperty("source", "file:"+source);
+    }
 }
 
 void Audio::deinit()
@@ -44,6 +50,6 @@ void Audio::setParentItem(QQuickItem *parent)
 
 void Audio::finished()
 {
-    MyAudio->finishedSimpleDuration();
+    MyMedia->finishedSimpleDuration();
 }
 

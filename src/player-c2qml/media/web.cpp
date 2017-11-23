@@ -20,14 +20,13 @@ Web::~Web()
 
 void Web::init(TMedia *media)
 {
-    MyWeb = qobject_cast<TWeb *>(media);
-    QString source = MyWeb->getLoadablePath();
-    web_item.data()->setProperty("url", source);
+    MyMedia = media;
+    web_item.data()->setProperty("url", MyMedia->getLoadablePath());
 }
 
 void Web::deinit()
 {
-    web_item.data()->setProperty("source", "");
+    web_item.data()->setProperty("url", "");
 }
 
 void Web::setParentItem(QQuickItem *parent)

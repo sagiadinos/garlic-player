@@ -16,20 +16,35 @@ void BaseMedia::setRegionId(const QString &value)
     region_id = value;
 }
 
-QString BaseMedia::determineQmlFillMode(QString fill_mode)
+bool BaseMedia::load(QQuickItem *item)
 {
-    if (fill_mode == "fill")
-        return "Stretch";
-    else if (fill_mode == "meet")
-        return "PreserveAspectCrop";
-    else if (fill_mode == "meetbest")
-        return "PreserveAspectFit";
+    QString source = MyMedia->getLoadablePath();
+    bool ret = false;
+    if (isFileExists(source))
+    {
+        ret = true;
+        item->setProperty("source", "file:"+source);
+    }
     else
-        return "Pad";
+        qInfo(MediaPlayer) << "MEDIA_NOT_AVAILABLE" << "recourceURI" << MyMedia->getSrc();
+
+    return ret;
 }
 
 QQuickItem *BaseMedia::createMediaItem(QQmlComponent *mc, QString str)
 {
     mc->setData(str.toUtf8(), QUrl());
+    if (mc->isError())
+    {
+        qCritical(MediaControl) << mc->errorString();
+        return Q_NULLPTR;
+    }
+
     return qobject_cast<QQuickItem *>(mc->create());
+}
+
+
+bool BaseMedia::isFileExists(QString path)
+{
+    return QFileInfo::exists(path);
 }

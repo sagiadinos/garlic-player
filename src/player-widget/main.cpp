@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     event_log.data()->open(QFile::Append | QFile::Text);
     QLoggingCategory::setFilterRules("*.debug=true\n");
     QLoggingCategory::setFilterRules("qt.qpa.*=false\n"); // get rid of mouse events
-    qInstallMessageHandler(myMessageHandler);
+  //  qInstallMessageHandler(myMessageHandler);
 
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop());

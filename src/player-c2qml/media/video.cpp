@@ -4,9 +4,9 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
 {
     setRegionId(r_id);
 #ifdef SUPPORT_QTAV
-    QString module = "import  QtAV 1.7\n";
+    QString module = "import QtAV 1.7\n";
 #else
-    QString module = "import  QtMultimedia 5.7\n";
+    QString module = "import QtMultimedia 5.7\n";
 #endif
     QString str("import QtQuick 2.7\n"+
                     module +
@@ -15,10 +15,9 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
                         anchors.fill: parent; \
                         autoPlay: true; \
                         property var video_fill_mode: \"\";  \
-                        source: \"file:\";  \
                    }\n"
     );
-// do not work in Android cause parent and this is NULL
+// do not work in Android cause "parent" and "this" returns NULL
 //onStatusChanged:
 //{
 //    parent.parent.fitVideo(this, video_fill_mode);
@@ -34,10 +33,11 @@ Video::~Video()
 
 void Video::init(TMedia *media)
 {
-    MyVideo = qobject_cast<TVideo *>(media);
-    QString source = "file:"+MyVideo->getLoadablePath();
-    video_item.data()->setProperty("source", source);
-    video_item.data()->setProperty("fillMode", determineFillMode(MyVideo->getFit()));
+    MyMedia = media;
+    if (load(video_item.data()))
+    {
+        video_item.data()->setProperty("fillMode", determineFillMode(MyMedia->getFit()));
+    }
 }
 
 void Video::deinit()
@@ -65,6 +65,6 @@ int Video::determineFillMode(QString smil_fit)
 
 void Video::finished()
 {
-    MyVideo->finishedSimpleDuration();
+    MyMedia->finishedSimpleDuration();
 }
 
