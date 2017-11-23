@@ -29,7 +29,7 @@
     #include <qtwebengineglobal.h>
 #endif
 
-void handleMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void handleMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     Logger& MyLogger = Logger::getInstance();
     MyLogger.dispatchMessages(type, context, msg);
@@ -42,7 +42,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
-    qInstallMessageHandler(handleMessage);
 
     LibFacade      *MyLibFacade     = new LibFacade();
     QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
@@ -54,15 +53,17 @@ int main(int argc, char *argv[])
     MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator
     MyLibFacade->getConfiguration()->createDirectories();
 
+    QLoggingCategory::setFilterRules("*.debug=true");
+    // Attention! This removes scenegraph.renderloop and other massive annoying flooding messages, but kills
+    // also qml's console.log and console.debug, so you have to use console.info
+    QLoggingCategory::setFilterRules("qt.scenegraph.*=false");
+    qInstallMessageHandler(handleMessages);
+
     TCmdParser MyParser(MyLibFacade->getConfiguration());
     MyParser.addOptions();
     MyParser.parse(&app);
 
 
-    QLoggingCategory::setFilterRules("*.debug=true");
-    // Attention! This removes scenegraph.renderloop and other massive annoying flooding messages, but kills
-    // also qml's console.log and console.debug, so you have to use console.info
-    QLoggingCategory::setFilterRules("qt.scenegraph.*=false");
 
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop(), 0);

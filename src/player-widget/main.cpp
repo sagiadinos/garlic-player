@@ -16,38 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
+#include "tools/logger.h"
 #include "mainwindow.h"
 #include "../player-common/cmdparser.h"
 #include "../player-common/screen.h"
 
-QScopedPointer<QFile>   event_log;
 
-void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void handleMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    QTextStream out(event_log.data());
-
-    out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz ");
-    switch (type)
-    {
-        case QtInfoMsg:
-            out << "INFO ";
-            break;
-        case QtDebugMsg:
-            out << "DEBUG ";
-            break;
-        case QtWarningMsg:
-            out << "WARNING ";
-            break;
-        case QtCriticalMsg:
-            out << "CRITICAL ";
-            break;
-        case QtFatalMsg:
-            out << "FATAL ";
-            abort();
-            break;
-    }
-    out << context.category << " " << msg << endl;
-    out.flush();    // Clear the buffered data
+    Logger& MyLogger = Logger::getInstance();
+    MyLogger.dispatchMessages(type, context, msg);
 }
 
 int main(int argc, char *argv[])
@@ -64,17 +42,13 @@ int main(int argc, char *argv[])
     MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
     MyLibFacade->getConfiguration()->createDirectories();
 
+    QLoggingCategory::setFilterRules("*.debug=true\n");
+    QLoggingCategory::setFilterRules("qt.qpa.*=false\n"); // get rid of mouse events
+    qInstallMessageHandler(handleMessages);
+
     TCmdParser MyParser(MyLibFacade->getConfiguration());
     MyParser.addOptions();
     MyParser.parse(&app);
-
-
-    // Set the logging file
-    event_log.reset(new QFile(MyLibFacade->getConfiguration()->getPaths("logs") + "events.log"));
-    event_log.data()->open(QFile::Append | QFile::Text);
-    QLoggingCategory::setFilterRules("*.debug=true\n");
-    QLoggingCategory::setFilterRules("qt.qpa.*=false\n"); // get rid of mouse events
-  //  qInstallMessageHandler(myMessageHandler);
 
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop());

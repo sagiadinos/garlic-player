@@ -5,7 +5,6 @@
 #-------------------------------------------------
 include(../defaults.pri)
 INCLUDEPATH += ../garlic-lib/
-INCLUDEPATH += ../garlic-lib/smilparser
 
 QT     += core gui xml widgets webenginewidgets
 CONFIG += warn_on c++11
