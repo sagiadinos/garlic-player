@@ -28,7 +28,8 @@ class Logger : public QObject
     protected:
                  QScopedPointer<QFile>   qtdebug_log, debug_log, event_log, play_log;
                  void                    writeQtDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-                 void                    writeDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+                 void                    writeAppQtDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+                 void                    writeDebugLog(QTextStream out, QtMsgType type, const QMessageLogContext &context, const QString &msg);
                  void                    writePlayLog(const QString &msg);
                  void                    writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data);
                  QString                 determineSeverity(QtMsgType type);

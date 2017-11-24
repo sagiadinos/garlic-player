@@ -71,9 +71,20 @@ QString Logger::createEventLogMetaData(QString event_name, QStringList meta_data
     return xml;
 }
 
-void Logger::writeDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void Logger::writeAppDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QTextStream out(debug_log.data());
+    writeDebugLog(out, type, context, msg);
+}
+
+void Logger::writeQtDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QTextStream out(qtdebug_log.data());
+    writeDebugLog(out, type, context, msg);
+}
+
+void Logger::writeDebugLog(QTextStream out, QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
 
     out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") << " "
         << determineSeverity(type) << " "
@@ -84,6 +95,7 @@ void Logger::writeDebugLog(QtMsgType type, const QMessageLogContext &context, co
         << endl;
     out.flush();
 }
+
 
 void Logger::writePlayLog(const QString &msg)
 {
