@@ -33,19 +33,25 @@ QDomElement IndexModel::getBody()
 
 bool IndexModel::loadDocument(QString file_path)
 {
-    QFile file(file_path);
+    QFile       file(file_path);
+    QStringList list;
+    list << "instanceId: " << "display:0"
+         << "resourceURI: " << file_path
+         << "contentLength: " << QString::number(file.size())
+         << "lastModifiedTime: " << QFileInfo(file).lastModified().toString();
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        qCritical(ContentManager) << "SMIL_OPEN_ERROR resourceUri:" << file_path << "Fail to load as SMIL index";
+        qCritical(MediaControl) << Logger::getInstance().createEventLogMetaData("SMIL_OPEN_ERROR", list);
         return false;
     }
     if (!document.setContent(&file))
     {
-        qCritical(ContentManager) << "SMIL_OPEN_ERROR resourceUri:" << file_path << "SMIL index syntax error or other";
+        qCritical(MediaControl) << Logger::getInstance().createEventLogMetaData("SMIL_OPEN_ERROR", list);
         file.close();
         return false;
     }
     file.close();
+    qInfo(MediaControl) << Logger::getInstance().createEventLogMetaData("SMIL_LOADED", list);
     return true;
 }
 

@@ -21,7 +21,6 @@ Downloader::Downloader(QByteArray agent, QObject *parent) : TNetworkAccess(agent
 {
     manager_head.reset(new QNetworkAccessManager(this));
     connect(manager_head.data(), SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRequest(QNetworkReply*)));
-
 }
 
 Downloader::~Downloader()
@@ -48,9 +47,11 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
     if (reply->error() != QNetworkReply::NoError)
     {
         handleNetworkError(reply);
+        reply->deleteLater();
         return;
     }
 
+    qDebug(Develop) << "finished HEAD Request";
     int status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     if (status_code != 301)
         checkStatusCode(reply, status_code);
@@ -75,6 +76,7 @@ void Downloader::finishedHeadRedirectRequest(QNetworkReply *reply)
         handleNetworkError(reply);
         return;
     }
+    qDebug(Develop) << "finished Redirect Request";
     checkStatusCode(reply, reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
     reply->deleteLater();
     return;
@@ -89,7 +91,7 @@ void Downloader::checkStatusCode(QNetworkReply *reply, int status_code)
                 break;
         case 304:
         default:
-            qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url.toString()  << " no need to refresh";
+            qDebug(Develop) << "status code: " << status_code << "not handled";
             emit notmodified(this);
         break;
     }
@@ -104,19 +106,23 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
     if (content_type.contains("text/html")  || content_type.contains("application/xhtml+xml"))
     {
+        qDebug(Develop) << remote_file_url.toString() << " no need for caching";
         emit notcacheable(this);
+        reply->deleteLater();
         return;
     }
 
     if (!validContentType(content_type))
     {
+        qWarning(Develop)<< remote_file_url.toString()  << " has contentype " << content_type << " which is not supported.";
+        reply->deleteLater();
         emit failed(this);
         return;
     }
 
     if (!reply->hasRawHeader("Last-Modified"))
     {
-        qWarning(ContentManager) << " FETCH_FAILED resourceURI:" << remote_file_url.toString() << " has no Last-Modified entry in header";
+        handleNetworkError(reply);
         emit failed(this);
         return;
     }
@@ -127,8 +133,9 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         local_file_info.size() ==  remote_size &&
         local_file_info.lastModified().toUTC() > reply->header(QNetworkRequest::LastModifiedHeader).toDateTime())
     {
-        qInfo() << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url.toString() << " no need for update";
+        qDebug(Develop) << remote_file_url.toString() << " no need for update";
         emit notmodified(this);
+        reply->deleteLater();
         return;
     }
 
@@ -136,7 +143,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
     qint64 calc = MyDiscSpace.calculateNeededDiscSpaceToFree(remote_size);
     if (calc > 0 && !MyDiscSpace.freeDiscSpace(calc))
     {
-        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url.toString()  << " could not be saved cause" << reply->header(QNetworkRequest::ContentLengthHeader).toString() << "space cannot be freed";
+        handleNetworkError(reply);
         emit failed(this);
         return;
     }
@@ -152,27 +159,30 @@ void Downloader::startDownload()
     manager_get.reset(new QNetworkAccessManager(this));
     MyFileDownloader.reset(new FileDownloader(manager_get.data(), getUserAgent(), this));
     connect(MyFileDownloader.data(), SIGNAL(downloadSuccessful()), SLOT(doDownloadSuccessFul()));
-    connect(MyFileDownloader.data(), SIGNAL(downloadError(QString)), SLOT(doDownloadError(QString)));
+    connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply *)), SLOT(doDownloadError(QNetworkReply *)));
     MyFileDownloader->startDownload(remote_file_url, local_file_info.absoluteFilePath());
 }
 
 void Downloader::doDownloadSuccessFul()
 {
-    qInfo() << "OBJECT_UPDATED resourceURI: " << remote_file_url.toString()  << " contentLength: " << local_file_info.size() << " lastModifiedTime: " << local_file_info.lastModified();
+    QStringList list;
+    list  << "resourceURI: " << remote_file_url.toString()
+          << "contentLength: " << QString::number(local_file_info.size())
+          << "lastModifiedTime: " << local_file_info.lastModified().toString();
+
+    qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECT_UPDATED", list);
     emit succeed(this);
 }
 
-void Downloader::doDownloadError(QString error_message)
+void Downloader::doDownloadError(QNetworkReply *reply)
 {
-    qWarning(ContentManager) << error_message;
-    emit failed(this);
+    handleNetworkError(reply);
 }
 
 bool Downloader::validContentType(QString content_type)
 {
     if (!content_type.contains("image/") && !content_type.contains("video/") && !content_type.contains("audio/") && !content_type.contains("application/smil") && !content_type.contains("application/widget"))
     {
-        qCritical() << "FETCH_FAILED resourceURI: " << remote_file_url.toString()  << " has contentype " << content_type << " which is not supported.";
         return false;
     }
     return true;
@@ -180,10 +190,34 @@ bool Downloader::validContentType(QString content_type)
 
 void Downloader::handleNetworkError(QNetworkReply *reply)
 {
+    QStringList list;
     if (local_file_info.exists())
-        qWarning(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url.toString()  << " " << reply->errorString();
+    {
+        list << "resourceURI: " << remote_file_url.toString()
+             << "errorMessage: " << reply->errorString()
+             << "transferLength: " << QString::number(determineBytesTransfered())
+             << "lastCachedLength: " << QString::number(local_file_info.size())
+             << "lastCachedModifiedTime: " << local_file_info.lastModified().toString();
+        qWarning(ContentManager) << Logger::getInstance().createEventLogMetaData("FETCH_FAILED",list);
+    }
     else
-        qCritical(ContentManager) << "FETCH_FAILED resourceURI: " << remote_file_url.toString()  << " " << reply->errorString();
+    {
+        list << "resourceURI: " << remote_file_url.toString()
+             << "errorMessage: " << reply->errorString()
+             << "transferLength: " << QString::number(determineBytesTransfered());
+        qCritical(ContentManager) << Logger::getInstance().createEventLogMetaData("FETCH_FAILED",list);
+    }
+
+    qDebug(Develop) << " Download failed " << remote_file_url.toString();
     reply->deleteLater();
     emit failed(this);
+}
+
+quint64 Downloader::determineBytesTransfered()
+{
+    quint64 bytes_transfered = 0;
+    if (!MyFileDownloader.isNull()) // maybe we get here almost after HEAD and there exists no download attempt
+        bytes_transfered = MyFileDownloader.data()->getBytesTransfered();
+
+    return bytes_transfered;
 }

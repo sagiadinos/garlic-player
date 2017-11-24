@@ -73,6 +73,15 @@ QDomElement IndexManager::getBody()
 
 void IndexManager::loadLocal(QString local_path)
 {
+    if (!QFile::exists(local_path))
+    {
+        QStringList list;
+        list << "instanceId: " << "display:0"
+             << "resourceURI: " << src_index_path;
+        qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("SMIL_NOT_AVAILABLE",list);
+        return;
+    }
+
     if (!MyIndexModel->loadDocument(local_path))
         return;
     MyConfiguration->setLastPlayedIndexPath(local_path);
@@ -89,6 +98,6 @@ void IndexManager::timerEvent(QTimerEvent *event)
 
 void IndexManager::doSucceed(TNetworkAccess *downloader)
 {
-    Downloader *MyDownloader = qobject_cast<Downloader *> (downloader);
+    Q_UNUSED(downloader); // This class should only have one permenent downloader instance
     loadLocal(MyDownloader->getLocalFileInfo().absoluteFilePath());
 }

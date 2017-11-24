@@ -50,6 +50,7 @@ class IndexManager : public BaseManager
 
     protected slots:
         void doSucceed(TNetworkAccess *downloader);
+        void doFailed(TNetworkAccess *downloader);
     signals:
         void availableIndexLoaded();
 

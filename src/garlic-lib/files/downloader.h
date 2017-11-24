@@ -20,7 +20,7 @@
 
 #include <QObject>
 #include "file_downloader.h"
-#include "tools/logging_categories.h"
+#include "tools/logger.h"
 #include "disc_space.h"
 
 /**
@@ -52,11 +52,12 @@ class Downloader : public TNetworkAccess
         void                    startDownload();
         bool                    validContentType(QString content_type);
         void                    handleNetworkError(QNetworkReply *reply);
+        quint64                 determineBytesTransfered();
     protected slots:
         void                    finishedHeadRequest(QNetworkReply *reply);
         void                    finishedHeadRedirectRequest(QNetworkReply *reply);
         void                    doDownloadSuccessFul();
-        void                    doDownloadError(QString error_message);
+        void                    doDownloadError(QNetworkReply *reply);
     signals:
         void                    notmodified(TNetworkAccess *);
         void                    notcacheable(TNetworkAccess *);

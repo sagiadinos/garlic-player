@@ -40,6 +40,16 @@ void FileDownloader::cancelDownload()
     emit backReady();
 }
 
+quint64 FileDownloader::getBytesTransfered()
+{
+    return bytes_transfered;
+}
+
+void FileDownloader::addBytesTransfered(quint64 add_bytes )
+{
+    bytes_transfered = bytes_transfered + add_bytes;
+}
+
 void FileDownloader::renameAfterDownload()
 {
     // Because Qt really likes to makes my life hard and QFile::rename cannot overwrite
@@ -60,8 +70,7 @@ void FileDownloader::cleanupDownload()
 
 void FileDownloader::readData()
 {
-    QByteArray data= network_reply->readAll();
-    destination_file.write(data);
+    addBytesTransfered(destination_file.write(network_reply->readAll()));
 }
 
 void FileDownloader::finishDownload()
@@ -69,11 +78,11 @@ void FileDownloader::finishDownload()
     if(network_reply->error() != QNetworkReply::NoError)
     {
         cleanupDownload();
-        emit downloadError(network_reply->errorString());
+        emit downloadError(network_reply);
     }
     else
     {
-        destination_file.write(network_reply->readAll());
+        readData();
         destination_file.close();
 
         renameAfterDownload();
