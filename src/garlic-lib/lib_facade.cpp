@@ -48,7 +48,7 @@ void LibFacade::timerEvent(QTimerEvent *event)
     qint64  free_mem = MyMemoryInfos.getFree();
     double d_total = (double)total_mem / (double)1048576;
     double d_free = (double)free_mem / (double)1048576;
-    qInfo() << QString("Total Memory System:: %1" ).arg(d_total, 0, 'f', 2) + " MiB" << QString("Free Memory System:: %1" ).arg(d_free, 0, 'f', 2) + " MiB";
+    qInfo(Develop) << QString("Total Memory System:: %1" ).arg(d_total, 0, 'f', 2) + " MiB" << QString("Free Memory System:: %1" ).arg(d_free, 0, 'f', 2) + " MiB";
 
     qint64  current_rss = MyMemoryInfos.getRSS();
     if (current_rss > max_memory_used)
@@ -58,12 +58,12 @@ void LibFacade::timerEvent(QTimerEvent *event)
     }
     double d_current = (double)current_rss / (double)1048576;
     double d_max = (double)max_memory_used / (double)1048576;
-    qInfo() << QString("App Memory use: %1" ).arg(d_current, 0, 'f', 2) + " MiB" << QString("Max Memory App used: %1" ).arg(d_max, 0, 'f', 2) + " MiB at" << max_memory_time;
+    qInfo(Develop) << QString("App Memory use: %1" ).arg(d_current, 0, 'f', 2) + " MiB" << QString("Max Memory App used: %1" ).arg(d_max, 0, 'f', 2) + " MiB at" << max_memory_time;
 
     qint64  current_threads = MyGeneralInfos.countThreads();
     if (current_threads > max_threads_used)
         max_threads_used = current_threads;
-    qInfo() << "Threads: " + QString::number(current_threads) << "Max Threads: " + QString::number(max_threads_used);
+    qInfo(Develop) << "Threads: " + QString::number(current_threads) << "Max Threads: " + QString::number(max_threads_used);
 }
 #endif
 
@@ -94,7 +94,7 @@ void LibFacade::beginSmilBodyParsing()
 
 void LibFacade::prepareNewLoadedIndex()
 {
-    qDebug(ContentManager) << "start " << Q_FUNC_INFO;
+    qDebug(Develop) << "start " << Q_FUNC_INFO;
     // Start with this only when it is absolutly sure that in the player component is no activity anymore.
     MyIndexManager->deactivateRefresh();
     MyHead.reset(new THead(MyConfiguration.data(), this));
@@ -109,7 +109,7 @@ void LibFacade::prepareNewLoadedIndex()
 
     connect(MySmil.data(), SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
     connect(MySmil.data(), SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
-    qDebug(ContentManager) << "end " << Q_FUNC_INFO;
+    qDebug(Develop) << "end " << Q_FUNC_INFO;
 }
 
 void LibFacade::emitStartShowMedia(TMedia *media)

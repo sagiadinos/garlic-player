@@ -29,7 +29,6 @@ Logger& Logger::getInstance()
 void Logger::dispatchMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     if (QString(context.category) == "EventLog" ||
-            QString(context.category) == "Screen" ||
             QString(context.category) == "SmilParser" ||
             QString(context.category) == "ContentManager" ||
             QString(context.category) == "MediaPlayer" ||
@@ -68,10 +67,11 @@ void Logger::writeDebugLog(QtMsgType type, const QMessageLogContext &context, co
 {
     QTextStream out(debug_log.data());
 
-    out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz ")
-        << determineSeverity(type)
-        << context.file
-        << context.line
+    out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") << " "
+        << determineSeverity(type) << " "
+        << context.category << " "
+        << context.file << " "
+        << context.line << " "
         << msg
         << endl;
     out.flush();
