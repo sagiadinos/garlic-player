@@ -19,6 +19,7 @@ class Video : public BaseMedia
     protected:
         QScopedPointer<QQuickItem>  video_item;
         int                         determineFillMode(QString smil_fit);
+        qreal                       determineVolume(QString percent);
     protected slots:
         void                        finished();
 };

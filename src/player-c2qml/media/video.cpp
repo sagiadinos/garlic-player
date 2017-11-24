@@ -36,6 +36,9 @@ void Video::init(TMedia *media)
     MyMedia = media;
     if (load(video_item.data()))
     {
+        TVideo *MyVideo = qobject_cast<TVideo *> (media);
+        float vol = determineVolume(MyVideo->getSoundLevel());
+        video_item.data()->setProperty("volume", vol);
         video_item.data()->setProperty("fillMode", determineFillMode(MyMedia->getFit()));
         if (MyMedia->getLogContentId() != "")
             setStartTime();
@@ -65,6 +68,15 @@ int Video::determineFillMode(QString smil_fit)
         return PRESERVEASPECTFIT;
     else
         return STRETCH;
+}
+
+qreal Video::determineVolume(QString percent)
+{
+    qreal vol = 0;
+    if (percent.endsWith('%'))
+        vol = percent.mid(0, percent.length()-1).toFloat();
+
+    return vol / (float) 100;
 }
 
 void Video::finished()

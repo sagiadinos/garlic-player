@@ -8,19 +8,19 @@ Audio::Audio(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
 #else
     QString module = "import QtMultimedia 5.7\n";
 #endif
+    // FIXIT! Audio QML cannot be created => Report Qt Bug?
     QString str("import QtQuick 2.7\n"+
                     module +
-                    "Audio {\n \
+                    "Video {\n \
                         id: "+getRegionId()+"_audio; \n \
                         autoPlay: true; \n \
                    }\n"
     );
-    // FIXIT! Audio QML cannot be created => Report Qt Bug?
     audio_item.reset(createMediaItem(mc, str));
     if (!audio_item.isNull())
         connect(audio_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
     else
-        qCritical(MediaControl) << "audio item is Null";
+        qCritical() << "audio item is Null";
 }
 
 Audio::~Audio()
