@@ -32,7 +32,6 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 #else
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
 #endif
-
     setMainWindowSize(QSize(980, 540)); // set default
 }
 
@@ -168,7 +167,8 @@ void MainWindow::resizeEvent(QResizeEvent * event)
 void MainWindow::createRegions()
 {
     QList<Region> *region_list = MyLibFacade->getHead()->getLayout();
-//    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
+    setColor(MyLibFacade->getHead()->getRootBackgroundColor());
+
     QMap<QString, TRegion *>::iterator j;
     for (int i = 0; i < region_list->length(); i++)
     {

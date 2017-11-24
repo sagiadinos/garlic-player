@@ -2,7 +2,7 @@ import QtQuick 2.7
 import QtAV 1.7
 import QtWebView 1.1
 
-Item
+item
 {
     id: root
     width: 800

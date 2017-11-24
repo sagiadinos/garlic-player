@@ -19,7 +19,6 @@ class Image : public BaseMedia
         void          deinit();
         void          setParentItem(QQuickItem *parent);
     protected:
-        TMedia                     *MyMedia;
         QScopedPointer<QQuickItem>  image_item;
         int                         determineFillMode(QString smil_fit);
    protected slots:

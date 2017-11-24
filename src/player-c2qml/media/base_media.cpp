@@ -44,8 +44,11 @@ bool BaseMedia::load(QQuickItem *item)
         item->setProperty("source", "file:"+source);
     }
     else
-        qInfo(MediaPlayer) << "MEDIA_NOT_AVAILABLE" << "recourceURI" << MyMedia->getSrc();
-
+    {
+        QStringList list;
+        list  << "resourceURI: " << MyMedia->getSrc();
+        qCritical(MediaPlayer) << Logger::getInstance().createEventLogMetaData("MEDIA_NOT_AVAILABLE", list);
+    }
     return ret;
 }
 

@@ -54,7 +54,7 @@ void TScreen::calculateWholeDisplayGeometrie()
         QRect screenRect = desktop_widget->screen(i)->geometry();
         whole_display_geometry = whole_display_geometry.united(screenRect); //union
     }
-    qInfo(Screen) << " DisplayGeometrie x:" << whole_display_geometry.x() << "y:" << whole_display_geometry.y() << "width:" << whole_display_geometry.width() << "height:" << whole_display_geometry.height();
+    qInfo(Develop) << " DisplayGeometrie x:" << whole_display_geometry.x() << "y:" << whole_display_geometry.y() << "width:" << whole_display_geometry.width() << "height:" << whole_display_geometry.height();
 }
 
 void TScreen::validateScreenId(int screen_id)

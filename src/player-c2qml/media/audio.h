@@ -14,7 +14,6 @@ class Audio : public BaseMedia
         void                        deinit();
         void                        setParentItem(QQuickItem *parent);
     protected:
-        TMedia                     *MyMedia;
         QScopedPointer<QQuickItem>  audio_item;
     protected slots:
         void                        finished();
