@@ -55,17 +55,20 @@ void TWeb::registerFile(MediaManager *mm)
 
 void TWeb::play()
 {
+    qDebug(Develop) << getID() << "played";
     status = _playing;
 }
 
 void TWeb::pause()
 {
+    qDebug(Develop) << getID() << "paused";
     status = _paused;
 }
 
 
 void TWeb::stop()
 {
+    qDebug(Develop) << getID() << "stopped";
     status = _stopped;
 }
 

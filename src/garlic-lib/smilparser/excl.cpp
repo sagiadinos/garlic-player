@@ -235,21 +235,25 @@ void TExcl::play()
         }
 
     }
+    qDebug(Develop) << getID() << "played";
     status = _playing;
 }
 
 void TExcl::resume()
 {
+    qDebug(Develop) << getID() << "resumed";
     status = _playing;
 }
 
 void TExcl::stop()
 {
+    qDebug(Develop) << getID() << "stopped";
     status = _stopped;
 }
 
 void TExcl::pause()
 {
+    qDebug(Develop) << getID() << "paused";
     status = _paused;
 }
 

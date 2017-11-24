@@ -127,7 +127,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         local_file_info.size() ==  remote_size &&
         local_file_info.lastModified().toUTC() > reply->header(QNetworkRequest::LastModifiedHeader).toDateTime())
     {
-        qInfo(ContentManager) << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url.toString() << " no need for update";
+        qInfo() << " OBJECT_IS_ACTUAL resourceURI:" << remote_file_url.toString() << " no need for update";
         emit notmodified(this);
         return;
     }

@@ -97,7 +97,7 @@ bool DiscSpace::deleteFile(QString file_path)
     qint64 del_size = del_file.size();
     if (!del_file.remove())
     {
-        qCritical(ContentManager) << file_path << " cannot be removed " << del_file.errorString();
+        qDebug(Develop) << file_path << " cannot be removed " << del_file.errorString();
         return false;
     }
     freedSpace(del_size);
@@ -114,7 +114,7 @@ bool DiscSpace::deleteDirectory(QString dir_path)
     quint64 dir_size = calculateDirectorySize(dir_path);
     if (!del_dir.removeRecursively())
     {
-        qCritical(ContentManager) << dir_path << " cannot be removed";
+        qDebug(Develop) << dir_path << " cannot be removed";
         return false;
     }
     freedSpace(dir_size);

@@ -7,8 +7,10 @@ Logger::Logger(QObject *parent) : QObject(parent)
 {
     debug_log.reset(new QFile(TConfiguration::getLogDir() + "debug.log"));
     debug_log.data()->open(QFile::Append | QFile::Text);
+
     event_log.reset(new QFile(TConfiguration::getLogDir() + "event_log.xml"));
     event_log.data()->open(QFile::Append | QFile::Text);
+
     play_log.reset(new QFile(TConfiguration::getLogDir() + "play_log.xml"));
     play_log.data()->open(QFile::Append | QFile::Text);
 }
@@ -26,18 +28,40 @@ Logger& Logger::getInstance()
 
 void Logger::dispatchMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    if (context.category == "PlayLog")
-    {
-        writePlayLog(type, context, msg);
-    }
-    else if (context.category == "EventLog")
+    if (QString(context.category) == "EventLog" ||
+            QString(context.category) == "Screen" ||
+            QString(context.category) == "SmilParser" ||
+            QString(context.category) == "ContentManager" ||
+            QString(context.category) == "MediaPlayer" ||
+            QString(context.category) == "MediaControl" ||
+            QString(context.category) == "System" ||
+            QString(context.category) == "TimeService")
     {
         writeEventLog(type, context, msg);
+    }
+    else if (QString(context.category) == "PlayLog")
+    {
+        writePlayLog(msg);
     }
     else
     {
         writeDebugLog(type, context, msg);
     }
+}
+
+QString Logger::createPlayLogEntry(QString start_time, QString content_id)
+{
+    return "<contentPlayed><contentId>"+content_id+"</contentId><startTime>"+start_time+"</startTime><endTime>" +QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")+"</endTime></contentPlayed>";
+}
+
+QString Logger::createEventLogMetaData(QString event_name, QStringList meta_data)
+{
+    QString xml = "<eventName>"+event_name+"</eventName>";
+    for (int i = 0; i < meta_data.size(); i = i+2)
+    {
+        xml += "<metadata><meta name=\""+meta_data.at(i)+"\" content=\""+meta_data.at(i+1)+"\"/></metadata>";
+    }
+    return xml;
 }
 
 void Logger::writeDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -50,17 +74,27 @@ void Logger::writeDebugLog(QtMsgType type, const QMessageLogContext &context, co
         << context.line
         << msg
         << endl;
-    out.flush();    // Clear the buffered data
+    out.flush();
 }
 
-void Logger::writePlayLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void Logger::writePlayLog(const QString &msg)
 {
-    // dummy
+    QTextStream out(play_log.data());
+    out << msg << endl;
+    out.flush();
 }
 
-void Logger::writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void Logger::writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data)
 {
-    // dummy
+    QTextStream out(event_log.data());
+    out << "<event>"
+        << "<eventType>" << determineSeverity(type) << "</eventType>"
+        << "<eventTime>" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") << "</eventTime>"
+        << "<eventSource>" << context.category << "</eventSource>"
+        << meta_data
+        << "</event>"
+        << endl;
+    out.flush();
 }
 
 QString Logger::determineSeverity(QtMsgType type)
@@ -68,15 +102,15 @@ QString Logger::determineSeverity(QtMsgType type)
     switch (type)
     {
         case QtDebugMsg:
-            return "DEBUG ";
+            return "debug";
         case QtInfoMsg:
-            return "INFO ";
+            return "informational";
         case QtWarningMsg:
-            return "WARNING ";
+            return "warning";
         case QtCriticalMsg:
-            return "ERROR ";
+            return "error";
         case QtFatalMsg:
-            return "FATAL ";
+            return "critical";
     }
     return "UNKNOWN";
 }

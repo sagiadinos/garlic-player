@@ -37,11 +37,15 @@ void Video::init(TMedia *media)
     if (load(video_item.data()))
     {
         video_item.data()->setProperty("fillMode", determineFillMode(MyMedia->getFit()));
+        if (MyMedia->getLogContentId() != "")
+            setStartTime();
     }
 }
 
 void Video::deinit()
 {
+    if (MyMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
     video_item.data()->setProperty("source", "");
 }
 

@@ -77,7 +77,7 @@ void TSeq::next(TBaseTiming *ended_element)
 
 bool TSeq::isChildPlayable(TBaseTiming *element)
 {
-    qDebug() << element->getID() << "is ChildPlayable in seq";
+    qDebug(Develop) << getID() << "is ChildPlayable in seq";
     childStarted(element);
     return true;
 }
@@ -97,16 +97,19 @@ void TSeq::play()
         }
         reactByTag();
     }
+    qDebug(Develop) << getID() << "played";
     status = _playing;
 }
 
 void TSeq::resume()
 {
-    status = _playing;
+    qDebug(Develop) << getID() << "plaused";
+    status = _paused;
 }
 
 void TSeq::stop()
 {
+    qDebug(Develop) << getID() << "stopped";
     status = _stopped;
 }
 

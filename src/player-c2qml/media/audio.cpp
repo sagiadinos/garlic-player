@@ -30,16 +30,20 @@ Audio::~Audio()
 
 void Audio::init(TMedia *media)
 {
-    MyMedia = qobject_cast<TAudio *>(media);
+    MyMedia = media;
     QString source = MyMedia->getLoadablePath();
     if (isFileExists(source))
     {
         audio_item.data()->setProperty("source", "file:"+source);
+        if (MyMedia->getLogContentId() != "")
+            setStartTime();
     }
 }
 
 void Audio::deinit()
 {
+    if (MyMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
     audio_item.data()->setProperty("source", "");
 }
 

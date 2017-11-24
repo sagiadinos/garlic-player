@@ -28,6 +28,7 @@ void Reporting::SystemReportManager::timerEvent(QTimerEvent *event)
 
 void Reporting::SystemReportManager::sendSystemReport()
 {
+    qDebug(Develop) << "begin send system report" << Q_FUNC_INFO;
     Reporting::CreateSystemReport *MyCreateSystemReport = new Reporting::CreateSystemReport(new DiscSpace(MyConfiguration->getPaths("cache"), this),
                                                                            new SystemInfos::Memory(this),
                                                                            new SystemInfos::Network(this),
@@ -36,5 +37,6 @@ void Reporting::SystemReportManager::sendSystemReport()
     MyCreateSystemReport->process();
     MyWebDav->processPutData(MySubscription->getAction(), MyCreateSystemReport->asXMLString().toUtf8());
     delete MyCreateSystemReport;
+    qDebug(Develop) << "end send system report" << Q_FUNC_INFO;
 }
 

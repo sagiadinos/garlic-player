@@ -89,13 +89,13 @@ void TMedia::setBaseParameters()
         for (int i = 0; i < childs.length(); i++)
         {
             param = childs.item(i).toElement();
-            if (param.tagName() == "param")
+            if (param.tagName() == "param" && param.hasAttribute("name") && param.hasAttribute("value"))
             {
-                if (param.hasAttribute("cacheControl") && param.hasAttribute("value"))
+                if (param.attribute("name") == "cacheControl")
                     cache_control = param.attribute("value");
-                else if (param.hasAttribute("filename") && param.hasAttribute("value"))
+                else if (param.attribute("name") == "filename")
                     filename = param.attribute("value");
-                else if (param.hasAttribute("logContentId") && param.hasAttribute("value"))
+                else if (param.attribute("name") == "logContentId")
                     log_content_id = param.attribute("value");
             }
         }

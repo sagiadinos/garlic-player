@@ -117,7 +117,6 @@ int MainWindow::openConfigDialog()
     return MyConfigDialog.exec();
 }
 
-
 void MainWindow::resizeAsNormalFullScreen()
 {
     screen_state = FULLSCREEN;

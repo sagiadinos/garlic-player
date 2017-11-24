@@ -48,6 +48,7 @@ void TSmil::beginSmilParsing(QDomElement body)
 
 void TSmil::stopAllPlayingMedia()
 {
+    qDebug(Develop) << "begin stopAllPlayingMedia" << Q_FUNC_INFO;
     // Used while cause every stopped element will removed from QSet in QSmil::emitStopShowMedia()
     // so ar_played_media will decrease after every
     QSet<TBaseTiming *>::iterator i;
@@ -56,6 +57,7 @@ void TSmil::stopAllPlayingMedia()
         i = current_played_media_list.begin();
         stopPlayingElement(*i);
     }
+    qDebug(Develop) << "end stopAllPlayingMedia" << Q_FUNC_INFO;
 }
 
 /**
@@ -115,7 +117,6 @@ void TSmil::foundElement(TContainer *parent_container, QString type, QDomElement
  */
 void TSmil::startElement(TContainer *parent_container, TBaseTiming *element)
 {
-    qDebug() << element->getID() << " startElement";
     bool         playable      = true;
     if (parent_container->getBaseType() == "container")
     {
@@ -223,6 +224,7 @@ void TSmil::stopElement(TBaseTiming *element)
 
 void TSmil::connectContainerSlots(TContainer *MyContainer)
 {
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     connect(MyContainer, SIGNAL(foundElement(TContainer *, QString, QDomElement )), this, SLOT(foundElement(TContainer *, QString, QDomElement )));
     connect(MyContainer, SIGNAL(startedContainer(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
     connect(MyContainer, SIGNAL(finishedContainer(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
@@ -232,29 +234,34 @@ void TSmil::connectContainerSlots(TContainer *MyContainer)
         connect(MyContainer, SIGNAL(pauseElement(TBaseTiming *)), this, SLOT(pausePlayingElement(TBaseTiming *)));
         connect(MyContainer, SIGNAL(stopElement(TBaseTiming *)), this, SLOT(stopPlayingElement(TBaseTiming *)));
     }
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;
 }
 
 void TSmil::connectMediaSlots(TMedia *media)
 {
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     media->registerFile(MyMediaManager);
     connect(media, SIGNAL(startedMedia(TContainer *, TBaseTiming *)), this, SLOT(startElement(TContainer *, TBaseTiming *)));
     connect(media, SIGNAL(finishedMedia(TContainer *, TBaseTiming *)), this, SLOT(finishElement(TContainer *, TBaseTiming *)));
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;
 }
 
 void TSmil::emitStartShowMedia(TMedia *media)
 {
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     current_played_media_list.insert(media);
     emit startShowMedia(media);
-    qDebug() << media->getID() << "startShowMedia";
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;
 }
 
 void TSmil::emitStopShowMedia(TMedia *media)
 {
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     current_played_media_list.remove(media);
     emit stopShowMedia(media);
-    qDebug() << media->getID() << "stopShowMedia";
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;
 }

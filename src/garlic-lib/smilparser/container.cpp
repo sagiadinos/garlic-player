@@ -114,7 +114,7 @@ QString TContainer::reactByTag()
 
 void TContainer::emitfinished() // called from finishedActiveDuration() TBase
 {
-    qDebug() << getID() << "finished Playlist";
+    qDebug(Develop) << getID() << "finished Playlist";
     emit finishedContainer(parent_container, this);
 }
 

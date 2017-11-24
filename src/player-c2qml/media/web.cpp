@@ -22,10 +22,14 @@ void Web::init(TMedia *media)
 {
     MyMedia = media;
     web_item.data()->setProperty("url", MyMedia->getLoadablePath());
+    if (MyMedia->getLogContentId() != "")
+        setStartTime();
 }
 
 void Web::deinit()
 {
+    if (MyMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
     web_item.data()->setProperty("url", "");
 }
 

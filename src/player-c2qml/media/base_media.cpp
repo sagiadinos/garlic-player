@@ -16,6 +16,24 @@ void BaseMedia::setRegionId(const QString &value)
     region_id = value;
 }
 
+void BaseMedia::setStartTime()
+{
+    start_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+}
+
+QString BaseMedia::createPlayLogXml()
+{
+    if (start_time == "")
+        return "";
+
+    QString xml = MyLogger.createPlayLogEntry(start_time, MyMedia->getLogContentId());
+
+    // set times to Zero
+    start_time = "";
+    return xml;
+}
+
+
 bool BaseMedia::load(QQuickItem *item)
 {
     QString source = MyMedia->getLoadablePath();

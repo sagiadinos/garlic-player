@@ -31,11 +31,15 @@ void Image::init(TMedia *media)
     if (load(image_item.data()))
     {
         image_item.data()->setProperty("fillMode", determineFillMode(MyMedia->getFit()));
+        if (MyMedia->getLogContentId() != "")
+            setStartTime();
     }
 }
 
 void Image::deinit()
 {
+    if (MyMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
     image_item.data()->setProperty("source","");
 }
 

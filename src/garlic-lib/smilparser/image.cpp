@@ -43,19 +43,19 @@ void TImage::setDurationTimerBeforePlay()
 
 void TImage::play()
 {
-    qDebug() << getID() << "play";
+    qDebug(Develop) << getID() << "played";
     status = _playing;
 }
 
 void TImage::pause()
 {
-   qDebug() << getID() << "paused " << end_remaining;
+    qDebug(Develop) << getID() << "paused" << end_remaining;
     status = _paused;
 }
 
 void TImage::stop()
 {
-    qDebug() << getID() << "stopped";
+    qDebug(Develop) << getID() << "stopped";
     status = _stopped;
 }
 

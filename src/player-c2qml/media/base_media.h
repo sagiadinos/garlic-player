@@ -4,7 +4,7 @@
 #include <QQuickItem> // interates QQmlComponent
 #include <QScopedPointer>
 #include "smilparser/media.h"
-#include "tools/logging_categories.h"
+#include "tools/logger.h"
 
 class BaseMedia : public QObject
 {
@@ -15,11 +15,15 @@ class BaseMedia : public QObject
         virtual void          deinit()   = 0;
         virtual void          setParentItem(QQuickItem *parent)   = 0;
         QString               getRegionId() const;
+        void                  setStartTime();
+        QString               createPlayLogXml();
         void                  setRegionId(const QString &value);
 
     protected:
+        Logger&               MyLogger = Logger::getInstance();
         TMedia               *MyMedia;
-        QString               region_id;
+        QString               start_time = "";
+        QString               region_id  = "";
         QQuickItem           *createMediaItem(QQmlComponent *mc, QString str);
         bool                  load(QQuickItem *item);
         bool                  isFileExists(QString path);

@@ -10,6 +10,7 @@
 #include <mutex>
 
 #include "configuration.h"
+#include "logging_categories.h"
 
 /**
  * @brief The Logger class
@@ -19,17 +20,17 @@ class Logger : public QObject
 {
         Q_OBJECT
     public:
-        static   Logger& getInstance();
-                 void    dispatchMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+        static   Logger&                 getInstance();
+                 void                    dispatchMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+                 QString                 createPlayLogEntry(QString start_time, QString content_id);
+                 QString                 createEventLogMetaData(QString event_name, QStringList meta_data);
 
     protected:
-        QScopedPointer<QFile>   debug_log;
-        QScopedPointer<QFile>   event_log;
-        QScopedPointer<QFile>   play_log;
-        void                    writeDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-        void                    writePlayLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-        void                    writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-        QString                 determineSeverity(QtMsgType type);
+                 QScopedPointer<QFile>   debug_log, event_log, play_log;
+                 void                    writeDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+                 void                    writePlayLog(const QString &msg);
+                 void                    writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data);
+                 QString                 determineSeverity(QtMsgType type);
 
     private:
         explicit Logger(QObject *parent = nullptr);

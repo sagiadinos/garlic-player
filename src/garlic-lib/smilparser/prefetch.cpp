@@ -29,6 +29,12 @@ TPrefetch::~TPrefetch()
     deleteTimer();
 }
 
+void TPrefetch::play()
+{
+    qDebug() << getID()  << "played";
+    status = _playing;
+}
+
 void TPrefetch::pause()
 {
     qDebug() << getID() << "paused ";
@@ -41,15 +47,11 @@ void TPrefetch::stop()
     status = _stopped;
 }
 
-void TPrefetch::play()
-{
-    qDebug() << getID()  << "prefetch play";
-    status = _playing;
-}
 
 void TPrefetch::setDurationTimerBeforePlay()
 {
-    MyMediaManager->registerFile(src); // register file again to start check if changed";
+    qDebug(Develop) << getID() << src << " register again to start check if changed";
+    MyMediaManager->registerFile(src); // ";
     setInternalDefaultDur();
 }
 
