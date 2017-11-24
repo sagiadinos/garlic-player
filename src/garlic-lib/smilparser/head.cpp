@@ -36,7 +36,7 @@ void THead::setDefaultValues()
     title                          = "No Title";
     width                          = 1366;
     height                         = 768;
-    backgroundColor                = "transparent";
+    backgroundColor                = "black";
     region_list.clear();
     default_region.regionName      = "screen";
     default_region.top             = 0;
