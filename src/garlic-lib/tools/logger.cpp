@@ -5,6 +5,9 @@ std::once_flag Logger::initInstanceFlag;
 
 Logger::Logger(QObject *parent) : QObject(parent)
 {
+    qtdebug_log.reset(new QFile(TConfiguration::getLogDir() + "qtdebug_log.xml"));
+    qtdebug_log.data()->open(QFile::Append | QFile::Text);
+
     debug_log.reset(new QFile(TConfiguration::getLogDir() + "debug.log"));
     debug_log.data()->open(QFile::Append | QFile::Text);
 
@@ -13,6 +16,7 @@ Logger::Logger(QObject *parent) : QObject(parent)
 
     play_log.reset(new QFile(TConfiguration::getLogDir() + "play_log.xml"));
     play_log.data()->open(QFile::Append | QFile::Text);
+
 }
 
 void Logger::initSingleton()
@@ -37,6 +41,10 @@ void Logger::dispatchMessages(QtMsgType type, const QMessageLogContext &context,
             QString(context.category) == "TimeService")
     {
         writeEventLog(type, context, msg);
+    }
+    else if (QString(context.category).mid(0,3) == "qt.")
+    {
+        writeQtDebugLog(type, context, msg); // get all qt log rubbish here not poisoning debug_log
     }
     else if (QString(context.category) == "PlayLog")
     {

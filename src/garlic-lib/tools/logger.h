@@ -26,7 +26,8 @@ class Logger : public QObject
                  QString                 createEventLogMetaData(QString event_name, QStringList meta_data);
 
     protected:
-                 QScopedPointer<QFile>   debug_log, event_log, play_log;
+                 QScopedPointer<QFile>   qtdebug_log, debug_log, event_log, play_log;
+                 void                    writeQtDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
                  void                    writeDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
                  void                    writePlayLog(const QString &msg);
                  void                    writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data);
