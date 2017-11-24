@@ -5,7 +5,7 @@ std::once_flag Logger::initInstanceFlag;
 
 Logger::Logger(QObject *parent) : QObject(parent)
 {
-    qtdebug_log.reset(new QFile(TConfiguration::getLogDir() + "qtdebug_log.xml"));
+    qtdebug_log.reset(new QFile(TConfiguration::getLogDir() + "qtdebug.log"));
     qtdebug_log.data()->open(QFile::Append | QFile::Text);
 
     debug_log.reset(new QFile(TConfiguration::getLogDir() + "debug.log"));
@@ -52,7 +52,7 @@ void Logger::dispatchMessages(QtMsgType type, const QMessageLogContext &context,
     }
     else
     {
-        writeDebugLog(type, context, msg);
+        writeAppDebugLog(type, context, msg);
     }
 }
 
@@ -68,24 +68,22 @@ QString Logger::createEventLogMetaData(QString event_name, QStringList meta_data
     {
         xml += "<metadata><meta name=\""+meta_data.at(i)+"\" content=\""+meta_data.at(i+1)+"\"/></metadata>";
     }
-    return xml;
+    return xml.replace("/", "");
 }
 
 void Logger::writeAppDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    QTextStream out(debug_log.data());
-    writeDebugLog(out, type, context, msg);
+    writeDebugLog(debug_log.data(), type, context, msg);
 }
 
 void Logger::writeQtDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    QTextStream out(qtdebug_log.data());
-    writeDebugLog(out, type, context, msg);
+    writeDebugLog(qtdebug_log.data(), type, context, msg);
 }
 
-void Logger::writeDebugLog(QTextStream out, QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void Logger::writeDebugLog(QFile *file, QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-
+    QTextStream out(file);
     out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") << " "
         << determineSeverity(type) << " "
         << context.category << " "
