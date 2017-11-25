@@ -21,3 +21,32 @@ BaseMedia::BaseMedia(QObject *parent) : QObject(parent)
 {
 
 }
+
+void BaseMedia::setStartTime()
+{
+    start_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+}
+
+bool BaseMedia::isFileExists(QString path)
+{
+    exists = QFileInfo::exists(path);
+    if (exists)
+    {
+        QStringList list;
+        list  << "resourceURI: " << MyMedia->getSrc();
+        qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_NOT_AVAILABLE", list);
+    }
+    return exists;
+}
+
+QString BaseMedia::createPlayLogXml()
+{
+    if (start_time == "")
+        return "";
+
+    QString xml = MyLogger.createPlayLogEntry(start_time, MyMedia->getLogContentId());
+
+    // set times to Zero
+    start_time = "";
+    return xml;
+}

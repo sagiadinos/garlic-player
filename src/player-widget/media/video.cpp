@@ -34,34 +34,51 @@ Video::~Video()
 
 void Video::init(TMedia *media)
 {
-   ParserVideo  = qobject_cast<TVideo *>(media);
-   MediaDecoder.data()->load(ParserVideo->getLoadablePath());
-   MediaDecoder.data()->play();}
+   MyMedia  = media;
+   QString path = MyMedia->getLoadablePath();
+   if (isFileExists(path))
+   {
+       MediaDecoder.data()->load(path);
+       MediaDecoder.data()->play();
+       TVideo  *MyParser = qobject_cast<TVideo *>(media);
+       MediaDecoder.data()->setVolume(MyParser->getSoundLevel());
+       if (MyMedia->getLogContentId() != "")
+           setStartTime();
+   }
+}
 
 void Video::deinit()
 {
     MediaDecoder.data()->stop();
     MediaDecoder.data()->unload();
+    if (MyMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
 }
-
 
 void Video::changeSize(int w, int h)
 {
-    Q_UNUSED(w);Q_UNUSED(h)
-    if (ParserVideo->getFit() == "fill")
+    Q_UNUSED(w);
+    Q_UNUSED(h)
+    if (!exists)
+        return;
+
+    QString fit = MyMedia->getFit();
+    if (fit == "fill")
         VideoWidget.data()->setAspectRatioFill();
-    else if (ParserVideo->getFit() == "meet")
+    else if (fit == "meet")
         VideoWidget.data()->setAspectRatioMeet();
-    else if (ParserVideo->getFit() == "meetbest")
+    else if (fit == "meetbest")
         VideoWidget.data()->setAspectRatioMeetBest();
 }
 
 QWidget *Video::getView()
 {
+    if (!exists)
+        return Q_NULLPTR;
     return VideoWidget.data()->getVideoWidget();
 }
 
 void Video::finished()
 {
-   ParserVideo->finishedSimpleDuration();
+   MyMedia->finishedSimpleDuration();
 }

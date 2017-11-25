@@ -53,6 +53,24 @@ bool MediaDecoderWrapper::load(QString file_path)
 #endif
 }
 
+void MediaDecoderWrapper::setVolume(QString percent)
+{
+
+#ifdef SUPPORT_QTAV
+    qreal vol = 0;
+    if (percent.endsWith('%'))
+        vol = (percent.mid(0, percent.length()-1).toFloat()) / (float) 100;
+    // sometimes result messed up with 0.10000000000000000001, but that should be no problem
+    // a more significant problem could be, that e.g. 10% Volume is in QtMultimedia louder than in QtAV.
+    MediaDecoder.data()->audio()->setVolume(vol);
+#else
+    int vol = 0;
+    if (percent.endsWith('%'))
+        vol = percent.mid(0, percent.length()-1).toInt();
+    MediaDecoder.data()->setVolume(vol);
+#endif
+}
+
 void MediaDecoderWrapper::unload()
 {
     current_media_path = "";

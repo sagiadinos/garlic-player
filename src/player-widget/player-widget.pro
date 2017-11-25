@@ -16,6 +16,8 @@ CONFIG    += support_qtav
 support_qtav {
     DEFINES += SUPPORT_QTAV
     QT      += avwidgets
+    # QtAV has "this use of defined may not be portable" issues with newer gcc
+    QMAKE_CXXFLAGS += -Wno-expansion-to-defined
 } else {
     QT += multimedia multimediawidgets
 }

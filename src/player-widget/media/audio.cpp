@@ -29,15 +29,25 @@ Audio::~Audio()
 
 void Audio::init(TMedia *media)
 {
-    ParserAudio  = qobject_cast<TAudio *>(media);
-    MediaDecoder.data()->load(ParserAudio->getLoadablePath());
-    MediaDecoder.data()->play();
+    MyMedia  = media;
+    QString path = MyMedia->getLoadablePath();
+    if (isFileExists(path))
+    {
+        MediaDecoder.data()->load(path);
+        MediaDecoder.data()->play();
+        TAudio  *MyParser = qobject_cast<TAudio *>(media);
+        MediaDecoder.data()->setVolume(MyParser->getSoundLevel());
+        if (MyMedia->getLogContentId() != "")
+            setStartTime();
+     }
 }
 
 void Audio::deinit()
 {
     MediaDecoder.data()->stop();
     MediaDecoder.data()->unload();
+    if (MyMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
 void Audio::changeSize(int w, int h)
@@ -53,5 +63,5 @@ QWidget *Audio::getView()
 
 void Audio::finished()
 {
-   ParserAudio->finishedSimpleDuration();
+   MyMedia->finishedSimpleDuration();
 }

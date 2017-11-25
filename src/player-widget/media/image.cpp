@@ -28,26 +28,37 @@ Image::~Image()
 
 void Image::init(TMedia *media)
 {
-    ParserImage = qobject_cast<TImage *>(media);
+    MyMedia = media;
 
-    QString path = media->getLoadablePath();
-    loaded_image.load(path);
-    ImageWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ImageWidget.data()->setPixmap(loaded_image);
+    QString path = MyMedia->getLoadablePath();
+    if (isFileExists(path))
+    {
+        loaded_image.load(path);
+        ImageWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        ImageWidget.data()->setPixmap(loaded_image);
+        if (MyMedia->getLogContentId() != "")
+            setStartTime();
+    }
 }
 
 void Image::deinit()
 {
     loaded_image.load("");
+    if (MyMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
 void Image::changeSize(int w, int h)
 {
-    if (ParserImage->getFit() == "fill")
+    if (!exists)
+        return;
+
+    QString fit = MyMedia->getFit();
+    if (fit == "fill")
        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
-    else if (ParserImage->getFit() == "meet")
+    else if (fit == "meet")
         ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
-    else if (ParserImage->getFit() == "meetbest")
+    else if (fit == "meetbest")
         ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     else
         ImageWidget.data()->setPixmap(loaded_image);
@@ -55,5 +66,8 @@ void Image::changeSize(int w, int h)
 
 QWidget *Image::getView()
 {
+    if (!exists)
+        return Q_NULLPTR;
+
     return ImageWidget.data();
 }

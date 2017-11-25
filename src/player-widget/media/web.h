@@ -1,7 +1,6 @@
 #ifndef WEB_H
 #define WEB_H
 
-#include <QObject>
 #include <QWebEngineView>
 #include <QWebEngineSettings>
 
@@ -19,7 +18,6 @@ class Web : public BaseMedia
         void            changeSize(int w, int h);
         QWidget        *getView();
     protected:
-        TWeb            *ParserWeb;
         QWebEngineView  *browser; // needed when opointer deleteLater not to crash
 };
 

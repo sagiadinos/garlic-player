@@ -42,14 +42,18 @@ void TRegion::paintEvent(QPaintEvent *event)
 
 void TRegion::startShowMedia(TMedia *media)
 {
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyMedia = MyMediaFactory.initMedia(media);
     layout->addWidget(MyMedia->getView());
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 void TRegion::stopShowMedia()
 {
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     layout.data()->removeWidget(MyMedia->getView());
     MyMedia->deinit();
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 /**

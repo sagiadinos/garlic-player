@@ -1,7 +1,6 @@
 #ifndef MPIMAGE_H
 #define MPIMAGE_H
 
-#include <QObject>
 #include <QLabel>
 #include <QPixmap>
 #include "base_media.h"
@@ -17,7 +16,6 @@
             void          changeSize(int w, int h);
             QWidget      *getView();
         protected:
-            TImage                 *ParserImage;
             QPixmap                 loaded_image;
             QScopedPointer<QLabel, QScopedPointerDeleteLater>  ImageWidget;
     };

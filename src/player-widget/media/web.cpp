@@ -40,6 +40,8 @@ void Web::init(TMedia *media)
 
     QUrl url(media->getLoadablePath());
     browser->load(url);
+    if (MyMedia->getLogContentId() != "")
+        setStartTime();
 }
 
 void Web::deinit()
@@ -47,6 +49,8 @@ void Web::deinit()
     browser->load(QUrl(""));
     browser->close();
     delete  browser;
+    if (MyMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
 void Web::changeSize(int w, int h)

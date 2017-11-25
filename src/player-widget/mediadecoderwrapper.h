@@ -22,6 +22,7 @@ public:
     void                setVideoOutput(MediaViewWrapper *renderer);
     void                removeVideoOutput(MediaViewWrapper *renderer);
     bool                load(QString file_path);
+    void                setVolume(QString percent);
     void                unload();
 
 signals:

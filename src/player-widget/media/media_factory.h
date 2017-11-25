@@ -1,7 +1,6 @@
 #ifndef MEDIA_FACTORY_H
 #define MEDIA_FACTORY_H
 
-#include <QObject>
 #include "media/image.h"
 #include "media/web.h"
 #include "media/video.h"
