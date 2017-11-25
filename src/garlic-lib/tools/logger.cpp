@@ -63,12 +63,12 @@ QString Logger::createPlayLogEntry(QString start_time, QString content_id)
 
 QString Logger::createEventLogMetaData(QString event_name, QStringList meta_data)
 {
-    QString xml = "<eventName>"+event_name+"</eventName>";
+    QString xml = "<eventName>"+event_name+"</eventName><metadata>";
     for (int i = 0; i < meta_data.size(); i = i+2)
     {
-        xml += "<metadata><meta name=\""+meta_data.at(i)+"\" content=\""+meta_data.at(i+1)+"\"/></metadata>";
+        xml += "<meta name=\""+meta_data.at(i)+"\" content=\""+meta_data.at(i+1)+"\"/>";
     }
-    return xml.replace("/", "");
+    return xml+"</metadata>";
 }
 
 void Logger::writeAppDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -104,12 +104,14 @@ void Logger::writePlayLog(const QString &msg)
 
 void Logger::writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data)
 {
+    QString meta = meta_data;
+    meta.replace("\\", "");
     QTextStream out(event_log.data());
     out << "<event>"
         << "<eventType>" << determineSeverity(type) << "</eventType>"
         << "<eventTime>" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") << "</eventTime>"
         << "<eventSource>" << context.category << "</eventSource>"
-        << meta_data
+        << meta.mid(1, meta.length()-2)
         << "</event>"
         << endl;
     out.flush();

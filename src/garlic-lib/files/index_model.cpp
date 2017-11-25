@@ -35,10 +35,10 @@ bool IndexModel::loadDocument(QString file_path)
 {
     QFile       file(file_path);
     QStringList list;
-    list << "instanceId: " << "display:0"
-         << "resourceURI: " << file_path
-         << "contentLength: " << QString::number(file.size())
-         << "lastModifiedTime: " << QFileInfo(file).lastModified().toString();
+    list << "instanceId" << "display:0"
+         << "resourceURI" << file_path
+         << "contentLength" << QString::number(file.size())
+         << "lastModifiedTime" << QFileInfo(file).lastModified().toString(Qt::ISODate);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qCritical(MediaControl) << Logger::getInstance().createEventLogMetaData("SMIL_OPEN_ERROR", list);

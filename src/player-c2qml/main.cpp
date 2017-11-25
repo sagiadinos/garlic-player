@@ -45,7 +45,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
-
     LibFacade      *MyLibFacade     = new LibFacade();
     QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
     QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());

@@ -168,7 +168,7 @@ void Downloader::doDownloadSuccessFul()
     QStringList list;
     list  << "resourceURI: " << remote_file_url.toString()
           << "contentLength: " << QString::number(local_file_info.size())
-          << "lastModifiedTime: " << local_file_info.lastModified().toString();
+          << "lastModifiedTime: " << local_file_info.lastModified().toString(Qt::ISODate);
 
     qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECT_UPDATED", list);
     emit succeed(this);
@@ -193,18 +193,18 @@ void Downloader::handleNetworkError(QNetworkReply *reply)
     QStringList list;
     if (local_file_info.exists())
     {
-        list << "resourceURI: " << remote_file_url.toString()
-             << "errorMessage: " << reply->errorString()
-             << "transferLength: " << QString::number(determineBytesTransfered())
-             << "lastCachedLength: " << QString::number(local_file_info.size())
-             << "lastCachedModifiedTime: " << local_file_info.lastModified().toString();
+        list << "resourceURI" << remote_file_url.toString()
+             << "errorMessage" << reply->errorString()
+             << "transferLength" << QString::number(determineBytesTransfered())
+             << "lastCachedLength" << QString::number(local_file_info.size())
+             << "lastCachedModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
         qWarning(ContentManager) << Logger::getInstance().createEventLogMetaData("FETCH_FAILED",list);
     }
     else
     {
-        list << "resourceURI: " << remote_file_url.toString()
-             << "errorMessage: " << reply->errorString()
-             << "transferLength: " << QString::number(determineBytesTransfered());
+        list << "resourceURI" << remote_file_url.toString()
+             << "errorMessage" << reply->errorString()
+             << "transferLength" << QString::number(determineBytesTransfered());
         qCritical(ContentManager) << Logger::getInstance().createEventLogMetaData("FETCH_FAILED",list);
     }
 
