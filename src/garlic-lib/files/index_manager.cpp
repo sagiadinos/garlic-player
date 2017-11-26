@@ -36,7 +36,7 @@ void IndexManager::lookUpForIndex()
     // if nothing is loaded look first at cache if there is an Index
     if (src_index_path == "")
     {
-        qWarning(ContentManager) << "set index path first";
+        qWarning(Develop) << "set index path first";
         return;
     }
     if (isRemote(src_index_path))
@@ -76,8 +76,8 @@ void IndexManager::loadLocal(QString local_path)
     if (!QFile::exists(local_path))
     {
         QStringList list;
-        list << "instanceId: " << "display:0"
-             << "resourceURI: " << src_index_path;
+        list << "instanceId" << "display:0"
+             << "resourceURI" << src_index_path;
         qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("SMIL_NOT_AVAILABLE",list);
         return;
     }

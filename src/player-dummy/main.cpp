@@ -16,8 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
+#include "tools/logger.h"
 #include "mainwindow.h"
 #include "../player-common/cmdparser.h"
+
+void handleMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    Logger& MyLogger = Logger::getInstance();
+    MyLogger.dispatchMessages(type, context, msg);
+}
 
 int main(int argc, char *argv[])
 {
@@ -27,22 +34,21 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
     QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());
     QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName());
+    MyLibFacade->getConfiguration()->determineIndexUri("http://indexes.smil-admin.com");
 
     QDir dir(".");
     MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
     MyLibFacade->getConfiguration()->determineUserAgent();
     MyLibFacade->getConfiguration()->createDirectories();
+    qInstallMessageHandler(handleMessages);
 
     TCmdParser MyParser(MyLibFacade->getConfiguration());
     MyParser.addOptions();
     MyParser.parse(&app);
 
-
     MainWindow w(MyLibFacade);
     MyLibFacade->initIndex();
     MyLibFacade->checkForNewSmilIndex();
-
-    w.openDebugInfos();
 
     return app.exec();
 }

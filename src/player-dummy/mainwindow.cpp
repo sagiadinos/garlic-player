@@ -24,7 +24,6 @@ MainWindow::MainWindow(LibFacade *lib_facade, QWidget *parent) :   QMainWindow(p
     connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
-    MyDebugInfos = new  DebugInfos(MyLibFacade);
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +59,8 @@ void MainWindow::prepareParsing()
     MyLibFacade->prepareNewLoadedIndex();
     createRegions();
     MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+    MyDebugInfos = new DebugInfos(MyLibFacade);
+    openDebugInfos();
 }
 
 

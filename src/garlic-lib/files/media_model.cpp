@@ -92,7 +92,7 @@ QString MediaModel::determinePathByMedia(QString src_file_path, QString local_fi
         real_file_path = MyWgt.handleRealPath();
         if (real_file_path == "")
         {
-            qCritical(ContentManager) << "UNZIP_FAILED resourceURI: " << src_file_path << " caused an error during processing";
+            qCritical(Develop) << "UNZIP_FAILED resourceURI: " << src_file_path << " caused an error during processing";
             return "";
         }
     }

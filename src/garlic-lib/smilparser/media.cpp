@@ -53,7 +53,7 @@ void TMedia::registerFile(MediaManager *mm)
 {
     MyMediaManager = mm;
     MyMediaManager->registerFile(src);
-    qDebug(SmilParser) << src << " registered";
+    qDebug(Develop) << src << " registered";
 }
 
 void TMedia::setBaseMediaAttributes()
