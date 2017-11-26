@@ -55,7 +55,6 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
     rectangle.data()->setData(str.toUtf8(), QUrl());
 
     rectangle_item.reset(qobject_cast<QQuickItem *>(rectangle->create()));
-  //  rectangle_item.data()->setProperty("color", "");
 
     rectangle_item.data()->setParentItem(root_item);
     MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, this));
