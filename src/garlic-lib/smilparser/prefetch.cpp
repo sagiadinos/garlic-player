@@ -50,8 +50,8 @@ void TPrefetch::stop()
 
 void TPrefetch::setDurationTimerBeforePlay()
 {
-    qDebug(Develop) << getID() << src << " register again to start check if changed";
     MyMediaManager->registerFile(src); // ";
+    qDebug(Develop) << src << "registered and queued again for update check";
     setInternalDefaultDur();
 }
 

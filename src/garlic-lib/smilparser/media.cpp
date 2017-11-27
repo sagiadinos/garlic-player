@@ -53,7 +53,7 @@ void TMedia::registerFile(MediaManager *mm)
 {
     MyMediaManager = mm;
     MyMediaManager->registerFile(src);
-    qDebug(Develop) << src << " registered";
+    qDebug(Develop) << src << " registered and queued for download";
 }
 
 void TMedia::setBaseMediaAttributes()

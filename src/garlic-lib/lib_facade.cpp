@@ -24,7 +24,7 @@ LibFacade::LibFacade(QObject *parent) : QObject(parent)
     connect(MyIndexManager.data(), SIGNAL(availableIndexLoaded()), this, SLOT(emitNewIndexLoaded()));
 
 #ifdef QT_DEBUG
-    timer_id = startTimer(20000); // every 20s
+    timer_id = startTimer(60000); // every 60s
 #endif
 }
 

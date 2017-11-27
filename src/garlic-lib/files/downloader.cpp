@@ -44,6 +44,7 @@ QFileInfo Downloader::getLocalFileInfo()
 
 void Downloader::finishedHeadRequest(QNetworkReply *reply)
 {
+    qDebug(Develop) << "finished HEAD Request for " << remote_file_url.toString();
     if (reply->error() != QNetworkReply::NoError)
     {
         handleNetworkError(reply);
@@ -51,7 +52,6 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
         return;
     }
 
-    qDebug(Develop) << "finished HEAD Request";
     int status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     if (status_code != 301)
         checkStatusCode(reply, status_code);
@@ -71,12 +71,12 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
 
 void Downloader::finishedHeadRedirectRequest(QNetworkReply *reply)
 {
+    qDebug(Develop) << "finished Redirect Request for " << remote_file_url.toString();
     if (reply->error() != QNetworkReply::NoError)
     {
         handleNetworkError(reply);
         return;
     }
-    qDebug(Develop) << "finished Redirect Request";
     checkStatusCode(reply, reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
     reply->deleteLater();
     return;
@@ -91,7 +91,7 @@ void Downloader::checkStatusCode(QNetworkReply *reply, int status_code)
                 break;
         case 304:
         default:
-            qDebug(Develop) << "status code: " << status_code << "not handled";
+            qDebug(Develop) << "status code: " << status_code << "not handled for " << remote_file_url.toString();
             emit notmodified(this);
         break;
     }
@@ -106,7 +106,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
     if (content_type.contains("text/html")  || content_type.contains("application/xhtml+xml"))
     {
-        qDebug(Develop) << remote_file_url.toString() << " no need for caching";
+        qDebug(Develop) << remote_file_url.toString() << " no need for caching " << remote_file_url.toString();
         emit notcacheable(this);
         reply->deleteLater();
         return;
