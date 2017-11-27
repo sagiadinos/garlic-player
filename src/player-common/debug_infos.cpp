@@ -11,7 +11,7 @@ DebugInfos::DebugInfos(LibFacade *lib_facade, QWidget *parent) :  QDialog(parent
 
 void DebugInfos::setCurrentFilePlayed(TMedia *media)
 {
-    ui->CurrentFileInUse->setText(media->getRegion()+": "+media->getTitle() +"\n");
+    ui->CurrentFileInUse->setText(preparePlayedMediaText(media));
 }
 
 void DebugInfos::setLibFacade(LibFacade *lib_facade)
@@ -30,6 +30,28 @@ void DebugInfos::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
     outputResourcesUsage();
+}
+
+QString DebugInfos::preparePlayedMediaText(TMedia *media)
+{
+    QString key = media->getRegion();
+    QString value = media->getTitle();
+
+    if (value == "")
+        value = media->getSrc();
+
+    QMap<QString, QString>::iterator i = played_media.find(key);
+    if (i != played_media.end())
+        played_media[i.key()] = value;
+    else
+        played_media.insert(key, value);
+
+    QString output = "";
+    for (i = played_media.begin(); i != played_media.end(); i++)
+    {
+        output += i.key()+": " + i.value()+"\n";
+    }
+    return output;
 }
 
 void DebugInfos::outputResourcesUsage()

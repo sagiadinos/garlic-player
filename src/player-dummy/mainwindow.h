@@ -33,9 +33,11 @@ class MainWindow : public QMainWindow
         LibFacade                *MyLibFacade      = Q_NULLPTR;
         DebugInfos               *MyDebugInfos;
         QPointer<TMedia>          MyMedia;
+        QString                   start_time;
         void                      outputResourcesUsage();
         void                      createRegions();
         void                      deleteRegions();
+        Logger&                   MyLogger = Logger::getInstance();
 
     protected slots:
         void                      prepareParsing();

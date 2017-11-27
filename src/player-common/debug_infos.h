@@ -2,6 +2,7 @@
 #define DEBUGINFOS_H
 
 #include <QDialog>
+#include <QMap>
 #include "lib_facade.h"
 
 #include "system_infos/memory.h"
@@ -26,14 +27,15 @@ class DebugInfos : public QDialog
         ~DebugInfos();
         void outputResourcesUsage();
     protected:
-        qint64               max_memory_used = 0;
-        qint64               max_threads_used = 0;
-        int                  timer_id;
-        LibFacade           *MyLibFacade;
-        SystemInfos::Memory  MyMemoryInfos;
-        SystemInfos::General MyGeneralInfos;
-        void                 timerEvent(QTimerEvent *event);
-
+        qint64                 max_memory_used = 0;
+        qint64                 max_threads_used = 0;
+        QMap<QString, QString> played_media;
+        int                    timer_id;
+        LibFacade             *MyLibFacade;
+        SystemInfos::Memory    MyMemoryInfos;
+        SystemInfos::General   MyGeneralInfos;
+        void                   timerEvent(QTimerEvent *event);
+        QString                preparePlayedMediaText(TMedia *media);
     private:
         Ui::DebugInfos *ui;
 };

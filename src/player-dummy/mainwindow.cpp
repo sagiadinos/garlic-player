@@ -67,6 +67,7 @@ void MainWindow::prepareParsing()
 
 void MainWindow::startShowMedia(TMedia *media)
 {
+    start_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     MyDebugInfos->setCurrentFilePlayed(media);
     if (media->objectName() == "TVideo" || media->objectName() == "TAudio")
     {
@@ -77,6 +78,10 @@ void MainWindow::startShowMedia(TMedia *media)
 
 void MainWindow::stopShowMedia(TMedia *media)
 {
+    // Log everything in Playlog
+    qInfo(PlayLog).noquote() << MyLogger.createPlayLogEntry(start_time, media->getSrc());
+    start_time = ""; // set times to Zero
+
     Q_UNUSED(media);
     MyMedia = NULL; // prevent crash look at finish Media
 }
