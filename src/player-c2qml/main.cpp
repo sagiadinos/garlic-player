@@ -61,9 +61,7 @@ int main(int argc, char *argv[])
     MyParser.addOptions();
     MyParser.parse(&app);
 
-    QLoggingCategory::setFilterRules(QStringLiteral("qt.scenegraph.general=false"));
-    QLoggingCategory::setFilterRules("*.debug=true");
-
+    QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
 
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop(), 0);

@@ -42,8 +42,7 @@ int main(int argc, char *argv[])
     MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
     MyLibFacade->getConfiguration()->createDirectories();
 
-    QLoggingCategory::setFilterRules("*.debug=true\n");
-    QLoggingCategory::setFilterRules("qt.qpa.*=false\n"); // get rid of mouse events
+    QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
     qInstallMessageHandler(handleMessages);
 
     TCmdParser MyParser(MyLibFacade->getConfiguration());

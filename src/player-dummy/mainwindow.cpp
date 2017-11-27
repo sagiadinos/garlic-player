@@ -59,8 +59,14 @@ void MainWindow::prepareParsing()
     MyLibFacade->prepareNewLoadedIndex();
     createRegions();
     MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
-    MyDebugInfos = new DebugInfos(MyLibFacade);
-    openDebugInfos();
+
+    // Must opened here after parsing, otherwise it crashes with media
+    // but had to prevent from open second debug dialog after new index
+    if (MyDebugInfos == Q_NULLPTR)
+    {
+        MyDebugInfos = new DebugInfos(MyLibFacade);
+        openDebugInfos();
+    }
 }
 
 

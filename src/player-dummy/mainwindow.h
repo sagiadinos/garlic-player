@@ -31,7 +31,7 @@ class MainWindow : public QMainWindow
         void                      openDebugInfos();
     protected:
         LibFacade                *MyLibFacade      = Q_NULLPTR;
-        DebugInfos               *MyDebugInfos;
+        DebugInfos               *MyDebugInfos     = Q_NULLPTR;
         QPointer<TMedia>          MyMedia;
         QString                   start_time;
         void                      outputResourcesUsage();
