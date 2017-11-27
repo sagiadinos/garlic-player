@@ -8,7 +8,6 @@ class LogRotate : public QObject
     Q_OBJECT
 public:
     explicit LogRotate(QObject *parent = nullptr);
-
 signals:
 
 public slots:

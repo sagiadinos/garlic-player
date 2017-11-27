@@ -20,10 +20,13 @@ class Logger : public QObject
 {
         Q_OBJECT
     public:
+        const qint64 MAX_LOG_FILE_SIZE    = 10485760; // 10 MiB
+        const qint64 MAX_LOG_FILE_NUMBER  = 20;
         static   Logger&                 getInstance();
                  void                    dispatchMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg);
                  QString                 createPlayLogEntry(QString start_time, QString content_id);
                  QString                 createEventLogMetaData(QString event_name, QStringList meta_data);
+                 QFile                  *rotateFile(QFile *file);
 
     protected:
                  QScopedPointer<QFile>   qtdebug_log, debug_log, event_log, play_log;
@@ -33,6 +36,7 @@ class Logger : public QObject
                  void                    writePlayLog(const QString &msg);
                  void                    writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data);
                  QString                 determineSeverity(QtMsgType type);
+                 bool                    isSizeExeeds(QFile *file);
 
     private:
         explicit Logger(QObject *parent = nullptr);

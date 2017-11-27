@@ -84,6 +84,7 @@ void Logger::writeQtDebugLog(QtMsgType type, const QMessageLogContext &context, 
 void Logger::writeDebugLog(QFile *file, QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QTextStream out(file);
+
     out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") << " "
         << determineSeverity(type) << " "
         << context.category << " "
@@ -104,6 +105,8 @@ void Logger::writePlayLog(const QString &msg)
 
 void Logger::writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data)
 {
+//    if (isSizeExeeds(event_log.data()))
+//        event_log.reset(rotateFile(event_log.data()));
     QString meta = meta_data;
     meta.replace("\\", "");
     QTextStream out(event_log.data());
@@ -133,4 +136,36 @@ QString Logger::determineSeverity(QtMsgType type)
             return "critical";
     }
     return "UNKNOWN";
+}
+
+bool Logger::isSizeExeeds(QFile *file)
+{
+    return (file->size() > MAX_LOG_FILE_SIZE);
+}
+
+QFile *Logger::rotateFile(QFile *file)
+{
+    QFileInfo fi(*file);
+    QString file_path = fi.absoluteFilePath();
+    file->flush();
+    file->close();
+    QDir dir =fi.absoluteDir();
+
+    // find all a files with this name
+   foreach (const QString &match,  dir.entryList(QStringList(fi.baseName()+"*"), QDir::Files, QDir::Time | QDir::Reversed))
+   {
+        QStringList list = match.split(".");
+        int num = list.at(list.size()-1).toInt();
+
+        if (num == 0)
+            QFile::rename(file_path, file_path+".1");
+        else if (num < MAX_LOG_FILE_NUMBER)
+            QFile::rename(file_path+"."+QString::number(num), file_path+"."+QString::number(num+1));
+        else
+            QFile::remove(file_path+"."+QString::number(num));
+   }
+
+    QFile *new_file = new QFile(file_path);
+    new_file->open(QFile::Append | QFile::Text);
+    return new_file;
 }
