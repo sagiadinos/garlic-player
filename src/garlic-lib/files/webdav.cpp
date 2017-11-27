@@ -63,7 +63,7 @@ void WebDav::finishedPutRequest(QNetworkReply *reply)
          handleNetworkError(reply);
          return;
      }
-     qInfo(ContentManager) << "SEND_WEBDAV_SUCCEED resourceURI: " << remote_file_url.toString();
+     qInfo(Develop) << "SEND_WEBDAV_SUCCEED resourceURI: " << remote_file_url.toString();
      reply->deleteLater();
      emit succeed(this);
 }
@@ -71,7 +71,7 @@ void WebDav::finishedPutRequest(QNetworkReply *reply)
 
 void WebDav::handleNetworkError(QNetworkReply *reply)
 {
-   qWarning(ContentManager) << "SEND_FAILED resourceURI: " << remote_file_url.toString()  << " " << reply->errorString();
+   qWarning(Develop) << "SEND_FAILED resourceURI: " << remote_file_url.toString()  << " " << reply->errorString();
    reply->deleteLater();
    emit failed(this);
 }

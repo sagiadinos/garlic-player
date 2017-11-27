@@ -29,6 +29,14 @@ TPrefetch::~TPrefetch()
     deleteTimer();
 }
 
+void TPrefetch::registerFile(MediaManager *mm)
+{
+    // overwrite not to check on first parsing
+    // see setDurationTimerBeforePlay()
+
+    Q_UNUSED(mm);
+}
+
 void TPrefetch::play()
 {
     qDebug() << getID()  << "played";
@@ -51,7 +59,7 @@ void TPrefetch::stop()
 void TPrefetch::setDurationTimerBeforePlay()
 {
     MyMediaManager->registerFile(src); // ";
-    qDebug(Develop) << src << "registered and queued again for update check";
+    qDebug(Develop) << src << "register from prefetch";
     setInternalDefaultDur();
 }
 

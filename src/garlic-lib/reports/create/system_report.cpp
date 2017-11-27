@@ -17,16 +17,13 @@
 *************************************************************************************/
 #include "system_report.h"
 
-Reporting::CreateSystemReport::CreateSystemReport(DiscSpace *disc_space,
-                           SystemInfos::Memory *memory,
-                           SystemInfos::Network *network,
-                           TConfiguration *config,
+Reporting::CreateSystemReport::CreateSystemReport(TConfiguration *config,
                            QObject *parent) : Reporting::CreateBase(config, parent)
 {
-    MyDiscSpace     = disc_space;
-    MyMemory        = memory;
-    MyNetwork       = network;
     MyConfiguration = config;
+    MyDiscSpace.reset(new DiscSpace(MyConfiguration->getPaths("cache")));
+    MyMemory.reset(new SystemInfos::Memory(this));
+    MyNetwork.reset(new SystemInfos::Network(this));
 
 }
 

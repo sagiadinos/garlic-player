@@ -34,17 +34,15 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            explicit CreateSystemReport(DiscSpace *disc_space,
-                                  SystemInfos::Memory *memory,
-                                  SystemInfos::Network *network,
+            explicit CreateSystemReport(
                                   TConfiguration *config,
                                   QObject *parent = nullptr);
             void process();
             QString asXMLString();
         protected:
-             DiscSpace            *MyDiscSpace;
-             SystemInfos::Memory  *MyMemory;
-             SystemInfos::Network *MyNetwork;
+             QScopedPointer<DiscSpace>            MyDiscSpace;
+             QScopedPointer<SystemInfos::Memory>  MyMemory;
+             QScopedPointer<SystemInfos::Network> MyNetwork;
              QDomElement           system_info, network, interface, hardware_info, configuration;
              void                  createSystemInfo();
              void                  createConfiguration();
