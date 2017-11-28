@@ -94,10 +94,13 @@ void IndexManager::timerEvent(QTimerEvent *event)
         lookUpForIndex();
 }
 
+
 // ==================  protected slots =======================================
 
 void IndexManager::doSucceed(TNetworkAccess *downloader)
 {
-    Q_UNUSED(downloader); // This class should only have one permenent downloader instance
+    Q_UNUSED(downloader); // This class have one permenent downloader instance so function paramter not used
+    renameDownloadedFile(MyDownloader->getLocalFileInfo().absoluteFilePath());
+
     loadLocal(MyDownloader->getLocalFileInfo().absoluteFilePath());
 }

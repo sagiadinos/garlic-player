@@ -21,6 +21,7 @@ namespace Reporting
             WebDav          *MyWebDav = Q_NULLPTR;
             SubScription    *MySubscription;
             TConfiguration  *MyConfiguration;
+            QScopedPointer<Reporting::CreateSystemReport> MyCreateSystemReport;
             void             timerEvent(QTimerEvent *event);
             void             sendSystemReport();
         signals:

@@ -39,3 +39,15 @@ bool BaseManager::isRelative(QString src)
 {
     return (src.at(0) != '/');
 }
+
+void BaseManager::renameDownloadedFile(QString file_path)
+{
+    QFileInfo fi(file_path);
+
+    QFile file(fi.absolutePath()+"/"+FILE_DOWNLOADER_PREFIX+fi.fileName());
+    if (file.exists())
+    {
+        QFile::remove(file_path); // rename cannot overwrite
+        file.rename(file_path);
+    }
+}

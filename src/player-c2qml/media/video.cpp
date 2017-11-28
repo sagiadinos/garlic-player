@@ -12,6 +12,7 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
                     module +
                     "Video { \
                         id: "+getRegionId()+"_video; \
+                        orientation: 0; \
                         anchors.fill: parent; \
                         autoPlay: true; \
                         property var video_fill_mode: \"\";  \

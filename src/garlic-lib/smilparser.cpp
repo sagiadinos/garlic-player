@@ -49,13 +49,14 @@ void TSmil::beginSmilParsing(QDomElement body)
 void TSmil::stopAllPlayingMedia()
 {
     qDebug(Develop) << "begin stopAllPlayingMedia" << Q_FUNC_INFO;
+
     // Used while cause every stopped element will removed from QSet in QSmil::emitStopShowMedia()
-    // so ar_played_media will decrease after every
     QSet<TBaseTiming *>::iterator i;
-    while (current_played_media_list.size() > 0) // stop actual played media
+    while (currently_playing_media.size() > 0) // stop actual played media
     {
-        i = current_played_media_list.begin();
+        i = currently_playing_media.begin();
         stopPlayingElement(*i);
+
     }
     qDebug(Develop) << "end stopAllPlayingMedia" << Q_FUNC_INFO;
 }
@@ -205,6 +206,18 @@ void TSmil::stopPlayingElement(TBaseTiming *element)
     return;
 }
 
+void TSmil::insertCurrentlyPlayingMedia(TMedia *media)
+{
+    currently_playing_media.insert(media);
+    MyMediaManager->insertCurrentlyPlaying(media->getSrc());
+}
+
+void TSmil::removeCurrentlyPlayingMedia(TMedia *media)
+{
+    currently_playing_media.remove(media);
+    MyMediaManager->removeCurrentlyPlaying(media->getSrc());
+}
+
 // ============================== private methods =======================================
 
 void TSmil::stopElement(TBaseTiming *element)
@@ -251,7 +264,7 @@ void TSmil::connectMediaSlots(TMedia *media)
 void TSmil::emitStartShowMedia(TMedia *media)
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
-    current_played_media_list.insert(media);
+    insertCurrentlyPlayingMedia(media);
     emit startShowMedia(media);
     qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;
@@ -260,7 +273,7 @@ void TSmil::emitStartShowMedia(TMedia *media)
 void TSmil::emitStopShowMedia(TMedia *media)
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
-    current_played_media_list.remove(media);
+    removeCurrentlyPlayingMedia(media);
     emit stopShowMedia(media);
     qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;

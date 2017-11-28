@@ -18,8 +18,6 @@
 #ifndef SYSTEM_REPORT_H
 #define SYSTEM_REPORT_H
 
-
-#include <QObject>
 #include <QFileInfo>
 #include <QTimeZone>
 
@@ -38,7 +36,6 @@ namespace Reporting
                                   TConfiguration *config,
                                   QObject *parent = nullptr);
             void process();
-            QString asXMLString();
         protected:
              QScopedPointer<DiscSpace>            MyDiscSpace;
              QScopedPointer<SystemInfos::Memory>  MyMemory;

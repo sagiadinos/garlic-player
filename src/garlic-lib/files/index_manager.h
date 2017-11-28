@@ -23,7 +23,6 @@
 #include "base_manager.h"
 #include "index_model.h"
 #include "tools/configuration.h"
-#include "files/downloader.h"
 
 class IndexManager : public BaseManager
 {

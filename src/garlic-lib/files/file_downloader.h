@@ -9,6 +9,9 @@
 #include <QNetworkReply>
 #include "files/network_access.h"
 
+
+const QString FILE_DOWNLOADER_PREFIX = "ready_";
+
 class FileDownloader : public TNetworkAccess
 {
         Q_OBJECT
@@ -37,6 +40,7 @@ class FileDownloader : public TNetworkAccess
         void addBytesTransfered(quint64 add_bytes);
         void renameAfterDownload();
         void cleanupDownload();
+        void overwriteFile(QString file_name);
     protected slots:
         void readData();
         void finishDownload();

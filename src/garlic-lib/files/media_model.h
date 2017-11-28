@@ -24,6 +24,12 @@
 #include "tools/configuration.h"
 #include "files/wgt.h"
 
+
+const     int        MEDIAMODEL_NOT_EXISTS   = 0;
+const     int        MEDIAMODEL_EXISTS       = 1;
+const     int        MEDIAMODEL_MODIFIED     = 2;
+const     int        MEDIAMODEL_UNCACHABLE   = 3;
+
 /**
  * @brief The FileModel class handles the file management list
  *
@@ -34,10 +40,6 @@ class MediaModel : public QObject
 {
     Q_OBJECT
     public:
-        const     int        NOT_EXISTS   = 0;
-        const     int        EXISTS      = 1;
-        const     int        RELOADABLE = 2;
-        const     int        UNCACHABLE = 3;
 
         explicit MediaModel(QObject *parent=Q_NULLPTR);
         ~MediaModel();

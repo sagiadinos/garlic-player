@@ -39,12 +39,6 @@ void Reporting::CreateSystemReport::process()
     createHardwareInfo();
 }
 
-QString Reporting::CreateSystemReport::asXMLString()
-{
-    return document.toString();
-}
-
-
 void Reporting::CreateSystemReport::createSystemInfo()
 {
     system_info = document.createElement("systemInfo");

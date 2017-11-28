@@ -63,8 +63,26 @@ int MediaManager::checkCacheStatus(QString src)
 {
     if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
         src = MyConfiguration->getIndexPath() + src;
+    int status = MyMediaModel->findStatusBySrcPath(src);
+    if (status == MEDIAMODEL_MODIFIED && !isCurrentlyPlaying(src))
+        renameDownloadedFile(requestLoadablePath(src));
 
-    return MyMediaModel->findStatusBySrcPath(src);
+    return status;
+}
+
+void MediaManager::insertCurrentlyPlaying(QString path)
+{
+    currently_playing.insert(path);
+}
+
+void MediaManager::removeCurrentlyPlaying(QString path)
+{
+    currently_playing.remove(path);
+}
+
+bool MediaManager::isCurrentlyPlaying(QString path)
+{
+    return (currently_playing.find(path) != currently_playing.end());
 }
 
 
@@ -73,23 +91,19 @@ QString MediaManager::requestLoadablePath(QString src)
     if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
         src = MyConfiguration->getIndexPath() + src;
 
-    QString ret = MyMediaModel->findLocalBySrcPath(src);
-
-    return ret;
+    return MyMediaModel->findLocalBySrcPath(src);
 }
 
 // ==================  protected methods =======================================
 
 void MediaManager::handleRemoteFile(QString src)
 {
-
     QString local_path = MyConfiguration->getPaths("cache") + MyMediaModel->determineHashedFilePath(src);
     QFileInfo fi(local_path);
     if (fi.exists()) // use cached, cause network could be unreachable
         MyMediaModel->insertAvaibleFile(src, local_path);
 
     MyDownloadQueue->insertQueue(src, local_path);
-
 }
 
 // ==================  protected slots =======================================

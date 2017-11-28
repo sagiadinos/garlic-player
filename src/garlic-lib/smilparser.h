@@ -36,6 +36,7 @@ public:
     void                               clearLists();
     void                               beginSmilParsing(QDomElement body);
     void                               stopAllPlayingMedia();
+
 protected:
     QDomElement                        parser;
     QString                            index_path;
@@ -51,7 +52,9 @@ protected slots:
     void                               pausePlayingElement(TBaseTiming *element);
     void                               stopPlayingElement(TBaseTiming *element);
 private:
-    QSet<TBaseTiming *>                current_played_media_list;
+    QSet<TBaseTiming *>                currently_playing_media;
+    void                               insertCurrentlyPlayingMedia(TMedia *media);
+    void                               removeCurrentlyPlayingMedia(TMedia *media);
     void                               emitStartShowMedia(TMedia *media);
     void                               stopElement(TBaseTiming *element);
     void                               emitStopShowMedia(TMedia *media);

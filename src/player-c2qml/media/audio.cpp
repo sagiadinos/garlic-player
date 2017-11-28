@@ -11,7 +11,7 @@ Audio::Audio(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
     // FIXIT! Audio QML cannot be created => Report Qt Bug?
     QString str("import QtQuick 2.7\n"+
                     module +
-                    "Video {\n \
+                "Audio {\n \
                         id: "+getRegionId()+"_audio; \n \
                         autoPlay: true; \n \
                    }\n"

@@ -4,13 +4,14 @@ Reporting::SystemReportManager::SystemReportManager(TConfiguration *config, QObj
 {
     MyConfiguration      = config;
     MyWebDav             = new WebDav(MyConfiguration->getUserAgent().toUtf8(), this);
+    MyCreateSystemReport.reset(new Reporting::CreateSystemReport(MyConfiguration, this));
 }
 
 Reporting::SystemReportManager::~SystemReportManager()
 {
     if (timer_id != 0)
         killTimer(timer_id);
-    MyWebDav->deleteLater(); // maybe a sendprocess is established
+    MyWebDav->deleteLater(); // maybe a send process was established
 }
 
 void Reporting::SystemReportManager::init(SubScription *subscription)
@@ -28,10 +29,9 @@ void Reporting::SystemReportManager::timerEvent(QTimerEvent *event)
 
 void Reporting::SystemReportManager::sendSystemReport()
 {
-    qDebug(Develop) << "begin send system report" << Q_FUNC_INFO;
-    Reporting::CreateSystemReport *MyCreateSystemReport = new Reporting::CreateSystemReport(MyConfiguration, this);
-    MyCreateSystemReport->process();
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
+    MyCreateSystemReport.data()->process();
     MyWebDav->processPutData(MySubscription->getAction(), MyCreateSystemReport->asXMLString().toUtf8());
-    qDebug(Develop) << "end send system report" << Q_FUNC_INFO;
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 

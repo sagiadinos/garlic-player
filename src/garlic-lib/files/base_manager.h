@@ -18,8 +18,9 @@
 #ifndef BASE_MANAGER_H
 #define BASE_MANAGER_H
 
-#include <QObject>
-#include <QFile>
+#include <QFileInfo>
+#include "download_queue.h"
+
 class BaseManager : public QObject
 {
         Q_OBJECT
@@ -29,6 +30,7 @@ class BaseManager : public QObject
     protected:
         bool     isRemote(QString src);
         bool     isRelative(QString src);
+        void     renameDownloadedFile(QString file_path);
 };
 
 #endif // BASE_MANAGER_H

@@ -18,11 +18,10 @@
 #ifndef MEDIA_MANAGER_H
 #define MEDIA_MANAGER_H
 
-#include <QObject>
+#include <QSet>
 #include "base_manager.h"
 #include "media_model.h"
 #include "tools/configuration.h"
-#include "download_queue.h"
 
 /**
  * @brief The MediaManager class is the "interface" for handling playlist media
@@ -42,8 +41,12 @@ public:
     void                  registerFile(QString src);
     QString               requestLoadablePath(QString src);
     int                   checkCacheStatus(QString src);
+    void                  insertCurrentlyPlaying(QString path);
+    void                  removeCurrentlyPlaying(QString path);
+    bool                  isCurrentlyPlaying(QString path);
 
 protected:
+    QSet<QString>         currently_playing;
     int                   timer_id;
     TConfiguration       *MyConfiguration;
     DownloadQueue        *MyDownloadQueue;

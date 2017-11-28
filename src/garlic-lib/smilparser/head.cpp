@@ -21,7 +21,7 @@
 THead::THead(TConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
-    MySystemReportManager = new Reporting::SystemReportManager(config);
+    MySystemReportManager.reset(new Reporting::SystemReportManager(config));
     setDefaultValues();
 }
 
@@ -115,7 +115,7 @@ void THead::parseMetaData(QDomElement element)
         if (subscription->getType() == "SystemReport")
         {
             MySystemReport.reset(subscription);
-            MySystemReportManager->init(MySystemReport.data());
+            MySystemReportManager.data()->init(MySystemReport.data());
         }
         else if (subscription->getType() == "InventoryReport")
         {
@@ -125,6 +125,8 @@ void THead::parseMetaData(QDomElement element)
         }
         else if (subscription->getType() == "EventlogCollection")
         {
+            MyEventLogs.reset(subscription);
+            MyEventLogsManager.data()->init(MyEventLogs.data());
         }
     }
 }

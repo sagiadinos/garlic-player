@@ -28,6 +28,13 @@ Reporting::CreateBase::CreateBase(TConfiguration *config, QObject *parent) : QOb
 
 }
 
+
+QString Reporting::CreateBase::asXMLString()
+{
+    return document.toString();
+}
+
+
 /**
  * @brief Reporting::Base::init
  */

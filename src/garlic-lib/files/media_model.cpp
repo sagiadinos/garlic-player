@@ -56,7 +56,7 @@ int MediaModel::findStatusBySrcPath(QString src_file_path)
 void MediaModel::insertAvaibleLink(QString src_file_path)
 {
     if (findLocalBySrcPath(src_file_path) == "") // reloadable not neccessary cause caching is part of WebEngine
-        available_media_list.insert(src_file_path, qMakePair(src_file_path, EXISTS));
+        available_media_list.insert(src_file_path, qMakePair(src_file_path, MEDIAMODEL_EXISTS));
 }
 
 
@@ -67,9 +67,9 @@ void MediaModel::insertAvaibleFile(QString src_file_path, QString local_file_pat
         return;
 
     if (findLocalBySrcPath(src_file_path) == "")
-        available_media_list.insert(src_file_path, qMakePair(path, EXISTS));
+        available_media_list.insert(src_file_path, qMakePair(path, MEDIAMODEL_EXISTS));
     else
-        available_media_list[src_file_path] = qMakePair(path, RELOADABLE);
+        available_media_list[src_file_path] = qMakePair(path, MEDIAMODEL_MODIFIED);
 }
 
 QString MediaModel::determineHashedFilePath(QString src_file_path)

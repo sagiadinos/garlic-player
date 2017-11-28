@@ -27,6 +27,7 @@
 
 #include "head/subscription.h"
 #include "reports/system_report_manager.h"
+#include "reports/event_logs_manager.h"
 
 /**
  * @brief The Region struct
@@ -68,7 +69,10 @@ class THead: public QObject
         TConfiguration       *MyConfiguration;
 
         QScopedPointer<SubScription>    MySystemReport;
-        Reporting::SystemReportManager *MySystemReportManager;
+        QScopedPointer<SubScription>    MyEventLogs;
+        QScopedPointer<SubScription>    MyPlaylogs;
+        QScopedPointer<Reporting::SystemReportManager> MySystemReportManager;
+        QScopedPointer<Reporting::EventLogsManager> MyEventLogsManager;
         void                 parseMeta(QDomElement element);
         void                 parseMetaData(QDomElement element);
         void                 parseLayout(QDomElement layout);

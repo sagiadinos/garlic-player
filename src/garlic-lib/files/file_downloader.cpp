@@ -18,7 +18,7 @@ void FileDownloader::startDownload(QUrl url, QString file_name)
     if(network_reply)
         return;
     original_file_name = file_name;
-    destination_file.setFileName(file_name+".tmp"); // add suffix to prevent overwriting
+    destination_file.setFileName(file_name+".part"); // add suffix to prevent overwriting
     setRemoteFileUrl(url);
     if(!destination_file.open(QIODevice::WriteOnly))
         return;
@@ -54,11 +54,23 @@ void FileDownloader::addBytesTransfered(quint64 add_bytes )
 
 void FileDownloader::renameAfterDownload()
 {
-    // Because Qt really likes to makes my life hard and QFile::rename cannot overwrite
+    // Do not overwrite an existing file, cause it could be possible
+    // that it is loaded. Tag it as "ready" and let the parse decide when it is renamed.
     QFile original_file(original_file_name);
-    if (original_file.exists())
-        original_file.remove();
-    destination_file.rename(original_file_name);
+    if (!original_file.exists())
+        destination_file.rename(original_file_name);
+    else
+        overwriteFile(FILE_DOWNLOADER_PREFIX+original_file_name);
+
+}
+
+void FileDownloader::overwriteFile(QString file_name)
+{
+    // Qt likes to make life hard and rename is unable to overwrite
+    QFile file(file_name);
+    if (file.exists())
+        file.remove();
+    destination_file.rename(file_name);
 }
 
 void FileDownloader::cleanupDownload()
@@ -86,7 +98,6 @@ void FileDownloader::finishDownload()
     {
         readData();
         destination_file.close();
-
         renameAfterDownload();
         network_reply->deleteLater();
 
