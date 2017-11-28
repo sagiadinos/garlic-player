@@ -25,10 +25,10 @@
 #include "files/wgt.h"
 
 
-const     int        MEDIAMODEL_NOT_EXISTS   = 0;
-const     int        MEDIAMODEL_EXISTS       = 1;
-const     int        MEDIAMODEL_MODIFIED     = 2;
-const     int        MEDIAMODEL_UNCACHABLE   = 3;
+const     int        MEDIA_NOT_EXISTS   = 0;
+const     int        MEDIA_AVAILABLE    = 1;
+const     int        MEDIA_MODIFIED     = 2;
+const     int        MEDIA_UNCACHABLE   = 3;
 
 /**
  * @brief The FileModel class handles the file management list
@@ -47,6 +47,7 @@ class MediaModel : public QObject
         void                                          clearQueue();
         QString                                       findLocalBySrcPath(QString src_file_path);
         int                                           findStatusBySrcPath(QString src_file_path);
+        void                                          setStatusBySrcPath(QString src_file_path, int status);
         void                                          insertAvaibleLink(QString src_file_path);
         void                                          insertAvaibleFile(QString src_file_path, QString local_file_path);
 

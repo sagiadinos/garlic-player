@@ -42,9 +42,7 @@ bool BaseManager::isRelative(QString src)
 
 void BaseManager::renameDownloadedFile(QString file_path)
 {
-    QFileInfo fi(file_path);
-
-    QFile file(fi.absolutePath()+"/"+FILE_DOWNLOADER_PREFIX+fi.fileName());
+    QFile file(file_path+FILE_DOWNLOADED_SUFFIX);
     if (file.exists())
     {
         QFile::remove(file_path); // rename cannot overwrite

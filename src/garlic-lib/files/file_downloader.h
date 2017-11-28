@@ -2,7 +2,7 @@
 #define FILE_DOWNLOADER_H
 
 #include <QObject>
-#include <QFileInfo>
+#include <QFile>
 #include <QPointer>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -10,7 +10,8 @@
 #include "files/network_access.h"
 
 
-const QString FILE_DOWNLOADER_PREFIX = "ready_";
+const QString FILE_DOWNLOADED_SUFFIX = ".ready";
+const QString FILE_DOWNLOAD_SUFFIX   = ".part";
 
 class FileDownloader : public TNetworkAccess
 {
@@ -40,7 +41,7 @@ class FileDownloader : public TNetworkAccess
         void addBytesTransfered(quint64 add_bytes);
         void renameAfterDownload();
         void cleanupDownload();
-        void overwriteFile(QString file_name);
+        void overwriteFile();
     protected slots:
         void readData();
         void finishDownload();

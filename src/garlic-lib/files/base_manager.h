@@ -18,7 +18,7 @@
 #ifndef BASE_MANAGER_H
 #define BASE_MANAGER_H
 
-#include <QFileInfo>
+#include <QFile>
 #include "download_queue.h"
 
 class BaseManager : public QObject
