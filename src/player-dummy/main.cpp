@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
 
     MainWindow w(MyLibFacade);
     MyLibFacade->initIndex();
+    MyLibFacade->loadIndex();
     MyLibFacade->checkForNewSmilIndex();
 
     return app.exec();

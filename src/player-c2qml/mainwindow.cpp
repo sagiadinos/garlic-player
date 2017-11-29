@@ -191,8 +191,9 @@ void MainWindow::deleteRegions()
 
 void MainWindow::prepareParsing()
 {
-    deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
-    MyLibFacade->prepareNewLoadedIndex();
+    if (regions_list.size() > 0) // prevent to call functionx of deleted or not existing regions
+        deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
+
     createRegions();
     MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
@@ -229,7 +230,8 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             break;
         case QQuickView::Ready:
             MyLibFacade->initIndex();
-            MyLibFacade->checkForNewSmilIndex(); // load index when QML comiled complete
+            MyLibFacade->loadIndex(); // load index when QML comiled complete
+            MyLibFacade->checkForNewSmilIndex();
             break;
         case QQuickView::Loading:
             qDebug(MediaPlayer) << "QML loaded/compiled... ";

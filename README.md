@@ -17,6 +17,7 @@ Linux, Windows, Raspberry Pi 3, Android, maybe later OSX
 Garlic actually is able to play local and remote (via http) SMIL Files with actual supported features.
 Compilations tested with:
  - Kde Neon Ubuntu 16.04 based (Attention when using QtMultimedia cause gstreamer 1.8 seems to have a mem leak)
+ - Kubuntu 16.10, 17.04, 17.10
  - Debian 8 Jessie
  - Rasperian Jessie/Stretch (rpi-zero/rpi2/rpi3 with poor video hw acceleration) 
  - Tinker Board (Linaro OS 1.8) 
@@ -25,8 +26,12 @@ Compilations tested with:
 
 For Android player-c2qml is needed, cause QtMultimedia-Widgets are not supported.
 
-Attention! Do not use 5.9.1 for garlic-c2qml cause the QML Image Type has an extremly [mem leak](https://bugreports.qt.io/browse/QTBUG-61754)
-which make it useable for a continous playing media player.
+Attention!
+
+ - Qt 5.9.1 QML Image Type, used in player-c2qml has a fat [mem leak](https://bugreports.qt.io/browse/QTBUG-61754)
+ - Qt 5.9.3 has also a [video player bug](https://bugreports.qt.io/browse/QTBUG-64764) on Android
+ 
+both bugs are showstoppers for a 24/7 running media player, so do not use this version to compile
 
 *garlic.sh [options] SMIL_INDEX*
 

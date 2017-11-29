@@ -28,12 +28,10 @@ IndexManager::IndexManager(TConfiguration *config, QObject *parent) : BaseManage
 void IndexManager::init(QString src)
 {
     src_index_path = src;
-    loadLocal(MyConfiguration->getLastPlayedIndexPath()); // load last Index to be sure that the player can contunue working if Downloader failed
 }
 
-void IndexManager::lookUpForIndex()
+void IndexManager::lookUpForRemoteIndex()
 {
-    // if nothing is loaded look first at cache if there is an Index
     if (src_index_path == "")
     {
         qWarning(Develop) << "set index path first";
@@ -41,8 +39,16 @@ void IndexManager::lookUpForIndex()
     }
     if (isRemote(src_index_path))
         MyDownloader->processFile(src_index_path, MyConfiguration->getPaths("cache")+"index.smil");
-    else
-        loadLocal(src_index_path); // src and local path are identically if src path local
+}
+
+bool IndexManager::load()
+{
+    if (src_index_path == "")
+    {
+        qWarning(Develop) << "set index path first";
+        return false;
+    }
+    return loadLocal(MyConfiguration->getLastPlayedIndexPath());
 }
 
 void IndexManager::activateRefresh(int value)
@@ -55,6 +61,7 @@ void IndexManager::deactivateRefresh()
 {
     if (timer_id == 0)
         return;
+
     refresh_time   = 0;
     killTimer(timer_id);
 }
@@ -71,27 +78,28 @@ QDomElement IndexManager::getBody()
 
 // ==================  protected methods =======================================
 
-void IndexManager::loadLocal(QString local_path)
+bool IndexManager::loadLocal(QString local_path)
 {
+    renameDownloadedFile(local_path);
     if (!QFile::exists(local_path))
     {
         QStringList list;
         list << "instanceId" << "display:0"
              << "resourceURI" << src_index_path;
         qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("SMIL_NOT_AVAILABLE",list);
-        return;
+        return false;
     }
 
     if (!MyIndexModel->loadDocument(local_path))
-        return;
+        return false;
     MyConfiguration->setLastPlayedIndexPath(local_path);
-    emit availableIndexLoaded();
+    return true;
 }
 
 void IndexManager::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timer_id)
-        lookUpForIndex();
+        lookUpForRemoteIndex();
 }
 
 
@@ -100,7 +108,5 @@ void IndexManager::timerEvent(QTimerEvent *event)
 void IndexManager::doSucceed(TNetworkAccess *downloader)
 {
     Q_UNUSED(downloader); // This class have one permenent downloader instance so function paramter not used
-    renameDownloadedFile(MyDownloader->getLocalFileInfo().absoluteFilePath());
-
-    loadLocal(MyDownloader->getLocalFileInfo().absoluteFilePath());
+    emit newIndexDownloaded();
 }

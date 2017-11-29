@@ -30,27 +30,28 @@ class IndexManager : public BaseManager
     public:
         explicit IndexManager(TConfiguration *config, QObject *parent=Q_NULLPTR);
         void            init(QString src);
+        bool            load();
         void            activateRefresh(int value);
         void            deactivateRefresh();
         QDomElement     getHead();
         QDomElement     getBody();
-        void            lookUpForIndex();
+        void            lookUpForRemoteIndex();
 
     protected:
 
-        int             refresh_time;
-        int             timer_id;
+        int             refresh_time = 0;
+        int             timer_id = 0;
         TConfiguration *MyConfiguration;
         IndexModel     *MyIndexModel;
         Downloader     *MyDownloader;
         QString         src_index_path;
-        void            loadLocal(QString local_path);
+        bool            loadLocal(QString local_path);
         void            timerEvent(QTimerEvent *event);
 
     protected slots:
         void doSucceed(TNetworkAccess *downloader);
     signals:
-        void availableIndexLoaded();
+        void newIndexDownloaded();
 
 };
 

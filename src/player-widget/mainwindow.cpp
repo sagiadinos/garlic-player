@@ -172,8 +172,9 @@ void MainWindow::deleteRegions()
 
 void MainWindow::prepareParsing()
 {
-    deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
-    MyLibFacade->prepareNewLoadedIndex();
+    if (regions_list.size() > 0)
+        deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
+
     createRegions();
     MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }

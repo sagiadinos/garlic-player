@@ -51,13 +51,12 @@ class LibFacade : public QObject
         TConfiguration    *getConfiguration() const;
         THead             *getHead() const;
         void               beginSmilBodyParsing();
-        void               prepareNewLoadedIndex();
+        void               checkForNewSmilIndex();
 
     public slots:
-        void               checkForNewSmilIndex();
+        void               loadIndex();
         void               emitStartShowMedia(TMedia *media);
         void               emitStopShowMedia(TMedia *media);
-        void               emitNewIndexLoaded();
 
     protected:
         int                 timer_id;

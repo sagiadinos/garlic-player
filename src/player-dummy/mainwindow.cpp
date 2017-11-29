@@ -41,7 +41,6 @@ void MainWindow::openDebugInfos()
 
 void MainWindow::deleteRegions()
 {
-    MyLibFacade->prepareNewLoadedIndex();
 }
 
 
@@ -56,7 +55,6 @@ void MainWindow::createRegions()
 void MainWindow::prepareParsing()
 {
     deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
-    MyLibFacade->prepareNewLoadedIndex();
     createRegions();
     MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
 

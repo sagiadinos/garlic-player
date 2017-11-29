@@ -21,7 +21,7 @@ LibFacade::LibFacade(QObject *parent) : QObject(parent)
 {
     MyConfiguration.reset(new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player")));
     MyIndexManager.reset(new IndexManager(MyConfiguration.data(), this));
-    connect(MyIndexManager.data(), SIGNAL(availableIndexLoaded()), this, SLOT(emitNewIndexLoaded()));
+    connect(MyIndexManager.data(), SIGNAL(newIndexDownloaded()), this, SLOT(loadIndex()));
 
 #ifdef QT_DEBUG
     timer_id = startTimer(60000); // every 60s
@@ -79,7 +79,7 @@ void LibFacade::initIndex()
 
 void LibFacade::checkForNewSmilIndex()
 {
-    MyIndexManager.data()->lookUpForIndex();
+    MyIndexManager.data()->lookUpForRemoteIndex();
 }
 
 THead *LibFacade::getHead() const
@@ -89,14 +89,24 @@ THead *LibFacade::getHead() const
 
 void LibFacade::beginSmilBodyParsing()
 {
+    connect(MySmil.data(), SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
+    connect(MySmil.data(), SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
     MySmil->beginSmilParsing(MyIndexManager->getBody());
 }
 
-void LibFacade::prepareNewLoadedIndex()
+void LibFacade::loadIndex()
 {
-    qDebug(Develop) << "start " << Q_FUNC_INFO;
+    qDebug(Develop) << "start" << Q_FUNC_INFO;
+    if (!MySmil.isNull())
+    {
+        MySmil.data()->endSmilParsing();
+        MyIndexManager.data()->deactivateRefresh();
+    }
+
     // Start with this only when it is absolutly sure that in the player component is no activity anymore.
-    MyIndexManager->deactivateRefresh();
+    if (!MyIndexManager.data()->load())
+        return;
+
     MyHead.reset(new THead(MyConfiguration.data(), this));
     MyHead.data()->parse(MyIndexManager->getHead());
     MyIndexManager.data()->activateRefresh(MyHead->getRefreshTime());
@@ -106,29 +116,21 @@ void LibFacade::prepareNewLoadedIndex()
     MyMediaManager.reset(new MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
 
     MySmil.reset(new TSmil(MyMediaManager.data(), this));
-
-    connect(MySmil.data(), SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
-    connect(MySmil.data(), SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
+    emit newIndexLoaded();
     qDebug(Develop) << "end " << Q_FUNC_INFO;
 }
 
 void LibFacade::emitStartShowMedia(TMedia *media)
 {
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     emit startShowMedia(media);
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 void LibFacade::emitStopShowMedia(TMedia *media)
 {
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     emit stopShowMedia(media);
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
-void LibFacade::emitNewIndexLoaded()
-{
-    // to make sure player component cannot get signals
-    if (!MySmil.isNull())
-    {
-        disconnect(MySmil.data(), SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
-        disconnect(MySmil.data(), SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
-    }
-    emit newIndexLoaded();
-}

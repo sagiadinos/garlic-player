@@ -75,7 +75,9 @@ int main(int argc, char *argv[])
             w.resizeAsWindow();
         }
         MyLibFacade->initIndex();
+        MyLibFacade->loadIndex();
         MyLibFacade->checkForNewSmilIndex();
+
         ret = app.exec();
     }
     return ret;

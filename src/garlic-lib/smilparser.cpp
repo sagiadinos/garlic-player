@@ -21,18 +21,19 @@
 TSmil::TSmil(MediaManager *mm, QObject *parent) : QObject(parent)
 {
     MyMediaManager   = mm;
+    stop_all         = false;
 }
 
 TSmil::~TSmil()
 {
-    clearLists();
-}
-
-void TSmil::clearLists()
-{
-    stopAllPlayingMedia();
     qDeleteAll(all_elements_list);
     all_elements_list.clear();
+}
+
+void TSmil::endSmilParsing()
+{
+    stop_all = true;
+    stopAllPlayingMedia();
     return;
 }
 
@@ -48,17 +49,15 @@ void TSmil::beginSmilParsing(QDomElement body)
 
 void TSmil::stopAllPlayingMedia()
 {
-    qDebug(Develop) << "begin stopAllPlayingMedia" << Q_FUNC_INFO;
-
+    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     // Used while cause every stopped element will removed from QSet in QSmil::emitStopShowMedia()
     QSet<TBaseTiming *>::iterator i;
     while (currently_playing_media.size() > 0) // stop actual played media
     {
         i = currently_playing_media.begin();
         stopPlayingElement(*i);
-
     }
-    qDebug(Develop) << "end stopAllPlayingMedia" << Q_FUNC_INFO;
+    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 /**
@@ -156,7 +155,6 @@ void TSmil::finishElement(TContainer *parent_container, TBaseTiming *element)
     }
     return;
 }
-
 
 /**
  * @brief TSmil::handlePause prepares elements for pause, pause them and recurses their childs
@@ -263,18 +261,16 @@ void TSmil::connectMediaSlots(TMedia *media)
 
 void TSmil::emitStartShowMedia(TMedia *media)
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
+    if (stop_all)
+        return;
     insertCurrentlyPlayingMedia(media);
     emit startShowMedia(media);
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;
 }
 
 void TSmil::emitStopShowMedia(TMedia *media)
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     removeCurrentlyPlayingMedia(media);
     emit stopShowMedia(media);
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;
 }
