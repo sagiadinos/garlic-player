@@ -7,6 +7,7 @@
 #include "files/webdav.h"
 #include "create/system_report.h"
 #include "smilparser/head/subscription.h"
+#include "tools/logger.h"
 namespace Reporting
 {
     class SystemReportManager : public QObject

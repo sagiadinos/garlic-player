@@ -64,9 +64,9 @@ SOURCES += \
     reports/system_report_manager.cpp \
     files/file_downloader.cpp \
     tools/logger.cpp \
-    tools/log_rotate.cpp \
     reports/event_logs_manager.cpp \
-    reports/create/event_logs.cpp
+    reports/create/event_logs.cpp \
+    tools/log_file.cpp
 
 HEADERS += \
     files/base_manager.h \
@@ -113,7 +113,7 @@ HEADERS += \
     tools/configuration.h \
     tools/logging_categories.h \
     tools/logger.h \
-    tools/log_rotate.h \
     reports/event_logs_manager.h \
-    reports/create/event_logs.h
+    reports/create/event_logs.h \
+    tools/log_file.h
 

@@ -31,7 +31,7 @@ namespace Reporting
         public:
             explicit CreateBase(TConfiguration *config, QObject *parent = nullptr);
             void     init();
-            QString asXMLString();
+            QString  asXMLString();
 
         protected:
             TConfiguration       *MyConfiguration;

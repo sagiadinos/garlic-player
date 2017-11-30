@@ -25,13 +25,12 @@
 Reporting::CreateBase::CreateBase(TConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
-
 }
 
 
 QString Reporting::CreateBase::asXMLString()
 {
-    return document.toString();
+    return document.toString(-1);
 }
 
 

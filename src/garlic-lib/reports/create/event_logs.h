@@ -9,9 +9,10 @@ namespace Reporting
     {
         public:
             CreateEventLogs(TConfiguration *config, QObject *parent);
-            void process();
+            void process(QString file_path);
         protected:
-            QDomElement           system_info, network, interface, hardware_info, configuration;
+            QDomElement player_event_log;
+            void mergeXml(QString file_path);
 
     };
 }

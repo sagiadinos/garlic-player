@@ -83,6 +83,7 @@ void TConfiguration::setUserConfigByKey(QString key, QString value)
     UserConfig->setValue(key, value);
 }
 
+
 QString TConfiguration::getPlayerName() const
 {
     return player_name;
@@ -94,6 +95,11 @@ void TConfiguration::setPlayerName(const QString &value)
     setUserConfigByKey("player_name", value);
 }
 
+QString TConfiguration::createUuid()
+{
+    return QUuid::createUuid().toString().mid(1, 36);
+}
+
 QString TConfiguration::getUuid() const
 {
     return uuid;
@@ -103,6 +109,16 @@ void TConfiguration::setUuid(const QString &value)
 {
     uuid = value;
     setUserConfigByKey("uuid", value);
+}
+
+void TConfiguration::determineUuid()
+{
+    setUuid(getUserConfigByKey("uuid"));
+    if (getUuid() == "")
+    {
+        setUuid(createUuid());
+        UserConfig->setValue("uuid", getUuid());
+    }
 }
 
 QString TConfiguration::getUserAgent() const
@@ -276,7 +292,7 @@ void TConfiguration::checkConfigXML()
                  }
              }
          }
-        file.rename(base_path+"config.xml", base_path+"config_readed.xml");
+        file.rename(base_path+"config.xml", base_path+"config_readd0aeec17b69aed.xml");
     }
 }
 
@@ -308,16 +324,6 @@ void TConfiguration::createDirectoryIfNotExist(QString path)
     if (!dir.exists() && !dir.mkpath("."))
         qCritical(SmilParser) << "Failed to create " << dir.path() << "\r";
     return;
-}
-
-void TConfiguration::determineUuid()
-{
-    setUuid(getUserConfigByKey("uuid"));
-    if (getUuid() == "")
-    {
-        setUuid(QUuid::createUuid().toString().mid(1, 36));
-        UserConfig->setValue("uuid", getUuid());
-    }
 }
 
 void TConfiguration::determinePlayerName()

@@ -31,7 +31,7 @@ void Reporting::SystemReportManager::sendSystemReport()
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyCreateSystemReport.data()->process();
-    MyWebDav->processPutData(MySubscription->getAction(), MyCreateSystemReport->asXMLString().toUtf8());
+    MyWebDav->processPutData(MySubscription->getAction(), MyCreateSystemReport.data()->asXMLString().toUtf8());
     qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 

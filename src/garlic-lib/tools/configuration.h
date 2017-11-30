@@ -25,7 +25,7 @@
 #include <QUrl>
 #include <QUuid>
 #include <QString>
-#include "logging_categories.h"
+#include "logger.h"
 
 
 /**
@@ -51,6 +51,7 @@ class TConfiguration  : public QObject
         void            setUserConfig(QSettings *value);
         QString         getUserConfigByKey(QString key);
         void            setUserConfigByKey(QString key, QString value);
+        QString         createUuid();
         QString         getUuid() const;
         void            setUuid(const QString &value);
         QString         getPlayerName() const;

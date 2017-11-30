@@ -18,9 +18,12 @@ namespace Reporting
        void             init(SubScription *subscription);
    protected:
        int              timer_id = 0;
+       QDir             log_dir;
        WebDav          *MyWebDav = Q_NULLPTR;
        SubScription    *MySubscription;
        TConfiguration  *MyConfiguration;
+       QScopedPointer<Reporting::CreateEventLogs> MyCreateEventLogs;
+
        void             timerEvent(QTimerEvent *event);
        void             sendEvenLogs();
      };
