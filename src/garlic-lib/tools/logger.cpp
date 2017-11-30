@@ -5,18 +5,10 @@ std::once_flag Logger::initInstanceFlag;
 
 Logger::Logger(QObject *parent) : QObject(parent)
 {
-    qtdebug_log.reset(new QFile(TConfiguration::getLogDir() + "qtdebug.log"));
-    qtdebug_log.data()->open(QFile::Append | QFile::Text);
-
-    debug_log.reset(new QFile(TConfiguration::getLogDir() + "debug.log"));
-    debug_log.data()->open(QFile::Append | QFile::Text);
-
-    event_log.reset(new QFile(TConfiguration::getLogDir() + "event_log.xml"));
-    event_log.data()->open(QFile::Append | QFile::Text);
-
-    play_log.reset(new QFile(TConfiguration::getLogDir() + "play_log.xml"));
-    play_log.data()->open(QFile::Append | QFile::Text);
-
+    qtdebug_log.reset(new LogFile(TConfiguration::getLogDir() + "qtdebug.log"));
+    debug_log.reset(new LogFile(TConfiguration::getLogDir() + "debug.log"));
+    event_log.reset(new LogFile(TConfiguration::getLogDir() + "event_log.xml"));
+    play_log.reset(new LogFile(TConfiguration::getLogDir() + "play_log.xml"));
 }
 
 void Logger::initSingleton()
@@ -40,25 +32,25 @@ void Logger::dispatchMessages(QtMsgType type, const QMessageLogContext &context,
             QString(context.category) == "System" ||
             QString(context.category) == "TimeService")
     {
-        writeEventLog(type, context, msg);
+        event_log.data()->write(collectEventLog(type, context, msg));
     }
     else if (QString(context.category).mid(0,3) == "qt.")
     {
-        writeQtDebugLog(type, context, msg); // get all qt log rubbish here not poisoning debug_log
+       qtdebug_log.data()->write(collectDebugLog(type, context, msg)); // get all qt log rubbish here not poisoning debug_log
     }
     else if (QString(context.category) == "PlayLog")
     {
-        writePlayLog(msg);
+        play_log.data()->write(msg);
     }
     else
     {
-        writeAppDebugLog(type, context, msg);
+        debug_log.data()->write(collectDebugLog(type, context, msg));
     }
 }
 
 QString Logger::createPlayLogEntry(QString start_time, QString content_id)
 {
-    return "<contentPlayed><contentId>"+content_id+"</contentId><startTime>"+start_time+"</startTime><endTime>" +QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")+"</endTime></contentPlayed>";
+    return "<contentPlayed><contentId>"+content_id+"</contentId><startTime>"+start_time+"</startTime><endTime>" +getCurrentIsoDateTime()+"</endTime></contentPlayed>";
 }
 
 QString Logger::createEventLogMetaData(QString event_name, QStringList meta_data)
@@ -71,53 +63,37 @@ QString Logger::createEventLogMetaData(QString event_name, QStringList meta_data
     return xml+"</metadata>";
 }
 
-void Logger::writeAppDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+void Logger::rotateLog(QString log_name)
 {
-    writeDebugLog(debug_log.data(), type, context, msg);
+    if (log_name == "event")
+        event_log.data()->rotateFile();
+    else if (log_name == "play")
+        event_log.data()->rotateFile();
 }
 
-void Logger::writeQtDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+QString Logger::getCurrentIsoDateTime()
 {
-    writeDebugLog(qtdebug_log.data(), type, context, msg);
+    // ugly workaround from https://stackoverflow.com/questions/21976264/qt-isodate-formatted-date-time-including-timezone
+    // cause otherwise we get no time zone in date string
+    return QDateTime::currentDateTime().toOffsetFromUtc(QDateTime::currentDateTime().offsetFromUtc()).toString(Qt::ISODate);
 }
 
-void Logger::writeDebugLog(QFile *file, QtMsgType type, const QMessageLogContext &context, const QString &msg)
+QString Logger::collectDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    QTextStream out(file);
-
-    out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") << " "
-        << determineSeverity(type) << " "
-        << context.category << " "
-        << context.file << " "
-        << context.line << " "
-        << msg
-        << endl;
-    out.flush();
+    return QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + " "
+        + determineSeverity(type) + " "
+        + context.category + " "
+        + context.file + "(" + QString::number(context.line) + ")"
+        + msg;
 }
 
-
-void Logger::writePlayLog(const QString &msg)
+QString Logger::collectEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data)
 {
-    QTextStream out(play_log.data());
-    out << msg << endl;
-    out.flush();
-}
-
-void Logger::writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data)
-{
-//    if (isSizeExeeds(event_log.data()))
-//        event_log.reset(rotateFile(event_log.data()));
     QString meta = meta_data;
     meta.replace("\\", "");
-    QTextStream out(event_log.data());
-    out << "<event>"
-        << "<eventType>" << determineSeverity(type) << "</eventType>"
-        << "<eventTime>" << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") << "</eventTime>"
-        << "<eventSource>" << context.category << "</eventSource>"
-        << meta.mid(1, meta.length()-2)
-        << "</event>"
-        << endl;
-    out.flush();
+    return "<event><eventType>"+determineSeverity(type) + "</eventType><eventTime>"
+                            + getCurrentIsoDateTime()+"</eventTime><eventSource>"
+                            + context.category + "</eventSource>" + meta.mid(1, meta.length()-2)+ "</event>";
 }
 
 QString Logger::determineSeverity(QtMsgType type)
@@ -136,36 +112,4 @@ QString Logger::determineSeverity(QtMsgType type)
             return "critical";
     }
     return "UNKNOWN";
-}
-
-bool Logger::isSizeExeeds(QFile *file)
-{
-    return (file->size() > MAX_LOG_FILE_SIZE);
-}
-
-QFile *Logger::rotateFile(QFile *file)
-{
-    QFileInfo fi(*file);
-    QString file_path = fi.absoluteFilePath();
-    file->flush();
-    file->close();
-    QDir dir =fi.absoluteDir();
-
-    // find all a files with this name
-   foreach (const QString &match,  dir.entryList(QStringList(fi.baseName()+"*"), QDir::Files, QDir::Time | QDir::Reversed))
-   {
-        QStringList list = match.split(".");
-        int num = list.at(list.size()-1).toInt();
-
-        if (num == 0)
-            QFile::rename(file_path, file_path+".1");
-        else if (num < MAX_LOG_FILE_NUMBER)
-            QFile::rename(file_path+"."+QString::number(num), file_path+"."+QString::number(num+1));
-        else
-            QFile::remove(file_path+"."+QString::number(num));
-   }
-
-    QFile *new_file = new QFile(file_path);
-    new_file->open(QFile::Append | QFile::Text);
-    return new_file;
 }

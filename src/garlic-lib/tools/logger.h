@@ -10,6 +10,7 @@
 #include <mutex>
 
 #include "configuration.h"
+#include "log_file.h"
 #include "logging_categories.h"
 
 /**
@@ -20,23 +21,17 @@ class Logger : public QObject
 {
         Q_OBJECT
     public:
-        const qint64 MAX_LOG_FILE_SIZE    = 10485760; // 10 MiB
-        const qint64 MAX_LOG_FILE_NUMBER  = 20;
-        static   Logger&                 getInstance();
-                 void                    dispatchMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-                 QString                 createPlayLogEntry(QString start_time, QString content_id);
-                 QString                 createEventLogMetaData(QString event_name, QStringList meta_data);
-                 QFile                  *rotateFile(QFile *file);
-
+        static   Logger&                  getInstance();
+                 void                     dispatchMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+                 QString                  createPlayLogEntry(QString start_time, QString content_id);
+                 QString                  createEventLogMetaData(QString event_name, QStringList meta_data);
+                 void                     rotateLog(QString log_name);
+                 QString                  getCurrentIsoDateTime();
     protected:
-                 QScopedPointer<QFile>   qtdebug_log, debug_log, event_log, play_log;
-                 void                    writeQtDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-                 void                    writeAppDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-                 void                    writeDebugLog(QFile *file, QtMsgType type, const QMessageLogContext &context, const QString &msg);
-                 void                    writePlayLog(const QString &msg);
-                 void                    writeEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data);
-                 QString                 determineSeverity(QtMsgType type);
-                 bool                    isSizeExeeds(QFile *file);
+                 QScopedPointer<LogFile>  qtdebug_log, debug_log, play_log, event_log;
+                 QString                  collectDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+                 QString                  collectEventLog(QtMsgType type, const QMessageLogContext &context, const QString &meta_data);
+                 QString                  determineSeverity(QtMsgType type);
 
     private:
         explicit Logger(QObject *parent = nullptr);
