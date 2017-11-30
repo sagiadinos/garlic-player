@@ -42,10 +42,16 @@ bool IndexModel::loadDocument(QString file_path)
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qCritical(MediaControl) << Logger::getInstance().createEventLogMetaData("SMIL_OPEN_ERROR", list);
+        file.close();
         return false;
     }
-    if (!document.setContent(&file))
+    QString error_message = "";
+    int error_line, error_column = 0;
+    if (!document.setContent(&file, &error_message, &error_line, &error_column))
     {
+        list << "errorMessage" << error_message
+             << "errorLine" << QString::number(error_line)
+             << "errorColumn" << QString::number(error_column);
         qCritical(MediaControl) << Logger::getInstance().createEventLogMetaData("SMIL_OPEN_ERROR", list);
         file.close();
         return false;

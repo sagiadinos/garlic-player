@@ -166,9 +166,9 @@ void Downloader::startDownload()
 void Downloader::doDownloadSuccessFul()
 {
     QStringList list;
-    list  << "resourceURI: " << remote_file_url.toString()
-          << "contentLength: " << QString::number(local_file_info.size())
-          << "lastModifiedTime: " << local_file_info.lastModified().toString(Qt::ISODate);
+    list  << "resourceURI" << remote_file_url.toString()
+          << "contentLength" << QString::number(local_file_info.size())
+          << "lastModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
 
     qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECT_UPDATED", list);
     emit succeed(this);
