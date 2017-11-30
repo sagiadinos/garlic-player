@@ -24,7 +24,7 @@ BaseMedia::BaseMedia(QObject *parent) : QObject(parent)
 
 void BaseMedia::setStartTime()
 {
-    start_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    start_time = MyLogger.getCurrentIsoDateTime();;
 }
 
 bool BaseMedia::isFileExists(QString path)
