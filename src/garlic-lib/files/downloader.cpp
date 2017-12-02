@@ -129,9 +129,15 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
     qint64 remote_size = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
     // we need to check for size and last Modified, cause a previous index smil on the server can have a older Date and would not be loaded
-    if (local_file_info.exists() &&
-        local_file_info.size() ==  remote_size &&
-        local_file_info.lastModified().toUTC() > reply->header(QNetworkRequest::LastModifiedHeader).toDateTime())
+    // we need to check also if there is an already downloaded file which is signed and waiting via downloaded suffix
+    QFileInfo fi(local_file_info.absoluteFilePath() + FILE_DOWNLOADED_SUFFIX);
+    if (
+            (local_file_info.exists() && local_file_info.size() ==  remote_size &&
+            local_file_info.lastModified().toUTC() > reply->header(QNetworkRequest::LastModifiedHeader).toDateTime())
+            ||
+            (fi.exists() && fi.size() ==  remote_size &&
+              fi.lastModified().toUTC() > reply->header(QNetworkRequest::LastModifiedHeader).toDateTime())
+        )
     {
         qDebug(Develop) << remote_file_url.toString() << " no need for update";
         emit notmodified(this);

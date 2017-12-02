@@ -88,39 +88,39 @@ void MediaDecoderWrapper::onMediaStatusChanged(QtAV::MediaStatus status)
      switch (status)
     {
         case UnknownMediaStatus:
-            qWarning(MediaPlayer) << "Unknown media status! Media:" << current_media_path;
+            qWarning(Develop) << "Unknown media status! Media:" << current_media_path;
             break;
         case QtAV::NoMedia:
-            qWarning(MediaPlayer) << "No Media " << current_media_path;
+            qWarning(Develop) << "No Media " << current_media_path;
             break;
         case QtAV::LoadedMedia:
-            qInfo(MediaPlayer) << "Loaded media " << current_media_path;
+            qInfo(Develop) << "Loaded media " << current_media_path;
             break;
         case QtAV::BufferedMedia:
-            qInfo(MediaPlayer) << "Buffered media " << current_media_path;
+            qInfo(Develop) << "Buffered media " << current_media_path;
             break;
         case QtAV::BufferingMedia:
-            qInfo(MediaPlayer) << "Buffering media " << current_media_path;
+            qInfo(Develop) << "Buffering media " << current_media_path;
             break;
         case QtAV::LoadingMedia:
-            qInfo(MediaPlayer) << "Loading media " << current_media_path;
+            qInfo(Develop) << "Loading media " << current_media_path;
             break;
         case QtAV::StalledMedia:
-            qWarning(MediaPlayer) << "Stalled media " << current_media_path;
+            qWarning(Develop) << "Stalled media " << current_media_path;
             break;
         case QtAV::EndOfMedia:
-             qInfo(MediaPlayer) << "End of media " << current_media_path;
+             qInfo(Develop) << "End of media " << current_media_path;
             emit finished();
             break;
         case QtAV::InvalidMedia:
-            qWarning(MediaPlayer) << "invalid Media " << current_media_path;
+            qWarning(Develop) << "invalid Media " << current_media_path;
             break;
     }
 }
 
 void MediaDecoderWrapper::displayErrorMessage(QtAV::AVError e)
 {
-    qWarning(MediaPlayer) << e.string();
+    qWarning(Develop) << e.string();
     return;
 }
 
@@ -131,39 +131,39 @@ void MediaDecoderWrapper::onMediaStatusChanged(QMediaPlayer::MediaStatus status)
     switch (status)
     {
         case QMediaPlayer::UnknownMediaStatus:
-            qWarning(MediaPlayer) << "Unknown media status! Media:" << current_media_path;
+            qWarning(Develop) << "Unknown media status! Media:" << current_media_path;
             break;
         case QMediaPlayer::NoMedia:
-            qWarning(MediaPlayer) << "No Media " << current_media_path;
+            qWarning(Develop) << "No Media " << current_media_path;
             break;
         case QMediaPlayer::LoadedMedia:
-            qInfo(MediaPlayer) << "Loaded media " << current_media_path;
+            qInfo(Develop) << "Loaded media " << current_media_path;
             break;
         case QMediaPlayer::BufferedMedia:
-            qInfo(MediaPlayer) << "Buffered media " << current_media_path;
+            qInfo(Develop) << "Buffered media " << current_media_path;
             break;
         case QMediaPlayer::BufferingMedia:
-            qInfo(MediaPlayer) << "Buffering media " << current_media_path;
+            qInfo(Develop) << "Buffering media " << current_media_path;
             break;
         case QMediaPlayer::LoadingMedia:
-            qInfo(MediaPlayer) << "Loading media " << current_media_path;
+            qInfo(Develop) << "Loading media " << current_media_path;
             break;
         case QMediaPlayer::StalledMedia:
-            qWarning(MediaPlayer) << "Stalled media " << current_media_path;
+            qWarning(Develop) << "Stalled media " << current_media_path;
             break;
         case QMediaPlayer::EndOfMedia:
-            qInfo(MediaPlayer) << "End of media " << current_media_path;
+            qInfo(Develop) << "End of media " << current_media_path;
             emit finished();
             break;
         case QMediaPlayer::InvalidMedia:
-            qWarning(MediaPlayer) << "invalid Media " << current_media_path;
+            qWarning(Develop) << "invalid Media " << current_media_path;
             break;
     }
 }
 
 void MediaDecoderWrapper::displayErrorMessage()
 {
-   qWarning(MediaPlayer) << MediaDecoder->errorString();
+   qWarning(Develop) << MediaDecoder->errorString();
 }
 
 #endif

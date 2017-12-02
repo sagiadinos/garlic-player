@@ -21,7 +21,6 @@
 THead::THead(TConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
-    MySystemReportManager.reset(new Reporting::SystemReportManager(config));
     setDefaultValues();
 }
 
@@ -107,26 +106,29 @@ void THead::parseMeta(QDomElement element)
 void THead::parseMetaData(QDomElement element)
 {
     QDomNodeList node_list = element.elementsByTagName("subscription");
-    SubScription *subscription = new SubScription(this);
 
+    // QObject do not have a copy constructor so we had to put subscriptions in a subscription_list to store
+    SubScription *subscription  = new SubScription(this);
     for(int i = 0; i < node_list.size(); i++)
     {
         subscription->parse(node_list.at(i).toElement());
         if (subscription->getType() == "SystemReport")
         {
-            MySystemReport.reset(subscription);
-            MySystemReportManager.data()->init(MySystemReport.data());
+            MySystemReportManager.reset(new Reporting::SystemReportManager(MyConfiguration));
+            MySystemReportManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
         else if (subscription->getType() == "InventoryReport")
         {
         }
         else if (subscription->getType() == "PlaylogCollection")
         {
+            MyPlayLogsManager.reset(new Reporting::PlayLogsManager(MyConfiguration));
+            MyPlayLogsManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
         else if (subscription->getType() == "EventlogCollection")
         {
-            MyEventLogs.reset(subscription);
-            MyEventLogsManager.data()->init(MyEventLogs.data());
+            MyEventLogsManager.reset(new Reporting::EventLogsManager(MyConfiguration));
+            MyEventLogsManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
     }
 }

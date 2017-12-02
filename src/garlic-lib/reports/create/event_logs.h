@@ -7,12 +7,12 @@ namespace Reporting
 {
     class CreateEventLogs : public Reporting::CreateBase
     {
+            Q_OBJECT
         public:
             CreateEventLogs(TConfiguration *config, QObject *parent);
-            void process(QString file_path);
+            void process(QString file_name);
         protected:
-            QDomElement player_event_log;
-            void mergeXml(QString file_path);
+            void mergeXml(QString file_name);
 
     };
 }

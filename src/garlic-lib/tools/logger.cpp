@@ -7,6 +7,7 @@ Logger::Logger(QObject *parent) : QObject(parent)
 {
     qtdebug_log.reset(new LogFile(TConfiguration::getLogDir() + "qtdebug.log"));
     debug_log.reset(new LogFile(TConfiguration::getLogDir() + "debug.log"));
+    debug_log.data()->setMaxSize(10485760); // 10MiB
     event_log.reset(new LogFile(TConfiguration::getLogDir() + "event_log.xml"));
     play_log.reset(new LogFile(TConfiguration::getLogDir() + "play_log.xml"));
 }
@@ -67,8 +68,8 @@ void Logger::rotateLog(QString log_name)
 {
     if (log_name == "event")
         event_log.data()->rotateFile();
-    else if (log_name == "play")
-        event_log.data()->rotateFile();
+    else if (log_name == "playlog")
+        play_log.data()->rotateFile();
 }
 
 QString Logger::getCurrentIsoDateTime()

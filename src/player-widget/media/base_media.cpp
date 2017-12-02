@@ -30,10 +30,10 @@ void BaseMedia::setStartTime()
 bool BaseMedia::isFileExists(QString path)
 {
     exists = QFileInfo::exists(path);
-    if (exists)
+    if (!exists)
     {
         QStringList list;
-        list  << "resourceURI: " << MyMedia->getSrc();
+        list  << "resourceURI" << MyMedia->getSrc();
         qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_NOT_AVAILABLE", list);
     }
     return exists;

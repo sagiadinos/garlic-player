@@ -23,7 +23,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
-#include "tools/logging_categories.h"
+#include "tools/logger.h"
 
 class TNetworkAccess : public QObject
 {

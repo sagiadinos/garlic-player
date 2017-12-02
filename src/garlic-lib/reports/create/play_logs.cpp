@@ -1,20 +1,21 @@
-#include "event_logs.h"
+#include "play_logs.h"
 
-Reporting::CreateEventLogs::CreateEventLogs(TConfiguration *config, QObject *parent) : Reporting::CreateBase(config, parent)
+Reporting::CreatePlayLogs::CreatePlayLogs(TConfiguration *config, QObject *parent) : Reporting::CreateBase(config, parent)
 {
 
 }
 
-void Reporting::CreateEventLogs::process(QString file_name)
+
+void Reporting::CreatePlayLogs::process(QString file_name)
 {
     init();
     mergeXml(MyConfiguration->getPaths("logs") + file_name);
 }
 
-void Reporting::CreateEventLogs::mergeXml(QString file_name)
+void Reporting::CreatePlayLogs::mergeXml(QString file_name)
 {
     QFile file;
-    QDomDocument event_log;
+    QDomDocument play_log;
     file.setFileName(file_name);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -23,10 +24,10 @@ void Reporting::CreateEventLogs::mergeXml(QString file_name)
         return;
     }
 
-    QByteArray xml        = "<playerEventLog>" + file.readAll() + "</playerEventLog>";
+    QByteArray xml        = "<contentPlayLog>" + file.readAll() + "</contentPlayLog>";
     QString error_message = "";
     int error_line, error_column = 0;
-    if (!event_log.setContent(xml, &error_message, &error_line, &error_column))
+    if (!play_log.setContent(xml, &error_message, &error_line, &error_column))
     {
         qWarning(Develop) << "cannot read xml" << file_name << error_message
                           << "Line: " << QString::number(error_line)
@@ -35,5 +36,5 @@ void Reporting::CreateEventLogs::mergeXml(QString file_name)
         return;
     }
     file.close();
-    player.appendChild(event_log);
+    player.appendChild(play_log);
 }

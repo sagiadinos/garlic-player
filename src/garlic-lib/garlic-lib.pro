@@ -66,7 +66,10 @@ SOURCES += \
     tools/logger.cpp \
     reports/event_logs_manager.cpp \
     reports/create/event_logs.cpp \
-    tools/log_file.cpp
+    tools/log_file.cpp \
+    reports/base_report_manager.cpp \
+    reports/play_logs_manager.cpp \
+    reports/create/play_logs.cpp
 
 HEADERS += \
     files/base_manager.h \
@@ -115,5 +118,8 @@ HEADERS += \
     tools/logger.h \
     reports/event_logs_manager.h \
     reports/create/event_logs.h \
-    tools/log_file.h
+    tools/log_file.h \
+    reports/base_report_manager.h \
+    reports/play_logs_manager.h \
+    reports/create/play_logs.h
 

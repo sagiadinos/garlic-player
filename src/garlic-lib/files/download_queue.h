@@ -38,6 +38,7 @@ public:
     void     insertQueue(QString src, QString local);
     void     clearQueues();
 
+
     //Getter/Setter
     QByteArray                          getUserAgent() const {return user_agent;}
     void                                setUserAgent(const QByteArray &value) {user_agent = value;}
