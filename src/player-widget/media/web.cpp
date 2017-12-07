@@ -36,6 +36,7 @@ Web::~Web()
 
 void Web::init(TMedia *media)
 {
+    MyMedia = media;
     browser = new QWebEngineView;
 
     QUrl url(media->getLoadablePath());

@@ -18,7 +18,7 @@ Garlic actually is able to play local and remote (via http) SMIL Files with actu
 Compilations tested with:
  - Kde Neon Ubuntu 16.04 based (Attention when using QtMultimedia cause gstreamer 1.8 seems to have a mem leak)
  - Kubuntu 16.10, 17.04, 17.10
- - Debian 8 Jessie
+ - Debian: Jessie and Stretch
  - Rasperian Jessie/Stretch (rpi-zero/rpi2/rpi3 with poor video hw acceleration) 
  - Tinker Board (Linaro OS 1.8) 
  - Android armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2 and 7.0)
@@ -28,7 +28,7 @@ For Android player-c2qml is needed, cause QtMultimedia-Widgets are not supported
 
 Attention!
 
- - Qt 5.9.1 QML Image Type, used in player-c2qml has a fat [mem leak](https://bugreports.qt.io/browse/QTBUG-61754)
+ - Qt 5.9.1 QML Image Type, used in player-c2qml has a [mem leak](https://bugreports.qt.io/browse/QTBUG-61754)
  - Qt 5.9.3 has also a [video player bug](https://bugreports.qt.io/browse/QTBUG-64764) on Android
  
 both bugs are showstoppers for a 24/7 running media player, so do not use this version to compile
@@ -46,6 +46,8 @@ Arguments:
 SMIL_INDEX        Path to SMIL index
 
 Binaries (Linux/Windows) of v0.1.0 can be downloaded at [garlic-player.com](https://garlic-player.com)
+
+Next binary version 0.2.0 is prepared and should be released in the next two weeks
 
 ## Features
  - Support for multiple screens
@@ -111,6 +113,7 @@ Binaries (Linux/Windows) of v0.1.0 can be downloaded at [garlic-player.com](http
 ## additional features supported not in w3c standard
 - **shuffle play** in seq container via metadata
 - **automatic refresh** via metatags in SMIL header
+- **Logs/reports** system-reports, events-log and playlog via subscription meta
 
 ## actual supported remote features via downloader
  - http downloads and caching
@@ -126,12 +129,11 @@ Binaries (Linux/Windows) of v0.1.0 can be downloaded at [garlic-player.com](http
  - open configuration dialog with Ctrl-C
 
 ## Actual Working
- - deployment Linux and Windows for first binary release
+ - testing Linux, Android and Windows for second binary release
 
 ## future ToDo's
  - change config.xml during plaback
  - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
- - **logs and reports** as described in [a-smil.org reporting](http://www.a-smil.org/index.php/Reporting)
  - **administration functions** as described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)
