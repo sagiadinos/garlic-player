@@ -5,3 +5,4 @@ bin
 lib
 libandroid
 *.pro.user
+./*.sh
