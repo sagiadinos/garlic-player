@@ -44,6 +44,7 @@ void Image::init(TMedia *media)
 void Image::deinit()
 {
     loaded_image.load("");
+    ImageWidget.data()->setPixmap(loaded_image);
     if (MyMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }

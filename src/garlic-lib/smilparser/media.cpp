@@ -40,7 +40,8 @@ QString TMedia::parseSrc(QDomElement element)
 
 bool TMedia::isDownloaded()
 {
-    return (MyMediaManager->checkCacheStatus(src) == MEDIA_AVAILABLE); // FIXME MediaModel::_no_exist as static constant do not work Fix later look at https://stackoverflow.com/questions/5391973/undefined-reference-to-static-const-int
+    // FIXME MediaModel::_no_exist as static member constant do not work =>look at https://stackoverflow.com/questions/5391973/undefined-reference-to-static-const-int
+    return (MyMediaManager->checkCacheStatus(src) == MEDIA_AVAILABLE || MyMediaManager->checkCacheStatus(src) == MEDIA_UNCACHABLE);
 }
 
 QString TMedia::getLoadablePath()
