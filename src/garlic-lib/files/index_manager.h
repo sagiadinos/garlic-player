@@ -35,7 +35,7 @@ class IndexManager : public BaseManager
         void            deactivateRefresh();
         QDomElement     getHead();
         QDomElement     getBody();
-        void            lookUpForRemoteIndex();
+        void            lookUpForUpdatedIndex();
 
     protected:
 

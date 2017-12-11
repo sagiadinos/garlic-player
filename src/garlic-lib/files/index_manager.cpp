@@ -30,7 +30,7 @@ void IndexManager::init(QString src)
     src_index_path = src;
 }
 
-void IndexManager::lookUpForRemoteIndex()
+void IndexManager::lookUpForUpdatedIndex()
 {
     if (src_index_path == "")
     {
@@ -38,7 +38,13 @@ void IndexManager::lookUpForRemoteIndex()
         return;
     }
     if (isRemote(src_index_path))
+    {
         MyDownloader->processFile(src_index_path, MyConfiguration->getPaths("cache")+"index.smil");
+        // First Start surely not have LastPlayedIndexPath so set this here
+        MyConfiguration->setLastPlayedIndexPath(MyConfiguration->getPaths("cache")+"index.smil");
+    }
+    else
+        MyConfiguration->setLastPlayedIndexPath(src_index_path);
 }
 
 bool IndexManager::load()
@@ -92,14 +98,13 @@ bool IndexManager::loadLocal(QString local_path)
 
     if (!MyIndexModel->loadDocument(local_path))
         return false;
-    MyConfiguration->setLastPlayedIndexPath(local_path);
     return true;
 }
 
 void IndexManager::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timer_id)
-        lookUpForRemoteIndex();
+        lookUpForUpdatedIndex();
 }
 
 
@@ -108,5 +113,6 @@ void IndexManager::timerEvent(QTimerEvent *event)
 void IndexManager::doSucceed(TNetworkAccess *downloader)
 {
     Q_UNUSED(downloader); // This class have one permenent downloader instance so function paramter not used
+
     emit newIndexDownloaded();
 }
