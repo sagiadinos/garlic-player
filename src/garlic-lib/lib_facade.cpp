@@ -24,7 +24,7 @@ LibFacade::LibFacade(QObject *parent) : QObject(parent)
     connect(MyIndexManager.data(), SIGNAL(newIndexDownloaded()), this, SLOT(loadIndex()));
 
 #ifdef QT_DEBUG
-    timer_id = startTimer(60000); // every 60s
+    timer_id = startTimer(300000); // every 300s
 #endif
 }
 
@@ -34,9 +34,8 @@ LibFacade::~LibFacade()
     killTimer(timer_id);
 #endif
 
-    MyIndexManager->deactivateRefresh();
+    MyIndexManager.data()->deactivateRefresh();
 }
-
 
 #ifdef QT_DEBUG
 void LibFacade::timerEvent(QTimerEvent *event)
@@ -79,7 +78,7 @@ void LibFacade::initIndex()
 
 void LibFacade::checkForNewSmilIndex()
 {
-    MyIndexManager.data()->lookUpForRemoteIndex();
+    MyIndexManager.data()->lookUpForUpdatedIndex();
 }
 
 THead *LibFacade::getHead() const
