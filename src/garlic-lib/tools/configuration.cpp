@@ -252,8 +252,8 @@ QString TConfiguration::getPaths(QString path_name)
 void TConfiguration::createDirectories()
 {
 #if defined Q_OS_WIN32  // QStandardPaths::CacheLocation in windows 7 is set to appdir (bin), which should not be writable after installation in Program Files
-    cache_dir = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/cache/";
-    log_dir   = QStandardPaths::locate(QStandardPaths::AppLocalDataLocation, QString(), QStandardPaths::LocateDirectory) +  getAppName() + "/logs/";
+    cache_dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/cache/";
+    log_dir   = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/logs/";
 #elif defined  Q_OS_ANDROID
     // Using CacheLocation in Android is dangerous, cause that is limited App-Storage which flooding soon and crash the Player
     // GenericDataLocation should be /sdcard

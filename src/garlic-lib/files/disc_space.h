@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QStorageInfo>
 #include <QDirIterator>
-#include "tools/logging_categories.h"
+#include "tools/logger.h"
 
 /**
  * @brief The DiscSpace is a helper class to handle deletes/cleanups for FileModel
