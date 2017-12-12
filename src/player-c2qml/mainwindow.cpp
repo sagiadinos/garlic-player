@@ -74,7 +74,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             openDebugInfos();
             setCursor(Qt::BlankCursor);
             break;
-        case Qt::Key_C:
+        case Qt::Key_S:
             setCursor(Qt::ArrowCursor);
             if (openConfigDialog() == QDialog::Accepted)
                 MyLibFacade->checkForNewSmilIndex();
