@@ -46,23 +46,23 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
     switch (ke->key())
     {
         case Qt::Key_F:
-        if (screen_state != FULLSCREEN)
+            if (screen_state != FULLSCREEN)
                 resizeAsNormalFullScreen();
             else
                 resizeAsWindow();
-        break;
+           break;
         case Qt::Key_B:
             if (screen_state != BIGFULLSCREEN)
                  resizeAsBigFullScreen();
             else
                 resizeAsWindow();
-        break;
+            break;
         case Qt::Key_D:
             setCursor(Qt::ArrowCursor);
             openDebugInfos();
             setCursor(Qt::BlankCursor);
             break;
-        case Qt::Key_C:
+        case Qt::Key_S:
             setCursor(Qt::ArrowCursor);
             if (openConfigDialog() == QDialog::Accepted)
                 MyLibFacade->checkForNewSmilIndex();
@@ -70,6 +70,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             break;
         case Qt::Key_Q:
              QApplication::quit();
+
         break;
     }
 }
