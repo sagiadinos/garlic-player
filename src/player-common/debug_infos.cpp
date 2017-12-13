@@ -7,6 +7,7 @@ DebugInfos::DebugInfos(LibFacade *lib_facade, QWidget *parent) :  QDialog(parent
     ui->setupUi(this);
     timer_id = startTimer(500);
     setWindowOpacity(0.9);
+    setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 void DebugInfos::setCurrentFilePlayed(TMedia *media)

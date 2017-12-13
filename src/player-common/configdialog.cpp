@@ -6,6 +6,7 @@ ConfigDialog::ConfigDialog(QWidget *parent, TConfiguration *Config) :  QDialog(p
     MyConfiguration = Config;
     ui->lineEditPlayerName->setText(MyConfiguration->getPlayerName());
     ui->lineEditContentUrl->setText(MyConfiguration->getIndexUri());
+    setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 
