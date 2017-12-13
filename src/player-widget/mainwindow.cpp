@@ -28,7 +28,6 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setMainWindowSize(QSize(980, 540)); // set default
 }
 
@@ -89,6 +88,8 @@ int MainWindow::openConfigDialog()
 
 void MainWindow::resizeAsNormalFullScreen()
 {
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    showFullScreen();
     setCursor(Qt::BlankCursor);
     screen_state = FULLSCREEN;
     move(MyScreen->getStartPointFromScreen());
@@ -97,6 +98,8 @@ void MainWindow::resizeAsNormalFullScreen()
 
 void MainWindow::resizeAsBigFullScreen()
 {
+    setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    showFullScreen();
     setCursor(Qt::BlankCursor);
     screen_state = BIGFULLSCREEN;
     move(0, 0);
@@ -105,7 +108,9 @@ void MainWindow::resizeAsBigFullScreen()
 
 void MainWindow::resizeAsWindow()
 {
-    setCursor(Qt::BlankCursor);
+    setWindowFlags(Qt::Window);
+    show();
+    setCursor(Qt::ArrowCursor);
     screen_state = WINDOWED;
     move(MyScreen->getStartPointFromScreen());
     resize(getMainWindowSize());

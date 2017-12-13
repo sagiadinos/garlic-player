@@ -57,10 +57,9 @@ class MainWindow : public QMainWindow
         void                      resizeEvent(QResizeEvent * event);
         void                      keyPressEvent(QKeyEvent *ke);
         void                      openDebugInfos();
-        QString                   selectRegion(QString region_name);    protected slots:
+        QString                   selectRegion(QString region_name);
         void                      createRegions();
         void                      deleteRegions();
-
     protected slots:
         void                      prepareParsing();
         void                      startShowMedia(TMedia *media);
