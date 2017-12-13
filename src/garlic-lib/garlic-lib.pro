@@ -5,7 +5,6 @@ TEMPLATE  = lib
 CONFIG    += warn_on staticlib c++11 stl
 
 DEFINES += QUAZIP_STATIC
-Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 DEFINES += QT_DEPRECATED_WARNINGS
 

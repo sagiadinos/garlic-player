@@ -8,7 +8,6 @@ INCLUDEPATH += ../garlic-lib/
 
 QT     += core gui xml widgets webenginewidgets
 CONFIG += warn_on c++11
-Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 #Delete or comment out the next line when you want to use QTMultimedia
 CONFIG    += support_qtav

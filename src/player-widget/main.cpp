@@ -42,7 +42,12 @@ int main(int argc, char *argv[])
     MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
     MyLibFacade->getConfiguration()->createDirectories();
 
+#ifdef QT_DEBUG
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
+#else
+    QLoggingCategory::setFilterRules("*.debug=false");
+#endif
+
     qInstallMessageHandler(handleMessages);
 
     TCmdParser MyParser(MyLibFacade->getConfiguration());
@@ -62,7 +67,6 @@ int main(int argc, char *argv[])
     if (is_index)
     {
         MyScreen.setActualScreenId(MyParser.getScreenSelect());
-        w.show();
 
         QString val = MyParser.getWindowMode();
         if (val == "fullscreen")
