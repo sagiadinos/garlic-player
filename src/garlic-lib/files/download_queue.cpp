@@ -31,7 +31,11 @@ DownloadQueue::~DownloadQueue()
 void DownloadQueue::clearQueues()
 {
     media_queue.clear();
-    qDeleteAll(download_slots);
+    QHash<QString, Downloader *>::iterator i;
+    for (i = download_slots.begin(); i != download_slots.end(); i++)
+    {
+        i.value()->deleteLater(); // delete will crash
+    }
     download_slots.clear();
 }
 
