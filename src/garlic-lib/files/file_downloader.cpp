@@ -54,9 +54,6 @@ void FileDownloader::addBytesTransfered(quint64 add_bytes )
 
 void FileDownloader::renameAfterDownload()
 {
-    // Do not overwrite an existing file, cause it could be possible
-    // that it is loaded. Tag it as "ready" and let the parse decide when it is renamed.
-
     QFile original_file(original_file_name);
     if (!original_file.exists())
         destination_file.rename(original_file_name);
@@ -66,6 +63,9 @@ void FileDownloader::renameAfterDownload()
 
 void FileDownloader::overwriteFile()
 {
+    // Do not overwrite an existing file, cause it could be possible  that it is loaded.
+    // so tag  with ".ready"-suffix and let the media/index-manager decide when to overwrite.
+
     QString ready_path = original_file_name+FILE_DOWNLOADED_SUFFIX;
 
     // Qt likes to make life hard and rename is unable to overwrite
