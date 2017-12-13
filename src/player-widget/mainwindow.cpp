@@ -62,7 +62,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             openDebugInfos();
             setCursor(Qt::BlankCursor);
             break;
-        case Qt::Key_S:
+        case Qt::Key_S:  // Ctrl-C will not work with qwebengineview
             setCursor(Qt::ArrowCursor);
             if (openConfigDialog() == QDialog::Accepted)
                 MyLibFacade->checkForNewSmilIndex();
