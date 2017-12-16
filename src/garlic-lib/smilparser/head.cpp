@@ -107,8 +107,12 @@ void THead::parseMetaData(QDomElement element)
 {
     QDomNodeList node_list = element.elementsByTagName("subscription");
 
-    // QObject do not have a copy constructor so we had to put subscriptions in a subscription_list to store
+    // QObject's have not a copy constructor so subscriptions had to be stored in a subscription_list
+    // otherwise we get only the last parsed subscription send and mem leaks
     SubScription *subscription  = new SubScription(this);
+
+    // FixMe: Violation SRP Find a way to replace this with a GoF-Pattern, e.g. factory!
+    // Remind Task scheduler
     for(int i = 0; i < node_list.size(); i++)
     {
         subscription->parse(node_list.at(i).toElement());
@@ -119,6 +123,8 @@ void THead::parseMetaData(QDomElement element)
         }
         else if (subscription->getType() == "InventoryReport")
         {
+//            MyInventoryReportManager.reset(new Reporting::InventoryReportManager(MyConfiguration));
+//            MyInventoryReportManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
         else if (subscription->getType() == "PlaylogCollection")
         {

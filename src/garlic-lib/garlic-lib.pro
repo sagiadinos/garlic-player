@@ -1,6 +1,6 @@
 include(../defaults.pri)
 
-QT       += core network xml widgets
+QT       += core sql network xml widgets
 TEMPLATE  = lib
 CONFIG    += warn_on staticlib c++11 stl
 
@@ -68,7 +68,10 @@ SOURCES += \
     tools/log_file.cpp \
     reports/base_report_manager.cpp \
     reports/play_logs_manager.cpp \
-    reports/create/play_logs.cpp
+    reports/create/play_logs.cpp \
+    reports/create/inventory_report.cpp \
+    reports/inventory_report_manager.cpp \
+    db/inventory_table.cpp
 
 HEADERS += \
     files/base_manager.h \
@@ -120,5 +123,8 @@ HEADERS += \
     tools/log_file.h \
     reports/base_report_manager.h \
     reports/play_logs_manager.h \
-    reports/create/play_logs.h
+    reports/create/play_logs.h \
+    reports/create/inventory_report.h \
+    reports/inventory_report_manager.h \
+    db/inventory_table.h
 

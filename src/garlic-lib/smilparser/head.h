@@ -29,6 +29,7 @@
 #include "reports/system_report_manager.h"
 #include "reports/event_logs_manager.h"
 #include "reports/play_logs_manager.h"
+#include "reports/inventory_report_manager.h"
 
 /**
  * @brief The Region struct
@@ -63,6 +64,7 @@ class THead: public QObject
     protected:
 
         QScopedPointer<Reporting::SystemReportManager> MySystemReportManager;
+        QScopedPointer<Reporting::InventoryReportManager> MyInventoryReportManager;
         QScopedPointer<Reporting::EventLogsManager>    MyEventLogsManager;
         QScopedPointer<Reporting::PlayLogsManager>    MyPlayLogsManager;
 
