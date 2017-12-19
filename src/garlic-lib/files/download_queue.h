@@ -30,39 +30,41 @@
  */
 class DownloadQueue : public QObject
 {
-    Q_OBJECT
-public:
-    const int _max_download_slots   = 5;
-    explicit DownloadQueue(QByteArray ua, QObject *parent=Q_NULLPTR);
-    ~DownloadQueue();
-    void     insertQueue(QString src, QString local);
-    void     clearQueues();
+        Q_OBJECT
+    public:
+        const int _max_download_slots   = 5;
+        explicit DownloadQueue(QByteArray ua, QObject *parent=Q_NULLPTR);
+        ~DownloadQueue();
+        void     insertQueue(QString src, QString local);
+        void     clearQueues();
 
 
-    //Getter/Setter
-    QByteArray                          getUserAgent() const {return user_agent;}
-    void                                setUserAgent(const QByteArray &value) {user_agent = value;}
-    QQueue<QPair<QString, QString>>     getMediaQueue() {return media_queue;}
-    QHash<QString, Downloader *>        getDownloadSlots(){return download_slots;}
-protected:
-    QByteArray                          user_agent;
-    QQueue<QPair<QString, QString>>     media_queue;
-    QHash<QString, Downloader *>        download_slots;
-    void               processQueue();
-    void               emitPaths();
+        //Getter/Setter
+        QByteArray                          getUserAgent() const {return user_agent;}
+        void                                setUserAgent(const QByteArray &value) {user_agent = value;}
+        QQueue<QPair<QString, QString>>     getMediaQueue() {return media_queue;}
+        QHash<QString, Downloader *>        getDownloadSlots(){return download_slots;}
+        void                                setInventoryTable(DB::InventoryTable *value);
 
-public slots:
-    void               doSucceed(TNetworkAccess *downloader);
-    void               doNotModified(TNetworkAccess *downloader);
-    void               doNotCacheable(TNetworkAccess *downloader);
-    void               doFailed(TNetworkAccess *downloader);
+    protected:
+        DB::InventoryTable                 *MyInventoryTable = Q_NULLPTR;
+        QByteArray                          user_agent;
+        QQueue<QPair<QString, QString>>     media_queue;
+        QHash<QString, Downloader *>        download_slots;
+        void               processQueue();
+        void               emitPaths();
 
-signals:
-    void               succeed(QString src, QString local);
-    void               notmodified(QString src);
-    void               notcacheable(QString src);
-    void               failed(QString src);
+    public slots:
+        void               doSucceed(TNetworkAccess *downloader);
+        void               doNotModified(TNetworkAccess *downloader);
+        void               doNotCacheable(TNetworkAccess *downloader);
+        void               doFailed(TNetworkAccess *downloader);
 
+    signals:
+        void               succeed(QString src, QString local);
+        void               notmodified(QString src);
+        void               notcacheable(QString src);
+        void               failed(QString src);
 };
 
 #endif // DOWNLOAD_QUEUE_H

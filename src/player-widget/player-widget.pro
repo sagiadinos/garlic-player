@@ -6,7 +6,7 @@
 include(../defaults.pri)
 INCLUDEPATH += ../garlic-lib/
 
-QT     += core gui xml widgets webenginewidgets
+QT     += core gui sql xml widgets webenginewidgets
 CONFIG += warn_on c++11
 
 #Delete or comment out the next line when you want to use QTMultimedia

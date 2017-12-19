@@ -71,8 +71,11 @@ TConfiguration *LibFacade::getConfiguration() const
     return MyConfiguration.data();
 }
 
-void LibFacade::initIndex()
+void LibFacade::init()
 {
+    MyInventoryTable.reset(new DB::InventoryTable(this));
+    MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
+
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
 }
 
@@ -98,7 +101,7 @@ void LibFacade::loadIndex()
     qDebug(Develop) << "start" << Q_FUNC_INFO;
     if (!MySmil.isNull())
     {
-        MySmil.data()->endSmilParsing();
+       MySmil.data()->endSmilParsing();
         MyIndexManager.data()->deactivateRefresh();
     }
 
@@ -112,6 +115,7 @@ void LibFacade::loadIndex()
 
     MyMediaModel.reset(new MediaModel(this));
     MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data()->getUserAgent().toUtf8(), this));
+    MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
     MyMediaManager.reset(new MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
 
     MySmil.reset(new TSmil(MyMediaManager.data(), this));

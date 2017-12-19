@@ -6,7 +6,7 @@ DB::InventoryTable::InventoryTable(QObject *parent) : QObject(parent)
 
 bool DB::InventoryTable::init(QString path)
 {
-    db_file.setFileName(path);
+    db_file.setFileName(path+"garlic.db");
 
     if (!db_file.exists())
     {
@@ -24,26 +24,50 @@ bool DB::InventoryTable::init(QString path)
 void DB::InventoryTable::replace(DB::InventoryDataset dataset)
 {
     QSqlQuery query(db);
-    query.exec("REPLACE INTO inventory \
+    QString   sql = "REPLACE INTO inventory (resource_uri, cache_name, content_type, content_length, last_update, expires, state ) \
                VALUES( \
-                   resource_uri   = '" + dataset.resource_uri + "' \
-                   cache_name     = '" + dataset.cache_name + "' \
-                   content_type   = '" + dataset.content_type + "' \
-                   content_length = '" + dataset.content_length + "' \
-                   last_update    = '" + dataset.last_update.toString() + "' \
-                   expires        = '" + dataset.expires.toString() + "' \
-                   state          = '" + dataset.state + "' \
-                )");
+                   '" + dataset.resource_uri + "', \
+                   '" + dataset.cache_name + "', \
+                   '" + dataset.content_type + "', \
+                   " + QString::number(dataset.content_length) + ", \
+                   '" + dataset.last_update.toString() + "', \
+                   '" + dataset.expires.toString() + "', \
+                   " + QString::number(dataset.state) + " \
+                )";
+   if (!query.exec(sql))
+       qCritical(Database) << "replace/insert failed" << sql << query.lastError().text();
 }
 
 DB::InventoryDataset DB::InventoryTable::getByResourceURI(QString resource_uri)
 {
     QSqlQuery query(db);
-    query.exec("SELECT * FROM inventory WHERE resource_uri ='" +resource_uri+"'");
+    if (!query.exec("SELECT * FROM inventory WHERE resource_uri ='" +resource_uri+"'"))
+        qCritical(Database) << "select failed" << query.lastError().text();
     if (!query.first())
         return InventoryDataset();
 
     return collectResult(&query);
+}
+
+void DB::InventoryTable::updateFileStatus(QString resource_uri, int status)
+{
+    QSqlQuery query(db);
+    if (!query.exec("UPDATE inventory SET status = " + QString::number(status) + " WHERE resource_uri ='" +resource_uri+"'"))
+        qCritical(Database) << "delete failed" << query.lastError().text();
+}
+
+void DB::InventoryTable::deleteByResourceURI(QString resource_uri)
+{
+    QSqlQuery query(db);
+    if (!query.exec("DELETE FROM inventory WHERE resource_uri ='" +resource_uri+"'"))
+        qCritical(Database) << "delete failed" << query.lastError().text();
+}
+
+void DB::InventoryTable::deleteByCacheName(QString cache_name)
+{
+    QSqlQuery query(db);
+    if (!query.exec("DELETE FROM inventory WHERE cache_name ='" +cache_name+"'"))
+        qCritical(Database) << "delete failed" << query.lastError().text();
 }
 
 QList<DB::InventoryDataset> DB::InventoryTable::getAll()
@@ -69,7 +93,7 @@ bool DB::InventoryTable::openDBFile()
     db.setDatabaseName(db_file.fileName());
     if (!db.open())
     {
-        qCritical() << "database file" << db_file.fileName() << "could not created";
+        qCritical(Database) << "database file" << db_file.fileName() << "could not created";
         return false;
     }
     return true;
@@ -90,7 +114,12 @@ bool DB::InventoryTable::createTable()
 
     if (!query.exec(sql))
     {
-        qCritical() << "Inventory table could not be created" << query.lastError().text();
+        qCritical(Database) << "Inventory table could not be created" << query.lastError().text();
+        return false;
+    }
+    if (!query.exec("CREATE INDEX cache_name ON inventory (cache_name collate nocase)"))
+    {
+        qCritical(Database) << "Index cache_name could not be created on table inventory" << query.lastError().text();
         return false;
     }
     return true;
@@ -100,7 +129,7 @@ bool DB::InventoryTable::createDBFile()
 {
     if (!db_file.open(QIODevice::WriteOnly))
     {
-        qCritical() << "Inventory table could not be created";
+        qCritical(Database) << "Inventory table could not be created";
         return false;
     }
 

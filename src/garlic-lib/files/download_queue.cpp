@@ -39,6 +39,10 @@ void DownloadQueue::clearQueues()
     download_slots.clear();
 }
 
+void DownloadQueue::setInventoryTable(DB::InventoryTable *value)
+{
+    MyInventoryTable = value;
+}
 
 void DownloadQueue::insertQueue(QString src, QString local)
 {
@@ -62,6 +66,8 @@ void DownloadQueue::processQueue()
             connect(MyDownloader, SIGNAL(notcacheable(TNetworkAccess*)), SLOT(doNotCacheable(TNetworkAccess *)));
             connect(MyDownloader, SIGNAL(notmodified(TNetworkAccess*)), SLOT(doNotModified(TNetworkAccess *)));
             connect(MyDownloader, SIGNAL(failed(TNetworkAccess *)), SLOT(doFailed(TNetworkAccess *)));
+            if (MyInventoryTable != Q_NULLPTR)
+                MyDownloader->setInventoryTable(MyInventoryTable);
             download_slots.insert(paths.second, MyDownloader);
             MyDownloader->processFile(QUrl(paths.first), QFileInfo(paths.second));
         }

@@ -29,6 +29,11 @@ Downloader::~Downloader()
          MyFileDownloader.data()->cancelDownload();
 }
 
+void Downloader::setInventoryTable(DB::InventoryTable *value)
+{
+    MyInventoryTable = value;
+}
+
 void Downloader::processFile(QUrl url, QFileInfo fi)
 {
     setRemoteFileUrl(url);
@@ -127,16 +132,15 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         return;
     }
 
-    qint64 remote_size = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
+    qint64    remote_size          = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
+    QDateTime remote_last_modified = reply->header(QNetworkRequest::LastModifiedHeader).toDateTime();
     // we need to check for size and last Modified, cause a previous index smil on the server can have a older Date and would not be loaded
     // we need to check also if there is an already downloaded file which is signed and waiting via downloaded suffix
     QFileInfo fi(local_file_info.absoluteFilePath() + FILE_DOWNLOADED_SUFFIX);
     if (
-            (local_file_info.exists() && local_file_info.size() ==  remote_size &&
-            local_file_info.lastModified().toUTC() > reply->header(QNetworkRequest::LastModifiedHeader).toDateTime())
+            (local_file_info.exists() && local_file_info.size() == remote_size && local_file_info.lastModified().toUTC() > remote_last_modified)
             ||
-            (fi.exists() && fi.size() ==  remote_size &&
-              fi.lastModified().toUTC() > reply->header(QNetworkRequest::LastModifiedHeader).toDateTime())
+            (fi.exists() && fi.size() ==  remote_size && fi.lastModified().toUTC() > remote_last_modified)
         )
     {
         qDebug(Develop) << remote_file_url.toString() << " no need for update";
@@ -146,6 +150,8 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
     }
 
     DiscSpace MyDiscSpace(local_file_info.absolutePath());
+    MyDiscSpace.setInventoryTable(MyInventoryTable);
+
     qint64 calc = MyDiscSpace.calculateNeededDiscSpaceToFree(remote_size);
     if (calc > 0 && !MyDiscSpace.freeDiscSpace(calc))
     {
@@ -154,7 +160,18 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         return;
     }
 
-
+    if (MyInventoryTable != Q_NULLPTR)
+    {
+        DB::InventoryDataset dataset;
+        dataset.resource_uri   = remote_file_url.toString();
+        dataset.cache_name     = local_file_info.fileName();
+        dataset.content_type   = content_type;
+        dataset.content_length = remote_size;
+        dataset.last_update    = QDateTime::currentDateTime();
+        dataset.expires        = QDateTime();
+        dataset.state          = DB::TRANSFER;
+        MyInventoryTable->replace(dataset);
+    }
     startDownload();
 
     return;

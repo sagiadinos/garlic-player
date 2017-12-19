@@ -47,7 +47,7 @@ class LibFacade : public QObject
     public:
         explicit LibFacade(QObject *parent = nullptr);
         ~LibFacade();
-        void               initIndex();
+        void               init();
         TConfiguration    *getConfiguration() const;
         THead             *getHead() const;
         void               beginSmilBodyParsing();
@@ -60,13 +60,14 @@ class LibFacade : public QObject
 
     protected:
         int                 timer_id;
-        QScopedPointer<TConfiguration>  MyConfiguration;
-        QScopedPointer<MediaModel>      MyMediaModel;
-        QScopedPointer<DownloadQueue>   MyDownloadQueue;
-        QScopedPointer<IndexManager>    MyIndexManager ;
-        QScopedPointer<MediaManager>    MyMediaManager;
-        QScopedPointer<THead>           MyHead;
-        QScopedPointer<TSmil>           MySmil;
+        QScopedPointer<DB::InventoryTable> MyInventoryTable;
+        QScopedPointer<TConfiguration>     MyConfiguration;
+        QScopedPointer<MediaModel>         MyMediaModel;
+        QScopedPointer<DownloadQueue>      MyDownloadQueue;
+        QScopedPointer<IndexManager>       MyIndexManager ;
+        QScopedPointer<MediaManager>       MyMediaManager;
+        QScopedPointer<THead>              MyHead;
+        QScopedPointer<TSmil>              MySmil;
 #ifdef QT_DEBUG
         qint64               max_memory_used = 0;
         QString              max_memory_time = "";

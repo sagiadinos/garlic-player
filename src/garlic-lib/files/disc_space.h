@@ -22,6 +22,7 @@
 #include <QStorageInfo>
 #include <QDirIterator>
 #include "tools/logger.h"
+#include "db/inventory_table.h"
 
 /**
  * @brief The DiscSpace is a helper class to handle deletes/cleanups for FileModel
@@ -50,8 +51,9 @@ public:
     qint64 getStorageBytesAvailable() const {return storage.bytesAvailable();}
     qint64 getStorageBytesTotal() const {return storage.bytesTotal();}
     qint64 getStorageBytesFree() const {return storage.bytesFree();}
+    void setInventoryTable(DB::InventoryTable *value);
 
-protected:
+    protected:
     const int _percent_free  = 5; // let some % of total disc space free for Operating System logs, tmp etc
     bool            deleteFile(QString file_path);
     bool            deleteDirectory(QString dir_path);
@@ -60,7 +62,8 @@ protected:
 public slots:
 
 protected:
-    QString        cache_path;
+    DB::InventoryTable *MyInventoryTable = Q_NULLPTR;
+    QString        cache_path = "";
     quint64        bytes_deleted = 0;
     quint64        bytes_available = 0;
     QStorageInfo   storage;

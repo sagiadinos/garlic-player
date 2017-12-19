@@ -5,8 +5,8 @@
 #include <QList>
 #include <QtDebug>
 #include <QDateTime>
-#include <QLoggingCategory>
 #include <QFile>
+#include "logger.h"
 
 namespace DB
 {
@@ -36,6 +36,9 @@ namespace DB
             bool init(QString path);
             void replace(InventoryDataset dataset);
             InventoryDataset getByResourceURI(QString resource_uri);
+            void updateFileStatus(QString resource_uri, int status);
+            void deleteByResourceURI(QString resource_uri);
+            void deleteByCacheName(QString cache_name);
             QList<InventoryDataset> getAll();
         protected:
             QSqlDatabase db;

@@ -35,6 +35,12 @@ void DiscSpace::init(QString path)
         setBytesAvailable(getStorageBytesAvailable());
 }
 
+
+void DiscSpace::setInventoryTable(DB::InventoryTable *value)
+{
+    MyInventoryTable = value;
+}
+
 void DiscSpace::freedSpace(qint64 size_deleted)
 {
     setBytesDeleted(getBytesDeleted() + size_deleted);
@@ -74,6 +80,11 @@ bool DiscSpace::freeDiscSpace(qint64 size_to_free)
                 return false;
         }
         qInfo(ContentManager) << "OBJECT_REMOVED resourceUri: " << dirList.at(i).absoluteFilePath() << " removed.";
+
+        // delete entry from db
+        if (MyInventoryTable != Q_NULLPTR)
+            MyInventoryTable->deleteByCacheName(dirList.at(i).fileName());
+
         if (size_to_free < getBytesDeleted())
             break;
     }

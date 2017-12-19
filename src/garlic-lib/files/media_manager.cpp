@@ -56,8 +56,13 @@ void MediaManager::registerFile(QString src)
         }
     }
 
+   registerUncached(src); // when local
+}
+
+void MediaManager::registerUncached(QString src)
+{
     if (MyMediaModel->findLocalBySrcPath(src) == "")
-        MyMediaModel->insertAvaibleFile(src, src); // src and local path are identically if src path is local
+        MyMediaModel->insertAvaibleFile(src, src); // src and local path are identically if src path is local or a simple website
 }
 
 int MediaManager::checkCacheStatus(QString src)

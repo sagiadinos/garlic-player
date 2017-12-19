@@ -42,9 +42,11 @@ class Downloader : public TNetworkAccess
         //Getter/Setter
         QFileInfo  getLocalFileInfo();
         void       setLocalFileInfo(const QFileInfo &value) {local_file_info = value;}
+        void       setInventoryTable(DB::InventoryTable *value);
 
     protected:
         QFileInfo               local_file_info;
+        DB::InventoryTable *MyInventoryTable = Q_NULLPTR;
         QScopedPointer <QNetworkAccessManager>  manager_head, manager_head_redirect, manager_get;
         QScopedPointer <FileDownloader>         MyFileDownloader;
         void                    checkStatusCode(QNetworkReply *reply, int status_code);
