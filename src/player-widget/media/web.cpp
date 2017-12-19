@@ -26,10 +26,11 @@ Web::~Web()
     // FIX THIS! delete or deleteLater for browser crashes,
     // when playliste changed and browser was used method init/deinit
     // it crashes even as stack variable or QScopedPointer
-    // do nothing is crappy, but QwebEngineView anyway seems to have memory leaks
+    // actual solution works, but unsatisfied
 
     // Info: delete crashes cause this destructor invoked two times
     // deleteLater crashes someone else deep in assembler
+
 
     qDebug() << "delete browser";
 }
@@ -38,6 +39,7 @@ void Web::init(TMedia *media)
 {
     MyMedia = media;
     browser = new QWebEngineView;
+    connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
 
     QUrl url(media->getLoadablePath());
     browser->load(url);
@@ -62,4 +64,13 @@ void Web::changeSize(int w, int h)
 QWidget *Web::getView()
 {
     return browser;
+}
+
+void Web::doLoadFinished(bool has_succeeded)
+{
+    if (has_succeeded)
+    {
+        QString code = QStringLiteral("document.body.style.overflow = 'hidden';");
+        browser->page()->runJavaScript(code);
+    }
 }

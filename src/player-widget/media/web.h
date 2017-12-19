@@ -18,7 +18,9 @@ class Web : public BaseMedia
         void            changeSize(int w, int h);
         QWidget        *getView();
     protected:
-        QWebEngineView  *browser; // needed when opointer deleteLater not to crash
+        QWebEngineView  *browser;
+    protected slots:
+        void             doLoadFinished(bool has_succeeded);
 };
 
 #endif // WEB_H
