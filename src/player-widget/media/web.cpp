@@ -40,6 +40,8 @@ void Web::init(TMedia *media)
     MyMedia = media;
     browser = new QWebEngineView;
     connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
+    // Deactovate caching for testing
+    browser->page()->profile()->setHttpCacheType(QWebEngineProfile::NoCache);
 
     QUrl url(media->getLoadablePath());
     browser->load(url);

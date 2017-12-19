@@ -2,7 +2,9 @@
 #define WEB_H
 
 #include <QWebEngineView>
+#include <QWebEnginePage>
 #include <QWebEngineSettings>
+#include <QWebEngineProfile>
 
 #include "smilparser/web.h"
 #include "base_media.h"
