@@ -229,7 +229,7 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             qDebug(MediaPlayer) << "No QML source set";
             break;
         case QQuickView::Ready:
-            MyLibFacade->initIndex();
+            MyLibFacade->init();
             MyLibFacade->loadIndex(); // load index when QML comiled complete
             MyLibFacade->checkForNewSmilIndex();
             break;
