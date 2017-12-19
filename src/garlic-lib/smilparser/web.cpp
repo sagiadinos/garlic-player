@@ -43,16 +43,6 @@ void TWeb::setDurationTimerBeforePlay()
     return;
 }
 
-void TWeb::registerFile(MediaManager *mm)
-{
-    if (type.contains("application/widget"))
-    {
-        MyMediaManager = mm;
-        MyMediaManager->registerFile(src);
-    }
-}
-
-
 void TWeb::play()
 {
     qDebug(Develop) << getID() << "played";

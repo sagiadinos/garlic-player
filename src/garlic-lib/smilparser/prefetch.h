@@ -26,7 +26,6 @@ class TPrefetch : public TMedia
 public:
     explicit TPrefetch(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TPrefetch();
-    void     registerFile(MediaManager *mm);
     void     pause();
     void     stop();
     void     play();

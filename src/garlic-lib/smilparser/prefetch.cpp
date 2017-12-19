@@ -29,14 +29,6 @@ TPrefetch::~TPrefetch()
     deleteTimer();
 }
 
-void TPrefetch::registerFile(MediaManager *mm)
-{
-    // overwrite not to check on first parsing
-    // see setDurationTimerBeforePlay()
-
-    Q_UNUSED(mm);
-}
-
 void TPrefetch::play()
 {
     qDebug() << getID()  << "played";

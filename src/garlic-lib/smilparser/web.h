@@ -30,7 +30,6 @@ public:
     void            pause();
     void            stop();
     void            play();
-    void            registerFile(MediaManager *mm);
 public slots:
     void            setDurationTimerBeforePlay();
 protected:

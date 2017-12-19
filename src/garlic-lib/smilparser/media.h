@@ -50,7 +50,6 @@ class TMedia : public TBaseTiming
         TContainer       *parent_container;
         QString           region = "screen";
         QString           src, exec, type, fit = "";
-        QString           cached_file_path;
         QString           filename, cache_control, log_content_id  = "";
         void              setBaseMediaAttributes();
         void              setBaseParameters();
