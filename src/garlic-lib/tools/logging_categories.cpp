@@ -2,6 +2,7 @@
 
 // for eventlogs
 Q_LOGGING_CATEGORY(Screen, "Screen")
+Q_LOGGING_CATEGORY(Database, "Database")
 Q_LOGGING_CATEGORY(SmilParser, "SmilParser")
 Q_LOGGING_CATEGORY(ContentManager, "ContentManager")
 Q_LOGGING_CATEGORY(MediaPlayer, "MediaPlayer")
