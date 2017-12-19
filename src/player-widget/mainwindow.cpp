@@ -28,7 +28,6 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
-    setMainWindowSize(QSize(980, 540)); // set default
 }
 
 MainWindow::~MainWindow()
@@ -88,32 +87,37 @@ int MainWindow::openConfigDialog()
 
 void MainWindow::resizeAsNormalFullScreen()
 {
+    move(0,0);
     setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-    showFullScreen();
     setCursor(Qt::BlankCursor);
-    screen_state = FULLSCREEN;
-    move(MyScreen->getStartPointFromScreen());
+    showFullScreen();
     resize(MyScreen->getSizeFromScreen());
+    screen_state = FULLSCREEN;
 }
 
 void MainWindow::resizeAsBigFullScreen()
 {
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-    showFullScreen();
-    setCursor(Qt::BlankCursor);
-    screen_state = BIGFULLSCREEN;
     move(0, 0);
+    setWindowFlags(Qt::CustomizeWindowHint  | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setCursor(Qt::BlankCursor);
+    showNormal();
     resize(MyScreen->getWholeSize());
+    screen_state = BIGFULLSCREEN;
 }
 
 void MainWindow::resizeAsWindow()
 {
+    move(0,0);
     setWindowFlags(Qt::Window);
-    show();
     setCursor(Qt::ArrowCursor);
-    screen_state = WINDOWED;
     move(MyScreen->getStartPointFromScreen());
-    resize(getMainWindowSize());
+    // This block is neccesary to workaround that Window is maximized after full- or bigscreen.
+    showNormal();
+    setWindowState(Qt::WindowMaximized);
+    showNormal();
+
+    resize(QSize(980, 540));
+    screen_state = WINDOWED;
 }
 
 void MainWindow::setMainWindowSize(QSize size)
@@ -133,10 +137,9 @@ void MainWindow::resizeEvent(QResizeEvent * event)
 {
     if (regions_list.size() > 0)
     {
-        Q_UNUSED(event);
         QMap<QString, TRegion *>::iterator i;
         for (i = regions_list.begin(); i != regions_list.end(); ++i)
-            regions_list[i.key()]->setRootSize(width(), height());
+            regions_list[i.key()]->setRootSize(event->size().width(), event->size().height());
     }
 }
 

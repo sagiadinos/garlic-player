@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
             w.setMainWindowSize(MyParser.getWindowSize());
             w.resizeAsWindow();
         }
-        MyLibFacade->initIndex();
+        MyLibFacade->init();
         MyLibFacade->loadIndex();
         MyLibFacade->checkForNewSmilIndex();
 
