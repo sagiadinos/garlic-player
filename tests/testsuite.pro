@@ -1,5 +1,6 @@
 TEMPLATE = subdirs
 SUBDIRS += \
+         garlic-lib/db/inventory_table \
          garlic-lib/files/base_manager \
          garlic-lib/files/disc_space \
          garlic-lib/files/index_model \

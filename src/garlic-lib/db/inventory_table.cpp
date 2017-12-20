@@ -6,11 +6,10 @@ DB::InventoryTable::InventoryTable(QObject *parent) : QObject(parent)
 
 bool DB::InventoryTable::init(QString path)
 {
-    db_file.setFileName(path+"garlic.db");
-
+    setDbPath(path);
     if (!db_file.exists())
     {
-        if (!createDBFile() || !openDBFile() || !createTable())
+        if (!createDbFile() || !openDbFile() || !createTable())
         {
             db_file.remove(); // delete to try again
             return false;
@@ -18,7 +17,7 @@ bool DB::InventoryTable::init(QString path)
         return true;
     }
     else
-        return openDBFile();
+        return openDbFile();
 }
 
 void DB::InventoryTable::replace(DB::InventoryDataset dataset)
@@ -49,10 +48,10 @@ DB::InventoryDataset DB::InventoryTable::getByResourceURI(QString resource_uri)
     return collectResult(&query);
 }
 
-void DB::InventoryTable::updateFileStatus(QString resource_uri, int status)
+void DB::InventoryTable::updateFileStatus(QString resource_uri, int state)
 {
     QSqlQuery query(db);
-    if (!query.exec("UPDATE inventory SET status = " + QString::number(status) + " WHERE resource_uri ='" +resource_uri+"'"))
+    if (!query.exec("UPDATE inventory SET state = " + QString::number(state) + " WHERE resource_uri ='" +resource_uri+"'"))
         qCritical(Database) << "delete failed" << query.lastError().text();
 }
 
@@ -73,7 +72,7 @@ void DB::InventoryTable::deleteByCacheName(QString cache_name)
 QList<DB::InventoryDataset> DB::InventoryTable::getAll()
 {
     QSqlQuery query(db);
-    QList<InventoryDataset> result{DB::InventoryDataset()};
+    QList<InventoryDataset> result;
     query.exec("SELECT * FROM inventory ORDER BY UPPER(last_update) DESC");
     if (!query.first())
         return result;
@@ -87,16 +86,9 @@ QList<DB::InventoryDataset> DB::InventoryTable::getAll()
 
 }
 
-bool DB::InventoryTable::openDBFile()
+void DB::InventoryTable::setDbPath(QString path)
 {
-    db = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
-    db.setDatabaseName(db_file.fileName());
-    if (!db.open())
-    {
-        qCritical(Database) << "database file" << db_file.fileName() << "could not created";
-        return false;
-    }
-    return true;
+    db_file.setFileName(path+"garlic.db");
 }
 
 bool DB::InventoryTable::createTable()
@@ -125,11 +117,22 @@ bool DB::InventoryTable::createTable()
     return true;
 }
 
-bool DB::InventoryTable::createDBFile()
+bool DB::InventoryTable::openDbFile()
+{
+    db.setDatabaseName(db_file.fileName());
+    if (!db.open())
+    {
+        qCritical(Database) << "database file" << db_file.fileName() << "could not be created";
+        return false;
+    }
+    return true;
+}
+
+bool DB::InventoryTable::createDbFile()
 {
     if (!db_file.open(QIODevice::WriteOnly))
     {
-        qCritical(Database) << "Inventory table could not be created";
+        qCritical(Database) << "DB file could not be created";
         return false;
     }
 

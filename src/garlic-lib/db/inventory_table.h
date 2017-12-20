@@ -21,12 +21,14 @@ namespace DB
             int       state        = 0;
 
     };
-
-    const int TRANSFER          = 1;
-    const int STREAMING         = 2;
-    const int CHECKSUM          = 3;
-    const int CHECKSUM_ERROR    = 4;
-    const int COMPLETE          = 5;
+    enum state
+    {
+        TRANSFER          = 1,
+        STREAMING         = 2,
+        CHECKSUM          = 3,
+        CHECKSUM_ERROR    = 4,
+        COMPLETE          = 5
+    };
 
     class InventoryTable : public QObject
     {
@@ -36,15 +38,17 @@ namespace DB
             bool init(QString path);
             void replace(InventoryDataset dataset);
             InventoryDataset getByResourceURI(QString resource_uri);
-            void updateFileStatus(QString resource_uri, int status);
+            void updateFileStatus(QString resource_uri, int state);
             void deleteByResourceURI(QString resource_uri);
             void deleteByCacheName(QString cache_name);
             QList<InventoryDataset> getAll();
+            void setDbPath(QString path);
+
         protected:
-            QSqlDatabase db;
-            QFile   db_file;
-            bool openDBFile();
-            bool createDBFile();
+            QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
+            QFile db_file;
+            bool createDbFile();
+            bool openDbFile();
             bool createTable();
             InventoryDataset collectResult(QSqlQuery *query);
     };
