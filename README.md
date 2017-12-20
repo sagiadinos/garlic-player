@@ -7,7 +7,7 @@ Offline usage via command-line is also possible.
 ## Libraries used
  - [Qt5](https://www.qt.io) >= 5.7
  - [QtAV](http://www.qtav.org) >= 1.11.0 as alternative to QtMultimedia
- - [Quazip](http://quazip.sourceforge.net) 0.7.3 (included)
+ - [Quazip](http://quazip.sourceforge.net) 0.7.3 (included in ./src/ext)
  - [zlib](https://zlib.net) 1.2.11 (included in ./src/ext)
 
 ## OS targets:
@@ -113,7 +113,7 @@ Next binary version 0.2.0 is prepared and should be released before Xmas 2017
 ## additional features supported not in w3c standard
 - **shuffle play** in seq container via metadata
 - **automatic refresh** via metatags in SMIL header
-- **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav like described in [a-smil.org Reporting] (http://www.a-smil.org/index.php/Reporting)
+- **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav like described in [a-smil.org Reporting](http://www.a-smil.org/index.php/Reporting)
 
 ## actual supported remote features via downloader
  - http downloads and caching
