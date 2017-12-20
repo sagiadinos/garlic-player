@@ -126,7 +126,7 @@ Next binary version 0.2.0 is prepared and should be released before Xmas 2017
  - toogle fullscreen with Ctrl-F
  - toogle bigscreen with Ctrl-B
  - quit app with Ctrl-Q
- - open configuration dialog with Ctrl-C
+ - open configuration dialog with Ctrl-S
 
 ## Actual Working
  - testing Linux, Android and Windows for second binary release
