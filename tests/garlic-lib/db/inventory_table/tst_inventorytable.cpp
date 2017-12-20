@@ -111,7 +111,6 @@ void TestInventoryTable::testDeletes()
     MyTable.deleteByResourceURI("remote_file_url");
     db_list = MyTable.getAll();
     QCOMPARE(db_list.size(), 0);
-
 }
 
 

@@ -95,13 +95,13 @@ bool DB::InventoryTable::createTable()
 {
     QSqlQuery query(db);
     QString sql = "CREATE TABLE inventory ( \
-                  resource_uri binary(255) PRIMARY KEY, \
-                  cache_name varchar(50), \
-                  content_type varchar(20), \
-                  content_length bigint, \
-                  last_update date_time, \
-                  expires datetime, \
-                  state int \
+                  resource_uri TEXT PRIMARY KEY, \
+                  cache_name TEXT, \
+                  content_type TEXT, \
+                  content_length INTEGER, \
+                  last_update TEXT, \
+                  expires TEXT, \
+                  state INTEGER \
                   )";
 
     if (!query.exec(sql))
@@ -147,8 +147,8 @@ DB::InventoryDataset DB::InventoryTable::collectResult(QSqlQuery *query)
     dataset.cache_name     = query->value("cache_name").toString();
     dataset.content_type   = query->value("content_type").toString();
     dataset.content_length = query->value("content_length").toLongLong();
-    dataset.last_update    = query->value("last_update").toDateTime();
-    dataset.expires        = query->value("expires").toDateTime();
+    dataset.last_update    = QDateTime::fromString(query->value("last_update").toString());
+    dataset.expires        = QDateTime::fromString(query->value("expires").toString());
     dataset.state          = query->value("state").toInt();
     return dataset;
 }

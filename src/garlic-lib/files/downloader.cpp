@@ -194,6 +194,8 @@ void Downloader::doDownloadSuccessFul()
           << "lastModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
 
     qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECT_UPDATED", list);
+    if (MyInventoryTable != Q_NULLPTR)
+        MyInventoryTable->updateFileStatus(remote_file_url.toString(), DB::COMPLETE);
     emit succeed(this);
 }
 

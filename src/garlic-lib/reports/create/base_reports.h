@@ -22,6 +22,8 @@
 #include <QDomDocument>
 #include <QDomElement>
 #include "tools/configuration.h"
+#include "files/disc_space.h"
+#include "system_infos/memory.h"
 
 namespace Reporting
 {
@@ -34,12 +36,14 @@ namespace Reporting
             QString  asXMLString();
 
         protected:
+            QScopedPointer<DiscSpace>            MyDiscSpace;
+            QScopedPointer<SystemInfos::Memory>  MyMemory;
             TConfiguration       *MyConfiguration;
             QDomDocument          document;
-            QDomElement           root, player;
+            QDomElement           root, player, system_info;
+            void                  createSystemInfo();
             QDomElement           createTagWithTextValue(QString tag_name, QString tag_value);
             QDomElement           createPropTag(QString name, QString value);
-
     };
 }
 

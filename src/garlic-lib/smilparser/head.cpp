@@ -44,7 +44,8 @@ void THead::setDefaultValues()
     default_region.height          = 1;
     default_region.z_index         = 0;
     default_region.backgroundColor = "transparent";
-    region_list.append(default_region);
+    region_list.append(default_region);            void process();
+
 }
 
 QString THead::getTitle()
@@ -89,6 +90,11 @@ void THead::setRootLayout(int w, int h)
     return;
 }
 
+void THead::setInventoryTable(DB::InventoryTable *value)
+{
+    MyInventoryTable = value;
+}
+
 void THead::parseMeta(QDomElement element)
 {
     if (element.hasAttribute("name") && element.attribute("name") == "title" && element.hasAttribute("content"))
@@ -121,10 +127,10 @@ void THead::parseMetaData(QDomElement element)
             MySystemReportManager.reset(new Reporting::SystemReportManager(MyConfiguration));
             MySystemReportManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
-        else if (subscription->getType() == "InventoryReport")
+        else if (subscription->getType() == "InventoryReport" && MyInventoryTable != Q_NULLPTR)
         {
-//            MyInventoryReportManager.reset(new Reporting::InventoryReportManager(MyConfiguration));
-//            MyInventoryReportManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
+            MyInventoryReportManager.reset(new Reporting::InventoryReportManager(MyConfiguration, MyInventoryTable));
+            MyInventoryReportManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
         else if (subscription->getType() == "PlaylogCollection")
         {

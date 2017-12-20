@@ -69,9 +69,9 @@ SOURCES += \
     reports/base_report_manager.cpp \
     reports/play_logs_manager.cpp \
     reports/create/play_logs.cpp \
-    reports/create/inventory_report.cpp \
     reports/inventory_report_manager.cpp \
-    db/inventory_table.cpp
+    db/inventory_table.cpp \
+    reports/create/inventory_report.cpp
 
 HEADERS += \
     files/base_manager.h \

@@ -1,7 +1,7 @@
 #ifndef INVENTORY_REPORT_MANAGER_H
 #define INVENTORY_REPORT_MANAGER_H
 
-#include "create/event_logs.h"
+#include "create/inventory_report.h"
 #include "base_report_manager.h"
 
 namespace Reporting
@@ -10,8 +10,11 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            InventoryReportManager(TConfiguration *config, QObject *parent = nullptr);
+            InventoryReportManager(TConfiguration *config, DB::InventoryTable *inv_table, QObject *parent = nullptr);
+
         protected:
+            DB::InventoryTable *MyInventoryTable = Q_NULLPTR;
+            QScopedPointer<Reporting::CreateInventoryReport> MyCreateInventoryReport;
             void             handleSend();
          protected slots:
             void               doSucceed(TNetworkAccess *uploader);

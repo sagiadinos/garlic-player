@@ -8,10 +8,8 @@ Reporting::SystemReportManager::SystemReportManager(TConfiguration *config, QObj
 
 void Reporting::SystemReportManager::handleSend()
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyCreateSystemReport.data()->process();
     MyWebDav.data()->processPutData(action_url, MyCreateSystemReport.data()->asXMLString().toUtf8());
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 void Reporting::SystemReportManager::doSucceed(TNetworkAccess *uploader)

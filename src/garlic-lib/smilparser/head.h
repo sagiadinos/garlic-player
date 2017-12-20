@@ -61,8 +61,10 @@ class THead: public QObject
         QString                getTitle();
         QList<Region>         *getLayout();
         void                   setRootLayout(int w, int h);
+        void                   setInventoryTable(DB::InventoryTable *value);
     protected:
 
+        DB::InventoryTable *MyInventoryTable = Q_NULLPTR;
         QScopedPointer<Reporting::SystemReportManager> MySystemReportManager;
         QScopedPointer<Reporting::InventoryReportManager> MyInventoryReportManager;
         QScopedPointer<Reporting::EventLogsManager>    MyEventLogsManager;

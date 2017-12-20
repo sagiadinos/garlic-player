@@ -2,6 +2,8 @@
 #define INVENTORY_REPORT_H
 
 #include "base_reports.h"
+#include "db/inventory_table.h"
+#include "file_downloader.h"
 
 namespace Reporting
 {
@@ -10,6 +12,13 @@ namespace Reporting
             Q_OBJECT
         public:
             CreateInventoryReport(TConfiguration *config, QObject *parent = nullptr);
+            void process(QList<DB::InventoryDataset> list);
+        protected:
+            QDomElement content_directory, object_info;
+            QDomElement createObjectInfo(DB::InventoryDataset dataset);
+            QString     getObjectId(QString file_name);
+            QString     getState(int state);
+            qint64      determineTransferLength(QString file_name, int state);
     };
 }
 

@@ -21,8 +21,6 @@
 #include <QFileInfo>
 #include <QTimeZone>
 
-#include "files/disc_space.h"
-#include "system_infos/memory.h"
 #include "system_infos/network.h"
 #include "base_reports.h"
 
@@ -37,11 +35,8 @@ namespace Reporting
                                   QObject *parent = nullptr);
             void process();
         protected:
-             QScopedPointer<DiscSpace>            MyDiscSpace;
-             QScopedPointer<SystemInfos::Memory>  MyMemory;
-             QScopedPointer<SystemInfos::Network> MyNetwork;
-             QDomElement           system_info, network, interface, hardware_info, configuration;
-             void                  createSystemInfo();
+            QScopedPointer<SystemInfos::Network> MyNetwork;
+             QDomElement           network, interface, hardware_info, configuration;
              void                  createConfiguration();
              void                  createModelInfo();
              void                  createFactoryDefault();

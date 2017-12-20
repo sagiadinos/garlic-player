@@ -21,8 +21,6 @@ Reporting::CreateSystemReport::CreateSystemReport(TConfiguration *config,
                            QObject *parent) : Reporting::CreateBase(config, parent)
 {
     MyConfiguration = config;
-    MyDiscSpace.reset(new DiscSpace(MyConfiguration->getPaths("cache")));
-    MyMemory.reset(new SystemInfos::Memory(this));
     MyNetwork.reset(new SystemInfos::Network(this));
 
 }
@@ -37,27 +35,6 @@ void Reporting::CreateSystemReport::process()
     createFactoryDefault();
     createUserPref();
     createHardwareInfo();
-}
-
-void Reporting::CreateSystemReport::createSystemInfo()
-{
-    system_info = document.createElement("systemInfo");
-    player.appendChild(system_info);
-
-    system_info.appendChild(createTagWithTextValue("systemStartTime", MyConfiguration->getStartTime()));
-    system_info.appendChild(createTagWithTextValue("systemTimeZone", MyConfiguration->getTimeZone()));
-
-    MyDiscSpace->init(MyConfiguration->getPaths("cache"));
-    system_info.appendChild(createTagWithTextValue("totalCapacity", QString::number(MyDiscSpace->getStorageBytesTotal())));
-    system_info.appendChild(createTagWithTextValue("totalFreeSpace", QString::number(MyDiscSpace->getStorageBytesAvailable())));
-
-    system_info.appendChild(createTagWithTextValue("cpuUsage", ""));
-
-    MyMemory->refresh();
-    system_info.appendChild(createTagWithTextValue("memoryTotal", QString::number(MyMemory->getTotal())));
-    system_info.appendChild(createTagWithTextValue("memoryUsed", QString::number(MyMemory->getUsed())));
-    system_info.appendChild(createTagWithTextValue("hdmiOutput", ""));
-
 }
 
 void Reporting::CreateSystemReport::createNetwork()

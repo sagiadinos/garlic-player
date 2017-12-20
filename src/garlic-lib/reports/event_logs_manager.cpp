@@ -9,10 +9,8 @@ Reporting::EventLogsManager::EventLogsManager(TConfiguration *config, QObject *p
 
 void Reporting::EventLogsManager::handleSend()
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     send_list = log_dir.entryList(QStringList("event_log*"), QDir::Files, QDir::Time | QDir::Reversed);
     send();
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 

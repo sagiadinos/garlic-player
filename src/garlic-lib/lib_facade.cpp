@@ -110,6 +110,7 @@ void LibFacade::loadIndex()
         return;
 
     MyHead.reset(new THead(MyConfiguration.data(), this));
+    MyHead.data()->setInventoryTable(MyInventoryTable.data()); // must set before parse
     MyHead.data()->parse(MyIndexManager->getHead());
     MyIndexManager.data()->activateRefresh(MyHead->getRefreshTime());
 
