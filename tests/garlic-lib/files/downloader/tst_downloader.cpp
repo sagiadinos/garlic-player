@@ -38,7 +38,9 @@ private Q_SLOTS:
     void initTestCase(){qInstallMessageHandler(noMessageOutput);}
     void testObjectCreateAndDelete();
     void testAgentString();
-    void testDownloadSmil();
+    void testDownloadSmilNew();
+    void testDownloadSmilNotModified();
+    void testDownloadSmilUpdated();
     void testDownloadMedia();
     void testDownloadMediaDirect();
     void testDownloadFailed();
@@ -54,7 +56,13 @@ void TestDownloader::cleanup()
     file.setFileName("./index.smil");
     if (file.exists())
         file.remove();
+    file.setFileName("./index.smil" + FILE_DOWNLOADED_SUFFIX);
+    if (file.exists())
+        file.remove();
     file.setFileName("./server.jpg");
+    if (file.exists())
+        file.remove();
+    file.setFileName("./server.jpg" + FILE_DOWNLOADED_SUFFIX);
     if (file.exists())
         file.remove();
 }
@@ -116,7 +124,7 @@ void TestDownloader::testAgentString()
     delete MyDownloader;
 }
 
-void TestDownloader::testDownloadSmil()
+void TestDownloader::testDownloadSmilNew()
 {
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
     Downloader *MyDownloader = new Downloader(agent);
@@ -134,7 +142,6 @@ void TestDownloader::testDownloadSmil()
     }
     QCOMPARE(spy1.count(), 1);
     QFile file(":/simple.smil");
-
     QFile data(fi.absoluteFilePath());
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     data.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -156,35 +163,64 @@ void TestDownloader::testDownloadSmil()
     }
     QCOMPARE(spy2.count(), 1);
     QVERIFY(first_download == fi.lastModified());
+    delete MyDownloader;
+}
 
-    // check to react on http 304
-    url.setUrl("http://smil-admin.com/garlic/test.php?action=get_smil_cached");
-    fi.setFile(":/notavaible.smil"); // to make sure file is not exist
-    QSignalSpy spy3(MyDownloader, SIGNAL(notmodified(TNetworkAccess *)));
-    QVERIFY(spy3.isValid());
+void TestDownloader::testDownloadSmilNotModified()
+{
+    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+    Downloader *MyDownloader = new Downloader(agent);
+    // request a SMIL which returned a not modiefied 304
+    QUrl url("http://smil-admin.com/garlic/test.php?action=get_smil_cached");
+    QFileInfo fi(":/notavaible.smil"); // to make sure file is not exist
+    QSignalSpy spy(MyDownloader, SIGNAL(notmodified(TNetworkAccess *)));
+    QVERIFY(spy.isValid());
     MyDownloader->processFile(url, fi);
-    i = 0;
-    while (spy3.count() == 0 && i < 4000)
+    int i = 0;
+    while (spy.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
     }
-    QCOMPARE(spy3.count(), 1);
+    QCOMPARE(spy.count(), 1);
+    delete MyDownloader;
+}
 
+void TestDownloader::testDownloadSmilUpdated()
+{
+    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+    Downloader *MyDownloader = new Downloader(agent);
+    QUrl url("http://smil-admin.com/garlic/test.php?action=get_smil_new");
+    QFileInfo fi("./index.smil");
+    qRegisterMetaType<TNetworkAccess *>();
+    QSignalSpy spy1(MyDownloader, SIGNAL(succeed(TNetworkAccess *)));
+    QVERIFY(spy1.isValid());
+    MyDownloader->processFile(url, fi);
+    int i = 0;
+    while (spy1.count() == 0 && i < 4000)
+    {
+        QTest::qWait(200);
+        i +=200;
+    }
+    QCOMPARE(spy1.count(), 1);
+    QDateTime first_download = fi.lastModified();
+
+    // request an updated SMIL
     url.setUrl("http://smil-admin.com/garlic/test.php?action=get_smil_updated");
     fi.setFile("./index.smil"); // set back
-    QSignalSpy spy4(MyDownloader, SIGNAL(succeed(TNetworkAccess *)));
+    QSignalSpy spy2(MyDownloader, SIGNAL(succeed(TNetworkAccess *)));
     MyDownloader->processFile(url, fi);
-    QVERIFY(spy4.isValid());
+    QVERIFY(spy2.isValid());
     i = 0;
-    while (spy4.count() == 0 && i < 4000)
+    while (spy2.count() == 0 && i < 4000)
     {
         QTest::qWait(200);
         i +=200;
     }
-    QCOMPARE(spy4.count(), 1);
+    QCOMPARE(spy2.count(), 1);
 
-    QFileInfo fi2(fi.absoluteFilePath()); // to make sure file exists
+    QFileInfo fi2(fi.absoluteFilePath() + FILE_DOWNLOADED_SUFFIX); // to make sure file exists
+    QVERIFY(fi2.exists());
     QVERIFY(first_download != fi2.lastModified());
     delete MyDownloader;
 }
@@ -259,7 +295,7 @@ void TestDownloader::testDownloadMedia()
         i +=200;
     }
     QCOMPARE(spy4.count(), 1);
-    QFileInfo fi2(fi.absoluteFilePath()); // to make sure file exists
+    QFileInfo fi2(fi.absoluteFilePath() + FILE_DOWNLOADED_SUFFIX); // to make sure file exists
     QVERIFY(first_download < fi2.lastModified());
     delete MyDownloader;
 }

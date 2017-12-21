@@ -5,7 +5,7 @@
 #-------------------------------------------------
 include(../../../../src/defaults.pri)
 
-QT       += xml network testlib
+QT       += xml sql network testlib
 QT       -= gui
 
 CONFIG   += console testcase c++11

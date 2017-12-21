@@ -39,7 +39,7 @@ void TestTHead::test_getDefaultValues()
 {
     QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
     THead MySmilHead(new TConfiguration(Settings));
-    QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("transparent"));
+    QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("black"));
     QCOMPARE(MySmilHead.getTitle(), QString("No Title"));
     QList<Region> *region_list = MySmilHead.getLayout();
     QCOMPARE(region_list->count(), int(1));
@@ -59,7 +59,7 @@ void TestTHead::test_getHeadValuesFromSimpleSmil()
     THead MySmilHead(new TConfiguration(Settings));
     MySmilHead.parse(head);
     QCOMPARE(MySmilHead.getTitle(), QString("Simple SMIL header for testing"));
-    QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("transparent"));
+    QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("black"));
     QList<Region> *region_list = MySmilHead.getLayout();
     QCOMPARE(region_list->count(), int(1));
 
