@@ -21,8 +21,8 @@
 #include <QFileInfo>
 #include <QTimeZone>
 
-#include "system_infos/network.h"
 #include "base_reports.h"
+#include "system_infos/network.h"
 
 namespace Reporting
 {
@@ -35,7 +35,7 @@ namespace Reporting
                                   QObject *parent = nullptr);
             void process();
         protected:
-            QScopedPointer<SystemInfos::Network> MyNetwork;
+             QScopedPointer<SystemInfos::Network> MyNetwork;
              QDomElement           network, interface, hardware_info, configuration;
              void                  createConfiguration();
              void                  createModelInfo();
