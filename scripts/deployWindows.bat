@@ -65,7 +65,7 @@ rem create/copy bin data icon and start-batch into install dir
 if not exist deployment\packages\com.sagiadinos.garlic.x64\data\bin mkdir deployment\packages\com.sagiadinos.garlic.x64\data\bin
 xcopy bin\* deployment\packages\com.sagiadinos.garlic.x64\data\bin\* /sy
 copy ..\deployment\win\garlic-player.ico deployment\packages\com.sagiadinos.garlic.x64\data\bin
-copy /Y ..\start_garlic.bat deployment\packages\com.sagiadinos.garlic.x64\data
+copy /Y ..\deployment\win\start_garlic.bat deployment\packages\com.sagiadinos.garlic.x64\data
 
 rem create install archive
 %QT_PATH%\Tools\QtInstallerFramework\2.0\bin\binarycreator -c  deployment\config\config.xml -p  deployment\packages garlic-installer.exe
