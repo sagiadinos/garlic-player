@@ -35,6 +35,7 @@ namespace DB
             Q_OBJECT
         public:
             explicit InventoryTable(QObject *parent = nullptr);
+            ~InventoryTable();
             bool init(QString path);
             void replace(InventoryDataset dataset);
             InventoryDataset getByResourceURI(QString resource_uri);

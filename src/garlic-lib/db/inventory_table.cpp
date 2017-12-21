@@ -4,6 +4,11 @@ DB::InventoryTable::InventoryTable(QObject *parent) : QObject(parent)
 {
 }
 
+DB::InventoryTable::~InventoryTable()
+{
+    db.close();
+}
+
 bool DB::InventoryTable::init(QString path)
 {
     setDbPath(path);

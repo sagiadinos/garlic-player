@@ -31,10 +31,14 @@ class TestInventoryTable : public QObject
 
 void TestInventoryTable::cleanup()
 {
+    // prevent Warnings QSqlDatabasePrivate::addDatabase: duplicate connection name
+    // must be first to deinitialize DB to remove file especially under Windows
+    QSqlDatabase::removeDatabase("SQLITE");
     QFile file("./garlic.db");
-    if (file.exists())
-        file.remove();
-    QSqlDatabase::removeDatabase("SQLITE"); // prevent Warnings QSqlDatabasePrivate::addDatabase: duplicate connection name
+    // needed for Windows
+    file.setPermissions(QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther);
+    if (file.exists() && !file.remove())
+        qDebug() << file.errorString();
 }
 
 void TestInventoryTable::testReplace()
