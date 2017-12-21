@@ -71,7 +71,7 @@ void TestMediaModel::testInsertAvaibleFile()
     QFileInfo fi("./cache/test.wgt");
 
     QCOMPARE(MyMediaModel->findLocalBySrcPath(fi.absoluteFilePath()), QString(""));
-    QCOMPARE(MyMediaModel->findStatusBySrcPath(fi.absoluteFilePath()), MEDIAMODEL_NOT_EXISTS);
+    QCOMPARE(MyMediaModel->findStatusBySrcPath(fi.absoluteFilePath()), MEDIA_NOT_EXISTS);
 
     // do a first insert
     MyMediaModel->insertAvaibleFile(fi.absoluteFilePath(), fi.absoluteFilePath());
@@ -91,16 +91,17 @@ void TestMediaModel::testInsertAvaibleFile()
     QVERIFY(local.contains("file:///"));
 #endif
     QVERIFY(local.contains("/cache/test/index.html"));
-    QCOMPARE(MyMediaModel->findStatusBySrcPath(fi.absoluteFilePath()), MEDIAMODEL_EXISTS);
+    QCOMPARE(MyMediaModel->findStatusBySrcPath(fi.absoluteFilePath()), MEDIA_AVAILABLE);
 
     local = MyMediaModel->findLocalBySrcPath(fi1.absoluteFilePath());
     QVERIFY(local.contains("/uiuiui.png"));
-    QCOMPARE(MyMediaModel->findStatusBySrcPath(fi.absoluteFilePath()), MEDIAMODEL_EXISTS);
+    QCOMPARE(MyMediaModel->findStatusBySrcPath(fi.absoluteFilePath()), MEDIA_AVAILABLE);
 
-    // chec second insert
+    // check second insert
     MyMediaModel->insertAvaibleFile(fi1.absoluteFilePath(), fi1.absoluteFilePath());
     QCOMPARE(MyMediaModel->getAvailableMediaList().size(), 2);
-    QCOMPARE(MyMediaModel->findStatusBySrcPath(fi1.absoluteFilePath()), MEDIAMODEL_MODIFIED);
+    MyMediaModel->setStatusBySrcPath(fi1.absoluteFilePath(), MEDIA_MODIFIED);
+    QCOMPARE(MyMediaModel->findStatusBySrcPath(fi1.absoluteFilePath()), MEDIA_MODIFIED);
 
 }
 
