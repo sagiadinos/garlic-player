@@ -1,9 +1,9 @@
 @echo off
-REM =============================================== 
-REM execute this script in a VS Native CMD
-REM =============================================== 
+rem =============================================== 
+rem execute this script in a VS Native CMD
+rem =============================================== 
 if "%VSINSTALLDIR%" =="" (
-	CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+	call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
 )
 
 rem put all files needed and structured in %DEPLOYMENT_HELPER_PATH%

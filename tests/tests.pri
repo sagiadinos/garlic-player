@@ -5,6 +5,6 @@ unix{
     LIBS += -L$$PWD/../src/lib -lgarlic -lquazip -lzlib
 }
 win32 {
-    Release:LIBS += -L$$PWD/../src/lib -lgarlic -lquazip -lzlib
+    Release:LIBS += -L$$PWD/../execute_tests/lib -lgarlic -lquazip -lzlib
     Debug:LIBS += -L$$PWD/../src/lib -lgarlic -lquazipd -lzlib
 }
