@@ -23,21 +23,16 @@ LibFacade::LibFacade(QObject *parent) : QObject(parent)
     MyIndexManager.reset(new IndexManager(MyConfiguration.data(), this));
     connect(MyIndexManager.data(), SIGNAL(newIndexDownloaded()), this, SLOT(loadIndex()));
 
-#ifdef QT_DEBUG
     timer_id = startTimer(300000); // every 300s
-#endif
 }
 
 LibFacade::~LibFacade()
 {
-#ifdef QT_DEBUG
     killTimer(timer_id);
-#endif
 
     MyIndexManager.data()->deactivateRefresh();
 }
 
-#ifdef QT_DEBUG
 void LibFacade::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
@@ -64,7 +59,6 @@ void LibFacade::timerEvent(QTimerEvent *event)
         max_threads_used = current_threads;
     qInfo(Develop) << "Threads: " + QString::number(current_threads) << "Max Threads: " + QString::number(max_threads_used);
 }
-#endif
 
 TConfiguration *LibFacade::getConfiguration() const
 {

@@ -68,14 +68,13 @@ class LibFacade : public QObject
         QScopedPointer<MediaManager>       MyMediaManager;
         QScopedPointer<THead>              MyHead;
         QScopedPointer<TSmil>              MySmil;
-#ifdef QT_DEBUG
         qint64               max_memory_used = 0;
         QString              max_memory_time = "";
         qint64               max_threads_used = 0;
         SystemInfos::Memory  MyMemoryInfos;
         SystemInfos::General MyGeneralInfos;
         void                timerEvent(QTimerEvent *event);
-#endif
+
     signals:
         void                startShowMedia(TMedia *media);
         void                stopShowMedia(TMedia *media);
