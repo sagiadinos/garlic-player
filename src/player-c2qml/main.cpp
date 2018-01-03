@@ -23,6 +23,7 @@
 #include "../player-common/screen.h"
 
 #if defined  Q_OS_ANDROID
+    #include <QtWebView>
     #include <QtAndroidExtras/QAndroidJniEnvironment>
     #include <QtAndroidExtras/QtAndroidExtras>
 #else
@@ -44,6 +45,9 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
+#if defined  Q_OS_ANDROID
+    QtWebView::initialize();
+#endif
 
     LibFacade      *MyLibFacade     = new LibFacade();
     QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
@@ -98,7 +102,6 @@ int main(int argc, char *argv[])
         }
         w.showFullScreen();
 #else
-        QtWebEngine::initialize();
         MyScreen.setActualScreenId(MyParser.getScreenSelect());
         w.show();
 

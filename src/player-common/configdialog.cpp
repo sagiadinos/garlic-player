@@ -6,7 +6,10 @@ ConfigDialog::ConfigDialog(QWidget *parent, TConfiguration *Config) :  QDialog(p
     MyConfiguration = Config;
     ui->lineEditPlayerName->setText(MyConfiguration->getPlayerName());
     ui->lineEditContentUrl->setText(MyConfiguration->getIndexUri());
+#if !defined  Q_OS_ANDROID
+    // cause in Android it shows fullscreen and not as dialog
     setWindowFlags(Qt::WindowStaysOnTopHint);
+#endif
 }
 
 

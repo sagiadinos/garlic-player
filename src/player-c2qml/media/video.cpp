@@ -8,7 +8,7 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
 #else
     QString module = "import QtMultimedia 5.7\n";
 #endif
-    QString str("import QtQuick 2.7\n"+
+    qml = "import QtQuick 2.7\n"+
                     module +
                     "Video { \
                         id: "+getRegionId()+"_video; \
@@ -16,14 +16,9 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
                         anchors.fill: parent; \
                         autoPlay: true; \
                         property var video_fill_mode: \"\";  \
-                   }\n"
-    );
-// do not work in Android cause "parent" and "this" returns NULL
-//onStatusChanged:
-//{
-//    parent.parent.fitVideo(this, video_fill_mode);
-//}
-    video_item.reset(createMediaItem(mc, str));
+                   }\n";
+    media_component = mc;
+    video_item.reset(createMediaItem(media_component, qml));
     connect(video_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
 }
 
@@ -37,6 +32,7 @@ void Video::init(TMedia *media)
     MyMedia = media;
     if (load(video_item.data()))
     {
+        // to set Volume we need to cast
         TVideo *MyVideo = qobject_cast<TVideo *> (media);
         float vol = determineVolume(MyVideo->getSoundLevel());
         video_item.data()->setProperty("volume", vol);
@@ -82,6 +78,14 @@ qreal Video::determineVolume(QString percent)
 
 void Video::finished()
 {
+    if (video_item.data()->property("error").toInt() != 0)
+    {
+        QStringList list;
+         list  << "resourceURI" << MyMedia->getSrc()
+              << "error"<< video_item.data()->property("error").toString()
+              << "errorMessage" << video_item.data()->property("errorString").toString();
+        qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_PLAYBACK_ERROR", list);
+    }
     MyMedia->finishedSimpleDuration();
-}
 
+}

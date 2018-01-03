@@ -15,6 +15,7 @@ class Web : public BaseMedia
         void          setParentItem(QQuickItem *parent);
     protected:
         QScopedPointer<QQuickItem>   web_item;
+        QQmlComponent                *media_component;
 };
 
 #endif // WEB_H
