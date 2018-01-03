@@ -47,8 +47,6 @@ SMIL_INDEX        Path to SMIL index
 
 Binaries (Linux/Windows) of v0.1.0 can be downloaded at [garlic-player.com](https://garlic-player.com)
 
-Next binary version 0.2.0 is prepared and should be released before Xmas 2017
-
 ## Features
  - Support for multiple screens
  - Logging
