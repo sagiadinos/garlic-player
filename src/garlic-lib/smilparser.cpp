@@ -129,6 +129,12 @@ void TSmil::startElement(TContainer *parent_container, TBaseTiming *element)
 
     if (playable)
     {
+
+        // Remark!
+        // when element->play set after emit some videos skipped on Android and player-c2qml
+        // when element->play set before emit there are crashes in android with QtMultimedia or videos did not play
+        // it works with with QtAV but crashes after some hours
+        // In Windows 7 or Linux there are no such behaviour (even woth player-c2qml) and all worked well.
         if (element->getBaseType() == "media")
             emitStartShowMedia(qobject_cast<TMedia *> (element));
         element->play();

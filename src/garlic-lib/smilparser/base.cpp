@@ -31,7 +31,6 @@ QString TBase::parseID(QDomElement element)
         ret = element.attribute("xml:id");
     if (ret == "") // get line and column number as alternative when no
     {
-
         ret = element.tagName()+"_"+QString::number(element.lineNumber()) + "_" + QString::number(element.columnNumber());
     }
     return ret;
