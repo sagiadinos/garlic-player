@@ -6,11 +6,11 @@
 include(../defaults.pri)
 INCLUDEPATH += ../garlic-lib/
 
-QT     += core widgets gui xml quick qml
+QT     += core sql widgets gui xml quick qml
 CONFIG += warn_on c++11
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
-#Delete or comment out the next line when you want to use QTMultimedia
+#Delete or comment out the next line when you want to use QTMultimedia instead of QtAV
 #CONFIG    += support_qtav
 
 support_qtav {
@@ -54,7 +54,7 @@ unix:!android {
     LIBS += -L../lib -lgarlic -lquazip -lzlib
 }
 android {
-    QT += androidextras
+    QT += androidextras webview
     LIBS += -L../libandroid -lgarlic -lquazip -lzlib
 }
 win32 {

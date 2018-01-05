@@ -24,10 +24,9 @@
 #include "smilparser/head.h"
 #include "smilparser.h"
 
-#ifdef QT_DEBUG
-    #include "system_infos/memory.h"
-    #include "system_infos/general.h"
-#endif
+#include "system_infos/memory.h"
+#include "system_infos/general.h"
+
 /**
  * @brief The LibFacade class is the interface for a player component to the garlic parser
  *
