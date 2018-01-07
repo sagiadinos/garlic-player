@@ -103,7 +103,6 @@ int main(int argc, char *argv[])
         }
         w.showFullScreen();
 #else
-        MyScreen.setActualScreenId(MyParser.getScreenSelect());
         w.show();
 
         QString val = MyParser.getWindowMode();

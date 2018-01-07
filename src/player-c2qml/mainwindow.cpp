@@ -119,28 +119,28 @@ int MainWindow::openConfigDialog()
 void MainWindow::resizeAsNormalFullScreen()
 {
     screen_state = FULLSCREEN;
-    setPosition(MyScreen->getStartPointFromScreen());
-    resize(MyScreen->getSizeFromScreen());
-    setFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setCursor(Qt::BlankCursor);
+    showFullScreen();
 }
 
 void MainWindow::resizeAsBigFullScreen()
 {
     screen_state = BIGFULLSCREEN;
-    setPosition(0, 0);
-    resize(MyScreen->getWholeSize());
     setFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setCursor(Qt::BlankCursor);
+    showNormal();
+    setPosition(0, 0);
+    resize(MyScreen->getWholeSize());
 }
 
 void MainWindow::resizeAsWindow()
 {
     screen_state = WINDOWED;
-    setPosition(MyScreen->getStartPointFromScreen());
-    resize(getMainWindowSize());
+    setFlags(Qt::Window);
     setCursor(Qt::ArrowCursor);
-    setFlags(0);
+    showNormal();
+    setPosition(MyScreen->getStartPointFromCurrentScreen());
+    resize(QSize(980, 540));
 }
 
 void MainWindow::setMainWindowSize(QSize size)
@@ -162,6 +162,7 @@ void MainWindow::resizeEvent(QResizeEvent * event)
         for (i = regions_list.begin(); i != regions_list.end(); ++i)
             regions_list[i.key()]->setRootSize(width(), height());
     }
+    QQuickView::resizeEvent(event);
 }
 
 void MainWindow::createRegions()

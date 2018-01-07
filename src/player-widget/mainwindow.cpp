@@ -87,36 +87,36 @@ int MainWindow::openConfigDialog()
 
 void MainWindow::resizeAsNormalFullScreen()
 {
-    move(0,0);
-    setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setCursor(Qt::BlankCursor);
     showFullScreen();
-    resize(MyScreen->getSizeFromScreen());
     screen_state = FULLSCREEN;
 }
 
 void MainWindow::resizeAsBigFullScreen()
 {
-    move(0, 0);
+    // To work correct a taskbar had to set for overlap or hidden
+    move(0,0);
     setWindowFlags(Qt::CustomizeWindowHint  | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setCursor(Qt::BlankCursor);
     showNormal();
+
     resize(MyScreen->getWholeSize());
     screen_state = BIGFULLSCREEN;
 }
 
 void MainWindow::resizeAsWindow()
 {
-    move(0,0);
+    MyScreen->determineCurrentScreenId(this);
+    move(MyScreen->getStartPointFromCurrentScreen());
     setWindowFlags(Qt::Window);
     setCursor(Qt::ArrowCursor);
-    move(MyScreen->getStartPointFromScreen());
-    // This block is neccesary to workaround that Window is maximized after full- or bigscreen.
+
+    // This nonsense workaround prevent that MainWindow showed maximized after full- or bigscreen.
     showNormal();
     setWindowState(Qt::WindowMaximized);
     showNormal();
-
     resize(QSize(980, 540));
+
     screen_state = WINDOWED;
 }
 
@@ -141,6 +141,7 @@ void MainWindow::resizeEvent(QResizeEvent * event)
         for (i = regions_list.begin(); i != regions_list.end(); ++i)
             regions_list[i.key()]->setRootSize(event->size().width(), event->size().height());
     }
+    QMainWindow::resizeEvent(event);
 }
 
 QString MainWindow::selectRegion(QString region_name)

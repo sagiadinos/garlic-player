@@ -66,8 +66,6 @@ int main(int argc, char *argv[])
     int ret = 0;
     if (is_index)
     {
-        MyScreen.setActualScreenId(MyParser.getScreenSelect());
-
         QString val = MyParser.getWindowMode();
         if (val == "fullscreen")
             w.resizeAsNormalFullScreen();
