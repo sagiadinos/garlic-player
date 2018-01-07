@@ -9,7 +9,7 @@ DebugInfos::DebugInfos(LibFacade *lib_facade, QWidget *parent) :  QDialog(parent
     setWindowOpacity(0.9);
 #if !defined  Q_OS_ANDROID
     // cause in Android it shows fullscreen and not as dialog
-    setWindowFlags(Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::Popup	);
 #endif
 }
 
