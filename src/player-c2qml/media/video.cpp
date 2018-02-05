@@ -46,7 +46,11 @@ void Video::deinit()
 {
     if (MyMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
+
+// Raspberry with piotexture get upset when this is setted
+#ifndef SUPPORT_RPI
     video_item.data()->setProperty("source", "");
+#endif
 }
 
 void Video::setParentItem(QQuickItem *parent)

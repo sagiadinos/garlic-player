@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>root_qtm.qml</file>
         <file>root_qtav.qml</file>
+        <file>root_qtm_rpi.qml</file>
     </qresource>
 </RCC>

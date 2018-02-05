@@ -36,7 +36,7 @@ class TConfiguration  : public QObject
     Q_OBJECT
     public:
         explicit TConfiguration(QSettings *UserConfig, QObject *parent = Q_NULLPTR);
-        QString         getVersion(){return "0.1.0";}
+        QString         getVersion(){return "0.3.0";}
         void            setAppName(QString value){app_name = value;}
         QString         getAppName(){return app_name;}
         QString         getDescription() {return "SMIL Media Player for Digital Signage";}

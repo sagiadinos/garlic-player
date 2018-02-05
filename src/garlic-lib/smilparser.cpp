@@ -134,13 +134,13 @@ void TSmil::startElement(TContainer *parent_container, TBaseTiming *element)
         // when element->play set before emit, which should be the correct way there are crashes in android with
         // QtMultimedia or videos where generally skipped
 
+        element->play();
         if (element->getBaseType() == "media")
             emitStartShowMedia(qobject_cast<TMedia *> (element));
 
         // when element->play set after emit some videos skipped on Android with QtMultimedia and player-c2qml
         // QtAV has not this behaviour but on some devices e.g. rk3288 with Android 5.1 video acceleration is poor
 
-        element->play();
 
         // In Windows 7 or Linux the described behaviour above, even with player-c2qml, do not occur and all
         // worked well neitherless if QtAV or QtMultimedia or element->play is set before or after emit

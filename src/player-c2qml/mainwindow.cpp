@@ -29,6 +29,8 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 
 #ifdef SUPPORT_QTAV
     setSource(QUrl(QStringLiteral("qrc:/root_qtav.qml")));
+#elif SUPPORT_RPI
+    setSource(QUrl(QStringLiteral("qrc:/root_qtav_rpi.qml")));
 #else
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
 #endif
