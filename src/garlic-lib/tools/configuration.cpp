@@ -245,6 +245,8 @@ QString TConfiguration::getPaths(QString path_name)
         ret = cache_dir;
     else if (path_name == "logs")
         ret = log_dir;
+    else if (path_name == "scripts")
+        ret += "scripts";
 
     return ret;
 }

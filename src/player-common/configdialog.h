@@ -13,18 +13,17 @@ namespace Ui
 
 class ConfigDialog : public QDialog
 {
-    Q_OBJECT
+        Q_OBJECT
+    public:
+        explicit ConfigDialog(QWidget *parent, TConfiguration *Config);
+        ~ConfigDialog();
 
-public:
-    explicit ConfigDialog(QWidget *parent, TConfiguration *Config);
-    ~ConfigDialog();
+    protected:
+        Ui::ConfigDialog *ui;
+        TConfiguration   *MyConfiguration = NULL;
 
-private:
-    Ui::ConfigDialog *ui;
-    TConfiguration   *MyConfiguration = NULL;
-
-private slots:
-    void accept();
+    protected slots:
+        void accept();
 
 };
 
