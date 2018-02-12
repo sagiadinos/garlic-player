@@ -66,6 +66,12 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
                 MyLibFacade->checkForNewSmilIndex();
             setCursor(Qt::BlankCursor);
             break;
+        case Qt::Key_N:
+            setCursor(Qt::ArrowCursor);
+            if (openNetworkDialog() == QDialog::Accepted)
+                MyLibFacade->checkForNewSmilIndex();
+            setCursor(Qt::BlankCursor);
+            break;
         case Qt::Key_Q:
              QApplication::quit();
 
@@ -77,6 +83,13 @@ void MainWindow::openDebugInfos()
 {
     DebugInfos MyDebugInfos(MyLibFacade);
     MyDebugInfos.exec();
+}
+
+int MainWindow::openNetworkDialog()
+{
+    NetworkDialog MyNetworkDialog(0, MyLibFacade->getConfiguration());
+    return MyNetworkDialog.exec();
+
 }
 
 int MainWindow::openConfigDialog()

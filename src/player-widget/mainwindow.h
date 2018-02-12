@@ -24,6 +24,7 @@
 
 #include "region.h"
 #include "../player-common/configdialog.h"
+#include "../player-common/network_dialog.h"
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
 #include "files/index_manager.h"
@@ -57,6 +58,7 @@ class MainWindow : public QMainWindow
         void                      resizeEvent(QResizeEvent * event);
         void                      keyPressEvent(QKeyEvent *ke);
         void                      openDebugInfos();
+        int                       openNetworkDialog();
         QString                   selectRegion(QString region_name);
         void                      createRegions();
         void                      deleteRegions();
