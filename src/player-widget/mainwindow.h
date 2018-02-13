@@ -58,6 +58,7 @@ class MainWindow : public QMainWindow
         void                      resizeEvent(QResizeEvent * event);
         void                      keyPressEvent(QKeyEvent *ke);
         void                      openDebugInfos();
+        void                      openCommandline();
         int                       openNetworkDialog();
         QString                   selectRegion(QString region_name);
         void                      createRegions();

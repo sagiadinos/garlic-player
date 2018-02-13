@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>570</width>
-    <height>417</height>
+    <height>436</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,13 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="lb_error">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,5,0">
        <item>
@@ -163,6 +170,9 @@
        <property name="inputMask">
         <string>000.000.000.000;_</string>
        </property>
+       <property name="text">
+        <string>255.255.255.0</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -180,26 +190,19 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="lb_domain">
-       <property name="text">
-        <string>Domain</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="edit_domain"/>
-     </item>
-     <item>
       <widget class="QLabel" name="lb_dns">
        <property name="text">
-        <string>DNS</string>
+        <string>DNS (seperate with blanks)</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="edit_dns">
        <property name="inputMask">
-        <string>000.000.000.000;_</string>
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>

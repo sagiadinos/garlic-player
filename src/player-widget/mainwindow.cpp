@@ -60,7 +60,12 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             openDebugInfos();
             setCursor(Qt::BlankCursor);
             break;
-        case Qt::Key_S:  // Ctrl-C will not work with qwebengineview
+        case Qt::Key_C:
+            setCursor(Qt::ArrowCursor);
+            openCommandline();
+            setCursor(Qt::BlankCursor);
+            break;
+        case Qt::Key_S:
             setCursor(Qt::ArrowCursor);
             if (openConfigDialog() == QDialog::Accepted)
                 MyLibFacade->checkForNewSmilIndex();
@@ -83,6 +88,13 @@ void MainWindow::openDebugInfos()
 {
     DebugInfos MyDebugInfos(MyLibFacade);
     MyDebugInfos.exec();
+}
+
+void MainWindow::openCommandline()
+{
+    QProcess process;
+    process.start("/bin/bash", QStringList() << "mc");
+    process.waitForFinished(-1); // will wait forever until finished
 }
 
 int MainWindow::openNetworkDialog()

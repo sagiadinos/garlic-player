@@ -28,6 +28,7 @@ class NetworkDialog : public QDialog
         Ui::NetworkDialog *ui;
         TConfiguration    *MyConfiguration = NULL;
         void scanWiFiInterfaces();
+        bool commitToSystem();
     protected slots:
         void changeIndex(const QString &text);
         void changeDHCP(int state);
@@ -36,6 +37,10 @@ class NetworkDialog : public QDialog
         bool hasActiveDHCP();
         void toggleWifiSection(bool is_visible);
         void toggleIPSection(bool is_visible);
+        void writeWPASupplicantConf();
+        void writeDHCPConf();
+        QString determineInterface();
+        QString determineESSID();
 
     signals:
 
