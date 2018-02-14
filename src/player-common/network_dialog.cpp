@@ -4,80 +4,94 @@ NetworkDialog::NetworkDialog(QWidget *parent, TConfiguration *Config) : QDialog(
 {
     ui->setupUi(this);
     MyConfiguration = Config;
-    connect(ui->cb_connection, SIGNAL(currentIndexChanged(QString )), this, SLOT(changeIndex(QString )));
+    connect(ui->cb_interface, SIGNAL(currentIndexChanged(QString )), this, SLOT(changeIndex(QString )));
     connect(ui->chk_dhcp, SIGNAL(stateChanged(int)), this, SLOT(changeDHCP(int)));
 
     bool is_dhcp = hasActiveDHCP();
 
+    scanInterfaces();
+
     ui->chk_dhcp->setChecked(is_dhcp);
     toggleIPSection(!is_dhcp);
-    toggleWifiSection(ui->cb_connection->currentText() == "WLAN (wireless)");
 }
 
-void NetworkDialog::scanWiFiInterfaces()
+bool NetworkDialog::scanPossibleWiFiInterfaces(const QString interface)
 {
-    QList<QNetworkInterface> allInterfaces = QNetworkInterface::allInterfaces();
-    QNetworkInterface eth;
-    foreach(eth, allInterfaces)
-    {
-        QProcess process1;
-        QStringList arguments1;
+    QProcess    process;
+    QStringList arguments;
+    bool        is_wifi =false;
+
+    ui->cb_essid->clear();
+
 #ifdef SUPPORT_RPI
-    arguments1 << MyConfiguration->getPaths("scripts")+"/get_wifi_rpi.sh" << eth.name();
+    arguments << MyConfiguration->getPaths("scripts")+"/get_wifi_rpi.sh" << interface;
 #else
-    arguments1 << MyConfiguration->getPaths("scripts")+"/get_wifi.sh" << eth.name();
+    arguments << MyConfiguration->getPaths("scripts")+"/get_wifi.sh" << interface;
 #endif
-        process1.start("/bin/sh", arguments1);
+    process.start("/bin/sh", arguments);
 
-        process1.waitForFinished(-1); // will wait forever until finished
-        QString stdout = process1.readAllStandardOutput();
-        QString stderr = process1.readAllStandardError();
-        if (stderr == "" && stdout != "")
+    process.waitForFinished(-1); // will wait forever until finished
+    QString stdout = process.readAllStandardOutput();
+    QString stderr = process.readAllStandardError();
+    if (stderr == "" && stdout != "")
+    {
+        QString wifi_net;
+        foreach(wifi_net, stdout.split("\n"))
         {
-            QString wifi_net;
-            foreach(wifi_net, stdout.split("\n"))
-            {
-                if (wifi_net != "")
-                    ui->cb_essid->addItem(eth.name() + ": " + wifi_net);
-            }
+            if (wifi_net != "")
+                ui->cb_essid->addItem(wifi_net);
         }
+        ui->cb_essid->setCurrentText(determineCurrentESSID());
+        is_wifi = true;
     }
+    return is_wifi;
 }
-
-
 
 bool NetworkDialog::commitToSystem()
 {
-    if (ui->cb_connection->currentText() == "WLAN (wireless)")
+    MyConfiguration->setNetworkInterface(ui->cb_interface->currentText());
+    if (ui->cb_essid->isVisible()) // Is WiFi
     {
-        if (ui->cb_essid->currentText() == "" || ui->edit_passphrase->text() == "")
+        if (ui->cb_essid->currentText() == "")
         {
-            ui->lb_error->setText(tr("ESSID or passphrase missed"));
+            ui->lb_error->setText(tr("ESSID missed"));
             return false;
         }
+        if (ui->edit_passphrase->text().length() < 8)
+        {
+            ui->lb_error->setText(tr("Passphrase must have at least 8 Letters"));
+            return false;
+        }
+
         writeWPASupplicantConf();
     }
     if (ui->chk_dhcp->checkState() == Qt::Unchecked)
     {
-        if (ui->edit_ip->text() == "" || ui->edit_netmask->text() == "" || ui->edit_gateway->text() == "")
+        QPair<QHostAddress, int> addr = QHostAddress::parseSubnet(ui->edit_ip->text()+"/"+ui->edit_netmask->text());
+        if (addr.first.isNull())
         {
-            ui->lb_error->setText(tr("IP netmask and gateway must set"));
+            ui->lb_error->setText(tr("IP is incorrect"));
             return false;
         }
-        writeDHCPConf();
+        if (addr.second == -1)
+        {
+            ui->lb_error->setText(tr("Netmask is incorrect"));
+            return false;
+        }
+        QHostAddress gateway(ui->edit_gateway->text());
+        if (gateway.isNull())
+        {
+            ui->lb_error->setText(tr("Gateway is incorrect"));
+            return false;
+        }
+        writeStaticIntoDHCPConf();
     }
     return true;
 }
 
 void NetworkDialog::changeIndex(const QString &text)
 {
-    if (text == "LAN (cable)")
-        toggleWifiSection(false);
-    else
-    {
-        toggleWifiSection(true);
-        scanWiFiInterfaces();
-    }
+    toggleWifiSection(scanPossibleWiFiInterfaces(text));
 }
 
 void NetworkDialog::changeDHCP(int state)
@@ -97,15 +111,18 @@ void NetworkDialog::accept()
 
 bool NetworkDialog::hasActiveDHCP()
 {
-    // Unix check in Dir /run for a dhclient.pid
-    QDir dir("/run");
-    QStringList filter;
-    filter << "dhclient*";
-    QStringList found = dir.entryList(filter, QDir::Files);
-    if (found.size() > 0)
-        return true;
-    else
-        return false;
+    QProcess process;
+    QStringList arguments;
+
+    QPair<QHostAddress, int> addr = QHostAddress::parseSubnet(ui->edit_ip->text()+"/"+ui->edit_netmask->text());
+#ifdef SUPPORT_RPI
+    arguments << MyConfiguration->getPaths("scripts")+"/is_dhcp_rpi.sh";
+#else
+    arguments << MyConfiguration->getPaths("scripts")+"/is_dhcp.sh";
+#endif
+    process.start("/bin/sh", arguments);
+    process.waitForFinished(-1); // will wait forever until finished
+    return (process.exitCode() == 1);
 }
 
 void NetworkDialog::toggleWifiSection(bool is_visible)
@@ -135,45 +152,131 @@ void NetworkDialog::writeWPASupplicantConf()
     QProcess process;
     QStringList arguments;
 
-    arguments << MyConfiguration->getPaths("scripts")+"/write_wpa.sh" << determineESSID() << ui->edit_passphrase->text();
+    arguments << MyConfiguration->getPaths("scripts")+"/write_wpa.sh" << ui->cb_essid->currentText() << ui->edit_passphrase->text();
     process.start("/bin/sh", arguments);
 
     process.waitForFinished(-1); // will wait forever until finished
 }
 
-void NetworkDialog::writeDHCPConf()
+void NetworkDialog::writeStaticIntoDHCPConf()
 {
     QProcess process;
     QStringList arguments;
 
+    QPair<QHostAddress, int> addr = QHostAddress::parseSubnet(ui->edit_ip->text()+"/"+ui->edit_netmask->text());
     arguments << MyConfiguration->getPaths("scripts")+"/write_dhcp.sh"
-              << ui->edit_ip->text()
-              << ui->edit_netmask->text()
+              << addr.first.toString()
+              << QString::number(addr.second)
               << ui->edit_gateway->text()
               << ui->edit_dns->text()
     ;
     process.start("/bin/sh", arguments);
 
     process.waitForFinished(-1); // will wait forever until finished
+
 }
 
-QString NetworkDialog::determineInterface()
+void NetworkDialog::determinceStaticFromDHCPConf()
 {
-    if (ui->cb_connection->currentText() == "WLAN (wireless)")
+    QFile dhcp_conf("/etc/dhcpcd.conf");
+    if (!dhcp_conf.open(QIODevice::ReadOnly))
+        return;
+    QString file_contents(dhcp_conf.readAll());
+    QStringList garlic_contents = file_contents.mid(file_contents.indexOf("#garlic dhcp-static-config")).split("\n");
+    if (garlic_contents.size() == 0)
+        return;
+
+    QString line;
+    foreach(line, garlic_contents)
     {
-        QStringList list = ui->cb_essid->currentText().split(':');
-        return list.at(0).trimmed();
-    }
-    else
-    {
-        return "eth0"; // determine with
+        if(line.contains("static ip_address="))
+        {
+            QStringList ip = seperateValueFromParameter(line).split("/");
+            ui->edit_ip->setText(ip.at(0));
+            ui->edit_gateway->setText(determineIPFromSuffix(ip.at(1).toInt()));
+        }
+        if(line.contains("static routers="))
+            ui->edit_gateway->setText(seperateValueFromParameter(line));
+        if(line.contains("static domain_name_servers="))
+            ui->edit_dns->setText(seperateValueFromParameter(line));
     }
 
 }
 
-QString NetworkDialog::determineESSID()
+void NetworkDialog::scanInterfaces()
 {
-    QStringList list = ui->cb_essid->currentText().split(':');
-    return list.at(1).trimmed();
+    QList<QNetworkInterface> allInterfaces = QNetworkInterface::allInterfaces();
+    QNetworkInterface eth;
+    QString current_interface = MyConfiguration->getNetworkInterface();
+    foreach(eth, allInterfaces)
+    {
+        if (eth.flags().testFlag(QNetworkInterface::IsUp)
+            && eth.flags().testFlag(QNetworkInterface::CanBroadcast)
+            && eth.flags().testFlag(QNetworkInterface::CanMulticast)
+        )
+            ui->cb_interface->addItem(eth.name());
+
+    }
+    ui->cb_interface->setCurrentText(current_interface);
 }
 
+QString NetworkDialog::seperateValueFromParameter(const QString line)
+{
+    QStringList list = line.split("=");
+    return list.at(1);
+}
+
+QString NetworkDialog::determineCurrentESSID()
+{
+    QProcess process;
+    QStringList arguments;
+
+    arguments << ui->cb_interface->currentText() << "--raw";
+    process.start("iwgetid", arguments);
+
+    process.waitForFinished(-1); // will wait forever until finished
+    QString ret = process.readAllStandardOutput();
+    return ret.trimmed();
+}
+
+QString NetworkDialog::determineIPFromSuffix(int suffix)
+{
+    switch (suffix)
+    {
+        case 32: return "255.255.255.255";
+        case 31: return "255.255.255.254";
+        case 30: return "255.255.255.252";
+        case 29: return "255.255.255.248";
+        case 28: return "255.255.255.240";
+        case 27: return "255.255.255.224";
+        case 26: return "255.255.255.192";
+        case 25: return "255.255.255.128";
+        case 24: return "255.255.255.0";
+        case 23: return "255.255.254.0";
+        case 22: return "255.255.252.0";
+        case 21: return "255.255.248.0";
+        case 20: return "255.255.240.0";
+        case 19: return "255.255.224.0";
+        case 18: return "255.255.192.0";
+        case 17: return "255.255.128.0";
+        case 16: return "255.255.0.0";
+        case 15: return "255.254.0.0";
+        case 14: return "255.252.0.0";
+        case 13: return "255.248.0.0";
+        case 12: return "255.240.0.0";
+        case 11: return "255.224.0.0";
+        case 10: return "255.192.0.0";
+        case 9: return "255.128.0.0";
+        case 8: return "255.0.0.0";
+        case 7: return "254.0.0.0";
+        case 6: return "252.0.0.0";
+        case 5: return "248.0.0.0";
+        case 4: return "240.0.0.0";
+        case 3: return "224.0.0.0";
+        case 2: return "192.0.0.0";
+        case 1: return "128.0.0.0";
+        default: return "255.255.255.0";
+    }
+
+
+}

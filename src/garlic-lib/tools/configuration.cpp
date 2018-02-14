@@ -200,6 +200,16 @@ QString TConfiguration::getIndexPath()
     return index_path;
 }
 
+void TConfiguration::setNetworkInterface(const QString &value)
+{
+    setUserConfigByKey("Network/Interface", value);
+}
+
+QString TConfiguration::getNetworkInterface()
+{
+    return getUserConfigByKey("Network/Interface");
+}
+
 QString TConfiguration::getOS() const
 {
     return os;

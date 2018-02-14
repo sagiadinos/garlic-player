@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QNetworkInterface>
 #include <QProcess>
+#include <QHostAddress>
 
 #include <QDebug>
 
@@ -27,7 +28,7 @@ class NetworkDialog : public QDialog
     protected:
         Ui::NetworkDialog *ui;
         TConfiguration    *MyConfiguration = NULL;
-        void scanWiFiInterfaces();
+        bool scanPossibleWiFiInterfaces(const QString interface);
         bool commitToSystem();
     protected slots:
         void changeIndex(const QString &text);
@@ -38,10 +39,12 @@ class NetworkDialog : public QDialog
         void toggleWifiSection(bool is_visible);
         void toggleIPSection(bool is_visible);
         void writeWPASupplicantConf();
-        void writeDHCPConf();
-        QString determineInterface();
-        QString determineESSID();
-
+        void writeStaticIntoDHCPConf();
+        void determinceStaticFromDHCPConf();
+        void scanInterfaces();
+        QString seperateValueFromParameter(const QString line);
+        QString determineCurrentESSID();
+        QString determineIPFromSuffix(int suffix);
     signals:
 
 };

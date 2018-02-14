@@ -45,6 +45,7 @@ class TConfiguration  : public QObject
         static QString  getLogDir();
         static void     setLogDir(QString path);
 
+
         QString         getLastPlayedIndexPath();
         void            setLastPlayedIndexPath(const QString &value);
         QSettings      *getUserConfig() const;
@@ -65,6 +66,8 @@ class TConfiguration  : public QObject
         QString         getIndexUri();
         void            setIndexPath(const QString &value);
         QString         getIndexPath();
+        void            setNetworkInterface(const QString &value);
+        QString         getNetworkInterface();
         QString         getBasePath() const;
         void            setBasePath(const QString &value);
         void            determineBasePath(QString absolute_path_to_bin);
@@ -72,8 +75,6 @@ class TConfiguration  : public QObject
         void            createDirectories();
         void            determineUserAgent();
         void            checkConfigXML();
-
-
 
         QString getStartTime() const;
         void setStartTime(const QString &value);

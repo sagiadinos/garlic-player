@@ -30,7 +30,7 @@ DNS=$5
 
 # delete any previous garlic inserts
 # but do not delete manual inserted
-sed '/#garlic dhcp-static-config/q' /etc/dhcp.conf | grep -v '#dhcp-static-config' | sudo tee /etc/dhcpcd.conf
+sed '/#garlic dhcp-static-config/q' /etc/dhcp.conf | grep -v '#garlic dhcp-static-config' | sudo tee /etc/dhcpcd.conf
 
 # append 
 echo "#garlic dhcp-static-config

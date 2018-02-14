@@ -28,25 +28,14 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="QLabel" name="labelConnection">
+          <widget class="QLabel" name="lb_interface">
            <property name="text">
-            <string>Connection</string>
+            <string>Interface</string>
            </property>
           </widget>
          </item>
          <item alignment="Qt::AlignBottom">
-          <widget class="QComboBox" name="cb_connection">
-           <item>
-            <property name="text">
-             <string>LAN (cable)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>WLAN (wireless)</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="cb_interface"/>
          </item>
          <item>
           <widget class="QCheckBox" name="chk_dhcp">
@@ -151,10 +140,10 @@
         <set>Qt::ImhNone</set>
        </property>
        <property name="inputMask">
-        <string>000.000.000.000;_</string>
+        <string/>
        </property>
        <property name="text">
-        <string>...</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -168,7 +157,7 @@
      <item>
       <widget class="QLineEdit" name="edit_netmask">
        <property name="inputMask">
-        <string>000.000.000.000;_</string>
+        <string/>
        </property>
        <property name="text">
         <string>255.255.255.0</string>
@@ -185,7 +174,7 @@
      <item>
       <widget class="QLineEdit" name="edit_gateway">
        <property name="inputMask">
-        <string>000.000.000.000;_</string>
+        <string/>
        </property>
       </widget>
      </item>

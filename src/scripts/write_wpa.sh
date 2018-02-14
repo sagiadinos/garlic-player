@@ -23,6 +23,7 @@ sed '/#garlic wifi-config/q' /etc/wpa_supplicant/wpa_supplicant.conf | grep -v '
 echo "#garlic wifi-config
 " | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf
 
+#write encrypted and delete cleartext comment
 wpa_passphrase $SSID $PSK | grep -v '#psk=' | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf
 
 exit 0;
