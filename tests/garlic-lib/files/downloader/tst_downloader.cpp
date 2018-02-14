@@ -128,7 +128,7 @@ void TestDownloader::testDownloadSmilNew()
 {
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
     Downloader *MyDownloader = new Downloader(agent);
-    QUrl url("http://smil-admin.com/garlic/test.php?action=get_smil_new");
+    QUrl url("http://testing.smil-admin.com/garlic/test.php?action=get_smil_new");
     QFileInfo fi("./index.smil");
     qRegisterMetaType<TNetworkAccess *>();
     QSignalSpy spy1(MyDownloader, SIGNAL(succeed(TNetworkAccess *)));
@@ -171,7 +171,7 @@ void TestDownloader::testDownloadSmilNotModified()
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
     Downloader *MyDownloader = new Downloader(agent);
     // request a SMIL which returned a not modiefied 304
-    QUrl url("http://smil-admin.com/garlic/test.php?action=get_smil_cached");
+    QUrl url("http://testing.smil-admin.com/garlic/test.php?action=get_smil_cached");
     QFileInfo fi(":/notavaible.smil"); // to make sure file is not exist
     QSignalSpy spy(MyDownloader, SIGNAL(notmodified(TNetworkAccess *)));
     QVERIFY(spy.isValid());
@@ -190,7 +190,7 @@ void TestDownloader::testDownloadSmilUpdated()
 {
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
     Downloader *MyDownloader = new Downloader(agent);
-    QUrl url("http://smil-admin.com/garlic/test.php?action=get_smil_new");
+    QUrl url("http://testing.smil-admin.com/garlic/test.php?action=get_smil_new");
     QFileInfo fi("./index.smil");
     qRegisterMetaType<TNetworkAccess *>();
     QSignalSpy spy1(MyDownloader, SIGNAL(succeed(TNetworkAccess *)));
@@ -206,7 +206,7 @@ void TestDownloader::testDownloadSmilUpdated()
     QDateTime first_download = fi.lastModified();
 
     // request an updated SMIL
-    url.setUrl("http://smil-admin.com/garlic/test.php?action=get_smil_updated");
+    url.setUrl("http://testing.smil-admin.com/garlic/test.php?action=get_smil_updated");
     fi.setFile("./index.smil"); // set back
     QSignalSpy spy2(MyDownloader, SIGNAL(succeed(TNetworkAccess *)));
     MyDownloader->processFile(url, fi);
@@ -229,7 +229,7 @@ void TestDownloader::testDownloadMedia()
 {
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
     Downloader *MyDownloader = new Downloader(agent);
-    QUrl url("http://smil-admin.com/garlic/test.php?action=get_media_new");
+    QUrl url("http://testing.smil-admin.com/garlic/test.php?action=get_media_new");
     QFileInfo fi("./server.jpg");
     QFileInfo fi_compare(fi.absoluteFilePath());
     qRegisterMetaType<TNetworkAccess *>();
@@ -267,7 +267,7 @@ void TestDownloader::testDownloadMedia()
     QVERIFY(fi.lastModified() == first_download);
 
     // check to react on http 304
-    url.setUrl("http://smil-admin.com/garlic/test.php?action=get_media_cached");
+    url.setUrl("http://testing.smil-admin.com/garlic/test.php?action=get_media_cached");
     fi.setFile("./server_notavaible.jpg"); // to make sure file is not exist
     QSignalSpy spy3(MyDownloader, SIGNAL(notmodified(TNetworkAccess *)));
     QVERIFY(spy3.isValid());
@@ -283,7 +283,7 @@ void TestDownloader::testDownloadMedia()
     QFileInfo fi1("./server.jpg");
     QVERIFY(first_download == fi1.lastModified());
 
-    url.setUrl("http://smil-admin.com/garlic/test.php?action=get_media_updated");
+    url.setUrl("http://testing.smil-admin.com/garlic/test.php?action=get_media_updated");
     fi.setFile("./server.jpg"); // to make sure file exists
     QSignalSpy spy4(MyDownloader, SIGNAL(succeed(TNetworkAccess *)));
     QVERIFY(spy4.isValid());
@@ -304,7 +304,7 @@ void TestDownloader::testDownloadMediaDirect()
 {
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
     Downloader *MyDownloader = new Downloader(agent);
-    QUrl url("http://smil-admin.com/garlic/server.jpg");
+    QUrl url("http://testing.smil-admin.com/garlic/server.jpg");
     QFileInfo fi("./server.jpg");
     QSignalSpy spy1(MyDownloader, SIGNAL(succeed(TNetworkAccess *)));
     QVERIFY(spy1.isValid());
@@ -343,7 +343,7 @@ void TestDownloader::testDownloadFailed()
 {
     QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
     Downloader *MyDownloader = new Downloader(agent);
-    QUrl url("http://smil-admin.com/garlic/notexistingfile.jpg");
+    QUrl url("http://testing.smil-admin.com/garlic/notexistingfile.jpg");
     QFileInfo fi("./notexisting");
     QSignalSpy spy1(MyDownloader, SIGNAL(failed(TNetworkAccess *)));
     QVERIFY(spy1.isValid());
@@ -357,7 +357,7 @@ void TestDownloader::testDownloadFailed()
     QCOMPARE(spy1.count(), 1);
 
     // file exists but not valid mime/extension
-    QUrl url2("http://smil-admin.com/garlic/no.bin");
+    QUrl url2("http://testing.smil-admin.com/garlic/no.bin");
     QSignalSpy spy2(MyDownloader, SIGNAL(failed(TNetworkAccess *)));
     QVERIFY(spy2.isValid());
     MyDownloader->processFile(url2, fi);
