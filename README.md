@@ -126,9 +126,6 @@ Binaries (Linux/Windows) of v0.1.0 can be downloaded at [garlic-player.com](http
  - quit app with Ctrl-Q
  - open configuration dialog with Ctrl-S
 
-## Actual Working
- - testing Linux, Android and Windows for second binary release
-
 ## future ToDo's
  - change config.xml during plaback
  - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
