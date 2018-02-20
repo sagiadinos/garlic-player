@@ -4,12 +4,18 @@ NetworkDialog::NetworkDialog(QWidget *parent, TConfiguration *Config) : QDialog(
 {
     ui->setupUi(this);
     MyConfiguration = Config;
-    connect(ui->cb_interface, SIGNAL(currentIndexChanged(QString )), this, SLOT(changeIndex(QString )));
+    connect(ui->cb_interface, SIGNAL(currentIndexChanged(QString )), this, SLOT(changeInterface(QString )));
     connect(ui->chk_dhcp, SIGNAL(stateChanged(int)), this, SLOT(changeDHCP(int)));
 
-    bool is_dhcp = hasActiveDHCP();
+#ifdef SUPPORT_RPI
+    script_directory =  MyConfiguration->getPaths("scripts")+"raspberry/";
+#else
+    script_directory =  MyConfiguration->getPaths("scripts")+"dummy/";
+#endif
 
     scanInterfaces();
+
+    bool is_dhcp = hasActiveDHCP();
 
     ui->chk_dhcp->setChecked(is_dhcp);
     toggleIPSection(!is_dhcp);
@@ -22,15 +28,10 @@ bool NetworkDialog::scanPossibleWiFiInterfaces(const QString interface)
     bool        is_wifi =false;
 
     ui->cb_essid->clear();
-
-#ifdef SUPPORT_RPI
-    arguments << MyConfiguration->getPaths("scripts")+"/get_wifi_rpi.sh" << interface;
-#else
-    arguments << MyConfiguration->getPaths("scripts")+"/get_wifi.sh" << interface;
-#endif
+    arguments << script_directory +"get_wifi.sh" << interface;
     process.start("/bin/sh", arguments);
-
     process.waitForFinished(-1); // will wait forever until finished
+
     QString stdout = process.readAllStandardOutput();
     QString stderr = process.readAllStandardError();
     if (stderr == "" && stdout != "")
@@ -62,7 +63,6 @@ bool NetworkDialog::commitToSystem()
             ui->lb_error->setText(tr("Passphrase must have at least 8 Letters"));
             return false;
         }
-
         writeWPASupplicantConf();
     }
     if (ui->chk_dhcp->checkState() == Qt::Unchecked)
@@ -84,12 +84,15 @@ bool NetworkDialog::commitToSystem()
             ui->lb_error->setText(tr("Gateway is incorrect"));
             return false;
         }
-        writeStaticIntoDHCPConf();
+        writeStaticIP();
     }
+    else
+        writeDhcp();
+
     return true;
 }
 
-void NetworkDialog::changeIndex(const QString &text)
+void NetworkDialog::changeInterface(const QString &text)
 {
     toggleWifiSection(scanPossibleWiFiInterfaces(text));
 }
@@ -115,14 +118,10 @@ bool NetworkDialog::hasActiveDHCP()
     QStringList arguments;
 
     QPair<QHostAddress, int> addr = QHostAddress::parseSubnet(ui->edit_ip->text()+"/"+ui->edit_netmask->text());
-#ifdef SUPPORT_RPI
-    arguments << MyConfiguration->getPaths("scripts")+"/is_dhcp_rpi.sh";
-#else
-    arguments << MyConfiguration->getPaths("scripts")+"/is_dhcp.sh";
-#endif
+    arguments << script_directory+"/is_dhcp.sh";
     process.start("/bin/sh", arguments);
     process.waitForFinished(-1); // will wait forever until finished
-    return (process.exitCode() == 1);
+    return (process.exitCode() ==0);
 }
 
 void NetworkDialog::toggleWifiSection(bool is_visible)
@@ -145,6 +144,8 @@ void NetworkDialog::toggleIPSection(bool is_visible)
     ui->edit_netmask->setVisible(is_visible);
     ui->edit_gateway->setVisible(is_visible);
     ui->edit_dns->setVisible(is_visible);
+    if (is_visible)
+        determinceStaticIPs();
 }
 
 void NetworkDialog::writeWPASupplicantConf()
@@ -158,48 +159,53 @@ void NetworkDialog::writeWPASupplicantConf()
     process.waitForFinished(-1); // will wait forever until finished
 }
 
-void NetworkDialog::writeStaticIntoDHCPConf()
+void NetworkDialog::writeStaticIP()
 {
     QProcess process;
     QStringList arguments;
 
-    QPair<QHostAddress, int> addr = QHostAddress::parseSubnet(ui->edit_ip->text()+"/"+ui->edit_netmask->text());
-    arguments << MyConfiguration->getPaths("scripts")+"/write_dhcp.sh"
-              << addr.first.toString()
-              << QString::number(addr.second)
+    arguments << script_directory + "/write_static.sh"
+              << ui->edit_ip->text()
+              << ui->edit_netmask->text()
               << ui->edit_gateway->text()
-              << ui->edit_dns->text()
-    ;
+              << ui->edit_dns->text();
+    process.start("/bin/sh", arguments);
+
+    process.waitForFinished(-1); // will wait forever until finished  
+}
+
+void NetworkDialog::writeDhcp()
+{
+    QProcess process;
+    QStringList arguments;
+
+    arguments << script_directory+"/write_dhcp.sh";
+    process.start("/bin/sh", arguments);
+    process.waitForFinished(-1); // will wait forever until finished
+}
+
+void NetworkDialog::determinceStaticIPs()
+{
+    QProcess process;
+    QStringList arguments;
+
+    arguments << script_directory + "get_static.sh";
     process.start("/bin/sh", arguments);
 
     process.waitForFinished(-1); // will wait forever until finished
+    QString output = process.readAllStandardOutput();
+    QStringList output_list = output.split(",");
 
-}
-
-void NetworkDialog::determinceStaticFromDHCPConf()
-{
-    QFile dhcp_conf("/etc/dhcpcd.conf");
-    if (!dhcp_conf.open(QIODevice::ReadOnly))
-        return;
-    QString file_contents(dhcp_conf.readAll());
-    QStringList garlic_contents = file_contents.mid(file_contents.indexOf("#garlic dhcp-static-config")).split("\n");
-    if (garlic_contents.size() == 0)
-        return;
-
-    QString line;
-    foreach(line, garlic_contents)
-    {
-        if(line.contains("static ip_address="))
-        {
-            QStringList ip = seperateValueFromParameter(line).split("/");
-            ui->edit_ip->setText(ip.at(0));
-            ui->edit_gateway->setText(determineIPFromSuffix(ip.at(1).toInt()));
-        }
-        if(line.contains("static routers="))
-            ui->edit_gateway->setText(seperateValueFromParameter(line));
-        if(line.contains("static domain_name_servers="))
-            ui->edit_dns->setText(seperateValueFromParameter(line));
-    }
+    // remember output_list.at(1) is the interface
+    if (output_list.size() > 1)
+        ui->edit_ip->setText(output_list.at(1));
+    if (output_list.size() > 2)
+        ui->edit_netmask->setText(output_list.at(2));
+    if (output_list.size() > 3)
+        ui->edit_gateway->setText(output_list.at(3));
+    if (output_list.size() > 4)
+        ui->edit_dns->setText(output_list.at(4));
+    return;
 
 }
 
@@ -235,48 +241,5 @@ QString NetworkDialog::determineCurrentESSID()
     process.start("iwgetid", arguments);
 
     process.waitForFinished(-1); // will wait forever until finished
-    QString ret = process.readAllStandardOutput();
-    return ret.trimmed();
-}
-
-QString NetworkDialog::determineIPFromSuffix(int suffix)
-{
-    switch (suffix)
-    {
-        case 32: return "255.255.255.255";
-        case 31: return "255.255.255.254";
-        case 30: return "255.255.255.252";
-        case 29: return "255.255.255.248";
-        case 28: return "255.255.255.240";
-        case 27: return "255.255.255.224";
-        case 26: return "255.255.255.192";
-        case 25: return "255.255.255.128";
-        case 24: return "255.255.255.0";
-        case 23: return "255.255.254.0";
-        case 22: return "255.255.252.0";
-        case 21: return "255.255.248.0";
-        case 20: return "255.255.240.0";
-        case 19: return "255.255.224.0";
-        case 18: return "255.255.192.0";
-        case 17: return "255.255.128.0";
-        case 16: return "255.255.0.0";
-        case 15: return "255.254.0.0";
-        case 14: return "255.252.0.0";
-        case 13: return "255.248.0.0";
-        case 12: return "255.240.0.0";
-        case 11: return "255.224.0.0";
-        case 10: return "255.192.0.0";
-        case 9: return "255.128.0.0";
-        case 8: return "255.0.0.0";
-        case 7: return "254.0.0.0";
-        case 6: return "252.0.0.0";
-        case 5: return "248.0.0.0";
-        case 4: return "240.0.0.0";
-        case 3: return "224.0.0.0";
-        case 2: return "192.0.0.0";
-        case 1: return "128.0.0.0";
-        default: return "255.255.255.0";
-    }
-
-
+    return process.readAllStandardOutput().trimmed();
 }

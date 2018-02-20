@@ -31,20 +31,21 @@ class NetworkDialog : public QDialog
         bool scanPossibleWiFiInterfaces(const QString interface);
         bool commitToSystem();
     protected slots:
-        void changeIndex(const QString &text);
+        void changeInterface(const QString &text);
         void changeDHCP(int state);
         void accept();
     private:
+        QString script_directory;
         bool hasActiveDHCP();
         void toggleWifiSection(bool is_visible);
         void toggleIPSection(bool is_visible);
         void writeWPASupplicantConf();
-        void writeStaticIntoDHCPConf();
-        void determinceStaticFromDHCPConf();
+        void writeStaticIP();
+        void writeDhcp();
+        void determinceStaticIPs();
         void scanInterfaces();
         QString seperateValueFromParameter(const QString line);
         QString determineCurrentESSID();
-        QString determineIPFromSuffix(int suffix);
     signals:
 
 };
