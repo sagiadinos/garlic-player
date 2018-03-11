@@ -8,54 +8,10 @@ Item
     width: 800
     height: 600
 
-/*
-    works in Linux or Windows from Image/Video with parent.parent.fitImage / parent.parent.fitVideo
-    crappy qt/android cannot use this functions like in
-    but let there here maybe there comes a miracle ;)
-    function fitImage(image_id, fit_value)
+    ContextMenu {id: context_menu}
+    MouseArea
     {
-        switch (fit_value)
-        {
-            case "fill":
-                 image_id.anchors.fill = the_image.parent
-                 image_id.fillMode = Image.Stretch
-                 break
-            case "meet":
-                 image_id.anchors.fill = the_image.parent;
-                 image_id.fillMode = Image.PreserveAspectCrop;
-                 break
-            case "meetbest":
-                 image_id.anchors.fill = the_image.parent;
-                 image_id.fillMode = Image.PreserveAspectFit;
-                 break
-             default:
-                 image_id.anchors.fill = null;
-                 image_id.fillMode = Image.Pad;
-                 break
-        }
+        anchors.fill: parent
+        onPressAndHold: context_menu.popup()
     }
-
-    function fitVideo(video_id, fit_value)
-    {
-        switch (fit_value)
-        {
-            case "fill":
-                 video_id.anchors.fill = video_id.parent;
-                 video_id.fillMode = VideoOutput.Stretch;
-                 break
-            case "meet":
-                 video_id.anchors.fill = video_id.parent;
-                 video_id.fillMode = VideoOutput.PreserveAspectCrop;
-                 break
-            case "meetbest":
-                 video_id.anchors.fill = video_id.parent;
-                 video_id.fillMode = VideoOutput.PreserveAspectFit;
-                 break
-             default:
-                 video_id.anchors.fill = video_id.parent;
-                 video_id.fillMode = VideoOutput.Stretch;
-                 break
-        }
-    }
-*/
 }

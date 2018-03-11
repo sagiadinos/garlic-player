@@ -22,7 +22,6 @@ LibFacade::LibFacade(QObject *parent) : QObject(parent)
     MyConfiguration.reset(new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player")));
     MyIndexManager.reset(new IndexManager(MyConfiguration.data(), this));
     connect(MyIndexManager.data(), SIGNAL(newIndexDownloaded()), this, SLOT(loadIndex()));
-
     timer_id = startTimer(300000); // every 300s
 }
 
@@ -36,28 +35,12 @@ LibFacade::~LibFacade()
 void LibFacade::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
-    MyMemoryInfos.refresh();
+    MyResourceMonitor.refresh();
 
-    qint64  total_mem = MyMemoryInfos.getTotal();
-    qint64  free_mem = MyMemoryInfos.getFree();
-    double d_total = (double)total_mem / (double)1048576;
-    double d_free = (double)free_mem / (double)1048576;
-    qInfo(Develop) << QString("Total Memory System:: %1" ).arg(d_total, 0, 'f', 2) + " MiB" << QString("Free Memory System:: %1" ).arg(d_free, 0, 'f', 2) + " MiB";
-
-    qint64  current_rss = MyMemoryInfos.getRSS();
-    if (current_rss > max_memory_used)
-    {
-        max_memory_used = current_rss;
-        max_memory_time = QTime::currentTime().toString();
-    }
-    double d_current = (double)current_rss / (double)1048576;
-    double d_max = (double)max_memory_used / (double)1048576;
-    qInfo(Develop) << QString("App Memory use: %1" ).arg(d_current, 0, 'f', 2) + " MiB" << QString("Max Memory App used: %1" ).arg(d_max, 0, 'f', 2) + " MiB at" << max_memory_time;
-
-    qint64  current_threads = MyGeneralInfos.countThreads();
-    if (current_threads > max_threads_used)
-        max_threads_used = current_threads;
-    qInfo(Develop) << "Threads: " + QString::number(current_threads) << "Max Threads: " + QString::number(max_threads_used);
+    // write to logfile
+    qInfo(Develop) << MyResourceMonitor.getTotalMemorySystem() << MyResourceMonitor.getFreeMemorySystem();
+    qInfo(Develop) << MyResourceMonitor.getMemoryAppUse() << MyResourceMonitor.getMaxMemoryAppUsed();
+    qInfo(Develop) << MyResourceMonitor.getThreadsNumber() << MyResourceMonitor.getMaxThreadsNumber();
 }
 
 TConfiguration *LibFacade::getConfiguration() const
@@ -82,6 +65,7 @@ THead *LibFacade::getHead() const
 {
     return MyHead.data();
 }
+
 
 void LibFacade::beginSmilBodyParsing()
 {

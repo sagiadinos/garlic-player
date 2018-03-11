@@ -23,15 +23,13 @@
 #include "files/media_manager.h"
 #include "smilparser/head.h"
 #include "smilparser.h"
-
-#include "system_infos/memory.h"
-#include "system_infos/general.h"
+#include "tools/resource_monitor.h"
 
 /**
  * @brief The LibFacade class is the interface for a player component to the garlic parser
  *
  * It emits 4 signals:
- * Two for begin an start a meida playback
+ * Two for begin to start a media playback
  *       void                startShowMedia(TMedia *media);
  *       void                stopShowMedia(TMedia *media);
  *
@@ -67,17 +65,13 @@ class LibFacade : public QObject
         QScopedPointer<MediaManager>       MyMediaManager;
         QScopedPointer<THead>              MyHead;
         QScopedPointer<TSmil>              MySmil;
-        qint64               max_memory_used = 0;
-        QString              max_memory_time = "";
-        qint64               max_threads_used = 0;
-        SystemInfos::Memory  MyMemoryInfos;
-        SystemInfos::General MyGeneralInfos;
-        void                timerEvent(QTimerEvent *event);
+        ResourceMonitor                    MyResourceMonitor;
+        void                 timerEvent(QTimerEvent *event);
 
     signals:
-        void                startShowMedia(TMedia *media);
-        void                stopShowMedia(TMedia *media);
-        void                newIndexLoaded();
+        void                 startShowMedia(TMedia *media);
+        void                 stopShowMedia(TMedia *media);
+        void                 newIndexLoaded();
 };
 
 #endif // LIB_FACADE_H

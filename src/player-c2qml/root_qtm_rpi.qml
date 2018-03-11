@@ -1,6 +1,8 @@
 import QtQuick 2.7
 import QtMultimedia 5.7
 import QtWebEngine 1.4
+import QtQuick 2.8
+import QtQuick.Controls 2.2
 
 Item
 {
@@ -8,54 +10,86 @@ Item
     width: 800
     height: 600
 
-/*
-    works in Linux or Windows from Image/Video with parent.parent.fitImage / parent.parent.fitVideo
-    crappy qt/android cannot use this functions like in
-    but let there here maybe there comes a miracle ;)
-    function fitImage(image_id, fit_value)
+  //  ContextMenu {id: context_menu}
+    menuBar: MenuBar {
+           Menu {
+               title: "&File"
+               MenuItem {
+                   text: "E&xit"
+                   shortcut: StandardKey.Quit
+                   onTriggered: Qt.quit()
+               }
+           }
+           Menu {
+               title: "&Edit"
+               visible: tabView.currentIndex == 2
+               MenuItem { action: cutAction }
+               MenuItem { action: copyAction }
+               MenuItem { action: pasteAction }
+           }
+           Menu {
+               title: "&Help"
+               MenuItem {
+                   text: "About..."
+                   onTriggered: aboutDialog.open()
+               }
+           }
+    MouseArea
     {
-        switch (fit_value)
-        {
-            case "fill":
-                 image_id.anchors.fill = image_id.parent
-                 image_id.fillMode = Image.Stretch
-                 break
-            case "meet":
-                 image_id.anchors.fill = image_id.parent;
-                 image_id.fillMode = Image.PreserveAspectCrop;
-                 break
-            case "meetbest":
-                 image_id.anchors.fill = image_id.parent;
-                 image_id.fillMode = Image.PreserveAspectFit;
-                 break
-             default:
-                 image_id.anchors.fill = null;
-                 image_id.fillMode = Image.Pad;
-                 break
-        }
+        anchors.fill: parent
+        onPressAndHold: context_menu.popup()
     }
+    Menu
+    {
+        id: context_menu
+        MenuItem
+        {
+            text: "General options.."
+        }
+        MenuItem
+        {
+            text: "Network options..."
+            action: network_options
+        }
+        MenuItem
+        {
+            text: "Resource monitor..."
+            action: resource_monitor
+        }
+        MenuSeparator {}
+        MenuItem
+        {
+            text: "Quit"
 
-    function fitVideo(video_id, fit_value)
+            action: ac_quit
+        }
+     }
+    Action
     {
-        switch (fit_value)
+        id: network_options
+        shortcut: "Ctrl+N"
+        onTriggered:
         {
-            case "fill":
-                 video_id.anchors.fill = video_id.parent;
-                 video_id.fillMode = VideoOutput.Stretch;
-                 break
-            case "meet":
-                 video_id.anchors.fill = video_id.parent;
-                 video_id.fillMode = VideoOutput.PreserveAspectCrop;
-                 break
-            case "meetbest":
-                 video_id.anchors.fill = video_id.parent;
-                 video_id.fillMode = VideoOutput.PreserveAspectFit;
-                 break
-             default:
-                 video_id.anchors.fill = video_id.parent;
-                 video_id.fillMode = VideoOutput.Stretch;
-                 break
+            var component = Qt.createComponent("network_dialog.qml");
+            var window = component.createObject(root, {"x": 100, "y": 300});
+            window.show();
         }
     }
-    */
+    Action
+    {
+        id: resource_monitor
+        shortcut: "Ctrl+D"
+        onTriggered:
+        {
+            var component = Qt.createComponent("resource_monitor.qml");
+            var window = component.createObject(root, {"x": 100, "y": 300});
+            window.show();
+        }
+    }
+    Action
+    {
+        id: ac_quit
+        shortcut: "Ctrl+Q"
+        onTriggered: Qt.quit()
+    }
 }

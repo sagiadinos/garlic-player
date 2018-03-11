@@ -26,11 +26,12 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
+    connect(engine(), SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit())); // to connect quit signal from QML
 
 #ifdef SUPPORT_QTAV
     setSource(QUrl(QStringLiteral("qrc:/root_qtav.qml")));
 #elif SUPPORT_RPI
-    setSource(QUrl(QStringLiteral("qrc:/root_qtav_rpi.qml")));
+    setSource(QUrl(QStringLiteral("qrc:/root_qtm_rpi.qml")));
 #else
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
 #endif
@@ -42,7 +43,6 @@ MainWindow::~MainWindow()
     prepareParsing(); // region must be deleted at last, cause media pointer had to be deleted
 }
 
-
 QString MainWindow::selectRegion(QString region_name)
 {
     QMap<QString, TRegion *>::iterator i;
@@ -53,69 +53,19 @@ QString MainWindow::selectRegion(QString region_name)
     return i.key();
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *ke)
-{
-    if (!ke->modifiers().testFlag(Qt::ControlModifier))
-        return;
-    switch (ke->key())
-    {
-        case Qt::Key_F:
-        if (screen_state != FULLSCREEN)
-                resizeAsNormalFullScreen();
-            else
-                resizeAsWindow();
-        break;
-        case Qt::Key_B:
-            if (screen_state != BIGFULLSCREEN)
-                 resizeAsBigFullScreen();
-            else
-                resizeAsWindow();
-        break;
-        case Qt::Key_D:
-            setCursor(Qt::ArrowCursor);
-            openDebugInfos();
-            setCursor(Qt::BlankCursor);
-            break;
-        case Qt::Key_S:  // Ctrl-C will not work with qwebengineview
-            setCursor(Qt::ArrowCursor);
-            if (openConfigDialog() == QDialog::Accepted)
-                MyLibFacade->checkForNewSmilIndex();
-            setCursor(Qt::BlankCursor);
-        break;
-
-        case Qt::Key_Q:
-            exit(0);
-        break;
-    }
-}
-
-
-bool MainWindow::event(QEvent *event)
-{
-    event->accept();
-    if(event->type() == QEvent::TouchBegin)
-    {
-//        QTouchEvent *touchEvent = static_cast<QTouchEvent*>(event);
-        num_touched++;
-        if (num_touched > 4)
-        {
-            openDebugInfos();
-            num_touched = 0;
-        }
-    }
-    return QQuickView::event(event);
-}
-
-void MainWindow::openDebugInfos()
-{
-    DebugInfos MyDebugInfos(MyLibFacade);
-    MyDebugInfos.exec();
-}
-
 int MainWindow::openConfigDialog()
 {
     ConfigDialog MyConfigDialog(0, MyLibFacade->getConfiguration());
     return MyConfigDialog.exec();
+}
+
+int MainWindow::openNetworkDialog()
+{
+#ifdef SUPPORT_RPI
+    NetworkDialog MyNetworkDialog(0, MyLibFacade->getConfiguration());
+    return MyNetworkDialog.exec();
+#endif
+    return 0;
 }
 
 void MainWindow::resizeAsNormalFullScreen()

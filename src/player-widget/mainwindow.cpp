@@ -71,12 +71,14 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
                 MyLibFacade->checkForNewSmilIndex();
             setCursor(Qt::BlankCursor);
             break;
+#ifdef SUPPORT_RPI
         case Qt::Key_N:
             setCursor(Qt::ArrowCursor);
             if (openNetworkDialog() == QDialog::Accepted)
                 MyLibFacade->checkForNewSmilIndex();
             setCursor(Qt::BlankCursor);
             break;
+#endif
         case Qt::Key_Q:
              QApplication::quit();
 

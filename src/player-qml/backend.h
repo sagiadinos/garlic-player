@@ -4,7 +4,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickView>
-#include <QQuickItem>
 
 #include <QDebug>
 #include "lib_facade.h"

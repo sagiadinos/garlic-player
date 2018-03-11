@@ -6,14 +6,14 @@
 include(../defaults.pri)
 INCLUDEPATH += ../garlic-lib/
 
-QT     += core sql widgets gui xml quick qml
+QT     += core sql widgets gui xml quick qml quickcontrols2
 CONFIG += warn_on c++11
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 #Delete or comment out the next line when you want to use QTMultimedia instead of QtAV
-CONFIG  += support_qtav
+#CONFIG  += support_qtav
 #comment in to compile with RPI 3
-#DEFINES += SUPPORT_RPI
+DEFINES += SUPPORT_RPI
 
 support_qtav {
     DEFINES += SUPPORT_QTAV

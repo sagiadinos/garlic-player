@@ -71,7 +71,8 @@ SOURCES += \
     reports/create/play_logs.cpp \
     reports/inventory_report_manager.cpp \
     db/inventory_table.cpp \
-    reports/create/inventory_report.cpp
+    reports/create/inventory_report.cpp \
+    tools/resource_monitor.cpp
 
 HEADERS += \
     files/base_manager.h \
@@ -126,5 +127,6 @@ HEADERS += \
     reports/create/play_logs.h \
     reports/create/inventory_report.h \
     reports/inventory_report_manager.h \
-    db/inventory_table.h
+    db/inventory_table.h \
+    tools/resource_monitor.h
 

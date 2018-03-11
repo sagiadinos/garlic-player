@@ -19,6 +19,7 @@
 
 #include "tools/logger.h"
 #include "mainwindow.h"
+#include "tools/resource_monitor.h"
 #include "../player-common/cmdparser.h"
 #include "../player-common/screen.h"
 
@@ -46,6 +47,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts); // Raspberry and POT needs this http://thebugfreeblog.blogspot.de/2018/01/pot-570-with-qt-5100-built-for-armv8.html
     QApplication app(argc, argv);
+    qmlRegisterType<LibFacade>("com.garlic.LibFacade", 1, 0, "LibFacade");
+    qmlRegisterType<ResourceMonitor>("com.garlic.ResourceMonitor", 1, 0, "ResourceMonitor");
+
 #if defined  Q_OS_ANDROID
     QtWebView::initialize();
 #endif
@@ -71,6 +75,7 @@ int main(int argc, char *argv[])
     bool is_index = true;
     TScreen    MyScreen(QApplication::desktop(), 0);
     MainWindow w(&MyScreen, MyLibFacade);
+
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);
     if (MyLibFacade->getConfiguration()->getIndexUri() == "")
     {
