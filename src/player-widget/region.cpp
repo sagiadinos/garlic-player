@@ -22,7 +22,7 @@
 TRegion::TRegion(QWidget *parent) : QWidget(parent)
 {
     setParent(parent);
-    layout.reset(new QHBoxLayout(this));
+    layout.reset(new QStackedLayout(this));
     layout.data()->setMargin(0);
     setLayout(layout.data());
  }
@@ -30,7 +30,7 @@ TRegion::TRegion(QWidget *parent) : QWidget(parent)
 TRegion::~TRegion()
 {
 }
-
+/*
 void TRegion::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
@@ -39,12 +39,13 @@ void TRegion::paintEvent(QPaintEvent *event)
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
+*/
 
 void TRegion::startShowMedia(TMedia *media)
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyMedia = MyMediaFactory.initMedia(media);
-    layout->addWidget(MyMedia->getView());
+    layout.data()->addWidget(MyMedia->getView());
     qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 

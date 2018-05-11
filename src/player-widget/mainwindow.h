@@ -24,9 +24,7 @@
 
 #include "region.h"
 #include "../player-common/configdialog.h"
-#ifdef SUPPORT_RPI
-    #include "../player-common/network_dialog.h"
-#endif
+#include "../player-common/network_dialog.h"
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
 #include "files/index_manager.h"
