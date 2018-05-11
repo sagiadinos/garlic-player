@@ -10,8 +10,8 @@ Item
     width: 800
     height: 600
 
-  //  ContextMenu {id: context_menu}
-    menuBar: MenuBar {
+    ContextMenu {id: context_menu}
+/*    menuBar: MenuBar{
            Menu {
                title: "&File"
                MenuItem {
@@ -92,4 +92,5 @@ Item
         shortcut: "Ctrl+Q"
         onTriggered: Qt.quit()
     }
+    */
 }

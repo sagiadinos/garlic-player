@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtMultimedia 5.7
-import QtWebView 1.1
+import QtWebEngine 1.2
+import QtQuick.Controls 2.2
 
 Item
 {
@@ -12,6 +13,10 @@ Item
     MouseArea
     {
         anchors.fill: parent
-        onPressAndHold: context_menu.popup()
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: {
+             if (mouse.button === Qt.RightButton)
+                 context_menu.open()
+         }
     }
-}
+ }
