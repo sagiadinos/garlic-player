@@ -38,7 +38,7 @@ class TRegion : public QWidget
 public:
     explicit TRegion(QWidget *parent);
     ~TRegion();
- //   void                paintEvent(QPaintEvent *event);
+    void                paintEvent(QPaintEvent *event);
     void                setRootSize(int w, int h);
     void                setRegion(Region region);
     void                startShowMedia(TMedia *media);

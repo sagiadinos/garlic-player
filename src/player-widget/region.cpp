@@ -30,7 +30,11 @@ TRegion::TRegion(QWidget *parent) : QWidget(parent)
 TRegion::~TRegion()
 {
 }
-/*
+
+/**
+ * @brief TRegion::paintEvent needed to draw a background color setted in smil layout header
+ * @param event
+ */
 void TRegion::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
@@ -39,7 +43,6 @@ void TRegion::paintEvent(QPaintEvent *event)
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
-*/
 
 void TRegion::startShowMedia(TMedia *media)
 {
