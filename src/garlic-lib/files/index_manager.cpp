@@ -54,7 +54,10 @@ bool IndexManager::load()
         qWarning(Develop) << "set index path first";
         return false;
     }
-    return loadLocal(MyConfiguration->getLastPlayedIndexPath());
+    if (isRemote(src_index_path))
+        return loadLocal(MyConfiguration->getLastPlayedIndexPath());
+    else
+        return loadLocal(src_index_path);
 }
 
 void IndexManager::activateRefresh(int value)

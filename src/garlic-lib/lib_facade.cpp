@@ -79,7 +79,7 @@ void LibFacade::loadIndex()
     qDebug(Develop) << "start" << Q_FUNC_INFO;
     if (!MySmil.isNull())
     {
-       MySmil.data()->endSmilParsing();
+        MySmil.data()->endSmilParsing();
         MyIndexManager.data()->deactivateRefresh();
     }
 
