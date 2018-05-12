@@ -10,9 +10,7 @@ ConfigDialog::ConfigDialog(QWidget *parent, TConfiguration *Config) :  QDialog(p
     // cause in Android it shows fullscreen and not as dialog
     setWindowFlags(Qt::WindowStaysOnTopHint);
 #endif
-
 }
-
 
 ConfigDialog::~ConfigDialog()
 {
