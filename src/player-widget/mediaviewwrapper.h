@@ -5,7 +5,6 @@
 
 #ifdef SUPPORT_QTAV
     #include <QtAV>
-    #include <QtAVWidgets>
 #else
     #include <qvideowidget.h>
 #endif
@@ -18,7 +17,7 @@ public:
     explicit MediaViewWrapper(QWidget *parent = Q_NULLPTR);
     ~MediaViewWrapper();
 #ifdef SUPPORT_QTAV
-    QtAV::GLWidgetRenderer2 *getVideoWidget();
+    QtAV::VideoOutput *getVideoWidget();
 #else
     QVideoWidget *getVideoWidget();
 #endif
@@ -28,7 +27,7 @@ public:
 signals:
 protected:
 #ifdef SUPPORT_QTAV
-    QScopedPointer<QtAV::GLWidgetRenderer2> VideoWidget;  // a deleteLater leads to a crash on playlistchange!
+    QScopedPointer<QtAV::VideoOutput> VideoWidget;  // a deleteLater leads to a crash on playlistchange!
 #else
     QScopedPointer<QVideoWidget>         VideoWidget;
 #endif

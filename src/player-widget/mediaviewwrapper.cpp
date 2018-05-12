@@ -3,7 +3,7 @@
 MediaViewWrapper::MediaViewWrapper(QWidget *parent) :QWidget(parent)
 {
 #ifdef SUPPORT_QTAV
-    VideoWidget.reset(new QtAV::GLWidgetRenderer2(this));
+    VideoWidget.reset(new QtAV::VideoOutput(this));
 #else
     VideoWidget.reset(new  QVideoWidget);
 #endif
@@ -14,7 +14,7 @@ MediaViewWrapper::~MediaViewWrapper()
 }
 
 #ifdef SUPPORT_QTAV
-QtAV::GLWidgetRenderer2 *MediaViewWrapper::getVideoWidget()
+QtAV::VideoOutput *MediaViewWrapper::getVideoWidget()
 {
     return VideoWidget.data();
 }
