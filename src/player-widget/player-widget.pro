@@ -10,7 +10,7 @@ QT     += core gui sql xml widgets webenginewidgets
 CONFIG += warn_on c++11
 
 #Delete or comment out the next line when you want to use QTMultimedia
-#CONFIG    += support_qtav
+CONFIG    += support_qtav
 DEFINES += SUPPORT_RPI
 
 support_qtav {

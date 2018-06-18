@@ -1,12 +1,12 @@
 # garlic-player - Open Source SMIL Player for Digital Signage
 
-The goal is to create an as most as neccessary SMIL 3.0 and compatible and as most as possible platform independent free open source multimedia player to meet Digital Signage needs.
+The goal is to create a as most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet Digital Signage needs.
 Garlic should be used online with web-based content managment systems like [SmilControl](https://smil-control.com) or other.
 Offline usage via command-line is also possible.
 
 ## Libraries used
  - [Qt5](https://www.qt.io) >= 5.7
- - [QtAV](http://www.qtav.org) >= 1.11.0 as alternative to QtMultimedia
+ - [QtAV](http://www.qtav.org) >= 1.12.0 as alternative to QtMultimedia
  - [Quazip](http://quazip.sourceforge.net) 0.7.3 (included in ./src/ext)
  - [zlib](https://zlib.net) 1.2.11 (included in ./src/ext)
 
@@ -14,12 +14,12 @@ Offline usage via command-line is also possible.
 
 Linux, Windows, Raspberry Pi 3, Android, maybe later OSX
 
-Garlic actually is able to play local and remote (via http) SMIL Files with actual supported features.
-Compilations tested with:
- - Kde Neon Ubuntu 16.04 based (Attention when using QtMultimedia cause gstreamer 1.8 seems to have a mem leak)
- - Kubuntu 16.10, 17.04, 17.10
+Garlic is able to play local and remote (via http) SMIL Files with the features described below.
+Compilations were tested with:
+ - Kde Neon Ubuntu 16.04 based (Do not use QtMultimedia cause gstreamer 1.8 seems to have a mem leak)
+ - Kubuntu 16.10, 17.04, 17.10, 18.04 (native)
  - Debian: Jessie and Stretch
- - Rasperian Stretch rpi 3 with video hw acceleration from [POT](https://github.com/carlonluca/pot)
+ - Rasperian Stretch rpi 3 with hardware video acceleration from [POT](https://github.com/carlonluca/pot) (experimental)
  - Tinker Board (Linaro OS 1.8) 
  - Android armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2 and 7.0)
  - Windows 7 i64 (VS2015 Community Version)
@@ -31,7 +31,7 @@ Attention!
  - Qt 5.9.1 QML Image Type, used in player-c2qml has a [mem leak](https://bugreports.qt.io/browse/QTBUG-61754)
  - Qt 5.9.3 has also a [video player bug](https://bugreports.qt.io/browse/QTBUG-64764) on Android
  
-both bugs are showstoppers for a 24/7 running media player, so do not use this version to compile
+both bugs are showstoppers for media player who should run 24/7, so do not use this Qt-versions
 
 *garlic.sh [options] SMIL_INDEX*
 
@@ -45,7 +45,7 @@ both bugs are showstoppers for a 24/7 running media player, so do not use this v
 Arguments:
 SMIL_INDEX        Path to SMIL index
 
-Binaries (Linux/Windows) of v0.1.0 can be downloaded at [garlic-player.com](https://garlic-player.com)
+Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 
 ## Features
  - Support for multiple screens
@@ -72,8 +72,8 @@ Binaries (Linux/Windows) of v0.1.0 can be downloaded at [garlic-player.com](http
 - **video**
 - **audio**
 - **images**
-- **text** websites only
-- **wgt** 
+- **html/text**
+- **HTML Widgets** 
 
 ### other Elements
 - **prefetch**

@@ -1,13 +1,13 @@
-# directory SCR
+# directory src
 
 ## garlic-lib
 
-The basically lib for the player without dependencies to the view component and for testing.
+The basic lib for the player without dependencies to the view component and for testing.
 It integrates
 - SMIL parser
 - file classes for managing indexes, media, downlods etc
 - system infos for reoprts and inspecting
-- reports to generate reports and send to an WebDav directory current only systemreports work 
+- generating reports and sends them to a WebDav-Address 
 - configuration and loggings tools
 
 ## garlic-common
@@ -24,11 +24,11 @@ A Smil player based on Qt's QML technologie controlled by C++ objects (Android a
 
 ## garlic-qml
 
-A Smil player feasibility study based on pure QML technologie with javascript objects. Not reconnomed for production
+A Smil player concept study based on pure QML technologie with javascript objects. Works only with images - Do not use it
 
 ## garlic-dummy
 
-Only a minimal "client" for testing the garlic-lib (e.g. responisbilitym memory leaks, etc)
+Only a minimal "client" for testing the garlic-lib (e.g. responsibility, memory leaks, etc)
 
 
 
