@@ -68,7 +68,10 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
         case Qt::Key_S:
             setCursor(Qt::ArrowCursor);
             if (openConfigDialog() == QDialog::Accepted)
-                MyLibFacade->checkForNewSmilIndex();
+            {
+                MyLibFacade->init();
+                MyLibFacade->loadIndex();
+            }
             setCursor(Qt::BlankCursor);
             break;
 #ifdef SUPPORT_RPI

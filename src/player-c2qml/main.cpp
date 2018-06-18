@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
     QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());
     QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName());
-    MyLibFacade->getConfiguration()->determineIndexUri("http://indexes.smil-admin.com");
 
     QDir dir(".");
     MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator

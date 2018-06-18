@@ -75,7 +75,11 @@ QWidget *Video::getView()
 {
     if (!exists)
         return Q_NULLPTR;
+#ifdef SUPPORT_QTAV
+    return VideoWidget.data()->getVideoWidget()->widget();
+#else
     return VideoWidget.data()->getVideoWidget();
+#endif
 }
 
 void Video::finished()

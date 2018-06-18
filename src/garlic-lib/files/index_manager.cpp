@@ -40,7 +40,8 @@ void IndexManager::lookUpForUpdatedIndex()
     if (isRemote(src_index_path))
     {
         MyDownloader->processFile(src_index_path, MyConfiguration->getPaths("cache")+"index.smil");
-        // First Start surely not have LastPlayedIndexPath so set this here
+        // First Start surely do not have a LastPlayedIndexPath so set this here
+        // especially needed to ensure cache play first, when switching between local and remote indexes
         MyConfiguration->setLastPlayedIndexPath(MyConfiguration->getPaths("cache")+"index.smil");
     }
     else
@@ -54,7 +55,10 @@ bool IndexManager::load()
         qWarning(Develop) << "set index path first";
         return false;
     }
-    return loadLocal(MyConfiguration->getLastPlayedIndexPath());
+    if (isRemote(src_index_path))
+        return loadLocal(MyConfiguration->getLastPlayedIndexPath());
+    else
+        return loadLocal(src_index_path);
 }
 
 void IndexManager::activateRefresh(int value)

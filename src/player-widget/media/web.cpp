@@ -42,7 +42,6 @@ void Web::init(TMedia *media)
     connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
     // Deactivate caching for testing
     browser->page()->profile()->setHttpCacheType(QWebEngineProfile::NoCache);
-
     browser->lower();
 
     QUrl url(media->getLoadablePath());

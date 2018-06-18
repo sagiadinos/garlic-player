@@ -21,7 +21,7 @@
 
 #include <QObject>
 #include <QWidget>
-#include <QHBoxLayout>
+#include <QStackedLayout>
 #include <QPainter>
 #include <QPixmap>
 #include <QPaintEvent>
@@ -48,7 +48,7 @@ protected:
     qreal                 root_width_px, root_height_px = 0;
     QString               actual_media = "";
     Region                region;
-    QScopedPointer<QHBoxLayout>          layout;
+    QScopedPointer<QStackedLayout>          layout;
     BaseMedia             *MyMedia = Q_NULLPTR;
     MediaFactory          MyMediaFactory;
     void                  resizeGeometry();
