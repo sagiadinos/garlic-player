@@ -5,8 +5,10 @@ MediaDecoderWrapper::MediaDecoderWrapper(QObject *parent) : QObject(parent)
 #ifdef SUPPORT_QTAV
     MediaDecoder.reset(new QtAV::AVPlayer(this));
 
+#ifdef SUPPORT_RPI
     // ensure that Raspberry uses MMAL encoder
-    // MediaDecoder.data()->setVideoDecoderPriority(QStringList() << "MMAL" << "FFmpeg");
+    MediaDecoder.data()->setVideoDecoderPriority(QStringList() << "MMAL" << "FFmpeg");
+#endif
 
     MediaDecoder.data()->audio()->setBufferSamples(512); // prevent stuttering
     connect(MediaDecoder.data(), SIGNAL(mediaStatusChanged(QtAV::MediaStatus)), this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));

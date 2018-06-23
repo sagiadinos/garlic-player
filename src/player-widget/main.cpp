@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 
 #ifdef QT_DEBUG
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
+    QtAV::setLogLevel(QtAV::LogAll);
 #else
     QLoggingCategory::setFilterRules("*.debug=false");
 #endif
