@@ -28,7 +28,7 @@
     #include "../player-common/network_dialog.h"
 #endif
 #include "../player-common/screen.h"
-// #include "../player-common/debug_infos.h"
+#include "../player-common/debug_infos.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
 
@@ -58,9 +58,12 @@ class MainWindow : public QQuickView
         QMap<QString, TRegion *>  regions_list;
         QSize                     mainwindow_size;
         int                       screen_state, num_touched = 0;
+        void                      openDebugInfos();
         int                       openNetworkDialog();
         QString                   selectRegion(QString region_name);
         void                      resizeEvent(QResizeEvent * event);
+        void                      keyPressEvent(QKeyEvent *ke);
+        bool                      event(QEvent *event);
         void                      createRegions();
         void                      deleteRegions();
     protected slots:

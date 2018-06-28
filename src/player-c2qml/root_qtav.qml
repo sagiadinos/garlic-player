@@ -7,11 +7,4 @@ Item
     id: root
     width: 800
     height: 600
-
-    ContextMenu {id: context_menu}
-    MouseArea
-    {
-        anchors.fill: parent
-        onPressAndHold: context_menu.popup()
-    }
 }

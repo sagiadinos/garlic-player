@@ -53,6 +53,66 @@ QString MainWindow::selectRegion(QString region_name)
     return i.key();
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *ke)
+{
+    if (!ke->modifiers().testFlag(Qt::ControlModifier))
+        return;
+    switch (ke->key())
+    {
+        case Qt::Key_F:
+        if (screen_state != FULLSCREEN)
+                resizeAsNormalFullScreen();
+            else
+                resizeAsWindow();
+        break;
+        case Qt::Key_B:
+            if (screen_state != BIGFULLSCREEN)
+                 resizeAsBigFullScreen();
+            else
+                resizeAsWindow();
+        break;
+        case Qt::Key_D:
+            setCursor(Qt::ArrowCursor);
+            openDebugInfos();
+            setCursor(Qt::BlankCursor);
+            break;
+        case Qt::Key_S:  // Ctrl-C will not work with qwebengineview
+            setCursor(Qt::ArrowCursor);
+            if (openConfigDialog() == QDialog::Accepted)
+                MyLibFacade->checkForNewSmilIndex();
+            setCursor(Qt::BlankCursor);
+        break;
+
+        case Qt::Key_Q:
+            exit(0);
+        break;
+    }
+}
+
+
+bool MainWindow::event(QEvent *event)
+{
+    event->accept();
+    if(event->type() == QEvent::TouchBegin)
+    {
+//        QTouchEvent *touchEvent = static_cast<QTouchEvent*>(event);
+        num_touched++;
+        if (num_touched > 4)
+        {
+            openDebugInfos();
+            num_touched = 0;
+        }
+    }
+    return QQuickView::event(event);
+}
+
+void MainWindow::openDebugInfos()
+{
+    DebugInfos MyDebugInfos(MyLibFacade);
+    MyDebugInfos.exec();
+}
+
+
 int MainWindow::openConfigDialog()
 {
     ConfigDialog MyConfigDialog(0, MyLibFacade->getConfiguration());
