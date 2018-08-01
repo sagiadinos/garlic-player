@@ -79,7 +79,11 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
         case Qt::Key_S:  // Ctrl-C will not work with qwebengineview
             setCursor(Qt::ArrowCursor);
             if (openConfigDialog() == QDialog::Accepted)
+            {
+                MyLibFacade->init();
+                MyLibFacade->loadIndex(); // load index when QML comiled complete
                 MyLibFacade->checkForNewSmilIndex();
+            }
             setCursor(Qt::BlankCursor);
         break;
 
