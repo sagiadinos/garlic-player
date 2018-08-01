@@ -59,7 +59,9 @@ class MainWindow : public QQuickView
         QSize                     mainwindow_size;
         int                       screen_state, num_touched = 0;
         void                      openDebugInfos();
+#ifdef SUPPORT_RPI
         int                       openNetworkDialog();
+#endif
         QString                   selectRegion(QString region_name);
         void                      resizeEvent(QResizeEvent * event);
         void                      keyPressEvent(QKeyEvent *ke);

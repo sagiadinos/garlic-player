@@ -11,7 +11,7 @@ CONFIG += warn_on c++11
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 #comment out the next line when you want to use QTMultimedia instead of QtAV
-CONFIG  += support_qtav
+#CONFIG  += support_qtav
 #comment in to compile with RPI 3
 #DEFINES += SUPPORT_RPI
 

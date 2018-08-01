@@ -119,6 +119,7 @@ int MainWindow::openConfigDialog()
     return MyConfigDialog.exec();
 }
 
+#ifdef SUPPORT_RPI
 int MainWindow::openNetworkDialog()
 {
 #ifdef SUPPORT_RPI
@@ -127,6 +128,7 @@ int MainWindow::openNetworkDialog()
 #endif
     return 0;
 }
+#endif
 
 void MainWindow::resizeAsNormalFullScreen()
 {
