@@ -63,6 +63,9 @@ bool IndexManager::load()
 
 void IndexManager::activateRefresh(int value)
 {
+    if (timer_id == 0) // set not the timer, when no e.g. on index with no refresh time
+        return;
+
     refresh_time   = value;
     timer_id       = startTimer(refresh_time*1000);
 }

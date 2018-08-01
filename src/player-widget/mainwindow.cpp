@@ -71,6 +71,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             {
                 MyLibFacade->init();
                 MyLibFacade->loadIndex();
+                MyLibFacade->checkForNewSmilIndex();
             }
             setCursor(Qt::BlankCursor);
             break;
