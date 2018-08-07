@@ -20,9 +20,18 @@
 
 MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 {
-    connect (this, SIGNAL(statusChanged(QQuickView::Status)), this, SLOT(doStatusChanged(QQuickView::Status)));
     MyScreen               = screen;
     MyLibFacade            = lib_facade;
+}
+
+MainWindow::~MainWindow()
+{
+    prepareParsing(); // region must be deleted at last, cause media pointer had to be deleted
+}
+
+void MainWindow::init()
+{
+    connect (this, SIGNAL(statusChanged(QQuickView::Status)), this, SLOT(doStatusChanged(QQuickView::Status)));
     connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
     connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
@@ -36,11 +45,6 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
 #endif
     setMainWindowSize(QSize(980, 540)); // set default
-}
-
-MainWindow::~MainWindow()
-{
-    prepareParsing(); // region must be deleted at last, cause media pointer had to be deleted
 }
 
 QString MainWindow::selectRegion(QString region_name)

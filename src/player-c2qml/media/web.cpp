@@ -3,11 +3,7 @@
 Web::Web(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r_id, parent)
 {
     setRegionId(r_id);
-#ifdef SUPPORT_RPI
     QString module = "import QtWebView 1.1\n WebView ";
-#else
-    QString module = "import QtWebEngine 1.2\n WebEngineView";
-#endif
     media_component = mc;
     QString str("import QtQuick 2.7\n"+
                 module + "{\n \

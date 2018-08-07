@@ -40,6 +40,7 @@ class MainWindow : public QQuickView
     public:
         MainWindow(TScreen *screen, LibFacade *lib_facade);
         ~MainWindow();
+        void                      init();
         int                       openConfigDialog();
         void                      resizeAsNormalFullScreen();
         void                      resizeAsBigFullScreen();

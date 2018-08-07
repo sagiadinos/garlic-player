@@ -171,7 +171,7 @@ bool TConfiguration::validateContentUrl(QString url_string)
     {
         if (url_string.mid(0, 1) != "/")
         {
-            error_text += "Relative path for Content-Url/SMIL-Index is not allowed! Use /path/to/smil, http://domain.tld or file://path/to/file \n";
+            error_text += "Relative path for Content-Url/SMIL-Index is not allowed! Use /path/to/index, http://domain.tld or file://path/to/index \n";
             error = true;
         }
         else

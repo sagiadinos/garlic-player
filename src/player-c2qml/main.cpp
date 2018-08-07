@@ -60,71 +60,63 @@ int main(int argc, char *argv[])
     QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName());
 
     QDir dir(".");
-    MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal cause absolute path returns user homedirectory in QtCreator
+    MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // When run in terminal absolute path returns user homedirectory in QtCreator
     MyLibFacade->getConfiguration()->createDirectories();
 
     qInstallMessageHandler(handleMessages);
 
     TCmdParser MyParser(MyLibFacade->getConfiguration());
     MyParser.addOptions();
-    if (!MyParser.parse(&app))
-    {
-        return 1;
-    }
 
-    bool is_index = true;
+    if (!MyParser.parse(&app))
+        return 1;
+
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
 
     TScreen    MyScreen(QApplication::desktop(), 0);
     MainWindow w(&MyScreen, MyLibFacade);
 
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);
-    if (MyLibFacade->getConfiguration()->getIndexUri() == "")
-    {
-        if (w.openConfigDialog() == QDialog::Rejected)
-            is_index = false;
-    }
 
-    int ret = 0;
-    if (is_index)
-    {
+    if (MyLibFacade->getConfiguration()->getIndexUri() == "" && w.openConfigDialog() == QDialog::Rejected)
+        return 0;
+
+    w.init();
 
 #if defined  Q_OS_ANDROID
-        // preserve android screensaver https://stackoverflow.com/questions/44100627/how-to-disable-screensaver-on-qt-android-app
-        // https://forum.qt.io/topic/57625/solved-keep-android-5-screen-on
+    // preserve android screensaver https://stackoverflow.com/questions/44100627/how-to-disable-screensaver-on-qt-android-app
+    // https://forum.qt.io/topic/57625/solved-keep-android-5-screen-on
 
-        QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
-        if (activity.isValid())
+    QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
+    if (activity.isValid())
+    {
+        QAndroidJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
+        if (window.isValid())
         {
-            QAndroidJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
-            if (window.isValid())
-            {
-                const int FLAG_KEEP_SCREEN_ON = 128;
-                window.callMethod<void>("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
-            }
+            const int FLAG_KEEP_SCREEN_ON = 128;
+            window.callMethod<void>("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
         }
-        // not to crash in Android > 5.x Clear any possible pending exceptions.
-        QAndroidJniEnvironment env;
-        if (env->ExceptionCheck()) {
-            env->ExceptionClear();
-        }
-        w.showFullScreen();
-#else
-        w.show();
-
-        QString val = MyParser.getWindowMode();
-        if (val == "fullscreen")
-            w.resizeAsNormalFullScreen();
-        else if (val == "bigscreen")
-            w.resizeAsBigFullScreen();
-        else if (val == "windowed")
-        {
-            w.setMainWindowSize(MyParser.getWindowSize());
-            w.resizeAsWindow();
-        }
-#endif
-
-        ret = app.exec();
     }
-    return ret;
+    // not to crash in Android > 5.x Clear any possible pending exceptions.
+    QAndroidJniEnvironment env;
+    if (env->ExceptionCheck()) {
+        env->ExceptionClear();
+    }
+    w.showFullScreen();
+#else
+
+    w.show();
+
+    QString val = MyParser.getWindowMode();
+    if (val == "fullscreen")
+        w.resizeAsNormalFullScreen();
+    else if (val == "bigscreen")
+        w.resizeAsBigFullScreen();
+    else if (val == "windowed")
+    {
+        w.setMainWindowSize(MyParser.getWindowSize());
+        w.resizeAsWindow();
+    }
+#endif
+    return app.exec();
 }
