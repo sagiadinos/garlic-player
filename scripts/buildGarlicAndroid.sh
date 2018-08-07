@@ -10,7 +10,7 @@ export QT_VERSION=			         			    # The Qt Version 5.7, 5.8, 5.9.2 etc
 export QT_API_VERSION=                              # The api version gcc_64 android_armv7 etc
 export QT_BASE_PATH=$BASE_PATH/Qt                   # path to your qt base directory
 
-export CONFIG_DEBUG_RELEASE=	                    # set if debug or release
+export CONFIG_DEBUG_RELEASE=release                 # set if debug or release
 
 export DEV_JOBS=$(grep -c "^processor" /proc/cpuinfo)
 export BUILD_DIR=								 	# set your build directory
