@@ -141,6 +141,55 @@ void TConfiguration::setIndexUri(const QString &value)
     index_uri = value;
 }
 
+bool TConfiguration::validateContentUrl(QString url_string)
+{
+    QUrl    url(url_string, QUrl::StrictMode);
+    bool    error = false;
+    error_text    = "";
+    if (url_string == "") // isEmpty or isValid do not work as expected
+    {
+        error_text += "A content-url is neccessary\n";
+        error = true;
+    }
+
+    if (url.scheme() != "") // prevent things like HtTp or httP
+    {
+        if (url.toString(QUrl::RemoveScheme).mid(0, 2) != "//")
+        {
+            error_text += "Url Scheme is no valid! Use "+ url.scheme() + "://domain.tld \n";
+            error = true;
+        }
+        else
+        {
+            if (url.scheme() != "file") // file:// will irritate garlic-lib TODO! Fix this later!
+                setValidatedContentUrl(url.toString());
+            else
+                setValidatedContentUrl(url.toString(QUrl::RemoveScheme));
+        }
+    }
+    else
+    {
+        if (url_string.mid(0, 1) != "/")
+        {
+            error_text += "Relative path for Content-Url/SMIL-Index is not allowed! Use /path/to/smil, http://domain.tld or file://path/to/file \n";
+            error = true;
+        }
+        else
+            setValidatedContentUrl(url.toString());
+    }
+
+    if (error)
+        return false;
+
+
+    return true;
+}
+
+QString TConfiguration::getErrorText() const
+{
+    return error_text;
+}
+
 void TConfiguration::determineIndexUri(QString path)
 {
     if (path != "")
@@ -157,12 +206,14 @@ void TConfiguration::determineIndexUri(QString path)
         checkConfigXML();
     }
 
+/*
+    deprectated cause relative path for index should not be permitted!
     if (index_uri != "" && index_uri.mid(0, 4) != "http"  && index_uri.mid(0, 3) != "ftp" && index_uri.mid(0, 1) != "/") // https is includered in http!
     {
        setUserConfigByKey("index_uri", base_path+index_uri);
        setIndexUri( base_path+index_uri);
     }
-    determineIndexPath();
+*/    determineIndexPath();
 }
 
 void TConfiguration::setIndexPath(const QString &value)
@@ -218,6 +269,36 @@ QString TConfiguration::getOS() const
 void TConfiguration::setOS(const QString &value)
 {
     os = value;
+}
+
+QString TConfiguration::getValidatedContentUrl() const
+{
+    return validated_content_url;
+}
+
+void TConfiguration::setValidatedContentUrl(const QString &value)
+{
+    validated_content_url = value;
+}
+
+QString TConfiguration::getStartTime() const
+{
+    return start_time;
+}
+
+void TConfiguration::setStartTime(const QString &value)
+{
+    start_time = value;
+}
+
+QString TConfiguration::getTimeZone() const
+{
+    return time_zone;
+}
+
+void TConfiguration::setTimeZone(const QString &value)
+{
+    time_zone = value;
 }
 
 QString TConfiguration::getBasePath() const
@@ -307,27 +388,6 @@ void TConfiguration::checkConfigXML()
         file.rename(base_path+"config.xml", base_path+"config_readd0aeec17b69aed.xml");
     }
 }
-
-QString TConfiguration::getStartTime() const
-{
-    return start_time;
-}
-
-void TConfiguration::setStartTime(const QString &value)
-{
-    start_time = value;
-}
-
-QString TConfiguration::getTimeZone() const
-{
-    return time_zone;
-}
-
-void TConfiguration::setTimeZone(const QString &value)
-{
-    time_zone = value;
-}
-
 
 void TConfiguration::createDirectoryIfNotExist(QString path)
 {

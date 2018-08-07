@@ -20,12 +20,22 @@ void TCmdParser::addOptions()
     parser.setOptionsAfterPositionalArgumentsMode(QCommandLineParser::ParseAsOptions);
 }
 
-void TCmdParser::parse(QApplication *app)
+bool TCmdParser::parse(QApplication *app)
 {
     parser.process(*app);
     const QStringList args = parser.positionalArguments();
+
     if (args.size() > 0)
-        MyConfiguration->determineIndexUri(args.at(0));
+    {
+        if (MyConfiguration->validateContentUrl(args.at(0)))
+            MyConfiguration->determineIndexUri(MyConfiguration->getValidatedContentUrl());
+        else
+        {
+            QTextStream ts( stdout );
+            ts << "\n" << MyConfiguration->getErrorText() << "\n";
+            return false;
+        }
+    }
     else
         MyConfiguration->determineIndexUri("");
 
@@ -50,6 +60,7 @@ void TCmdParser::parse(QApplication *app)
                 setWindowSize(QSize(x, y));
         }
     }
+    return true;
 }
 
 QString TCmdParser::getWindowMode() const

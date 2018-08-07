@@ -67,11 +67,14 @@ int main(int argc, char *argv[])
 
     TCmdParser MyParser(MyLibFacade->getConfiguration());
     MyParser.addOptions();
-    MyParser.parse(&app);
-
-    QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
+    if (!MyParser.parse(&app))
+    {
+        return 1;
+    }
 
     bool is_index = true;
+    QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
+
     TScreen    MyScreen(QApplication::desktop(), 0);
     MainWindow w(&MyScreen, MyLibFacade);
 

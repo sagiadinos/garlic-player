@@ -17,9 +17,17 @@ ConfigDialog::~ConfigDialog()
     delete ui;
 }
 
+
 void ConfigDialog::accept()
 {
-    MyConfiguration->setPlayerName(ui->lineEditPlayerName->text());
-    MyConfiguration->determineIndexUri(ui->lineEditContentUrl->text());
-    QDialog::accept();
+    if (MyConfiguration->validateContentUrl(ui->lineEditContentUrl->text()))
+    {
+        MyConfiguration->setPlayerName(ui->lineEditPlayerName->text());
+        MyConfiguration->determineIndexUri(MyConfiguration->getValidatedContentUrl());
+        QDialog::accept();
+    }
+    else
+        ui->labelErrorMessage->setText(MyConfiguration->getErrorText());
 }
+
+

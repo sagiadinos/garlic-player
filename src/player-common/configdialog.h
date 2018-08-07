@@ -18,7 +18,8 @@ class ConfigDialog : public QDialog
         explicit ConfigDialog(QWidget *parent, TConfiguration *Config);
         ~ConfigDialog();
 
-    protected:
+
+protected:
         Ui::ConfigDialog *ui;
         TConfiguration   *MyConfiguration = NULL;
 

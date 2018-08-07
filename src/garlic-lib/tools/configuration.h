@@ -61,6 +61,12 @@ class TConfiguration  : public QObject
         void            setUserAgent(const QString &value);
         QString         getOS() const;
         void            setOS(const QString &value);
+        QString         getValidatedContentUrl() const;
+        void            setValidatedContentUrl(const QString &value);
+        QString         getStartTime() const;
+        void            setStartTime(const QString &value);
+        QString         getTimeZone() const;
+        void            setTimeZone(const QString &value);
         QString         getPaths(QString path_name);
         void            setIndexUri(const QString &value);
         QString         getIndexUri();
@@ -76,18 +82,18 @@ class TConfiguration  : public QObject
         void            determineUserAgent();
         void            checkConfigXML();
 
-        QString getStartTime() const;
-        void setStartTime(const QString &value);
 
-        QString getTimeZone() const;
-        void setTimeZone(const QString &value);
 
-    protected:
+        bool validateContentUrl(QString url_string);
+        QString getErrorText() const;
+
+protected:
         QSettings      *UserConfig;
-        QString         uuid, player_name, user_agent, os, base_path, index_uri, index_path = "";
+        QString         uuid, player_name, user_agent, os, base_path, index_uri, index_path, validated_content_url = "";
         QString         start_time, time_zone = "";
         QString         cache_dir, log_dir = "";
         QString         app_name = "garlic-player";
+        QString         error_text = "";
         void            createDirectoryIfNotExist(QString path);
         void            determineIndexPath();
         void            determineUuid();
