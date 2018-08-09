@@ -14,7 +14,7 @@ FORMS += \
     ../player-common/configdialog.ui \
     ../player-common/debug_infos.ui
 
-unix:!android & !win32{
+unix:!android | !win32 {
     SOURCES += ../player-common/network_dialog.cpp
     HEADERS += ../player-common/network_dialog.h
     FORMS   +=  ../player-common/networkdialog.ui
