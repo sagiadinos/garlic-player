@@ -75,7 +75,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             }
             setCursor(Qt::BlankCursor);
             break;
-#ifdef SUPPORT_RPI
+#ifdef SUPPORT_EMBEDDED
         case Qt::Key_N:
             setCursor(Qt::ArrowCursor);
             if (openNetworkDialog() == QDialog::Accepted)
@@ -103,12 +103,13 @@ void MainWindow::openCommandline()
     process.waitForFinished(-1); // will wait forever until finished
 }
 
+#ifdef SUPPORT_EMBEDDED
 int MainWindow::openNetworkDialog()
 {
     NetworkDialog MyNetworkDialog(0, MyLibFacade->getConfiguration());
     return MyNetworkDialog.exec();
-
 }
+#endif
 
 int MainWindow::openConfigDialog()
 {

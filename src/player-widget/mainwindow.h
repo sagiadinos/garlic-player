@@ -24,7 +24,9 @@
 
 #include "region.h"
 #include "../player-common/configdialog.h"
-#include "../player-common/network_dialog.h"
+#ifdef SUPPORT_EMBEDDED
+    #include "../player-common/network_dialog.h"
+#endif
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
 #include "files/index_manager.h"
@@ -59,7 +61,9 @@ class MainWindow : public QMainWindow
         void                      keyPressEvent(QKeyEvent *ke);
         void                      openDebugInfos();
         void                      openCommandline();
+#ifdef SUPPORT_EMBEDDED
         int                       openNetworkDialog();
+#endif
         QString                   selectRegion(QString region_name);
         void                      createRegions();
         void                      deleteRegions();

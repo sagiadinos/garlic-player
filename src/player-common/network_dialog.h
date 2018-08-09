@@ -16,8 +16,9 @@ namespace Ui
 {
     class NetworkDialog;
 }
-
-#include "ui_networkdialog.h"
+#ifdef SUPPORT_EMBEDDED
+    #include "ui_networkdialog.h"
+#endif
 
 class NetworkDialog : public QDialog
 {
