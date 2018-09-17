@@ -19,7 +19,6 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r
                    }\n";
     media_component = mc;
     video_item.reset(createMediaItem(media_component, qml));
-    connect(video_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
 }
 
 Video::~Video()
@@ -32,6 +31,9 @@ void Video::init(TMedia *media)
     MyMedia = media;
     if (load(video_item.data()))
     {
+        // cannot be connected once in constructor due to again Android/QMultimedia problems
+        // see @ method finished
+        connect(video_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
         // to set Volume we need to cast
         TVideo *MyVideo = qobject_cast<TVideo *> (media);
         float vol = determineVolume(MyVideo->getSoundLevel());
@@ -47,10 +49,7 @@ void Video::deinit()
     if (MyMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 
-// Raspberry with piotexture get upset when this is setted
-#ifndef SUPPORT_RPI
     video_item.data()->setProperty("source", "");
-#endif
 }
 
 void Video::setParentItem(QQuickItem *parent)
@@ -82,6 +81,9 @@ qreal Video::determineVolume(QString percent)
 
 void Video::finished()
 {
+    // must be disconected otherwise QMultimedia/Android will stop immediately when new video will be load
+    // so only first Video will shown
+    disconnect(video_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
     if (video_item.data()->property("error").toInt() != 0)
     {
         QStringList list;
