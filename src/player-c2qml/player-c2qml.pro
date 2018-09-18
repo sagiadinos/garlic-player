@@ -83,3 +83,11 @@ DISTFILES += \
     gradlew.bat
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD
+
+android {
+    ANDROID_LIBS = $$dirname(QMAKE_QMAKE)/../lib
+
+    ANDROID_EXTRA_LIBS += \
+        $$ANDROID_LIBS/libssl.so \
+        $$ANDROID_LIBS/libcrypto.so
+}
