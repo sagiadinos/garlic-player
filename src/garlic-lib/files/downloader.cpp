@@ -58,7 +58,7 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
     }
 
     int status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    if (status_code != 301)
+    if (status_code != 301 && status_code != 302)
         checkStatusCode(reply, status_code);
     else
     {
