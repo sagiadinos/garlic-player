@@ -63,7 +63,7 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
     else
     {
         // change remote_file_url with new redirect address
-        QUrl remote_file_url_301(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString());
+        QUrl remote_file_url_301 = examineRedirectUrl(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString());
         QNetworkRequest request = prepareNetworkRequest(remote_file_url_301);
 
         manager_head_redirect.reset(new QNetworkAccessManager(this));
@@ -172,18 +172,19 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         dataset.state          = DB::TRANSFER;
         MyInventoryTable->replace(dataset);
     }
-    startDownload();
+    startDownload(reply);
 
     return;
 }
 
-void Downloader::startDownload()
+void Downloader::startDownload(QNetworkReply *reply)
 {
     manager_get.reset(new QNetworkAccessManager(this));
     MyFileDownloader.reset(new FileDownloader(manager_get.data(), getUserAgent(), this));
     connect(MyFileDownloader.data(), SIGNAL(downloadSuccessful()), SLOT(doDownloadSuccessFul()));
     connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply *)), SLOT(doDownloadError(QNetworkReply *)));
-    MyFileDownloader->startDownload(remote_file_url, local_file_info.absoluteFilePath());
+    //
+    MyFileDownloader->startDownload(reply->url(), local_file_info.absoluteFilePath());
 }
 
 void Downloader::doDownloadSuccessFul()
@@ -236,6 +237,17 @@ void Downloader::handleNetworkError(QNetworkReply *reply)
     qDebug(Develop) << " Download failed " << remote_file_url.toString();
     reply->deleteLater();
     emit failed(this);
+}
+
+QUrl Downloader::examineRedirectUrl(QUrl redirect_url)
+{
+    if (redirect_url.scheme().isEmpty())
+        redirect_url.setScheme(remote_file_url.scheme());
+    if (redirect_url.host().isEmpty())
+        redirect_url.setHost(remote_file_url.host());
+    if (redirect_url.port() == -1)
+        redirect_url.setPort(remote_file_url.port());
+    return redirect_url;
 }
 
 quint64 Downloader::determineBytesTransfered()

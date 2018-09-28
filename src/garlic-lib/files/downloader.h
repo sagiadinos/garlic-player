@@ -46,14 +46,15 @@ class Downloader : public TNetworkAccess
 
     protected:
         QFileInfo               local_file_info;
-        DB::InventoryTable *MyInventoryTable = Q_NULLPTR;
+        DB::InventoryTable      *MyInventoryTable = Q_NULLPTR;
         QScopedPointer <QNetworkAccessManager>  manager_head, manager_head_redirect, manager_get;
         QScopedPointer <FileDownloader>         MyFileDownloader;
         void                    checkStatusCode(QNetworkReply *reply, int status_code);
         void                    checkHttpHeaders(QNetworkReply *reply);
-        void                    startDownload();
+        void                    startDownload(QNetworkReply *reply);
         bool                    validContentType(QString content_type);
         void                    handleNetworkError(QNetworkReply *reply);
+        QUrl                    examineRedirectUrl(QUrl redirect_url);
         quint64                 determineBytesTransfered();
     protected slots:
         void                    finishedHeadRequest(QNetworkReply *reply);
