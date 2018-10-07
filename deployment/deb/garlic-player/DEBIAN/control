@@ -4,7 +4,6 @@ Section: non-free
 Priority: extra
 Architecture: amd64
 Depends: libgl1-mesa-glx, libxv1, libnss3, libevent-2.0, libxcomposite1, libxcursor1, libxi6, libxtst6, libxss1, libfontconfig1, libre2-3, libxrandr2, libasound2, libsnappy1v5, libegl1-mesa, libpulse0, libva1, libxml2, libxslt1.1, libsdl2-2.0-0, libva-drm1, libva-x11-1, libvdpau1, xinit
-
 Installed-Size: 212653
 Maintainer: Nikolaos Sagiadinos <ns@smil-control.com>
 Homepage: garlic-player.com
