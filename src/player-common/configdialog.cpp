@@ -24,6 +24,7 @@ void ConfigDialog::accept()
     {
         MyConfiguration->setPlayerName(ui->lineEditPlayerName->text());
         MyConfiguration->determineIndexUri(MyConfiguration->getValidatedContentUrl());
+        MyConfiguration->determineUserAgent();
         QDialog::accept();
     }
     else

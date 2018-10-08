@@ -20,7 +20,7 @@
 IndexManager::IndexManager(TConfiguration *config, QObject *parent) : BaseManager(parent)
 {
     MyConfiguration = config;
-    MyDownloader    = new Downloader(MyConfiguration->getUserAgent().toUtf8(), this);
+    MyDownloader    = new Downloader(MyConfiguration, this);
     MyIndexModel    = new IndexModel(this);
     connect(MyDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
 }

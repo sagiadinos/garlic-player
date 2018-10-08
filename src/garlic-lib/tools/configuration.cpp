@@ -404,7 +404,6 @@ void TConfiguration::determinePlayerName()
     if (getPlayerName() == "")
     {
         setPlayerName(getUuid().mid(24,12));
-        UserConfig->setValue("player_name", getPlayerName());
     }
 }
 

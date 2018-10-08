@@ -3,7 +3,7 @@
 Reporting::BaseReportManager::BaseReportManager(TConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration      = config;
-    MyWebDav.reset(new WebDav(MyConfiguration->getUserAgent().toUtf8()));
+    MyWebDav.reset(new WebDav(MyConfiguration));
     connect(MyWebDav.data(), SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
     connect(MyWebDav.data(), SIGNAL(failed(TNetworkAccess *)), SLOT(doFailed(TNetworkAccess *)));
 }

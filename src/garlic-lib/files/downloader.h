@@ -34,7 +34,7 @@ class Downloader : public TNetworkAccess
     Q_OBJECT
     public:
 
-        explicit Downloader(QByteArray agent, QObject *parent=Q_NULLPTR);
+        explicit Downloader(TConfiguration *config, QObject *parent=Q_NULLPTR);
         ~Downloader();
 
         void       processFile(QUrl url, QFileInfo fi);

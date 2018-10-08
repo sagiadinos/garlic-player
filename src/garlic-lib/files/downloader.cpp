@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "downloader.h"
 
-Downloader::Downloader(QByteArray agent, QObject *parent) : TNetworkAccess(agent, parent)
+Downloader::Downloader(TConfiguration *config, QObject *parent) : TNetworkAccess(config, parent)
 {
     manager_head.reset(new QNetworkAccessManager(this));
     connect(manager_head.data(), SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRequest(QNetworkReply*)));
@@ -180,7 +180,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 void Downloader::startDownload(QNetworkReply *reply)
 {
     manager_get.reset(new QNetworkAccessManager(this));
-    MyFileDownloader.reset(new FileDownloader(manager_get.data(), getUserAgent(), this));
+    MyFileDownloader.reset(new FileDownloader(manager_get.data(), MyConfiguration, this));
     connect(MyFileDownloader.data(), SIGNAL(downloadSuccessful()), SLOT(doDownloadSuccessFul()));
     connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply *)), SLOT(doDownloadError(QNetworkReply *)));
     //

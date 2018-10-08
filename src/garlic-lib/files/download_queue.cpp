@@ -18,10 +18,10 @@
 
 #include "download_queue.h"
 
-DownloadQueue::DownloadQueue(QByteArray ua, QObject *parent) : QObject(parent)
+DownloadQueue::DownloadQueue(TConfiguration *config, QObject *parent) : QObject(parent)
 {
-    setUserAgent(ua);
- }
+    MyConfiguration = config;
+}
 
 DownloadQueue::~DownloadQueue()
 {
@@ -61,7 +61,7 @@ void DownloadQueue::processQueue()
         // or the same file more than one time in playlist
         if (download_slots.find(paths.second) == download_slots.end())
         {
-            Downloader *MyDownloader = new Downloader(getUserAgent(), this);
+            Downloader *MyDownloader = new Downloader(MyConfiguration, this);
             connect(MyDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
             connect(MyDownloader, SIGNAL(notcacheable(TNetworkAccess*)), SLOT(doNotCacheable(TNetworkAccess *)));
             connect(MyDownloader, SIGNAL(notmodified(TNetworkAccess*)), SLOT(doNotModified(TNetworkAccess *)));

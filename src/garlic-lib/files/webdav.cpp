@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "webdav.h"
 
-WebDav::WebDav(QByteArray agent, QObject *parent) : TNetworkAccess(agent, parent)
+WebDav::WebDav(TConfiguration *config, QObject *parent) : TNetworkAccess(config, parent)
 {
     manager_put         = new QNetworkAccessManager(this);
     connect(manager_put, SIGNAL(finished(QNetworkReply*)), SLOT(finishedPutRequest(QNetworkReply*)));

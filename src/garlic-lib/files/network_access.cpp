@@ -17,19 +17,14 @@
 *************************************************************************************/
 #include "network_access.h"
 
-TNetworkAccess::TNetworkAccess(QByteArray agent, QObject *parent) : QObject(parent), user_agent(agent)
+TNetworkAccess::TNetworkAccess(TConfiguration *config, QObject *parent) : QObject(parent)
 {
-    setUserAgent(agent);
-}
-
-void TNetworkAccess::setUserAgent(QByteArray value)
-{
-    user_agent = value;
+    MyConfiguration = config;
 }
 
 QByteArray TNetworkAccess::getUserAgent()
 {
-    return user_agent;
+    return MyConfiguration->getUserAgent().toLocal8Bit();
 }
 
 QUrl TNetworkAccess::getRemoteFileUrl()
@@ -48,6 +43,6 @@ QNetworkRequest TNetworkAccess::prepareNetworkRequest(QUrl remote_url)
     QSslConfiguration conf = request.sslConfiguration();
     conf.setPeerVerifyMode(QSslSocket::VerifyNone);
     request.setSslConfiguration(conf);
-    request.setRawHeader(QByteArray("User-Agent"), user_agent);
+    request.setRawHeader(QByteArray("User-Agent"), getUserAgent());
     return request;
 }

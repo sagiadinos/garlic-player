@@ -33,20 +33,19 @@ class DownloadQueue : public QObject
         Q_OBJECT
     public:
         const int _max_download_slots   = 5;
-        explicit DownloadQueue(QByteArray ua, QObject *parent=Q_NULLPTR);
+        explicit DownloadQueue(TConfiguration *config, QObject *parent=Q_NULLPTR);
         ~DownloadQueue();
         void     insertQueue(QString src, QString local);
         void     clearQueues();
 
 
         //Getter/Setter
-        QByteArray                          getUserAgent() const {return user_agent;}
-        void                                setUserAgent(const QByteArray &value) {user_agent = value;}
         QQueue<QPair<QString, QString>>     getMediaQueue() {return media_queue;}
         QHash<QString, Downloader *>        getDownloadSlots(){return download_slots;}
         void                                setInventoryTable(DB::InventoryTable *value);
 
     protected:
+        TConfiguration                     *MyConfiguration;
         DB::InventoryTable                 *MyInventoryTable = Q_NULLPTR;
         QByteArray                          user_agent;
         QQueue<QPair<QString, QString>>     media_queue;

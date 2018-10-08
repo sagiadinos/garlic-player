@@ -22,7 +22,7 @@ LibFacade::LibFacade(QObject *parent) : QObject(parent)
     MyConfiguration.reset(new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player")));
     MyIndexManager.reset(new IndexManager(MyConfiguration.data(), this));
     connect(MyIndexManager.data(), SIGNAL(newIndexDownloaded()), this, SLOT(loadIndex()));
-    timer_id = startTimer(300000); // every 300s
+    timer_id = startTimer(300000); // every 300s for ressource monitor
 }
 
 LibFacade::~LibFacade()
@@ -93,7 +93,7 @@ void LibFacade::loadIndex()
     MyIndexManager.data()->activateRefresh(MyHead->getRefreshTime());
 
     MyMediaModel.reset(new MediaModel(this));
-    MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data()->getUserAgent().toUtf8(), this));
+    MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data(), this));
     MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
     MyMediaManager.reset(new MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
 

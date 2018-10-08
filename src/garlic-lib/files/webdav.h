@@ -26,7 +26,7 @@ class WebDav : public TNetworkAccess
 {
         Q_OBJECT
     public:
-        explicit WebDav(QByteArray agent, QObject *parent = nullptr);
+        explicit WebDav(TConfiguration *config, QObject *parent = nullptr);
         ~WebDav();
         void       processPutData(QUrl url, QByteArray data);
         QByteArray getSendData() const;

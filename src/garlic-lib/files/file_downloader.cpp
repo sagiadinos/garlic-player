@@ -1,6 +1,6 @@
 #include "file_downloader.h"
 
-FileDownloader::FileDownloader(QNetworkAccessManager *nam, QByteArray agent, QObject* parent) : TNetworkAccess(agent, parent), network_manager(nam)
+FileDownloader::FileDownloader(QNetworkAccessManager *nam, TConfiguration *config, QObject* parent) : TNetworkAccess(config, parent), network_manager(nam)
 {
 }
 
