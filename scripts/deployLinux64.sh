@@ -54,10 +54,13 @@ cp $GARLIC_DIR/fonts/* $GARLIC_DEPLOY_PATH/garlic-player/bin/lib/fonts
 
 mkdir -p $GARLIC_DEPLOY_PATH/garlic-player/lib
 cp -P $QT_PATH_RUNTIME/lib/libav* $GARLIC_DEPLOY_PATH/garlic-player/lib
-cp -P $QT_PATH_RUNTIME/lib/libicudata.* $GARLIC_DEPLOY_PATH/garlic-player/lib
-cp -P $QT_PATH_RUNTIME/lib/libicui18n.* $GARLIC_DEPLOY_PATH/garlic-player/lib
-cp -P $QT_PATH_RUNTIME/lib/libicuio.* $GARLIC_DEPLOY_PATH/garlic-player/lib
-cp -P $QT_PATH_RUNTIME/lib/libicuuc.* $GARLIC_DEPLOY_PATH/garlic-player/lib
+if [ -f $QT_PATH_RUNTIME/lib/libicudata.so ]; then
+	cp -P $QT_PATH_RUNTIME/lib/libicudata.* $GARLIC_DEPLOY_PATH/garlic-player/lib
+	cp -P $QT_PATH_RUNTIME/lib/libicui18n.* $GARLIC_DEPLOY_PATH/garlic-player/lib
+	cp -P $QT_PATH_RUNTIME/lib/libicuio.* $GARLIC_DEPLOY_PATH/garlic-player/lib
+	cp -P $QT_PATH_RUNTIME/lib/libicuuc.* $GARLIC_DEPLOY_PATH/garlic-player/lib
+fi
+
 cp -P $QT_PATH_RUNTIME/lib/libQt5Core.* $GARLIC_DEPLOY_PATH/garlic-player/lib
 cp -P $QT_PATH_RUNTIME/lib/libQt5DBus.* $GARLIC_DEPLOY_PATH/garlic-player/lib
 cp -P $QT_PATH_RUNTIME/lib/libQt5Gui.* $GARLIC_DEPLOY_PATH/garlic-player/lib
