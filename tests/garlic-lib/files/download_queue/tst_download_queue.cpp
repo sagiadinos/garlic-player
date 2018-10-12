@@ -6,7 +6,7 @@ class I_DownloadQueue : public DownloadQueue
 {
     Q_OBJECT
 public:
-    explicit I_DownloadQueue(QByteArray ua) : DownloadQueue(ua){}
+    explicit I_DownloadQueue(TConfiguration *config) : DownloadQueue(config){}
     void test_doSucceed(TNetworkAccess *Downloader){doSucceed(Downloader);}
     void test_doNotCacheable(TNetworkAccess *Downloader){doNotCacheable(Downloader);}
     void test_doNotModified(TNetworkAccess *Downloader){doNotModified(Downloader);}
@@ -20,6 +20,8 @@ class TestDownloadQueue : public QObject
         Q_OBJECT
 
     public:
+private:
+    TConfiguration *getConfig();
     private Q_SLOTS:
         void initTestCase(){qInstallMessageHandler(noMessageOutput);}
         void testInsertQueue();
@@ -29,11 +31,17 @@ class TestDownloadQueue : public QObject
         void testDoFailed();
 };
 
+TConfiguration *TestDownloadQueue::getConfig()
+{
+    QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
+    TConfiguration *MyConfig  = new TConfiguration(Settings);
+    MyConfig->setUserAgent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+    return MyConfig;
+}
 
 void TestDownloadQueue::testInsertQueue()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    DownloadQueue *MyDownloadQueue = new DownloadQueue(agent);
+    DownloadQueue *MyDownloadQueue = new DownloadQueue(getConfig());
 
     MyDownloadQueue->insertQueue("http://notexisting1.ddd", "http://notexisting1.ddd");
     MyDownloadQueue->insertQueue("http://notexisting2.ddd", "http://notexisting2.ddd");
@@ -61,9 +69,9 @@ void TestDownloadQueue::testInsertQueue()
 
 void TestDownloadQueue::testDoSuccess()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(agent);
-    Downloader *MyDownloader = new Downloader(agent);
+    TConfiguration *MyConfig = getConfig();
+    I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(MyConfig);
+    Downloader *MyDownloader = new Downloader(MyConfig);
     QFileInfo fi(":/test.png");
     MyDownloader->setLocalFileInfo(fi);
     QUrl url("http://ihoabsverstan.dn");
@@ -85,9 +93,9 @@ void TestDownloadQueue::testDoSuccess()
 
 void TestDownloadQueue::testDoNotCacheable()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(agent);
-    Downloader *MyDownloader = new Downloader(agent);
+    TConfiguration *MyConfig = getConfig();
+    I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(MyConfig);
+    Downloader *MyDownloader = new Downloader(MyConfig);
     MyDownloader->setLocalFileInfo(QFileInfo(":/test.png"));
     QUrl url("http://notunderstandi.ng");
     MyDownloader->setRemoteFileUrl(url);
@@ -107,9 +115,9 @@ void TestDownloadQueue::testDoNotCacheable()
 
 void TestDownloadQueue::testDoNotModified()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(agent);
-    Downloader *MyDownloader = new Downloader(agent);
+    TConfiguration *MyConfig = getConfig();
+    I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(MyConfig);
+    Downloader *MyDownloader = new Downloader(MyConfig);
     MyDownloader->setLocalFileInfo(QFileInfo(":/test.png"));
     QUrl url("http://denkatalave.no");
     MyDownloader->setRemoteFileUrl(url);
@@ -129,9 +137,9 @@ void TestDownloadQueue::testDoNotModified()
 
 void TestDownloadQueue::testDoFailed()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(agent);
-    Downloader *MyDownloader = new Downloader(agent);
+    TConfiguration *MyConfig = getConfig();
+    I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(MyConfig);
+    Downloader *MyDownloader = new Downloader(MyConfig);
     MyDownloader->setLocalFileInfo(QFileInfo(":/test.png"));
     QUrl url("http://nixverste.hn");
     MyDownloader->setRemoteFileUrl(url);
