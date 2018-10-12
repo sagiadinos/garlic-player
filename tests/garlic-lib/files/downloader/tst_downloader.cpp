@@ -32,6 +32,8 @@ class TestDownloader : public QObject
 public:
     TestDownloader(){}
 
+private:
+    TConfiguration *getConfig(QByteArray agent);
 
 private Q_SLOTS:
     void cleanup();
@@ -47,6 +49,14 @@ private Q_SLOTS:
     void testDownloadWebSite();
     void testDownloadWebSiteWith301Redirect();
 };
+
+TConfiguration *TestDownloader::getConfig(QByteArray agent)
+{
+    QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
+    TConfiguration *MyConfig  = new TConfiguration(Settings);
+    MyConfig->setUserAgent(agent);
+    return MyConfig;
+}
 
 void TestDownloader::cleanup()
 {
@@ -69,14 +79,13 @@ void TestDownloader::cleanup()
 
 void TestDownloader::testObjectCreateAndDelete()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-
-    Downloader *MyDownloader = new Downloader(agent);
-    Downloader *MyDownloader1 = new Downloader(agent);
-    Downloader *MyDownloader2 = new Downloader(agent);
-    Downloader *MyDownloader3 = new Downloader(agent);
-    Downloader *MyDownloader4 = new Downloader(agent);
-    Downloader *MyDownloader5 = new Downloader(agent);
+    TConfiguration *MyConfig  = getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+    Downloader *MyDownloader  = new Downloader(MyConfig);
+    Downloader *MyDownloader1 = new Downloader(MyConfig);
+    Downloader *MyDownloader2 = new Downloader(MyConfig);
+    Downloader *MyDownloader3 = new Downloader(MyConfig);
+    Downloader *MyDownloader4 = new Downloader(MyConfig);
+    Downloader *MyDownloader5 = new Downloader(MyConfig);
     delete MyDownloader;
     delete MyDownloader1;
     delete MyDownloader2;
@@ -84,7 +93,7 @@ void TestDownloader::testObjectCreateAndDelete()
     delete MyDownloader4;
     delete MyDownloader5;
 
-    MyDownloader = new Downloader(agent);
+    MyDownloader = new Downloader(MyConfig);
     QUrl url("http://garlic-player.com/downloads/garlic-player.deb");
     QFileInfo fi("garlic-player.deb");
     qRegisterMetaType<TNetworkAccess *>();
@@ -97,9 +106,10 @@ void TestDownloader::testObjectCreateAndDelete()
 
 void TestDownloader::testAgentString()
 {
-    QByteArray agent("this is an agent string");
-    Downloader *MyDownloader = new Downloader(agent);
-    QUrl url("http://smil-admin.com/garlic/test.php?action=show_agent_string");
+    QByteArray agent("This is a user agent");
+    TConfiguration *MyConfig  = getConfig(agent);
+    Downloader *MyDownloader = new Downloader(MyConfig);
+    QUrl url("http://testing.smil-admin.com/garlic/test.php?action=show_agent_string");
     QFileInfo fi("./agent.txt");
     QFile file(fi.absoluteFilePath());
 
@@ -126,8 +136,7 @@ void TestDownloader::testAgentString()
 
 void TestDownloader::testDownloadSmilNew()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    Downloader *MyDownloader = new Downloader(agent);
+    Downloader *MyDownloader = new Downloader(getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)"));
     QUrl url("http://testing.smil-admin.com/garlic/test.php?action=get_smil_new");
     QFileInfo fi("./index.smil");
     qRegisterMetaType<TNetworkAccess *>();
@@ -168,8 +177,7 @@ void TestDownloader::testDownloadSmilNew()
 
 void TestDownloader::testDownloadSmilNotModified()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    Downloader *MyDownloader = new Downloader(agent);
+    Downloader *MyDownloader = new Downloader(getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)"));
     // request a SMIL which returned a not modiefied 304
     QUrl url("http://testing.smil-admin.com/garlic/test.php?action=get_smil_cached");
     QFileInfo fi(":/notavaible.smil"); // to make sure file is not exist
@@ -188,8 +196,7 @@ void TestDownloader::testDownloadSmilNotModified()
 
 void TestDownloader::testDownloadSmilUpdated()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    Downloader *MyDownloader = new Downloader(agent);
+    Downloader *MyDownloader = new Downloader(getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)"));
     QUrl url("http://testing.smil-admin.com/garlic/test.php?action=get_smil_new");
     QFileInfo fi("./index.smil");
     qRegisterMetaType<TNetworkAccess *>();
@@ -227,8 +234,7 @@ void TestDownloader::testDownloadSmilUpdated()
 
 void TestDownloader::testDownloadMedia()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    Downloader *MyDownloader = new Downloader(agent);
+    Downloader *MyDownloader = new Downloader(getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)"));
     QUrl url("http://testing.smil-admin.com/garlic/test.php?action=get_media_new");
     QFileInfo fi("./server.jpg");
     QFileInfo fi_compare(fi.absoluteFilePath());
@@ -302,8 +308,7 @@ void TestDownloader::testDownloadMedia()
 
 void TestDownloader::testDownloadMediaDirect()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    Downloader *MyDownloader = new Downloader(agent);
+    Downloader *MyDownloader = new Downloader(getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)"));
     QUrl url("http://testing.smil-admin.com/garlic/server.jpg");
     QFileInfo fi("./server.jpg");
     QSignalSpy spy1(MyDownloader, SIGNAL(succeed(TNetworkAccess *)));
@@ -341,8 +346,7 @@ void TestDownloader::testDownloadMediaDirect()
 
 void TestDownloader::testDownloadFailed()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    Downloader *MyDownloader = new Downloader(agent);
+    Downloader *MyDownloader = new Downloader(getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)"));
     QUrl url("http://testing.smil-admin.com/garlic/notexistingfile.jpg");
     QFileInfo fi("./notexisting");
     QSignalSpy spy1(MyDownloader, SIGNAL(failed(TNetworkAccess *)));
@@ -373,8 +377,7 @@ void TestDownloader::testDownloadFailed()
 
 void TestDownloader::testDownloadWebSite()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    Downloader *MyDownloader = new Downloader(agent);
+    Downloader *MyDownloader = new Downloader(getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)"));
     QUrl url("http://smil-control.com");
     QFileInfo fi;
     qRegisterMetaType<TNetworkAccess *>();
@@ -395,8 +398,7 @@ void TestDownloader::testDownloadWebSite()
 
 void TestDownloader::testDownloadWebSiteWith301Redirect()
 {
-    QByteArray agent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
-    Downloader *MyDownloader = new Downloader(agent);
+    Downloader *MyDownloader = new Downloader(getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)"));
     QUrl url("http://heise.de");
     QFileInfo fi;
     qRegisterMetaType<TNetworkAccess *>();
@@ -414,6 +416,7 @@ void TestDownloader::testDownloadWebSiteWith301Redirect()
     QCOMPARE(MyDownloader->getRemoteFileUrl(), url); // should not be something like https://heise.de
     delete MyDownloader;
 }
+
 
 
 QTEST_MAIN(TestDownloader)
