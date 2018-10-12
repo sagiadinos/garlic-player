@@ -64,11 +64,6 @@ void TestTConfiguration::test_determineIndexUriWhenParameter()
     MyConfig->determineIndexUri("/path_to/index.smil");
     QCOMPARE(MyConfig->getIndexUri(), QString("/path_to/index.smil"));
     QCOMPARE(MyConfig->getIndexPath(), QString("/path_to/"));
-
-    MyConfig->setBasePath("/BasePath/");
-    MyConfig->determineIndexUri("path_to/index.smil");
-    QCOMPARE(MyConfig->getIndexUri(), QString("/BasePath/path_to/index.smil"));
-    QCOMPARE(MyConfig->getIndexPath(), QString("/BasePath/path_to/"));
 }
 
 void TestTConfiguration::test_determineIndexUriWhenIni()
@@ -143,7 +138,7 @@ void TestTConfiguration::test_determineUserAgent()
    MyConfig->setPlayerName("the playername");
    MyConfig->setOS("hurd");
    MyConfig->determineUserAgent();
-   QCOMPARE(MyConfig->getUserAgent(), QString("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-hurd/0.1.0 (MODEL:Garlic)"));
+   QCOMPARE(MyConfig->getUserAgent(), QString("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-hurd/0.3.0 (MODEL:Garlic)"));
 
    return;
 }
