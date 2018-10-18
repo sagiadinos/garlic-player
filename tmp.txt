@@ -1,0 +1,3 @@
+bash /home/niko/scripts/1.2_buildLinux64.sh 2> error_build_linux 
+bash /home/niko/scripts/1.3_deployLinux64.sh 2> error_deploy_linux
+bash /home/niko/scripts/2.1_buildAndroidArmv7.sh 2> error_build_android_armv7 
