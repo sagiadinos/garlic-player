@@ -30,7 +30,7 @@ void handleMessages(QtMsgType type, const QMessageLogContext &context, const QSt
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  //  QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
     LibFacade      *MyLibFacade     = new LibFacade();
@@ -56,7 +56,10 @@ int main(int argc, char *argv[])
     MyParser.parse(&app);
 
     bool is_index = true;
+
+
     TScreen    MyScreen(QApplication::desktop());
+
     MainWindow w(&MyScreen, MyLibFacade);
     if (MyLibFacade->getConfiguration()->getIndexUri() == "")
     {

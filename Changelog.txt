@@ -1,0 +1,70 @@
+Changelog
+===========
+
+0.3.0 -> 0.4.0
+---------------------
+1. New Features
+	* get commit numberfrom git hub
+	* code coverage
+
+0.2.0 -> 0.3.0
+---------------------
+
+1. New Features
+	* Add Raspberry Pi and Tinker board Support 
+	* Network config dialog for embedded systems
+	* Initial scripts for embedded support (experimental)
+	* Index change via config
+
+2. Improvements
+	* Android version can now select SMIL-index
+	* Video output is now more generic for IoT devices
+	* Add handling for 302 status codes
+	* Full debian stretch dependencies for deb creatiion
+	* Include own openssl-lib for android > 5
+	
+3. Bugfixes
+	* fix bug with local file
+	* correct version info in http agent
+	* fix bug which hides images
+	* fix index timer
+	* fix for some broken media rederict
+	* fix missing fonts on some installations
+	* workaround for strange behaviour of Qt-Android QML signals
+
+
+0.1.0 -> 0.2.0
+---------------------
+
+1. New Features
+	* Events,- Play, System and Inventory-Reports sending via WebDav
+	* More strictly player component seperation from garlic-lib
+	* New QML player component added to support mobile devices
+	* Android version added
+
+2. Improvements
+	* Complete rewrite of network, and file and manager 
+	* Change configuration Hot-Key from Ctrl-C to Ctrl-S
+	  cause is some cases Ctr-C do not work correct 
+	* lot's of bug and memleaks fixes or workarounded
+	* work on stability
+
+
+Initial release 0.1.0
+---------------------
+
+1. Features 
+	* Multi monitor: can spread a big screen over multiple monitors or select one for showing fullscreen
+	* Videoformats:  H264, H265, VC1, VP8, MPEG-1/2/4, OGG/Theora, WEBM, TS, VOB, MOV, FLV
+	* Audio formats:  WAV, WMA, MP3, OGG/Vorbis
+	* Image formats:  AVI, JPG, GIF, PNG
+	* Playlist format: W3C SMIL 
+	* Web formats: HTML5 and W3C Widgets 
+	* SMIL Container: seq, par and excl
+	* SMIL Media: image, video, text and ref media
+	* Layouts: multizones for splitscreens etc...
+	* Caching: media and index
+	* SMIL-Indexes: variable refresh times
+	* http redirects and ssl/https
+	* Index-Path Config: via command line or config.xml
+ 

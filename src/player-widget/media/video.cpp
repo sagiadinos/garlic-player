@@ -19,10 +19,10 @@
 
 Video::Video(QObject *parent) : BaseMedia(parent)
 {
-    MediaDecoder.reset(new MediaDecoderWrapper(this));
+    MediaDecoder.reset(new MediaPlayerWrapper(this));
     connect(MediaDecoder.data(), SIGNAL(finished()), this, SLOT(finished()));
 
-    VideoWidget.reset(new MediaViewWrapper);
+    VideoWidget.reset(new MediaWidgetWrapper);
     MediaDecoder.data()->setVideoOutput(VideoWidget.data());
 }
 
@@ -75,11 +75,7 @@ QWidget *Video::getView()
 {
     if (!exists)
         return Q_NULLPTR;
-#ifdef SUPPORT_QTAV
-    return VideoWidget.data()->getVideoWidget()->widget();
-#else
     return VideoWidget.data()->getVideoWidget();
-#endif
 }
 
 void Video::finished()

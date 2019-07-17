@@ -2,7 +2,7 @@
 #define AUDIO_H
 
 #include <QLabel>
-#include "mediadecoderwrapper.h"
+#include "mediaplayer_wrapper.h"
 #include "smilparser/audio.h"
 #include "base_media.h"
 
@@ -17,7 +17,7 @@ class Audio : public BaseMedia
         QWidget      *getView();
         void          changeSize(int w, int h);
     protected:
-        QScopedPointer<MediaDecoderWrapper, QScopedPointerDeleteLater>   MediaDecoder;
+        QScopedPointer<MediaPlayerWrapper, QScopedPointerDeleteLater>   MediaDecoder;
     protected slots:
         void                  finished();
 };

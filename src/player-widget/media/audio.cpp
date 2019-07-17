@@ -19,7 +19,7 @@
 
 Audio::Audio( QObject *parent) : BaseMedia(parent)
 {
-    MediaDecoder.reset(new MediaDecoderWrapper(this));
+    MediaDecoder.reset(new MediaPlayerWrapper(this));
     connect(MediaDecoder.data(), SIGNAL(finished()), this, SLOT(finished()));
 }
 

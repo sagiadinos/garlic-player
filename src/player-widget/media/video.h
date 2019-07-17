@@ -1,8 +1,8 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-#include "mediadecoderwrapper.h"
-#include "mediaviewwrapper.h"
+#include "mediaplayer_wrapper.h"
+#include "mediawidget_wrapper.h"
 #include "smilparser/video.h"
 #include "base_media.h"
 
@@ -17,8 +17,8 @@ class Video : public BaseMedia
         void              changeSize(int w, int h);
         QWidget          *getView();
     protected:
-        QScopedPointer<MediaViewWrapper>     VideoWidget;
-        QScopedPointer<MediaDecoderWrapper, QScopedPointerDeleteLater>   MediaDecoder;
+        QScopedPointer<MediaWidgetWrapper>     VideoWidget;
+        QScopedPointer<MediaPlayerWrapper, QScopedPointerDeleteLater>   MediaDecoder;
     protected slots:
         void                  finished();
 };
