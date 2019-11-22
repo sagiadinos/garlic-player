@@ -1,4 +1,5 @@
 #ifdef SUPPORT_QTMM
+
 #ifndef QTMM_WIDGET_H
 #define QTMM_WIDGET_H
 

@@ -1,5 +1,6 @@
-#include "qtav_widget.h"
 #ifdef SUPPORT_QTAV
+
+#include "qtav_widget.h"
 QtAVWidget::QtAVWidget(QWidget *parent) :QWidget(parent)
 {
     VideoWidget.reset(new QtAV::VideoOutput(this));

@@ -1,3 +1,5 @@
+#ifdef SUPPORT_LIBVLC
+
 #include "vlc_decoder.h"
 
 VlcDecoder::VlcDecoder(QObject *parent) : QObject(parent)
@@ -81,3 +83,4 @@ void VlcDecoder::displayErrorMessage()
 {
 
 }
+#endif

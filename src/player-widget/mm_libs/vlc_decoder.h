@@ -1,3 +1,5 @@
+#ifdef SUPPORT_LIBVLC
+
 #ifndef VLC_DECODER_H
 #define VLC_DECODER_H
 
@@ -35,5 +37,6 @@ protected slots:
     void updatePosition();
     void displayErrorMessage();
 };
+#endif
 
 #endif // VLC_DECODER_H

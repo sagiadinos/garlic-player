@@ -1,7 +1,8 @@
+#ifdef SUPPORT_QTAV
+
 #ifndef QTAV_WIDGET_H
 #define QTAV_WIDGET_H
 
-#ifdef SUPPORT_QTAV
 #include <QtAV>
 #include <QtAVWidgets>
 
@@ -20,4 +21,5 @@ protected:
     QScopedPointer<QtAV::VideoOutput> VideoWidget;  // a deleteLater leads to a crash on playlistchange!
 };
 #endif
+
 #endif // QTAV_WIDGET_H

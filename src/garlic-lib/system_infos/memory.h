@@ -29,6 +29,8 @@
     #define NOMINMAX   // must defined before windows.h else AVPlayer.h runs in errors about ::max
     #include <windows.h>
     #include <psapi.h>
+#elif defined Q_OS_DARWIN
+    #include <mach/mach.h>
 #elif defined Q_OS_LINUX
     #include <unistd.h>
 #endif

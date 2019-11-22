@@ -39,7 +39,6 @@ include(quazip.pri)
 
 
 CONFIG(debug, debug|release) {
-     mac: TARGET = $$join(TARGET,,,_debug) 
      win32: TARGET = $$join(TARGET,,,d)
 }
 

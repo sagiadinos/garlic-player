@@ -1,3 +1,5 @@
+#ifdef SUPPORT_LIBVLC
+
 #ifndef VLC_WIDGET_H
 #define VLC_WIDGET_H
 
@@ -20,5 +22,6 @@ protected:
     QScopedPointer<QWidget> VideoWidget;
 public slots:
 };
+#endif
 
 #endif // VLC_WIDGET_H

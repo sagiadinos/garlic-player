@@ -1,3 +1,4 @@
+#ifdef SUPPORT_LIBVLC
 #include "vlc_widget.h"
 
 VlcWidget::VlcWidget(QWidget *parent) : QWidget(parent)
@@ -29,3 +30,4 @@ void VlcWidget::setAspectRatioMeetBest()
 {
 
 }
+#endif

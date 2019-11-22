@@ -1,7 +1,7 @@
+#ifdef SUPPORT_QTAV
+
 #ifndef QTAV_H
 #define QTAV_H
-
-#ifdef SUPPORT_QTAV
 
 #include <QObject>
 #include "tools/logging_categories.h"
@@ -36,4 +36,5 @@ protected slots:
 
 };
 #endif
+
 #endif // QTAV_H
