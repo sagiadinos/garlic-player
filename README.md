@@ -5,25 +5,27 @@ Garlic should be used online with web-based content managment systems like [Smil
 Offline usage via command-line is also possible.
 
 ## Libraries used
- - [Qt5](https://www.qt.io) >= 5.7
+ - [Qt5](https://www.qt.io) >= 5.7 (5.9.8 recommended)
  - [QtAV](http://www.qtav.org) >= 1.12.0 as alternative to QtMultimedia
  - [Quazip](http://quazip.sourceforge.net) 0.7.3 (included in ./src/ext)
  - [zlib](https://zlib.net) 1.2.11 (included in ./src/ext)
 
 ## OS targets:
 
-Linux, Windows, Raspberry Pi 3, Android, maybe later OSX
-
+Linux, Windows, Raspberry Pi 3/4, Android, OSX, later iOS
 Garlic is able to play local and remote (via http) SMIL Files with the features described below.
 Compilations were tested with:
  - Kde Neon Ubuntu 16.04 based (Do not use QtMultimedia cause gstreamer 1.8 seems to have a mem leak)
  - Kubuntu 16.10, 17.04, 17.10, 18.04 (native)
  - Debian: Jessie and Stretch
  - Rasperian Stretch rpi 3 with hardware video acceleration from [POT](https://github.com/carlonluca/pot) (experimental)
+ - Rasperian Stretch rpi 4 (experimental)
  - Tinker Board (Linaro OS 1.8) 
- - Android armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2 and 7.0)
+ - Android armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2, 7.1 and 9)
  - Windows 7 i64 (VS2015 Community Version)
-
+ - Windows 10 i64 (VS2015 Community Version)
+ - OSX High Sierra (Clang)
+ 
 For Android player-c2qml is needed, cause QtMultimedia-Widgets are not supported.
 
 Attention!
@@ -128,6 +130,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 
 ## future ToDo's
  - change config.xml during plaback
+ - interactivity trigger (touch, keyboard, ean-codes)
  - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
  - **administration functions** as described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)
 
