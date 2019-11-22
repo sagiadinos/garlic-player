@@ -57,7 +57,7 @@ void Video::deinit()
 
 void Video::changeSize(int w, int h)
 {
-    Q_UNUSED(w);
+    Q_UNUSED(w)
     Q_UNUSED(h)
     if (!exists)
         return;

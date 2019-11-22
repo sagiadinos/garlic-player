@@ -15,7 +15,7 @@ void QtMMDecoder::setVideoOutput(MediaWidgetWrapper *renderer)
 
 void QtMMDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
 {
-    Q_UNUSED(renderer);
+    Q_UNUSED(renderer)
 }
 
 bool QtMMDecoder::load(QString file_path)

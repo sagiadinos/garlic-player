@@ -12,7 +12,7 @@ CONFIG += warn_on c++11
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 
 #Delete or comment out the next line when you want to use QTMultimedia
-CONFIG    += support_qtmm # alternatives: support_qtav support_qtmm support_libvlc
+CONFIG    += support_qtav # alternatives: support_qtav support_qtmm support_libvlc
 
 #DEFINES += SUPPORT_EMBEDDED
 #DEFINES += SUPPORT_RPI

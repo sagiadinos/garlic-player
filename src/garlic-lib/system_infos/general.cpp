@@ -24,7 +24,7 @@ SystemInfos::General::General(QObject *parent) : QObject(parent)
 
 int SystemInfos::General::countThreads()
 {
-    int ret = 0;;
+    int ret = 0;
 #if defined Q_OS_WIN32
     // from https://stackoverflow.com/questions/3749668/how-to-query-the-thread-count-of-a-process-using-the-regular-windows-c-c-apis
     // first determine the id of the current process

@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     MyLibFacade->getConfiguration()->createDirectories();
 
 #ifdef QT_DEBUG
-    QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
+ //   QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
     // QtAV::setLogLevel(QtAV::LogAll); // use with caution! produces crashes in debug.log
 #else
     QLoggingCategory::setFilterRules("*.debug=false");

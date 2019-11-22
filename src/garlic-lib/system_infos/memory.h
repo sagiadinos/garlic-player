@@ -31,6 +31,9 @@
     #include <psapi.h>
 #elif defined Q_OS_DARWIN
     #include <mach/mach.h>
+    #include <mach/mach_host.h>
+    #include <sys/types.h>
+    #include <sys/sysctl.h>
 #elif defined Q_OS_LINUX
     #include <unistd.h>
 #endif

@@ -84,6 +84,30 @@ void SystemInfos::Memory::detectGlobal()
 
     setFree((qint64)memory_status.ullAvailPhys);
     setTotal((qint64)memory_status.ullTotalPhys);
+#elif defined Q_OS_DARWIN
+    int mib[2];
+    int64_t physical_memory;
+    size_t length;
+
+    // Get the Physical memory size
+    mib[0] = CTL_HW;
+    mib[1] = HW_MEMSIZE;
+    length = sizeof(int64_t);
+    sysctl(mib, 2, &physical_memory, &length, NULL, 0);
+
+    setTotal((qint64)physical_memory);
+
+    mach_port_t host_port;
+    mach_msg_type_number_t host_size;
+    vm_size_t pagesize;
+    host_port = mach_host_self();
+    host_size = sizeof(vm_statistics_data_t) / sizeof(integer_t);
+    host_page_size(host_port, &pagesize);
+    vm_statistics_data_t vm_stat;
+    host_statistics(host_port, HOST_VM_INFO, (host_info_t)&vm_stat, &host_size);
+    /* Stats in bytes */
+    natural_t mem_free = vm_stat.free_count * pagesize;
+    setFree((qint64)mem_free);
 
 #elif defined Q_OS_LINUX // work on Android too
     QFile fp("/proc/meminfo");
