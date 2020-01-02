@@ -32,7 +32,7 @@ public:
     ~TRegion();
     void                setRootSize(int w, int h);
     void                setRegion(Region r, QQmlEngine *e);
-    void                startShowMedia(TMedia *media);
+    void                startShowMedia(BaseMedia *media);
     void                stopShowMedia();
 
 protected:

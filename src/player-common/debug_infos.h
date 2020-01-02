@@ -7,7 +7,7 @@
 
 #include "system_infos/memory.h"
 #include "system_infos/general.h"
-#include "media.h"
+#include "base_media.h"
 
 namespace Ui
 {
@@ -22,7 +22,7 @@ class DebugInfos : public QDialog
 
     public:
         explicit DebugInfos(LibFacade *lib_facade, QWidget *parent = Q_NULLPTR);
-        void     setCurrentFilePlayed(TMedia *media);
+        void     setCurrentFilePlayed(BaseMedia *media);
         void     setLibFacade(LibFacade *lib_facade);
         ~DebugInfos();
         void outputResourcesUsage();
@@ -35,7 +35,7 @@ class DebugInfos : public QDialog
         SystemInfos::Memory    MyMemoryInfos;
         SystemInfos::General   MyGeneralInfos;
         void                   timerEvent(QTimerEvent *event);
-        QString                preparePlayedMediaText(TMedia *media);
+        QString                preparePlayedMediaText(BaseMedia *media);
     private:
         Ui::DebugInfos *ui;
 };

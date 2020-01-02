@@ -2,14 +2,18 @@ include(../defaults.pri)
 
 QT       += core sql network xml widgets
 TEMPLATE  = lib
-CONFIG    += warn_on staticlib c++11 stl
+CONFIG    += warn_on c++11 stl #staticlib
 
-DEFINES += QUAZIP_STATIC
+#DEFINES += QUAZIP_STATIC
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
+# -Wno-deprecated-copy is against the warnings float with gcc 9 and Qt < 5.13
+QMAKE_CXXFLAGS += -Wno-deprecated-copy
+
+
 TARGET = garlic
-LIBS += -L../ext -lquazip -lzlib
+#LIBS += -L../ext -lquazip -lzlib
 
 !android:DESTDIR = ../lib/
 android:DESTDIR = ../libandroid/
@@ -30,28 +34,34 @@ SOURCES += \
     files/network_access.cpp \
     files/webdav.cpp \
     files/wgt.cpp \
-    smilparser/timings/clock_value.cpp \
-    smilparser/timings/timing.cpp \
-    smilparser/tools/shuffle.cpp \
-    smilparser/audio.cpp \
+    smilparser/base_timings.cpp \
+    smilparser/current_playing_media.cpp \
+    smilparser/dom_parser.cpp \
+    smilparser/elements_container.cpp \
+    smilparser/media/audio.cpp \
+    smilparser/media/base_media.cpp \
+    smilparser/media/image.cpp \
+    smilparser/media/prefetch.cpp \
+    smilparser/media/unknown.cpp \
+    smilparser/media/video.cpp \
+    smilparser/media/web.cpp \
+    smilparser/sax_parser.cpp \
+    smilparser/timings/enhanced_timer.cpp \
+    smilparser/trigger/clock_value.cpp \
+    smilparser/timings/simple_timer.cpp \
+    smilparser/trigger/wallclock.cpp \
     smilparser/base.cpp \
-    smilparser/base_timing.cpp \
-    smilparser/body.cpp \
-    smilparser/container.cpp \
-    smilparser/excl.cpp \
+    smilparser/container/tools/shuffle.cpp \
+    smilparser/container/body.cpp \
+    smilparser/container/container.cpp \
+    smilparser/container/excl.cpp \
+    smilparser/container/par.cpp \
+    smilparser/container/priorityclass.cpp \
+    smilparser/container/seq.cpp \
     smilparser/factory.cpp \
     smilparser/head.cpp \
-    smilparser/image.cpp \
-    smilparser/media.cpp \
-    smilparser/par.cpp \
-    smilparser/prefetch.cpp \
-    smilparser/priorityclass.cpp \
-    smilparser/seq.cpp \
-    smilparser/video.cpp \
-    smilparser/web.cpp \
     tools/configuration.cpp \
     tools/logging_categories.cpp \
-    smilparser.cpp \
     smilparser/head/subscription.cpp \
     system_infos/memory.cpp \
     system_infos/network.cpp \
@@ -87,46 +97,52 @@ HEADERS += \
     files/network_access.h \
     files/webdav.h \
     files/wgt.h \
-    smilparser/timings/clock_value.h \
-    smilparser/timings/timing.h \
-    smilparser/tools/shuffle.h \
-    smilparser/audio.h \
-    smilparser/body.h \
-    smilparser/base.h \
-    smilparser/base_timing.h \
-    smilparser/container.h \
-    smilparser/excl.h \
+    smilparser/current_playing_media.h \
+    smilparser/dom_parser.h \
+    smilparser/elements_container.h \
+    smilparser/media/base_media.h \
+    smilparser/media/audio.h \
+    smilparser/media/image.h \
+    smilparser/media/prefetch.h \
+    smilparser/media/unknown.h \
+    smilparser/media/video.h \
+    smilparser/media/web.h \
+    smilparser/sax_parser.h \
+    smilparser/timings/enhanced_timer.h \
+    smilparser/trigger/clock_value.h \
+    smilparser/timings/simple_timer.h \
+    smilparser/trigger/wallclock.h \
+    smilparser/container/tools/shuffle.h \
+    smilparser/container/body.h \
+    smilparser/container/par.h \
+    smilparser/container/priorityclass.h \
+    smilparser/container/seq.h \
+    smilparser/container/container.h \
+    smilparser/container/excl.h \
     smilparser/factory.h \
+    smilparser/base_timings.h \
+    smilparser/base.h \
     smilparser/head.h \
-    smilparser/image.h \
-    smilparser/media.h \
-    smilparser/par.h \
-    smilparser/prefetch.h \
-    smilparser/priorityclass.h \
-    smilparser/seq.h \
-    smilparser/video.h \
-    smilparser/web.h \
-    smilparser.h \
     smilparser/head/subscription.h \
     system_infos/memory.h \
     system_infos/network.h \
     system_infos/cpu.h \
     system_infos/general.h \
-    lib_facade.h \
-    reports/create/base_reports.h \
-    reports/create/system_report.h \
-    reports/system_report_manager.h \
     tools/configuration.h \
     tools/logging_categories.h \
     tools/logger.h \
+    tools/log_file.h \
+    tools/resource_monitor.h \
+    reports/create/base_reports.h \
+    reports/create/system_report.h \
+    reports/system_report_manager.h \
     reports/event_logs_manager.h \
     reports/create/event_logs.h \
-    tools/log_file.h \
     reports/base_report_manager.h \
     reports/play_logs_manager.h \
     reports/create/play_logs.h \
     reports/create/inventory_report.h \
     reports/inventory_report_manager.h \
     db/inventory_table.h \
-    tools/resource_monitor.h
+    lib_facade.h
 

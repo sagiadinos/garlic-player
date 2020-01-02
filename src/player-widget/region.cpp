@@ -44,7 +44,7 @@ void TRegion::paintEvent(QPaintEvent *event)
     style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
 
-void TRegion::startShowMedia(TMedia *media)
+void TRegion::startShowMedia(BaseMedia *media)
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyMedia = MyMediaFactory.initMedia(media);

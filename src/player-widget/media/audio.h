@@ -3,16 +3,16 @@
 
 #include <QLabel>
 #include "mediaplayer_wrapper.h"
-#include "smilparser/audio.h"
-#include "base_media.h"
+#include "smilparser/media/audio.h"
+#include "player_base_media.h"
 
-class Audio : public BaseMedia
+class PlayerAudio : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        explicit Audio(QObject *parent = nullptr);
-        ~Audio();
-        void          init(TMedia *media);
+        explicit PlayerAudio(QObject *parent = nullptr);
+        ~PlayerAudio();
+        void          init(BaseMedia *media);
         void          deinit();
         QWidget      *getView();
         void          changeSize(int w, int h);

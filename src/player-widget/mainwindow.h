@@ -29,10 +29,10 @@
 #endif
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
+#include "../player-common/interactions.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
 #include "lib_facade.h"
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -51,6 +51,7 @@ class MainWindow : public QMainWindow
         const int                 WINDOWED      = 0;
         const int                 FULLSCREEN    = 1;
         const int                 BIGFULLSCREEN = 2;
+        Interactions             *MyInteractions;
         QWidget                  *centralWidget;
         LibFacade                *MyLibFacade      = Q_NULLPTR;
         TScreen                  *MyScreen;
@@ -69,8 +70,8 @@ class MainWindow : public QMainWindow
         void                      deleteRegions();
     protected slots:
         void                      prepareParsing();
-        void                      startShowMedia(TMedia *media);
-        void                      stopShowMedia(TMedia *media);
+        void                      startShowMedia(BaseMedia *media);
+        void                      stopShowMedia(BaseMedia *media);
 
 };
 

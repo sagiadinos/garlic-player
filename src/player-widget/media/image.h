@@ -3,15 +3,15 @@
 
 #include <QLabel>
 #include <QPixmap>
-#include "base_media.h"
-#include "smilparser/image.h"
+#include "player_base_media.h"
+#include "smilparser/media/image.h"
 
-    class Image : public BaseMedia
+    class PlayerImage : public PlayerBaseMedia
     {
             Q_OBJECT
-        public:            explicit      Image(QObject *parent = nullptr);
-            ~Image();
-            void          init(TMedia *media);
+        public:            explicit      PlayerImage(QObject *parent = nullptr);
+            ~PlayerImage();
+            void          init(BaseMedia *media);
             void          deinit();
             void          changeSize(int w, int h);
             QWidget      *getView();

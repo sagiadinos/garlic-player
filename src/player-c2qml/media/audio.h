@@ -1,7 +1,7 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-#include "smilparser/video.h"
+#include "smilparser/media/video.h"
 #include "base_media.h"
 
 class Audio : public BaseMedia
@@ -10,7 +10,7 @@ class Audio : public BaseMedia
     public:
         Audio(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
         ~Audio();
-        void                        init(TMedia *media);
+        void                        init(BaseMedia *media);
         void                        deinit();
         void                        setParentItem(QQuickItem *parent);
     protected:

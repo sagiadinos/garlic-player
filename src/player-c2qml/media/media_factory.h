@@ -13,7 +13,7 @@ class MediaFactory : public QObject
         Q_OBJECT
     public:
         explicit MediaFactory(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
-        BaseMedia *initMedia(TMedia *media);
+        BaseMedia *initMedia(BaseMedia *media);
 
     protected:
         QScopedPointer<BaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb;

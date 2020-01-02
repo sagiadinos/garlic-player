@@ -6,16 +6,16 @@
 #include <QWebEngineSettings>
 #include <QWebEngineProfile>
 
-#include "smilparser/web.h"
-#include "base_media.h"
+#include "smilparser/media/web.h"
+#include "player_base_media.h"
 
-class Web : public BaseMedia
+class PlayerWeb : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        Web(QObject *parent = nullptr);
-        ~Web();
-        void            init(TMedia *media);
+        PlayerWeb(QObject *parent = nullptr);
+        ~PlayerWeb();
+        void            init(BaseMedia *media);
         void            deinit();
         void            changeSize(int w, int h);
         QWidget        *getView();

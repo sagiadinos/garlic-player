@@ -9,10 +9,12 @@ INCLUDEPATH += ../garlic-lib/
 QT     += core gui sql xml widgets webenginewidgets
 CONFIG += warn_on c++11
 #temporary ToDO
-QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+# -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
+# -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
+QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
 
 #Delete or comment out the next line when you want to use QTMultimedia
-CONFIG    += support_qtav # alternatives: support_qtav support_qtmm support_libvlc
+CONFIG    += support_qtmm # alternatives: support_qtav support_qtmm support_libvlc
 
 #DEFINES += SUPPORT_EMBEDDED
 #DEFINES += SUPPORT_RPI
@@ -34,7 +36,7 @@ support_qtmm {
      QT += multimedia multimediawidgets
 }
 
-DEFINES += QT_DEPRECATED_WARNINGS QUAZIP_STATIC
+DEFINES += QT_DEPRECATED_WARNINGS #QUAZIP_STATIC
 
 TARGET = garlic-player
 TEMPLATE = app
@@ -44,8 +46,8 @@ INCLUDEPATH+=../ext/zlib/includes
 include(../player-common/common.pri)
 
 SOURCES += \
-    media/base_media.cpp \
     media/image.cpp \
+    media/player_base_media.cpp \
     media/video.cpp \
     media/web.cpp \
     media/audio.cpp \
@@ -63,8 +65,8 @@ SOURCES += \
     region.cpp
 
 HEADERS  += \
-    media/base_media.h \
     media/image.h \
+    media/player_base_media.h \
     media/video.h \
     media/web.h \
     media/audio.h \
@@ -81,7 +83,7 @@ HEADERS  += \
     region.h
 
 unix{
-    LIBS += -L../lib -lgarlic -lquazip -lzlib
+    LIBS += -L../lib -lgarlic -lquazip # -lzlib
 }
 win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib

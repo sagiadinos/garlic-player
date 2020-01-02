@@ -2,7 +2,7 @@
 #define MPIMAGE_H
 
 #include "base_media.h"
-#include "smilparser/image.h"
+#include "smilparser/media/image.h"
 #include <QQuickImageProvider>
 #include <QQuickImageResponse>
 class Image : public BaseMedia
@@ -15,7 +15,7 @@ class Image : public BaseMedia
 
         explicit      Image(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
         ~Image();
-        void          init(TMedia *media);
+        void          init(BaseMedia *media);
         void          deinit();
         void          setParentItem(QQuickItem *parent);
     protected:

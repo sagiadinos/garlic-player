@@ -21,25 +21,65 @@ TFactory::TFactory(QObject *parent) : QObject(parent)
 {
 }
 
-TBaseTiming* TFactory::createBase(QString type, TContainer *parent_container, QObject *parent)
+BaseTimings* TFactory::createBase(QDomElement dom_element, TContainer *parent_container, QObject *parent)
 {
+    QString tag_name = dom_element.tagName();
+    QString type     = "";
+    if(tag_name == "img" || tag_name == "video" || tag_name == "audio" || tag_name == "text" || tag_name == "prefetch" ||
+            tag_name == "seq"|| tag_name == "par" || tag_name == "excl")
+    {
+        type = tag_name;
+    }
+    else if(tag_name == "ref" && dom_element.hasAttribute("type"))
+    {
+        if(dom_element.attribute("type").contains("image"))
+           type = "img";
+        else if (dom_element.attribute("type").contains("video"))
+           type = "video";
+        else if (dom_element.attribute("type").contains("audio"))
+           type = "audio";
+        else if (dom_element.attribute("type").contains("text"))
+           type = "text";
+        else if (dom_element.attribute("type").contains("application/widget"))
+           type = "text";
+    }
+
     if (type == "img")
+    {
         return new TImage(parent_container, parent);
+    }
     else if (type == "video")
+    {
         return new TVideo(parent_container, parent);
+    }
     else if (type == "audio")
+    {
         return new TAudio(parent_container, parent);
+    }
     else if (type == "text")
+    {
         return new TWeb(parent_container, parent);
+    }
     else if (type == "prefetch")
+    {
         return new TPrefetch(parent_container, parent);
+    }
     else if (type == "seq")
+    {
         return new TSeq(parent_container, parent);
+    }
     else if (type == "par")
+    {
         return new TPar(parent_container, parent);
+    }
     else if (type == "excl")
+    {
         return new TExcl(parent_container, parent);
+    }
     else if (type == "body")
+    {
         return new TBody(parent);
-    return NULL;
+    }
+
+    return new Unknown(parent_container, parent);
 }

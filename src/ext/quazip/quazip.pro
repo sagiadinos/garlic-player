@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += qt warn_on staticlib c++11
+CONFIG += qt warn_on c++11 #staticlib
 QT -= gui
 
 !android:DESTDIR = ../../lib/
@@ -63,3 +63,6 @@ win32 {
 }
 INCLUDEPATH += ../zlib/includes
 LIBS += -L../../lib/ -lzlib
+
+# -Wno-deprecated-copy is against the warnings float with gcc 9 and Qt < 5.13
+QMAKE_CXXFLAGS += -Wno-deprecated-copy

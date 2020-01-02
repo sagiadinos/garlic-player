@@ -1,7 +1,7 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-#include "smilparser/video.h"
+#include "smilparser/media/video.h"
 #include "base_media.h"
 
 class Video : public BaseMedia
@@ -13,7 +13,7 @@ class Video : public BaseMedia
         const int PRESERVEASPECTCROP = 2;
         Video(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
         ~Video();
-        void                        init(TMedia *media);
+        void                        init(BaseMedia *media);
         void                        deinit();
         void                        setParentItem(QQuickItem *parent);
     protected:

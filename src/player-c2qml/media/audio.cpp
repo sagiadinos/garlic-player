@@ -29,7 +29,7 @@ Audio::~Audio()
     audio_item.reset();
 }
 
-void Audio::init(TMedia *media)
+void Audio::init(BaseMedia *media)
 {
     MyMedia = media;
     QString source = MyMedia->getLoadablePath();

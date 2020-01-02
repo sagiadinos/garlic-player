@@ -29,7 +29,7 @@ QString TBase::parseID(QDomElement element)
         ret = element.attribute("id");
     if (element.hasAttribute("xml:id")) // In SMIL 3.0 superset old SMIL 2.0 id.
         ret = element.attribute("xml:id");
-    if (ret == "") // get line and column number as alternative when no
+    if (ret == "") // get line and column number as alternative id when no one is set in SMIL
     {
         ret = element.tagName()+"_"+QString::number(element.lineNumber()) + "_" + QString::number(element.columnNumber());
     }
@@ -38,11 +38,20 @@ QString TBase::parseID(QDomElement element)
 
 void TBase::setBaseAttributes()
 {
-    id = parseID(root_element);
-    if (root_element.hasAttribute("title"))
-        title = root_element.attribute("title");
-    if (root_element.hasAttribute("class"))
-        a_class = root_element.attribute("class");
-    if (root_element.hasAttribute("xml:lang"))
-        lang = root_element.attribute("xml:lang");
+    id      = parseID(root_element);
+    title   = getAttributeFromRootElement("title");
+    a_class = getAttributeFromRootElement("class");
+    lang    = getAttributeFromRootElement("xml:lang");
 }
+
+QString TBase::getAttributeFromRootElement(const QString attribute_name)
+{
+    QString ret = "";
+    if (root_element.hasAttribute(attribute_name))
+    {
+        ret = root_element.attribute(attribute_name);
+    }
+    return ret;
+}
+
+

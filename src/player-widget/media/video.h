@@ -3,16 +3,16 @@
 
 #include "mediaplayer_wrapper.h"
 #include "mediawidget_wrapper.h"
-#include "smilparser/video.h"
-#include "base_media.h"
+#include "smilparser/media/video.h"
+#include "player_base_media.h"
 
-class Video : public BaseMedia
+class PlayerVideo : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        Video(QObject *parent = nullptr);
-        ~Video();
-        void              init(TMedia *media);
+        PlayerVideo(QObject *parent = nullptr);
+        ~PlayerVideo();
+        void              init(BaseMedia *media);
         void              deinit();
         void              changeSize(int w, int h);
         QWidget          *getView();

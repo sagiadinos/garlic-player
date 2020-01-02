@@ -48,8 +48,9 @@ protected:
             QString       title          = "";
             QString       lang           = "";
             QString       a_class        = ""; // cause class is reserved word. a_class means attribut_class
-            void          setBaseAttributes();
             QDomElement   root_element;
+            void          setBaseAttributes();
+            QString       getAttributeFromRootElement(const QString attribute_name);
 };
 
 #endif // TBASE_H

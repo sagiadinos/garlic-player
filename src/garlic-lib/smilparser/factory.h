@@ -17,23 +17,26 @@
 *************************************************************************************/
 #ifndef TFACTORY_H
 #define TFACTORY_H
-#include "smilparser/image.h"
-#include "smilparser/audio.h"
-#include "smilparser/video.h"
-#include "smilparser/web.h"
-#include "smilparser/prefetch.h"
+#include "smilparser/media/image.h"
+#include "smilparser/media/audio.h"
+#include "smilparser/media/video.h"
+#include "smilparser/media/web.h"
+#include "smilparser/media/prefetch.h"
+#include "smilparser/media/unknown.h"
 
-#include "smilparser/body.h"
-#include "smilparser/seq.h"
-#include "smilparser/par.h"
-#include "smilparser/excl.h"
+#include "smilparser/container/body.h"
+#include "smilparser/container/seq.h"
+#include "smilparser/container/par.h"
+#include "smilparser/container/excl.h"
 
 class TFactory : public QObject
 {
     Q_OBJECT
 public:
     explicit TFactory(QObject *parent = Q_NULLPTR);
-    static TBaseTiming    *createBase(QString type, TContainer *parent_container, QObject *parent);
+    static BaseTimings    *createBase(QDomElement dom_element, TContainer *parent_container, QObject *parent);
+protected:
+
 };
 
 #endif // TFACTORY_H

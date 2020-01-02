@@ -25,7 +25,7 @@ Image::~Image()
     image_item.reset();
 }
 
-void Image::init(TMedia *media)
+void Image::init(BaseMedia *media)
 {
     MyMedia = media;
     if (load(image_item.data()))

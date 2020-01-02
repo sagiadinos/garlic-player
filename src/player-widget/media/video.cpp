@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "video.h"
 
-Video::Video(QObject *parent) : BaseMedia(parent)
+PlayerVideo::PlayerVideo(QObject *parent) : PlayerBaseMedia(parent)
 {
     MediaDecoder.reset(new MediaPlayerWrapper(this));
     connect(MediaDecoder.data(), SIGNAL(finished()), this, SLOT(finished()));
@@ -26,43 +26,43 @@ Video::Video(QObject *parent) : BaseMedia(parent)
     MediaDecoder.data()->setVideoOutput(VideoWidget.data());
 }
 
-Video::~Video()
+PlayerVideo::~PlayerVideo()
 {
     MediaDecoder.reset();
     VideoWidget.reset();
 }
 
-void Video::init(TMedia *media)
+void PlayerVideo::init(BaseMedia *media)
 {
-   MyMedia  = media;
-   QString path = MyMedia->getLoadablePath();
+   SmilMedia  = media;
+   QString path = SmilMedia->getLoadablePath();
    if (isFileExists(path))
    {
        MediaDecoder.data()->load(path);
        MediaDecoder.data()->play();
        TVideo  *MyParser = qobject_cast<TVideo *>(media);
        MediaDecoder.data()->setVolume(MyParser->getSoundLevel());
-       if (MyMedia->getLogContentId() != "")
+       if (SmilMedia->getLogContentId() != "")
            setStartTime();
    }
 }
 
-void Video::deinit()
+void PlayerVideo::deinit()
 {
     MediaDecoder.data()->stop();
     MediaDecoder.data()->unload();
-    if (MyMedia->getLogContentId() != "")
+    if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
-void Video::changeSize(int w, int h)
+void PlayerVideo::changeSize(int w, int h)
 {
     Q_UNUSED(w)
     Q_UNUSED(h)
     if (!exists)
         return;
 
-    QString fit = MyMedia->getFit();
+    QString fit = SmilMedia->getFit();
     if (fit == "fill")
         VideoWidget.data()->setAspectRatioFill();
     else if (fit == "meet")
@@ -71,14 +71,14 @@ void Video::changeSize(int w, int h)
         VideoWidget.data()->setAspectRatioMeetBest();
 }
 
-QWidget *Video::getView()
+QWidget *PlayerVideo::getView()
 {
     if (!exists)
         return Q_NULLPTR;
     return VideoWidget.data()->getVideoWidget();
 }
 
-void Video::finished()
+void PlayerVideo::finished()
 {
-   MyMedia->finishedSimpleDuration();
+   SmilMedia->finishedSimpleDuration();
 }

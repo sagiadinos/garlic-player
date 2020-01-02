@@ -17,51 +17,51 @@
 *************************************************************************************/
 #include "audio.h"
 
-Audio::Audio( QObject *parent) : BaseMedia(parent)
+PlayerAudio::PlayerAudio( QObject *parent) : PlayerBaseMedia(parent)
 {
     MediaDecoder.reset(new MediaPlayerWrapper(this));
     connect(MediaDecoder.data(), SIGNAL(finished()), this, SLOT(finished()));
 }
 
-Audio::~Audio()
+PlayerAudio::~PlayerAudio()
 {
 }
 
-void Audio::init(TMedia *media)
+void PlayerAudio::init(BaseMedia *media)
 {
-    MyMedia  = media;
-    QString path = MyMedia->getLoadablePath();
+    SmilMedia  = media;
+    QString path = SmilMedia->getLoadablePath();
     if (isFileExists(path))
     {
         MediaDecoder.data()->load(path);
         MediaDecoder.data()->play();
         TAudio  *MyParser = qobject_cast<TAudio *>(media);
         MediaDecoder.data()->setVolume(MyParser->getSoundLevel());
-        if (MyMedia->getLogContentId() != "")
+        if (SmilMedia->getLogContentId() != "")
             setStartTime();
      }
 }
 
-void Audio::deinit()
+void PlayerAudio::deinit()
 {
     MediaDecoder.data()->stop();
     MediaDecoder.data()->unload();
-    if (MyMedia->getLogContentId() != "")
+    if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
-void Audio::changeSize(int w, int h)
+void PlayerAudio::changeSize(int w, int h)
 {
     Q_UNUSED(w);Q_UNUSED(h)
 }
 
 
-QWidget *Audio::getView()
+QWidget *PlayerAudio::getView()
 {
     return Q_NULLPTR;
 }
 
-void Audio::finished()
+void PlayerAudio::finished()
 {
-   MyMedia->finishedSimpleDuration();
+   SmilMedia->finishedSimpleDuration();
 }

@@ -26,7 +26,7 @@ Video::~Video()
     video_item.reset();
 }
 
-void Video::init(TMedia *media)
+void Video::init(BaseMedia *media)
 {
     MyMedia = media;
     if (load(video_item.data()))

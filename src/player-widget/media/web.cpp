@@ -17,11 +17,11 @@
 *************************************************************************************/
 #include "web.h"
 
-Web::Web(QObject *parent) : BaseMedia(parent)
+PlayerWeb::PlayerWeb(QObject *parent) : PlayerBaseMedia(parent)
 {
 }
 
-Web::~Web()
+PlayerWeb::~PlayerWeb()
 {
     // FIX THIS! delete or deleteLater for browser crashes,
     // when playliste changed and browser was used method init/deinit
@@ -35,9 +35,9 @@ Web::~Web()
     qDebug() << "delete browser";
 }
 
-void Web::init(TMedia *media)
+void PlayerWeb::init(BaseMedia *media)
 {
-    MyMedia = media;
+    SmilMedia = media;
     browser = new QWebEngineView;
     connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
     // Deactivate caching for testing
@@ -46,30 +46,30 @@ void Web::init(TMedia *media)
 
     QUrl url(media->getLoadablePath());
     browser->load(url);
-    if (MyMedia->getLogContentId() != "")
+    if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
 
-void Web::deinit()
+void PlayerWeb::deinit()
 {
     browser->load(QUrl(""));
     browser->close();
     delete  browser;
-    if (MyMedia->getLogContentId() != "")
+    if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
-void Web::changeSize(int w, int h)
+void PlayerWeb::changeSize(int w, int h)
 {
     browser->resize(w-2, h-2);
 }
 
-QWidget *Web::getView()
+QWidget *PlayerWeb::getView()
 {
     return browser;
 }
 
-void Web::doLoadFinished(bool has_succeeded)
+void PlayerWeb::doLoadFinished(bool has_succeeded)
 {
     if (has_succeeded)
     {

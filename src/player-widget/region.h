@@ -41,7 +41,7 @@ public:
     void                paintEvent(QPaintEvent *event);
     void                setRootSize(int w, int h);
     void                setRegion(Region region);
-    void                startShowMedia(TMedia *media);
+    void                startShowMedia(BaseMedia *media);
     void                stopShowMedia();
 
 protected:
@@ -49,7 +49,7 @@ protected:
     QString               actual_media = "";
     Region                region;
     QScopedPointer<QStackedLayout>          layout;
-    BaseMedia             *MyMedia = Q_NULLPTR;
+    PlayerBaseMedia             *MyMedia = Q_NULLPTR;
     MediaFactory          MyMediaFactory;
     void                  resizeGeometry();
 };

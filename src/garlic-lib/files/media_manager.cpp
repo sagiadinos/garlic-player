@@ -45,7 +45,6 @@ void MediaManager::registerFile(QString src)
         handleRemoteFile(src);
         return;
     }
-
     if (isRelative(src)) // when media is relative we need the Indexpath set in front
     {
         src = MyConfiguration->getIndexPath() + src;
@@ -62,13 +61,17 @@ void MediaManager::registerFile(QString src)
 void MediaManager::registerUncached(QString src)
 {
     if (MyMediaModel->findLocalBySrcPath(src) == "")
+    {
         MyMediaModel->insertAvaibleFile(src, src); // src and local path are identically if src path is local or a simple website
+    }
 }
 
 int MediaManager::checkCacheStatus(QString src)
 {
     if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
+    {
         src = MyConfiguration->getIndexPath() + src;
+    }
     int status = MyMediaModel->findStatusBySrcPath(src);
     if (status == MEDIA_MODIFIED && !isCurrentlyPlaying(src))
     {
@@ -97,8 +100,9 @@ bool MediaManager::isCurrentlyPlaying(QString path)
 QString MediaManager::requestLoadablePath(QString src)
 {
     if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
+    {
         src = MyConfiguration->getIndexPath() + src;
-
+    }
     return MyMediaModel->findLocalBySrcPath(src);
 }
 
@@ -109,8 +113,9 @@ void MediaManager::handleRemoteFile(QString src)
     QString local_path = MyConfiguration->getPaths("cache") + MyMediaModel->determineHashedFilePath(src);
     QFileInfo fi(local_path);
     if (fi.exists() && MyMediaModel->findLocalBySrcPath(src) == "") // use cached, cause network could be unreachable
+    {
         MyMediaModel->insertAvaibleFile(src, local_path);
-
+    }
     MyDownloadQueue->insertQueue(src, local_path);
 }
 
@@ -124,7 +129,11 @@ void MediaManager::doNotCacheable(QString src_file_path)
 void MediaManager::doSucceed(QString src_file_path, QString local_file_path)
 {
     if (MyMediaModel->findLocalBySrcPath(src_file_path) == "")
+    {
         MyMediaModel->insertAvaibleFile(src_file_path, local_file_path);
+    }
     else
+    {
         MyMediaModel->setStatusBySrcPath(src_file_path, MEDIA_MODIFIED);
+    }
 }

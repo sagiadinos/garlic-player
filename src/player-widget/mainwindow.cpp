@@ -21,10 +21,11 @@
 MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 {
     centralWidget          = new QWidget(this); // had to be there to get fullscreen simulation over multiple monitors
+    MyInteractions         = new Interactions(lib_facade, this);
     MyScreen               = screen;
     MyLibFacade            = lib_facade;
-    connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
-    connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
+    connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(startShowMedia(BaseMedia *)));
+    connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(stopShowMedia(BaseMedia *)));
     connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
@@ -40,7 +41,10 @@ MainWindow::~MainWindow()
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
     if (!ke->modifiers().testFlag(Qt::ControlModifier))
-        return;
+    {
+      MyInteractions->handleKeyPress(ke);
+      return;
+    }
     switch (ke->key())
     {
         case Qt::Key_F:
@@ -222,7 +226,7 @@ void MainWindow::prepareParsing()
 }
 
 
-void MainWindow::startShowMedia(TMedia *media)
+void MainWindow::startShowMedia(BaseMedia *media)
 {
     if (regions_list.size() > 0) // prevent to call functionx of deleted or not existing regions
     {
@@ -232,7 +236,7 @@ void MainWindow::startShowMedia(TMedia *media)
     }
 }
 
-void MainWindow::stopShowMedia(TMedia *media)
+void MainWindow::stopShowMedia(BaseMedia *media)
 {
     if (regions_list.size() > 0)// prevent to call function of deleted or nonexisting regions
         regions_list[selectRegion(media->getRegion())]->stopShowMedia();

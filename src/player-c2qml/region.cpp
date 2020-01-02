@@ -60,7 +60,7 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
     MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, this));
 }
 
-void TRegion::startShowMedia(TMedia *media)
+void TRegion::startShowMedia(BaseMedia *media)
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyMedia = MyMediaFactory.data()->initMedia(media);

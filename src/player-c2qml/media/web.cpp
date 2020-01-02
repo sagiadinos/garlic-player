@@ -19,7 +19,7 @@ Web::~Web()
     web_item.reset();
 }
 
-void Web::init(TMedia *media)
+void Web::init(BaseMedia *media)
 {
     MyMedia = media;
     web_item.data()->setVisible(true);

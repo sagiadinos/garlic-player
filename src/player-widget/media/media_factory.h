@@ -11,14 +11,14 @@ class MediaFactory : public QObject
         Q_OBJECT
     public:
         explicit MediaFactory(QObject *parent = nullptr);
-        BaseMedia *initMedia(TMedia *media);
+        PlayerBaseMedia *initMedia(BaseMedia *media);
 
     signals:
 
     public slots:
 
     protected:
-        QScopedPointer<BaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb;
+        QScopedPointer<PlayerBaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb;
 
 
 };

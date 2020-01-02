@@ -17,44 +17,44 @@
 *************************************************************************************/
 #include "media/image.h"
 
-Image::Image(QObject *parent) : BaseMedia(parent)
+PlayerImage::PlayerImage(QObject *parent) : PlayerBaseMedia(parent)
 {
     ImageWidget.reset(new QLabel);
 }
 
-Image::~Image()
+PlayerImage::~PlayerImage()
 {
 }
 
-void Image::init(TMedia *media)
+void PlayerImage::init(BaseMedia *media)
 {
-    MyMedia = media;
+    SmilMedia = media;
 
-    QString path = MyMedia->getLoadablePath();
+    QString path = SmilMedia->getLoadablePath();
     if (isFileExists(path))
     {
         loaded_image.load(path);
         ImageWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         ImageWidget.data()->setPixmap(loaded_image);
-        if (MyMedia->getLogContentId() != "")
+        if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
 }
 
-void Image::deinit()
+void PlayerImage::deinit()
 {
     loaded_image.load("");
     ImageWidget.data()->setPixmap(loaded_image);
-    if (MyMedia->getLogContentId() != "")
+    if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
-void Image::changeSize(int w, int h)
+void PlayerImage::changeSize(int w, int h)
 {
     if (!exists)
         return;
 
-    QString fit = MyMedia->getFit();
+    QString fit = SmilMedia->getFit();
     if (fit == "fill")
        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     else if (fit == "meet")
@@ -65,7 +65,7 @@ void Image::changeSize(int w, int h)
         ImageWidget.data()->setPixmap(loaded_image);
 }
 
-QWidget *Image::getView()
+QWidget *PlayerImage::getView()
 {
     if (!exists)
         return Q_NULLPTR;

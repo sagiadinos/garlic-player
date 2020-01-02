@@ -29,6 +29,7 @@
 #endif
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
+#include "../player-common/interactions.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
 
@@ -54,6 +55,7 @@ class MainWindow : public QQuickView
         const int                 FULLSCREEN    = 1;
         const int                 BIGFULLSCREEN = 2;
 
+        Interactions              MyInterActions;
         LibFacade                *MyLibFacade      = Q_NULLPTR;
         TScreen                  *MyScreen;
         QMap<QString, TRegion *>  regions_list;
@@ -71,8 +73,8 @@ class MainWindow : public QQuickView
         void                      deleteRegions();
     protected slots:
         void                      prepareParsing();
-        void                      startShowMedia(TMedia *media);
-        void                      stopShowMedia(TMedia *media);
+        void                      startShowMedia(BaseMedia *media);
+        void                      stopShowMedia(BaseMedia *media);
         void                      doStatusChanged(QQuickView::Status status);
 };
 

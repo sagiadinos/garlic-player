@@ -22,7 +22,7 @@
 #include "files/index_manager.h"
 #include "files/media_manager.h"
 #include "smilparser/head.h"
-#include "smilparser.h"
+#include "dom_parser.h"
 #include "tools/resource_monitor.h"
 
 /**
@@ -49,29 +49,34 @@ class LibFacade : public QObject
         THead             *getHead() const;
         void               beginSmilBodyParsing();
         void               checkForNewSmilIndex();
+        // Interactions
+        void               playNextSmilElement();
+        void               playPreviousSmilElement();
+        void               playSmilElement(int position, int zone = 1);
 
     public slots:
         void               loadIndex();
-        void               emitStartShowMedia(TMedia *media);
-        void               emitStopShowMedia(TMedia *media);
+        void               emitStartShowMedia(BaseMedia *media);
+        void               emitStopShowMedia(BaseMedia *media);
 
     protected:
         int                 timer_id;
-        QScopedPointer<DB::InventoryTable> MyInventoryTable;
-        QScopedPointer<TConfiguration>     MyConfiguration;
-        QScopedPointer<MediaModel>         MyMediaModel;
-        QScopedPointer<DownloadQueue>      MyDownloadQueue;
-        QScopedPointer<IndexManager>       MyIndexManager ;
-        QScopedPointer<MediaManager>       MyMediaManager;
-        QScopedPointer<THead>              MyHead;
-        QScopedPointer<TSmil>              MySmil;
-        ResourceMonitor                    MyResourceMonitor;
-        void                 timerEvent(QTimerEvent *event);
-
+        QScopedPointer<DB::InventoryTable>  MyInventoryTable;
+        QScopedPointer<ElementsContainer>   MyElementsContainer;
+        QScopedPointer<CurrentPlayingMedia> MyCurrentPlayingMedia;
+        QScopedPointer<TConfiguration>      MyConfiguration;
+        QScopedPointer<MediaModel>          MyMediaModel;
+        QScopedPointer<DownloadQueue>       MyDownloadQueue;
+        QScopedPointer<IndexManager>        MyIndexManager ;
+        QScopedPointer<MediaManager>        MyMediaManager;
+        QScopedPointer<THead>               MyHead;
+        QScopedPointer<DomParser>           MyDomParser;
+        ResourceMonitor                     MyResourceMonitor;
+        void               timerEvent(QTimerEvent *event);
     signals:
-        void                 startShowMedia(TMedia *media);
-        void                 stopShowMedia(TMedia *media);
-        void                 newIndexLoaded();
+        void               startShowMedia(BaseMedia *media);
+        void               stopShowMedia(BaseMedia *media);
+        void               newIndexLoaded();
 };
 
 #endif // LIB_FACADE_H

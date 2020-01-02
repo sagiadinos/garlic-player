@@ -61,25 +61,40 @@ void LibFacade::checkForNewSmilIndex()
     MyIndexManager.data()->lookUpForUpdatedIndex();
 }
 
+void LibFacade::playNextSmilElement()
+{
+
+}
+
+void LibFacade::playPreviousSmilElement()
+{
+
+}
+
+void LibFacade::playSmilElement(int position, int zone)
+{
+    Q_UNUSED(position);
+    Q_UNUSED(zone);
+}
+
 THead *LibFacade::getHead() const
 {
     return MyHead.data();
 }
 
-
 void LibFacade::beginSmilBodyParsing()
 {
-    connect(MySmil.data(), SIGNAL(startShowMedia(TMedia *)), this, SLOT(emitStartShowMedia(TMedia *)));
-    connect(MySmil.data(), SIGNAL(stopShowMedia(TMedia *)), this, SLOT(emitStopShowMedia(TMedia *)));
-    MySmil->beginSmilParsing(MyIndexManager->getBody());
+    connect(MyDomParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));
+    connect(MyDomParser.data(), SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(emitStopShowMedia(BaseMedia *)));
+    MyDomParser->beginSmilParsing(MyIndexManager->getBody());
 }
 
 void LibFacade::loadIndex()
 {
     qDebug(Develop) << "start" << Q_FUNC_INFO;
-    if (!MySmil.isNull())
+    if (!MyDomParser.isNull())
     {
-        MySmil.data()->endSmilParsing();
+        MyDomParser.data()->endSmilParsing();
         MyIndexManager.data()->deactivateRefresh();
     }
 
@@ -92,24 +107,26 @@ void LibFacade::loadIndex()
     MyHead.data()->parse(MyIndexManager->getHead());
     MyIndexManager.data()->activateRefresh(MyHead->getRefreshTime());
 
+    MyElementsContainer.reset(new ElementsContainer(this));
+
     MyMediaModel.reset(new MediaModel(this));
     MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data(), this));
     MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
     MyMediaManager.reset(new MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
 
-    MySmil.reset(new TSmil(MyMediaManager.data(), this));
+    MyDomParser.reset(new DomParser(MyMediaManager.data(), MyElementsContainer.data(), this));
     emit newIndexLoaded();
     qDebug(Develop) << "end " << Q_FUNC_INFO;
 }
 
-void LibFacade::emitStartShowMedia(TMedia *media)
+void LibFacade::emitStartShowMedia(BaseMedia *media)
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
     emit startShowMedia(media);
     qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
-void LibFacade::emitStopShowMedia(TMedia *media)
+void LibFacade::emitStopShowMedia(BaseMedia *media)
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
     emit stopShowMedia(media);

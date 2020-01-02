@@ -13,7 +13,7 @@ DebugInfos::DebugInfos(LibFacade *lib_facade, QWidget *parent) :  QDialog(parent
 #endif
 }
 
-void DebugInfos::setCurrentFilePlayed(TMedia *media)
+void DebugInfos::setCurrentFilePlayed(BaseMedia *media)
 {
     ui->CurrentFileInUse->setText(preparePlayedMediaText(media));
 }
@@ -36,7 +36,7 @@ void DebugInfos::timerEvent(QTimerEvent *event)
     outputResourcesUsage();
 }
 
-QString DebugInfos::preparePlayedMediaText(TMedia *media)
+QString DebugInfos::preparePlayedMediaText(BaseMedia *media)
 {
     QString key = media->getRegion();
     QString value = media->getTitle();

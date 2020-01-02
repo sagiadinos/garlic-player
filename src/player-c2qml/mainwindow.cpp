@@ -32,8 +32,8 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     connect (this, SIGNAL(statusChanged(QQuickView::Status)), this, SLOT(doStatusChanged(QQuickView::Status)));
-    connect(MyLibFacade, SIGNAL(startShowMedia(TMedia *)), this, SLOT(startShowMedia(TMedia *)));
-    connect(MyLibFacade, SIGNAL(stopShowMedia(TMedia *)), this, SLOT(stopShowMedia(TMedia *)));
+    connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(startShowMedia(BaseMedia *)));
+    connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(stopShowMedia(BaseMedia *)));
     connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
     connect(engine(), SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit())); // to connect quit signal from QML
 
@@ -60,41 +60,47 @@ QString MainWindow::selectRegion(QString region_name)
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
     if (!ke->modifiers().testFlag(Qt::ControlModifier))
-        return;
-    switch (ke->key())
     {
-        case Qt::Key_F:
-        if (screen_state != FULLSCREEN)
-                resizeAsNormalFullScreen();
-            else
-                resizeAsWindow();
-        break;
-        case Qt::Key_B:
-            if (screen_state != BIGFULLSCREEN)
-                 resizeAsBigFullScreen();
-            else
-                resizeAsWindow();
-        break;
-        case Qt::Key_D:
-            setCursor(Qt::ArrowCursor);
-            openDebugInfos();
-            setCursor(Qt::BlankCursor);
-            break;
-        case Qt::Key_S:  // Ctrl-C will not work with qwebengineview
-            setCursor(Qt::ArrowCursor);
-            if (openConfigDialog() == QDialog::Accepted)
-            {
-                MyLibFacade->init();
-                MyLibFacade->loadIndex(); // load index when QML comiled complete
-                MyLibFacade->checkForNewSmilIndex();
-            }
-            setCursor(Qt::BlankCursor);
-        break;
-
-        case Qt::Key_Q:
-            exit(0);
-        break;
+        MyInteraction.handleKeyPress(ke->key());
     }
+    else
+    {
+        switch (ke->key())
+        {
+            case Qt::Key_F:
+            if (screen_state != FULLSCREEN)
+                    resizeAsNormalFullScreen();
+                else
+                    resizeAsWindow();
+            break;
+            case Qt::Key_B:
+                if (screen_state != BIGFULLSCREEN)
+                     resizeAsBigFullScreen();
+                else
+                    resizeAsWindow();
+            break;
+            case Qt::Key_D:
+                setCursor(Qt::ArrowCursor);
+                openDebugInfos();
+                setCursor(Qt::BlankCursor);
+                break;
+            case Qt::Key_S:  // Ctrl-C will not work with qwebengineview
+                setCursor(Qt::ArrowCursor);
+                if (openConfigDialog() == QDialog::Accepted)
+                {
+                    MyLibFacade->init();
+                    MyLibFacade->loadIndex(); // load index when QML comiled complete
+                    MyLibFacade->checkForNewSmilIndex();
+                }
+                setCursor(Qt::BlankCursor);
+            break;
+
+            case Qt::Key_Q:
+                exit(0);
+            break;
+        }
+    }
+    return;
 }
 
 
@@ -222,7 +228,7 @@ void MainWindow::prepareParsing()
 }
 
 
-void MainWindow::startShowMedia(TMedia *media)
+void MainWindow::startShowMedia(BaseMedia *media)
 {
     if (regions_list.size() == 0)
         return;
@@ -234,7 +240,7 @@ void MainWindow::startShowMedia(TMedia *media)
     return;
 }
 
-void MainWindow::stopShowMedia(TMedia *media)
+void MainWindow::stopShowMedia(BaseMedia *media)
 {
     if (regions_list.size() == 0)
         return;

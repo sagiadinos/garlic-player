@@ -1,7 +1,7 @@
 #ifndef WEB_H
 #define WEB_H
 
-#include "smilparser/web.h"
+#include "smilparser/media/web.h"
 #include "base_media.h"
 
 class Web : public BaseMedia
@@ -10,7 +10,7 @@ class Web : public BaseMedia
     public:
         Web(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
         ~Web();
-        void          init(TMedia *media);
+        void          init(BaseMedia *media);
         void          deinit();
         void          setParentItem(QQuickItem *parent);
     protected:

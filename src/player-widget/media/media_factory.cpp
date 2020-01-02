@@ -19,13 +19,13 @@
 
 MediaFactory::MediaFactory(QObject *parent) : QObject(parent)
 {
-    MyImage.reset(new Image(this));
-    MyVideo.reset(new Video(this));
-    MyAudio.reset(new Audio(this));
-    MyWeb.reset(new Web(this));
+    MyImage.reset(new PlayerImage(this));
+    MyVideo.reset(new PlayerVideo(this));
+    MyAudio.reset(new PlayerAudio(this));
+    MyWeb.reset(new PlayerWeb(this));
 }
 
-BaseMedia *MediaFactory::initMedia(TMedia *media)
+PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
 {
     QString type   = media->objectName();
     if (type == "TImage")

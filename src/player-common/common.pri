@@ -1,10 +1,12 @@
 SOURCES += \
+    $$PWD/interactions.cpp \
     ../player-common/cmdparser.cpp \
     ../player-common/debug_infos.cpp \
     ../player-common/configdialog.cpp \
     ../player-common/screen.cpp
 
 HEADERS  += \
+    $$PWD/interactions.h \
     ../player-common/cmdparser.h \
     ../player-common/configdialog.h \
     ../player-common/debug_infos.h \

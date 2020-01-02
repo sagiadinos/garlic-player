@@ -3,7 +3,7 @@
 
 #include <QQuickItem> // interates QQmlComponent
 #include <QScopedPointer>
-#include "smilparser/media.h"
+#include "smilparser/media/base_media.h"
 #include "tools/logger.h"
 
 class BaseMedia : public QObject
@@ -11,7 +11,7 @@ class BaseMedia : public QObject
         Q_OBJECT
     public:
         explicit BaseMedia(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
-        virtual void          init(TMedia *media)   = 0;
+        virtual void          init(BaseMedia *media)   = 0;
         virtual void          deinit()   = 0;
         virtual void          setParentItem(QQuickItem *parent)   = 0;
         QString               getRegionId() const;
@@ -21,7 +21,7 @@ class BaseMedia : public QObject
 
     protected:
         Logger&               MyLogger = Logger::getInstance();
-        TMedia               *MyMedia;
+        BaseMedia               *MyMedia;
         QString               start_time = "";
         QString               region_id  = "";
         QQuickItem           *createMediaItem(QQmlComponent *mc, QString str);
