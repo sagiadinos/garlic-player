@@ -2,15 +2,9 @@ include(../defaults.pri)
 
 QT       += core sql network xml widgets
 TEMPLATE  = lib
-CONFIG    += warn_on c++11 stl #staticlib
+CONFIG    += warn_on c++11 stl
 
-DEFINES += QUAZIP_STATIC
-
-DEFINES += QT_DEPRECATED_WARNINGS
-
-# -Wno-deprecated-copy is against the warnings float with gcc 9 and Qt < 5.13
-QMAKE_CXXFLAGS += -Wno-deprecated-copy
-
+DEFINES += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
 
 TARGET = garlic
 LIBS += -L../lib -lquazip -lzlib
@@ -27,6 +21,12 @@ win32 {
     Debug:LIBS += -L../lib  -lquazipd -lzlib
 }
 
+unix{
+    #temporary ToDO
+    # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
+    # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
+    QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
+}
 
 SOURCES += \
     files/base_manager.cpp \

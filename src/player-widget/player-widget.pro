@@ -8,10 +8,6 @@ INCLUDEPATH += ../garlic-lib/
 
 QT     += core gui sql xml widgets webenginewidgets
 CONFIG += warn_on c++11
-#temporary ToDO
-# -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
-# -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
-QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
 
 #Delete or comment out the next line when you want to use QTMultimedia
 CONFIG    += support_qtav # alternatives: support_qtav support_qtmm support_libvlc
@@ -98,6 +94,10 @@ win32{
 
 unix{
     LIBS += -L../lib -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
+    #temporary ToDO
+    # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
+    # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
+    QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
 }
 win32 {
     #libcarlic is static compiled in windows
