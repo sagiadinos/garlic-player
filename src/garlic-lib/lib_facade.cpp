@@ -77,24 +77,24 @@ void LibFacade::playSmilElement(int position, int zone)
     Q_UNUSED(zone);
 }
 
-THead *LibFacade::getHead() const
+HeadParser *LibFacade::getHead() const
 {
-    return MyHead.data();
+    return MyHeadParser.data();
 }
 
 void LibFacade::beginSmilBodyParsing()
 {
-    connect(MyDomParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));
-    connect(MyDomParser.data(), SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(emitStopShowMedia(BaseMedia *)));
-    MyDomParser->beginSmilParsing(MyIndexManager->getBody());
+    connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));
+    connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(emitStopShowMedia(BaseMedia *)));
+    MyBodyParser->beginSmilParsing(MyIndexManager->getBody());
 }
 
 void LibFacade::loadIndex()
 {
     qDebug(Develop) << "start" << Q_FUNC_INFO;
-    if (!MyDomParser.isNull())
+    if (!MyBodyParser.isNull())
     {
-        MyDomParser.data()->endSmilParsing();
+        MyBodyParser.data()->endSmilParsing();
         MyIndexManager.data()->deactivateRefresh();
     }
 
@@ -102,10 +102,10 @@ void LibFacade::loadIndex()
     if (!MyIndexManager.data()->load())
         return;
 
-    MyHead.reset(new THead(MyConfiguration.data(), this));
-    MyHead.data()->setInventoryTable(MyInventoryTable.data()); // must set before parse
-    MyHead.data()->parse(MyIndexManager->getHead());
-    MyIndexManager.data()->activateRefresh(MyHead->getRefreshTime());
+    MyHeadParser.reset(new HeadParser(MyConfiguration.data(), this));
+    MyHeadParser.data()->setInventoryTable(MyInventoryTable.data()); // must set before parse
+    MyHeadParser.data()->parse(MyIndexManager->getHead());
+    MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
 
     MyElementsContainer.reset(new ElementsContainer(this));
 
@@ -114,7 +114,7 @@ void LibFacade::loadIndex()
     MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
     MyMediaManager.reset(new MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
 
-    MyDomParser.reset(new DomParser(MyMediaManager.data(), MyElementsContainer.data(), this));
+    MyBodyParser.reset(new BodyParser(MyMediaManager.data(), MyElementsContainer.data(), this));
     emit newIndexLoaded();
     qDebug(Develop) << "end " << Q_FUNC_INFO;
 }

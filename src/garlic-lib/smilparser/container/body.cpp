@@ -21,13 +21,13 @@
 TBody::TBody(QObject *parent) : TContainer(parent)
 {
     setObjectName("TBody");
+    parent_container       = Q_NULLPTR;
 }
 
 TBody::~TBody()
 {
     childs_list.clear();
 }
-
 
 bool TBody::parse(QDomElement element)
 {
@@ -47,6 +47,17 @@ bool TBody::parse(QDomElement element)
     else
        finishedActiveDuration();
     return ret;
+}
+
+void TBody::preload()
+{
+    for (QList<QDomElement>::iterator i = childs_list.begin(); i != childs_list.end(); i++)
+    {
+        active_element        = *i;
+        emitPreLoad();
+    }
+    active_element = childs_list.first();
+    emit finishPreload();
 }
 
 void TBody::prepareTimingsBeforePlaying()
@@ -90,6 +101,8 @@ void TBody::traverseChilds()
     {
         element = childs.item(i).toElement();
         if (element.tagName() != "")
+        {
             childs_list.append(element);
+        }
     }
 }

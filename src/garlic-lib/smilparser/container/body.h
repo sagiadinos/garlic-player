@@ -28,6 +28,7 @@ public:
     explicit TBody(QObject *parent = Q_NULLPTR);
     ~TBody();
     bool      parse(QDomElement element);
+    void      preload();
     void      prepareTimingsBeforePlaying();
     void      endPlay(){}
     void      next(BaseTimings *ended_element);
@@ -41,6 +42,9 @@ protected:
 public slots:
     void      setDurationTimerBeforePlay();
 private:
+signals:
+    void      finishPreload();
+
 };
 
 #endif // TBODY_H

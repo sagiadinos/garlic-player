@@ -39,6 +39,15 @@ bool TPar::parse(QDomElement element)
     return false;
 }
 
+void TPar::preload()
+{
+    for (QList<QDomElement>::iterator i = childs_list.begin(); i != childs_list.end(); i++)
+    {
+        active_element        = *i;
+        emitPreLoad();
+    }
+}
+
 void TPar::setDurationTimerBeforePlay()
 {
     if (startDurTimer() || isEndTimerActive() || childs_list.size() > 0)

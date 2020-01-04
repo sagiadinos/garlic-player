@@ -34,6 +34,7 @@ class TExcl : public TContainer
         const       int         _pause_new         = 4; // defer
 
         bool                 parse(QDomElement element);
+        void                 preload();
         void                 next(BaseTimings *ended_element);
         int                  interruptActualPlaying(QDomElement started_element, BaseTimings *element);
         bool                 isChildPlayable(BaseTimings *element);

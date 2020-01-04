@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#include "dom_parser.h"
+#include "body_parser.h"
 
-DomParser::DomParser(MediaManager *mm, ElementsContainer *ec, QObject *parent) : QObject(parent)
+BodyParser::BodyParser(MediaManager *mm, ElementsContainer *ec, QObject *parent) : QObject(parent)
 {
     MyElementsContainer   = ec;
     MyMediaManager        = mm;
@@ -26,11 +26,11 @@ DomParser::DomParser(MediaManager *mm, ElementsContainer *ec, QObject *parent) :
     stop_all              = false;
 }
 
-DomParser::~DomParser()
+BodyParser::~BodyParser()
 {
 }
 
-void DomParser::endSmilParsing()
+void BodyParser::endSmilParsing()
 {
     stop_all = true;
     stopAllPlayingMedia();
@@ -43,17 +43,23 @@ void DomParser::endSmilParsing()
  *
  * @param body
  */
-void DomParser::beginSmilParsing(QDomElement body)
+void BodyParser::beginSmilParsing(QDomElement body)
 {
     MyBody.reset(new TBody(this));
     connect(MyBody.data(), SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
     connect(MyBody.data(), SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
+
+    connect(MyBody.data(), SIGNAL(preloadElement(TContainer *, QDomElement)), this, SLOT(preloadElement(TContainer *, QDomElement)));
+    connect(MyBody.data(), SIGNAL(finishPreload()), this, SLOT(finishedPreload()));
+
     if (MyBody.data()->parse(body))
-        MyBody.data()->prepareTimingsBeforePlaying();
+    {
+        MyBody.data()->preload();
+    }
     return;
 }
 
-void DomParser::stopAllPlayingMedia()
+void BodyParser::stopAllPlayingMedia()
 {
     while (MyCurrentPlayingMedia->count() > 0) // stop actual played media
     {
@@ -66,21 +72,25 @@ void DomParser::stopAllPlayingMedia()
  * @param parent
  * @param found_tag
  */
-void DomParser::foundElement(TContainer *parent_container, QDomElement dom_element)
+void BodyParser::foundElement(TContainer *parent_container, QDomElement dom_element)
 {
-    BaseTimings *MyBaseTiming = determineElements(parent_container, dom_element);
+    BaseTimings *MyBaseTimings = determineElements(parent_container, dom_element);
 
-    MyBaseTiming->prepareTimingsBeforePlaying(); // here we start
-
-    QString object_name = parent_container->objectName();
-    if (object_name == "TExcl")  // increment active child to determine end of a excl
+    if (parent_container->objectName() == "TExcl")  // increment active child to determine end of a excl
     {
         TExcl   *MyExclParent   = qobject_cast<TExcl *> (parent_container);
-        MyExclParent->childStarted(MyBaseTiming);
+        MyExclParent->childStarted(MyBaseTimings);
     }
 
     return;
 }
+
+void BodyParser::preloadElement(TContainer *parent_container, QDomElement dom_element)
+{
+    determineElements(parent_container, dom_element);
+    return;
+}
+
 
 /**
  * @brief TSmil::startedElement slot catch the start signal from a element and check if it is allowed to play.
@@ -89,7 +99,7 @@ void DomParser::foundElement(TContainer *parent_container, QDomElement dom_eleme
  * @param parent
  * @param element
  */
-void DomParser::startElement(TContainer *parent_container, BaseTimings *element)
+void BodyParser::startElement(TContainer *parent_container, BaseTimings *element)
 {
     bool         playable      = true;
     if (parent_container->getBaseType() == "container")
@@ -116,7 +126,7 @@ void DomParser::startElement(TContainer *parent_container, BaseTimings *element)
  * @param parent
  * @param element
  */
-void DomParser::finishElement(TContainer *parent_container, BaseTimings *element)
+void BodyParser::finishElement(TContainer *parent_container, BaseTimings *element)
 {
     qDebug() << element->getID() <<  " finishElement";
     if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
@@ -129,12 +139,17 @@ void DomParser::finishElement(TContainer *parent_container, BaseTimings *element
     return;
 }
 
+void BodyParser::finishedPreload()
+{
+    MyBody.data()->prepareTimingsBeforePlaying();
+}
+
 /**
  * @brief TSmil::handlePause prepares elements for pause, pause them and recurses their childs
  * @param parent
  * @param element
  */
-void DomParser::pausePlayingElement(BaseTimings *element)
+void BodyParser::pausePlayingElement(BaseTimings *element)
 {
     qDebug() << element->getID() << "pause Element";
     element->prepareTimingsBeforePausing();
@@ -149,7 +164,7 @@ void DomParser::pausePlayingElement(BaseTimings *element)
     return;
 }
 
-void DomParser::resumeQueuedElement(BaseTimings *element)
+void BodyParser::resumeQueuedElement(BaseTimings *element)
 {
     qDebug() << element->getID() << "resume Element";
     element->prepareTimingsBeforeResume();
@@ -170,7 +185,7 @@ void DomParser::resumeQueuedElement(BaseTimings *element)
  * @param parent
  * @param element
  */
-void DomParser::stopPlayingElement(BaseTimings *element)
+void BodyParser::stopPlayingElement(BaseTimings *element)
 {
     if (element == Q_NULLPTR)
         return;
@@ -180,23 +195,32 @@ void DomParser::stopPlayingElement(BaseTimings *element)
     return;
 }
 
-BaseTimings* DomParser::determineElements(TContainer *parent_container, QDomElement dom_element)
+BaseTimings* BodyParser::determineElements(TContainer *parent_container, QDomElement dom_element)
 {
-    BaseTimings                             *MyBaseTimings        = MyElementsContainer->findSmilElement(dom_element);
-    QString                                  name                 = dom_element.nodeName();
+    BaseTimings *MyBaseTimings = MyElementsContainer->findSmilElement(dom_element);
+    QString      name          = dom_element.nodeName();
+
     if (MyBaseTimings == Q_NULLPTR)
     {
         MyBaseTimings = MyElementsContainer->insertSmilElement(parent_container, dom_element);
         connectSlots(MyBaseTimings);
+        qDebug(Develop) << MyBaseTimings->getID() << "inserted to Elementcontainer";
+        if (MyBaseTimings->getBaseType() == "container")
+        {
+            (qobject_cast<TContainer *> (MyBaseTimings))->preload();
+        }
+    }
+    else
+    {
+        MyBaseTimings->prepareTimingsBeforePlaying(); // here we start
     }
 
     return MyBaseTimings;
 }
 
-
 // ============================== private methods =======================================
 
-void DomParser::stopElement(BaseTimings *element)
+void BodyParser::stopElement(BaseTimings *element)
 {
     if (element->getStatus() != element->_stopped)
     {
@@ -212,9 +236,10 @@ void DomParser::stopElement(BaseTimings *element)
 }
 
 
-void DomParser::connectSlots(BaseTimings *element)
+void BodyParser::connectSlots(BaseTimings *element)
 {
     QString      base_type  = element->getBaseType();
+    connect(element, SIGNAL(preloadElement(TContainer *, QDomElement )), this, SLOT(preloadElement(TContainer *, QDomElement )));
     if (base_type == "media")
         connectMediaSlots(qobject_cast<BaseMedia *> (element));
     else if (base_type == "container")
@@ -222,9 +247,8 @@ void DomParser::connectSlots(BaseTimings *element)
 
 }
 
-void DomParser::connectContainerSlots(TContainer *MyContainer)
+void BodyParser::connectContainerSlots(TContainer *MyContainer)
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     connect(MyContainer, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
     connect(MyContainer, SIGNAL(startedContainer(TContainer *, BaseTimings *)), this, SLOT(startElement(TContainer *, BaseTimings *)));
     connect(MyContainer, SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
@@ -234,21 +258,18 @@ void DomParser::connectContainerSlots(TContainer *MyContainer)
         connect(MyContainer, SIGNAL(pauseElement(BaseTimings *)), this, SLOT(pausePlayingElement(BaseTimings *)));
         connect(MyContainer, SIGNAL(stopElement(BaseTimings *)), this, SLOT(stopPlayingElement(BaseTimings *)));
     }
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;
 }
 
-void DomParser::connectMediaSlots(BaseMedia *media)
+void BodyParser::connectMediaSlots(BaseMedia *media)
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     media->registerFile(MyMediaManager);
     connect(media, SIGNAL(startedMedia(TContainer *, BaseTimings *)), this, SLOT(startElement(TContainer *, BaseTimings *)));
     connect(media, SIGNAL(finishedMedia(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
     return;
 }
 
-void DomParser::emitStartShowMedia(BaseMedia *media)
+void BodyParser::emitStartShowMedia(BaseMedia *media)
 {
     if (stop_all) // preventing for starting media during stop process
         return;
@@ -257,7 +278,7 @@ void DomParser::emitStartShowMedia(BaseMedia *media)
     return;
 }
 
-void DomParser::emitStopShowMedia(BaseMedia *media)
+void BodyParser::emitStopShowMedia(BaseMedia *media)
 {
     MyCurrentPlayingMedia->remove(media);
     emit stopShowMedia(media);

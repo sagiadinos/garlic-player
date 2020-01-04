@@ -22,6 +22,7 @@ TContainer::TContainer(QObject *parent) : BaseTimings(parent)
 {
 }
 
+
 QString TContainer::getIdOfActiveElement()
 {
     return parseID(active_element);
@@ -72,6 +73,11 @@ void TContainer::childEnded(BaseTimings *element)
 void TContainer::setChildActive(bool active)
 {
     is_child_active = active;
+}
+
+void TContainer::emitPreLoad()
+{
+    emit preloadElement(this, active_element);
 }
 
 bool TContainer::hasPlayingChilds()

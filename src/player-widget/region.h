@@ -27,7 +27,7 @@
 #include <QPaintEvent>
 #include <QStyle>
 #include <QStyleOption>
-#include "head.h"
+#include "head_parser.h"
 
 
 #include "media/media_factory.h"

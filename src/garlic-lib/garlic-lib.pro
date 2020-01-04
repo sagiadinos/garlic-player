@@ -4,7 +4,7 @@ QT       += core sql network xml widgets
 TEMPLATE  = lib
 CONFIG    += warn_on c++11 stl #staticlib
 
-#DEFINES += QUAZIP_STATIC
+DEFINES += QUAZIP_STATIC
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
@@ -13,13 +13,19 @@ QMAKE_CXXFLAGS += -Wno-deprecated-copy
 
 
 TARGET = garlic
-#LIBS += -L../ext -lquazip -lzlib
+LIBS += -L../lib -lquazip -lzlib
 
 !android:DESTDIR = ../lib/
 android:DESTDIR = ../libandroid/
 
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes
+
+win32 {
+    CONFIG += staticlib
+    Release:LIBS += -L../lib -lquazip -lzlib
+    Debug:LIBS += -L../lib  -lquazipd -lzlib
+}
 
 
 SOURCES += \
@@ -35,9 +41,10 @@ SOURCES += \
     files/webdav.cpp \
     files/wgt.cpp \
     smilparser/base_timings.cpp \
+    smilparser/body_parser.cpp \
     smilparser/current_playing_media.cpp \
-    smilparser/dom_parser.cpp \
     smilparser/elements_container.cpp \
+    smilparser/head_parser.cpp \
     smilparser/media/audio.cpp \
     smilparser/media/base_media.cpp \
     smilparser/media/image.cpp \
@@ -45,7 +52,6 @@ SOURCES += \
     smilparser/media/unknown.cpp \
     smilparser/media/video.cpp \
     smilparser/media/web.cpp \
-    smilparser/sax_parser.cpp \
     smilparser/timings/enhanced_timer.cpp \
     smilparser/trigger/clock_value.cpp \
     smilparser/timings/simple_timer.cpp \
@@ -59,7 +65,6 @@ SOURCES += \
     smilparser/container/priorityclass.cpp \
     smilparser/container/seq.cpp \
     smilparser/factory.cpp \
-    smilparser/head.cpp \
     tools/configuration.cpp \
     tools/logging_categories.cpp \
     smilparser/head/subscription.cpp \
@@ -97,9 +102,10 @@ HEADERS += \
     files/network_access.h \
     files/webdav.h \
     files/wgt.h \
+    smilparser/body_parser.h \
     smilparser/current_playing_media.h \
-    smilparser/dom_parser.h \
     smilparser/elements_container.h \
+    smilparser/head_parser.h \
     smilparser/media/base_media.h \
     smilparser/media/audio.h \
     smilparser/media/image.h \
@@ -107,7 +113,6 @@ HEADERS += \
     smilparser/media/unknown.h \
     smilparser/media/video.h \
     smilparser/media/web.h \
-    smilparser/sax_parser.h \
     smilparser/timings/enhanced_timer.h \
     smilparser/trigger/clock_value.h \
     smilparser/timings/simple_timer.h \
@@ -122,7 +127,6 @@ HEADERS += \
     smilparser/factory.h \
     smilparser/base_timings.h \
     smilparser/base.h \
-    smilparser/head.h \
     smilparser/head/subscription.h \
     system_infos/memory.h \
     system_infos/network.h \

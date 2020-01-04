@@ -48,12 +48,12 @@ struct Region
 };
 
 
-class THead: public QObject
+class HeadParser: public QObject
 {
         Q_OBJECT
     public:
-        explicit THead(TConfiguration *config, QObject *parent = Q_NULLPTR);
-         ~THead();
+        explicit HeadParser(TConfiguration *config, QObject *parent = Q_NULLPTR);
+         ~HeadParser();
         void                   setDefaultValues();
         void                   parse(QDomElement head);
         int                    getRefreshTime(){return refresh;}

@@ -14,7 +14,7 @@ CONFIG += warn_on c++11
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
 
 #Delete or comment out the next line when you want to use QTMultimedia
-CONFIG    += support_qtmm # alternatives: support_qtav support_qtmm support_libvlc
+CONFIG    += support_qtav # alternatives: support_qtav support_qtmm support_libvlc
 
 #DEFINES += SUPPORT_EMBEDDED
 #DEFINES += SUPPORT_RPI
@@ -26,6 +26,7 @@ support_qtav {
     unix{    # QtAV has "this use of defined may not be portable" issues with newer gcc
         QMAKE_CXXFLAGS += -Wno-expansion-to-defined
     }
+
 }
 support_libvlc{
     DEFINES += SUPPORT_LIBVLC
@@ -36,7 +37,7 @@ support_qtmm {
      QT += multimedia multimediawidgets
 }
 
-DEFINES += QT_DEPRECATED_WARNINGS #QUAZIP_STATIC
+DEFINES += QT_DEPRECATED_WARNINGS
 
 TARGET = garlic-player
 TEMPLATE = app
@@ -82,10 +83,24 @@ HEADERS  += \
     mm_libs/vlc_widget.h \
     region.h
 
+# workaround for >Qt5.11 https://github.com/wang-bin/QtAV/issues/1231
+unix:!mac {
+    LIBS += -L$$QT.core.libs -lQtAV
+}
+unix:mac {
+    INCLUDEPATH += $$QT.core.libs/QtAV.framework/Versions/1/Headers
+    QMAKE_LFLAGS += -F$$QT.core.libs
+    LIBS += -framework QtAV
+}
+win32{
+    LIBS += -L$$QT.core.libs -lQtAV1
+}
+
 unix{
-    LIBS += -L../lib -lgarlic -lquazip # -lzlib
+    LIBS += -L../lib -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
 }
 win32 {
+    #libcarlic is static compiled in windows
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
     Debug:LIBS += -L../lib -lgarlic -lquazipd -lzlib
 }

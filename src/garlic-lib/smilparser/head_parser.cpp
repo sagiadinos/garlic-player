@@ -16,20 +16,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#include "head.h"
+#include "head_parser.h"
 
-THead::THead(TConfiguration *config, QObject *parent) : QObject(parent)
+HeadParser::HeadParser(TConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
     setDefaultValues();
 }
 
-THead::~THead()
+HeadParser::~HeadParser()
 {
     setDefaultValues();
 }
 
-void THead::setDefaultValues()
+void HeadParser::setDefaultValues()
 {
     refresh                        = 0; // means no looking for new index
     title                          = "No Title";
@@ -48,22 +48,22 @@ void THead::setDefaultValues()
 
 }
 
-QString THead::getTitle()
+QString HeadParser::getTitle()
 {
     return title;
 }
 
-QString THead::getRootBackgroundColor()
+QString HeadParser::getRootBackgroundColor()
 {
     return backgroundColor;
 }
 
-QList<Region> *THead::getLayout()
+QList<Region> *HeadParser::getLayout()
 {
     return &region_list;
 }
 
-void THead::parse(QDomElement head)
+void HeadParser::parse(QDomElement head)
 {
     setDefaultValues();
     if (head.hasChildNodes())
@@ -83,19 +83,19 @@ void THead::parse(QDomElement head)
     }
 }
 
-void THead::setRootLayout(int w, int h)
+void HeadParser::setRootLayout(int w, int h)
 {
     width           = w;
     height          = h;
     return;
 }
 
-void THead::setInventoryTable(DB::InventoryTable *value)
+void HeadParser::setInventoryTable(DB::InventoryTable *value)
 {
     MyInventoryTable = value;
 }
 
-void THead::parseMeta(QDomElement element)
+void HeadParser::parseMeta(QDomElement element)
 {
     if (element.hasAttribute("name") && element.attribute("name") == "title" && element.hasAttribute("content"))
         title = element.attribute("content");
@@ -109,7 +109,7 @@ void THead::parseMeta(QDomElement element)
     }
 }
 
-void THead::parseMetaData(QDomElement element)
+void HeadParser::parseMetaData(QDomElement element)
 {
     QDomNodeList node_list = element.elementsByTagName("subscription");
 
@@ -145,7 +145,7 @@ void THead::parseMetaData(QDomElement element)
     }
 }
 
-void THead::parseLayout(QDomElement layout)
+void HeadParser::parseLayout(QDomElement layout)
 {
     // root-layout must be found first, cause regions based on it
     QDomNodeList nodelist = layout.elementsByTagName("root-layout");
@@ -156,7 +156,7 @@ void THead::parseLayout(QDomElement layout)
         parseRegions(nodelist);
 }
 
-void THead::parseRootLayout(QDomElement root_layout)
+void HeadParser::parseRootLayout(QDomElement root_layout)
 {
     if (root_layout.hasAttribute("width"))
         width  = root_layout.attribute("width").toInt();
@@ -166,7 +166,7 @@ void THead::parseRootLayout(QDomElement root_layout)
         backgroundColor = root_layout.attribute("backgroundColor");
 }
 
-void THead::parseRegions(QDomNodeList childs)
+void HeadParser::parseRegions(QDomNodeList childs)
 {
     QDomElement element;
     region_list.clear(); // clear from default values
@@ -207,7 +207,7 @@ void THead::parseRegions(QDomNodeList childs)
 
 
 
-qreal THead::calculatePercentBasedOnRoot(QString value, qreal root)
+qreal HeadParser::calculatePercentBasedOnRoot(QString value, qreal root)
 {
     int length  = value.length();
     int px      = 0;

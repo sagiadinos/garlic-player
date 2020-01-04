@@ -5,7 +5,7 @@
 TEMPLATE = lib
 TARGET = zlib
 INCLUDEPATH += .
-CONFIG += c++11 #staticlib
+CONFIG += c++11 staticlib
 
 # -Wno-deprecated-copy is against the warnings fload with gcc 9 and Qt < 5.13
 QMAKE_CXXFLAGS += -Wno-deprecated-copy

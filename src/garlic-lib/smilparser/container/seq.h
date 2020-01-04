@@ -32,6 +32,7 @@ class TSeq : public TContainer
         explicit TSeq(TContainer *pc, QObject *parent = Q_NULLPTR);
                 ~TSeq();
         bool         parse(QDomElement element);
+        void         preload();
         void         next(BaseTimings *ended_element);
         void         pause();
         void         stop();

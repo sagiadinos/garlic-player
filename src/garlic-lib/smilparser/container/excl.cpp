@@ -41,6 +41,19 @@ bool TExcl::parse(QDomElement element)
     return true;
 }
 
+void TExcl::preload()
+{
+    for (QHash<int, TPriorityClass *>::iterator i_priorities = ar_priorities.begin(); i_priorities != ar_priorities.end(); i_priorities++)
+    {
+        QList<QDomElement> element_list = i_priorities.value()->getChildList();
+        for (QList<QDomElement>::iterator i = element_list.begin(); i != element_list.end(); i++)
+        {
+            active_element        = *i;
+            emitPreLoad();
+        }
+    }
+}
+
 void TExcl::setDurationTimerBeforePlay()
 {
     if (startDurTimer() || isEndTimerActive() || ar_priorities.size() > 0)

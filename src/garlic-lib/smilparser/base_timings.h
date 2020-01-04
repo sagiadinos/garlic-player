@@ -57,6 +57,7 @@ class BaseTimings : public TBase
         virtual QString       getBaseType() = 0;
         virtual BaseTimings  *getChildElementFromList() = 0;
         virtual bool          hasPlayingChilds() = 0;
+        virtual void          emitPreLoad() = 0;
                 void          initInternalTimer();
     public slots:
         virtual void          emitfinished() = 0;

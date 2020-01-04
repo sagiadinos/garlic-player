@@ -21,8 +21,8 @@
 #include <QObject>
 #include "files/index_manager.h"
 #include "files/media_manager.h"
-#include "smilparser/head.h"
-#include "dom_parser.h"
+#include "smilparser/head_parser.h"
+#include "body_parser.h"
 #include "tools/resource_monitor.h"
 
 /**
@@ -46,7 +46,7 @@ class LibFacade : public QObject
         ~LibFacade();
         void               init();
         TConfiguration    *getConfiguration() const;
-        THead             *getHead() const;
+        HeadParser             *getHead() const;
         void               beginSmilBodyParsing();
         void               checkForNewSmilIndex();
         // Interactions
@@ -69,8 +69,8 @@ class LibFacade : public QObject
         QScopedPointer<DownloadQueue>       MyDownloadQueue;
         QScopedPointer<IndexManager>        MyIndexManager ;
         QScopedPointer<MediaManager>        MyMediaManager;
-        QScopedPointer<THead>               MyHead;
-        QScopedPointer<DomParser>           MyDomParser;
+        QScopedPointer<HeadParser>          MyHeadParser;
+        QScopedPointer<BodyParser>          MyBodyParser;
         ResourceMonitor                     MyResourceMonitor;
         void               timerEvent(QTimerEvent *event);
     signals:

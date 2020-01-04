@@ -13,14 +13,13 @@ bool TPriorityClass::parse(QDomElement dom_element)
 {
     root_element   = dom_element;
     setAttributes();
-    setChildList();
+    traverseChilds();
     return true;
 }
 
-
 bool TPriorityClass::findElement(QDomElement dom_element)
 {
-    for (iterator =  ar_dom_childs.begin(); iterator < ar_dom_childs.end(); iterator++)
+    for (iterator =  childs_list.begin(); iterator < childs_list.end(); iterator++)
     {
         if (dom_element == *iterator)
             return true;
@@ -63,7 +62,7 @@ BaseTimings *TPriorityClass::getFromQueue()
 
 QList<QDomElement> TPriorityClass::getChildList()
 {
-    return ar_dom_childs;
+    return childs_list;
 }
 
 void TPriorityClass::setAttributes()
@@ -77,7 +76,7 @@ void TPriorityClass::setAttributes()
         lower = root_element.attribute("lower");
 }
 
-void TPriorityClass::setChildList()
+void TPriorityClass::traverseChilds()
 {
     QDomNodeList childs = root_element.childNodes();
     count_childs        = childs.length();
@@ -86,6 +85,8 @@ void TPriorityClass::setChildList()
     {
         element = childs.item(i).toElement();
         if (element.tagName() != "priorityClass" && element.tagName() != "")
-            ar_dom_childs.append(element);
+        {
+            childs_list.append(element);
+        }
     }
 }

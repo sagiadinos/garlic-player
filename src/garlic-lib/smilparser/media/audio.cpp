@@ -22,6 +22,7 @@ TAudio::TAudio(TContainer *pc, QObject *parent)  : BaseMedia(parent)
 {
     parent_container = pc;
     setObjectName("TAudio");
+    presentable = true;
 }
 
 TAudio::~TAudio()

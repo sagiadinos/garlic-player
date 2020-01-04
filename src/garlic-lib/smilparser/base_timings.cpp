@@ -46,7 +46,7 @@ void BaseTimings::prepareTimingsBeforePlaying()
         BeginTimer->start();
         status = _waiting;
     }
-    else // start to play immediately
+    else
     {
         setDurationTimerBeforePlay();
     }

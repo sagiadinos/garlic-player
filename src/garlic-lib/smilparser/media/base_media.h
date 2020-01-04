@@ -42,10 +42,12 @@ class BaseMedia : public BaseTimings
         TContainer       *getParentContainer(){return parent_container;}
         static  QString   parseSrc(QDomElement element);
         bool              isDownloaded();
+        bool              isPresentable(){return presentable;}
         QString           getLoadablePath();
         void              pause();
         void              stop();
         void              play();
+        void              emitPreLoad();
     public slots:
         void              emitfinished();
     protected:
@@ -54,6 +56,7 @@ class BaseMedia : public BaseTimings
         QString           region = "";
         QString           src, exec, type, fit = "";
         QString           filename, cache_control, log_content_id  = "";
+        bool              presentable = false;
         void              parseBaseMediaAttributes();
         void              parseBaseParameters();
         virtual void      setAttributes() = 0;
@@ -61,6 +64,7 @@ class BaseMedia : public BaseTimings
     signals:
         void              startedMedia(TContainer *parent , BaseTimings *element);
         void              finishedMedia(TContainer *parent , BaseTimings *element);
+        void               preloadElement(TContainer *parent, QDomElement);
 
 };
 

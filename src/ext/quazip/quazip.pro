@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += qt warn_on c++11 #staticlib
+CONFIG += qt warn_on c++11 staticlib
 QT -= gui
 
 !android:DESTDIR = ../../lib/

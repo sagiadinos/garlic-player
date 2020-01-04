@@ -38,7 +38,7 @@ public:
     BaseTimings                  *getFromQueue();
     QList<QDomElement>            getChildList();
 protected:
-    QList<QDomElement>            ar_dom_childs;
+    QList<QDomElement>            childs_list;
     QList<QDomElement>::iterator  iterator;
     QStack<BaseTimings *>         ar_defer;
     QQueue<BaseTimings *>         ar_pause;
@@ -48,7 +48,7 @@ private:
     QString                       lower  = "defer";  // how an group with lower priority interrupts this group
     int                           count_childs       = 0;
     void                          setAttributes();
-    void                          setChildList();
+    void                          traverseChilds();
 };
 
 #endif // TPRIORITYCLASS_H

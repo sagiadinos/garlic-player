@@ -46,6 +46,15 @@ bool TSeq::parse(QDomElement element)
     return true;
 }
 
+void TSeq::preload()
+{
+    for (QList<QDomElement>::iterator i = childs_list.begin(); i != childs_list.end(); i++)
+    {
+        active_element        = *i;
+        emitPreLoad();
+    }
+}
+
 void TSeq::next(BaseTimings *ended_element)
 {
     childEnded(ended_element);

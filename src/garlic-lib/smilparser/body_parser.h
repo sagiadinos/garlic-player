@@ -29,12 +29,12 @@
  *          has to be played.
  *
  */
-class DomParser : public QObject
+class BodyParser : public QObject
 {
     Q_OBJECT
 public:
-    explicit DomParser(MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
-    ~DomParser();
+    explicit BodyParser(MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
+    ~BodyParser();
     void                               endSmilParsing();
     void                               beginSmilParsing(QDomElement body);
 
@@ -47,7 +47,6 @@ protected:
     ElementsContainer                 *MyElementsContainer;
     CurrentPlayingMedia               *MyCurrentPlayingMedia;
     void                               stopAllPlayingMedia();
-    BaseTimings                       *determineElements(TContainer *parent_container, QDomElement dom_element);
     void                               emitStartShowMedia(BaseMedia *media);
     void                               stopElement(BaseTimings *element);
     void                               emitStopShowMedia(BaseMedia *media);
@@ -55,10 +54,13 @@ protected:
     void                               connectSlots(BaseTimings *element);
     void                               connectMediaSlots(BaseMedia *media);
     void                               connectContainerSlots(TContainer *MyContainer);
+    BaseTimings                       *determineElements(TContainer *parent_container, QDomElement dom_element);
 protected slots:
     void                               foundElement(TContainer *parent_container, QDomElement dom_element);
+    void                               preloadElement(TContainer *parent_container, QDomElement dom_element);
     void                               startElement(TContainer *parent_container, BaseTimings *element);
     void                               finishElement(TContainer *parent_container, BaseTimings *element);
+    void                               finishedPreload();
 
     void                               resumeQueuedElement(BaseTimings *element);
     void                               pausePlayingElement(BaseTimings *element);

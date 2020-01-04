@@ -56,6 +56,11 @@ void BaseMedia::play()
     status = _playing;
 }
 
+void BaseMedia::emitPreLoad()
+{
+    emit preloadElement(parent_container, root_element);
+}
+
 void BaseMedia::pause()
 {
     qDebug() << getID() << "paused ";
