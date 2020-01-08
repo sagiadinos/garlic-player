@@ -10,6 +10,7 @@ Logger::Logger(QObject *parent) : QObject(parent)
     debug_log.data()->setMaxSize(10485760); // 10MiB
     event_log.reset(new LogFile(TConfiguration::getLogDir() + "event_log.xml"));
     play_log.reset(new LogFile(TConfiguration::getLogDir() + "play_log.xml"));
+    task_execution_log.reset(new LogFile(TConfiguration::getLogDir() + "task_execution_log.xml"));
 }
 
 void Logger::initSingleton()
@@ -43,6 +44,10 @@ void Logger::dispatchMessages(QtMsgType type, const QMessageLogContext &context,
     {
         play_log.data()->write(msg);
     }
+    else if (QString(context.category) == "TaskExecution")
+    {
+        task_execution_log.data()->write(msg);
+    }
     else
     {
         debug_log.data()->write(collectDebugLog(type, context, msg));
@@ -52,6 +57,11 @@ void Logger::dispatchMessages(QtMsgType type, const QMessageLogContext &context,
 QString Logger::createPlayLogEntry(QString start_time, QString content_id)
 {
     return "<contentPlayed><contentId>"+content_id+"</contentId><startTime>"+start_time+"</startTime><endTime>" +getCurrentIsoDateTime()+"</endTime></contentPlayed>";
+}
+
+QString Logger::createTaskExecutionLogEntry(QString task_id, QString type)
+{
+   return "<taskState><task id=\""+task_id+"\"><lastUpdateTime>"+getCurrentIsoDateTime()+"</lastUpdateTime><state>"+type+"</state></task></taskState>";
 }
 
 QString Logger::createEventLogMetaData(QString event_name, QStringList meta_data)

@@ -73,9 +73,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             setCursor(Qt::ArrowCursor);
             if (openConfigDialog() == QDialog::Accepted)
             {
-                MyLibFacade->init();
-                MyLibFacade->loadIndex();
-                MyLibFacade->checkForNewSmilIndex();
+                MyLibFacade->initParser();
             }
             setCursor(Qt::BlankCursor);
             break;

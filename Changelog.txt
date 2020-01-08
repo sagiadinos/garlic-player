@@ -3,9 +3,15 @@ Changelog
 
 0.3.0 -> 0.4.0
 ---------------------
-1. New Features
-	* get commit numberfrom git hub
-	* code coverage
+1. New Features (currently @work)
+	* get version number from github repository (finished)
+	* SMIL-index will be preloaded (finished)
+	* interactivity, touch and jump to previous, next playlist item
+	* REST-Interface
+	* remote configuration change from CMS
+	* auto update for rooted Android devices
+	* code coverage (finished)
+	* reorganized code structure and name changes
 
 0.2.0 -> 0.3.0
 ---------------------

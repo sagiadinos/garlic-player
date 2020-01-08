@@ -31,6 +31,7 @@ unix{
 SOURCES += \
     files/base_manager.cpp \
     files/disc_space.cpp \
+    files/download_factory.cpp \
     files/downloader.cpp \
     files/download_queue.cpp \
     files/index_manager.cpp \
@@ -44,6 +45,9 @@ SOURCES += \
     smilparser/body_parser.cpp \
     smilparser/current_playing_media.cpp \
     smilparser/elements_container.cpp \
+    smilparser/head/firmware_update.cpp \
+    smilparser/head/task_scheduler.cpp \
+    smilparser/head/xml_configuration.cpp \
     smilparser/head_parser.cpp \
     smilparser/media/audio.cpp \
     smilparser/media/base_media.cpp \
@@ -92,6 +96,7 @@ SOURCES += \
 HEADERS += \
     files/base_manager.h \
     files/disc_space.h \
+    files/download_factory.h \
     files/downloader.h \
     files/download_queue.h \
     files/file_downloader.h \
@@ -105,6 +110,9 @@ HEADERS += \
     smilparser/body_parser.h \
     smilparser/current_playing_media.h \
     smilparser/elements_container.h \
+    smilparser/head/firmware_update.h \
+    smilparser/head/task_scheduler.h \
+    smilparser/head/xml_configuration.h \
     smilparser/head_parser.h \
     smilparser/media/base_media.h \
     smilparser/media/audio.h \
@@ -148,5 +156,6 @@ HEADERS += \
     reports/create/inventory_report.h \
     reports/inventory_report_manager.h \
     db/inventory_table.h \
-    lib_facade.h
+    lib_facade.h \
+    version.h
 

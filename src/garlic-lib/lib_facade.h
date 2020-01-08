@@ -44,20 +44,14 @@ class LibFacade : public QObject
     public:
         explicit LibFacade(QObject *parent = nullptr);
         ~LibFacade();
-        void               init();
+        void               initParser();
         TConfiguration    *getConfiguration() const;
-        HeadParser             *getHead() const;
+        HeadParser        *getHead() const;
         void               beginSmilBodyParsing();
-        void               checkForNewSmilIndex();
         // Interactions
         void               playNextSmilElement();
         void               playPreviousSmilElement();
         void               playSmilElement(int position, int zone = 1);
-
-    public slots:
-        void               loadIndex();
-        void               emitStartShowMedia(BaseMedia *media);
-        void               emitStopShowMedia(BaseMedia *media);
 
     protected:
         int                 timer_id;
@@ -70,9 +64,20 @@ class LibFacade : public QObject
         QScopedPointer<IndexManager>        MyIndexManager ;
         QScopedPointer<MediaManager>        MyMediaManager;
         QScopedPointer<HeadParser>          MyHeadParser;
+        QScopedPointer<SmilHead::TaskScheduler>       MyTaskScheduler;
         QScopedPointer<BodyParser>          MyBodyParser;
         ResourceMonitor                     MyResourceMonitor;
+        void               initInventoryDataTable();
+        void               initFileManager();
+        void               processHeader();
+        void               checkForNewSmilIndex();
         void               timerEvent(QTimerEvent *event);
+
+    protected slots:
+        void               loadIndex();
+        void               emitStartShowMedia(BaseMedia *media);
+        void               emitStopShowMedia(BaseMedia *media);
+
     signals:
         void               startShowMedia(BaseMedia *media);
         void               stopShowMedia(BaseMedia *media);

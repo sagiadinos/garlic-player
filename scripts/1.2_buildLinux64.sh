@@ -4,6 +4,7 @@ set -e
 
 SCRIPTDIR=$(dirname "$0")
 source $SCRIPTDIR/envLinux64.sh
+source $SCRIPTDIR/getGarlicVersion.sh
 
 echo 
 echo ========== prepare build 

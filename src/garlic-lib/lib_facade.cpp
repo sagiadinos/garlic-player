@@ -23,6 +23,12 @@ LibFacade::LibFacade(QObject *parent) : QObject(parent)
     MyIndexManager.reset(new IndexManager(MyConfiguration.data(), this));
     connect(MyIndexManager.data(), SIGNAL(newIndexDownloaded()), this, SLOT(loadIndex()));
     timer_id = startTimer(300000); // every 300s for ressource monitor
+
+    MyTaskScheduler.reset(new SmilHead::TaskScheduler(MyConfiguration.data(), this));
+
+    connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(loadIndex()));
+  //  connect(MyTaskScheduler.data(), SIGNAL(updateFirmware()), this, SLOT(loadIndex()));
+   // connect(MyTaskScheduler.data(), SIGNAL(reboot()), this, SLOT(loadIndex()));
 }
 
 LibFacade::~LibFacade()
@@ -32,15 +38,11 @@ LibFacade::~LibFacade()
     MyIndexManager.data()->deactivateRefresh();
 }
 
-void LibFacade::timerEvent(QTimerEvent *event)
+void LibFacade::initParser()
 {
-    Q_UNUSED(event);
-    MyResourceMonitor.refresh();
-
-    // write to logfile
-    qInfo(Develop) << MyResourceMonitor.getTotalMemorySystem() << MyResourceMonitor.getFreeMemorySystem();
-    qInfo(Develop) << MyResourceMonitor.getMemoryAppUse() << MyResourceMonitor.getMaxMemoryAppUsed();
-    qInfo(Develop) << MyResourceMonitor.getThreadsNumber() << MyResourceMonitor.getMaxThreadsNumber();
+    initInventoryDataTable();
+    loadIndex();
+    checkForNewSmilIndex();
 }
 
 TConfiguration *LibFacade::getConfiguration() const
@@ -48,17 +50,16 @@ TConfiguration *LibFacade::getConfiguration() const
     return MyConfiguration.data();
 }
 
-void LibFacade::init()
+HeadParser *LibFacade::getHead() const
 {
-    MyInventoryTable.reset(new DB::InventoryTable(this));
-    MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
-
-    MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
+    return MyHeadParser.data();
 }
 
-void LibFacade::checkForNewSmilIndex()
+void LibFacade::beginSmilBodyParsing()
 {
-    MyIndexManager.data()->lookUpForUpdatedIndex();
+    connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));
+    connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(emitStopShowMedia(BaseMedia *)));
+    MyBodyParser->beginSmilParsing(MyIndexManager->getBody());
 }
 
 void LibFacade::playNextSmilElement()
@@ -77,20 +78,16 @@ void LibFacade::playSmilElement(int position, int zone)
     Q_UNUSED(zone);
 }
 
-HeadParser *LibFacade::getHead() const
-{
-    return MyHeadParser.data();
-}
 
-void LibFacade::beginSmilBodyParsing()
+void LibFacade::initInventoryDataTable()
 {
-    connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));
-    connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(emitStopShowMedia(BaseMedia *)));
-    MyBodyParser->beginSmilParsing(MyIndexManager->getBody());
+    MyInventoryTable.reset(new DB::InventoryTable(this));
+    MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
 }
 
 void LibFacade::loadIndex()
 {
+    MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
     qDebug(Develop) << "start" << Q_FUNC_INFO;
     if (!MyBodyParser.isNull())
     {
@@ -102,21 +99,47 @@ void LibFacade::loadIndex()
     if (!MyIndexManager.data()->load())
         return;
 
-    MyHeadParser.reset(new HeadParser(MyConfiguration.data(), this));
-    MyHeadParser.data()->setInventoryTable(MyInventoryTable.data()); // must set before parse
-    MyHeadParser.data()->parse(MyIndexManager->getHead());
-    MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
+    processHeader();
 
+    MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
     MyElementsContainer.reset(new ElementsContainer(this));
 
-    MyMediaModel.reset(new MediaModel(this));
-    MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data(), this));
-    MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
-    MyMediaManager.reset(new MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
+    initFileManager();
 
     MyBodyParser.reset(new BodyParser(MyMediaManager.data(), MyElementsContainer.data(), this));
     emit newIndexLoaded();
     qDebug(Develop) << "end " << Q_FUNC_INFO;
+}
+
+void LibFacade::processHeader()
+{
+    MyHeadParser.reset(new HeadParser(MyConfiguration.data(), this));
+    MyHeadParser.data()->setInventoryTable(MyInventoryTable.data()); // must set before parse
+    MyHeadParser.data()->parse(MyIndexManager->getHead(), MyTaskScheduler.data());
+}
+
+void LibFacade::initFileManager()
+{
+    MyMediaModel.reset(new MediaModel(this));
+    MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data(), this));
+    MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
+    MyMediaManager.reset(new MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
+}
+
+void LibFacade::checkForNewSmilIndex()
+{
+    MyIndexManager.data()->lookUpForUpdatedIndex();
+}
+
+void LibFacade::timerEvent(QTimerEvent *event)
+{
+    Q_UNUSED(event);
+    MyResourceMonitor.refresh();
+
+    // write to logfile
+    qInfo(Develop) << MyResourceMonitor.getTotalMemorySystem() << MyResourceMonitor.getFreeMemorySystem();
+    qInfo(Develop) << MyResourceMonitor.getMemoryAppUse() << MyResourceMonitor.getMaxMemoryAppUsed();
+    qInfo(Develop) << MyResourceMonitor.getThreadsNumber() << MyResourceMonitor.getMaxThreadsNumber();
 }
 
 void LibFacade::emitStartShowMedia(BaseMedia *media)

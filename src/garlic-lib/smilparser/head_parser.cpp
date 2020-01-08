@@ -63,7 +63,7 @@ QList<Region> *HeadParser::getLayout()
     return &region_list;
 }
 
-void HeadParser::parse(QDomElement head)
+void HeadParser::parse(QDomElement head, SmilHead::TaskScheduler *MyTasks)
 {
     setDefaultValues();
     if (head.hasChildNodes())
@@ -76,7 +76,7 @@ void HeadParser::parse(QDomElement head)
             if (element.tagName() == "meta")
                 parseMeta(element);
             else if (element.tagName() == "metadata")
-                parseMetaData(element);
+                parseMetaData(element, MyTasks);
             else if (element.tagName() == "layout")
                 parseLayout(element);
         }
@@ -109,7 +109,7 @@ void HeadParser::parseMeta(QDomElement element)
     }
 }
 
-void HeadParser::parseMetaData(QDomElement element)
+void HeadParser::parseMetaData(QDomElement element, SmilHead::TaskScheduler *MyTasks)
 {
     QDomNodeList node_list = element.elementsByTagName("subscription");
 
@@ -141,6 +141,10 @@ void HeadParser::parseMetaData(QDomElement element)
         {
             MyEventLogsManager.reset(new Reporting::EventLogsManager(MyConfiguration));
             MyEventLogsManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
+        }
+        else if (subscription->getType() == "TaskSchedule")
+        {
+            MyTasks->init(subscription->getAction());
         }
     }
 }

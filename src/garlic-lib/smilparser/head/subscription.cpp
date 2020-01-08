@@ -19,8 +19,6 @@
 
 SubScription::SubScription(QObject *parent) : QObject(parent)
 {
-    setRefreshInterval(3600);
-    setRefreshInterval(3600);
 }
 
 void SubScription::parse(QDomElement element)
@@ -31,15 +29,15 @@ void SubScription::parse(QDomElement element)
         element = childs.item(i).toElement();
         QString tag_name = element.tagName();
         if (element.tagName() == "type")
-            setType(element.text());
+            type = element.text();
         else if (element.tagName() == "action")
-            setAction(element.text());
+            action = element.text();
         else if (element.tagName() == "method")
-            setMethod(element.text());
+            method = element.text();
         else if (element.tagName() == "refreshInterval")
-            setRefreshInterval(element.text().toInt());
+            refresh_interval = element.text().toInt();
         else if (element.tagName() =="retryInterval")
-            setRefreshInterval(element.text().toInt());
+            retry_interval = element.text().toInt();
     }
 }
 
@@ -48,19 +46,9 @@ QString SubScription::getType() const
     return type;
 }
 
-void SubScription::setType(const QString &value)
-{
-    type = value;
-}
-
 QString SubScription::getAction() const
 {
     return action;
-}
-
-void SubScription::setAction(const QString &value)
-{
-    action = value;
 }
 
 QString SubScription::getMethod() const
@@ -68,27 +56,13 @@ QString SubScription::getMethod() const
     return method;
 }
 
-void SubScription::setMethod(const QString &value)
-{
-    method = value;
-}
-
 int SubScription::getRefreshInterval() const
 {
     return refresh_interval;
 }
 
-void SubScription::setRefreshInterval(int value)
-{
-    refresh_interval = value;
-}
 
 int SubScription::getRetryInterval() const
 {
     return retry_interval;
-}
-
-void SubScription::setRetryInterval(int value)
-{
-    retry_interval = value;
 }

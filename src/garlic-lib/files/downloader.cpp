@@ -207,7 +207,12 @@ void Downloader::doDownloadError(QNetworkReply *reply)
 
 bool Downloader::validContentType(QString content_type)
 {
-    if (!content_type.contains("image/") && !content_type.contains("video/") && !content_type.contains("audio/") && !content_type.contains("application/smil") && !content_type.contains("application/widget"))
+    if (!content_type.contains("image/") &&
+            !content_type.contains("video/") &&
+            !content_type.contains("audio/") &&
+            !content_type.contains("application/smil") &&
+            !content_type.contains("application/xml") &&
+            !content_type.contains("application/widget"))
     {
         return false;
     }

@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     LibFacade      *MyLibFacade     = new LibFacade();
     QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
     QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());
-    QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName());
+    QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName() + " - " + MyLibFacade->getConfiguration()->getVersion());
 
     QDir dir(".");
     MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
@@ -48,19 +48,18 @@ int main(int argc, char *argv[])
 #else
     QLoggingCategory::setFilterRules("*.debug=false");
 #endif
-
     qInstallMessageHandler(handleMessages);
 
     TCmdParser MyParser(MyLibFacade->getConfiguration());
     MyParser.addOptions();
     MyParser.parse(&app);
 
-    bool is_index = true;
-
 
     TScreen    MyScreen(QApplication::desktop());
 
     MainWindow w(&MyScreen, MyLibFacade);
+
+    bool is_index = true;
     if (MyLibFacade->getConfiguration()->getIndexUri() == "")
     {
         if (w.openConfigDialog() == QDialog::Rejected)
@@ -80,9 +79,8 @@ int main(int argc, char *argv[])
             w.setMainWindowSize(MyParser.getWindowSize());
             w.resizeAsWindow();
         }
-        MyLibFacade->init();
-        MyLibFacade->loadIndex();
-        MyLibFacade->checkForNewSmilIndex();
+
+        MyLibFacade->initParser();
 
         ret = app.exec();
     }

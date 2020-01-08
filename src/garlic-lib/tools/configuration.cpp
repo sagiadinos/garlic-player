@@ -30,9 +30,9 @@ QString TConfiguration::log_directory = "";
  * @brief TConfiguration::TConfiguration
  * @param UserConfig
  */
-TConfiguration::TConfiguration(QSettings *UserConfig, QObject *parent) : QObject(parent)
+TConfiguration::TConfiguration(QSettings *uc, QObject *parent) : QObject(parent)
 {
-    setUserConfig(UserConfig);
+    UserConfig = uc;
     determineUuid();
     determinePlayerName();
     determineOS();
@@ -48,11 +48,6 @@ QString TConfiguration::getLogDir()
     return TConfiguration::log_directory;
 }
 
-void TConfiguration::setLogDir(QString path)
-{
-    TConfiguration::log_directory = path;
-}
-
 QString TConfiguration::getLastPlayedIndexPath()
 {
     return getUserConfigByKey("last_played_index_path");
@@ -61,16 +56,6 @@ QString TConfiguration::getLastPlayedIndexPath()
 void TConfiguration::setLastPlayedIndexPath(const QString &value)
 {
     setUserConfigByKey("last_played_index_path", value);
-}
-
-QSettings *TConfiguration::getUserConfig() const
-{
-    return UserConfig;
-}
-
-void TConfiguration::setUserConfig(QSettings *value)
-{
-    UserConfig = value;
 }
 
 QString TConfiguration::getUserConfigByKey(QString key)
@@ -105,18 +90,13 @@ QString TConfiguration::getUuid() const
     return uuid;
 }
 
-void TConfiguration::setUuid(const QString &value)
-{
-    uuid = value;
-    setUserConfigByKey("uuid", value);
-}
 
 void TConfiguration::determineUuid()
 {
-    setUuid(getUserConfigByKey("uuid"));
+    uuid = getUserConfigByKey("uuid");
     if (getUuid() == "")
     {
-        setUuid(createUuid());
+        uuid = createUuid();
         UserConfig->setValue("uuid", getUuid());
     }
 }
@@ -358,7 +338,7 @@ void TConfiguration::createDirectories()
 #endif
     createDirectoryIfNotExist(cache_dir);
     createDirectoryIfNotExist(log_dir);
-    setLogDir(log_dir);
+    TConfiguration::log_directory = log_dir;
 }
 
 void TConfiguration::determineUserAgent()

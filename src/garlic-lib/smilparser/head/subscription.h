@@ -28,16 +28,11 @@ class SubScription : public QObject
         explicit SubScription(QObject *parent = nullptr);
         void parse(QDomElement element);
         QString getType() const;
-        void setType(const QString &value);
         QString getAction() const;
-        void setAction(const QString &value);
         QString getMethod() const;
-        void setMethod(const QString &value);
 
         int getRefreshInterval() const;
-        void setRefreshInterval(int value);
         int getRetryInterval() const;
-        void setRetryInterval(int value);
 
 
     protected:

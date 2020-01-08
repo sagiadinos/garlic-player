@@ -26,6 +26,7 @@
 #include <QList>
 
 #include "head/subscription.h"
+#include "head/task_scheduler.h"
 #include "reports/system_report_manager.h"
 #include "reports/event_logs_manager.h"
 #include "reports/play_logs_manager.h"
@@ -55,7 +56,7 @@ class HeadParser: public QObject
         explicit HeadParser(TConfiguration *config, QObject *parent = Q_NULLPTR);
          ~HeadParser();
         void                   setDefaultValues();
-        void                   parse(QDomElement head);
+        void                   parse(QDomElement head, SmilHead::TaskScheduler *MyTasks);
         int                    getRefreshTime(){return refresh;}
         QString                getRootBackgroundColor();
         QString                getTitle();
@@ -78,7 +79,7 @@ class HeadParser: public QObject
         QList<Region>          region_list;
         TConfiguration        *MyConfiguration;
         void                   parseMeta(QDomElement element);
-        void                   parseMetaData(QDomElement element);
+        void                   parseMetaData(QDomElement element, SmilHead::TaskScheduler *MyTasks);
         void                   parseLayout(QDomElement layout);
         void                   parseRootLayout(QDomElement root_layout);
         void                   parseRegions(QDomNodeList childs);

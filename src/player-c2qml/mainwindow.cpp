@@ -61,7 +61,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
     if (!ke->modifiers().testFlag(Qt::ControlModifier))
     {
-        MyInteraction.handleKeyPress(ke->key());
+ //       MyInteraction.handleKeyPress(ke->key());
     }
     else
     {
@@ -88,9 +88,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
                 setCursor(Qt::ArrowCursor);
                 if (openConfigDialog() == QDialog::Accepted)
                 {
-                    MyLibFacade->init();
-                    MyLibFacade->loadIndex(); // load index when QML comiled complete
-                    MyLibFacade->checkForNewSmilIndex();
+                    MyLibFacade->initParser();
                 }
                 setCursor(Qt::BlankCursor);
             break;
@@ -258,9 +256,7 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             qDebug(MediaPlayer) << "No QML source set";
             break;
         case QQuickView::Ready:
-            MyLibFacade->init();
-            MyLibFacade->loadIndex(); // load index when QML comiled complete
-            MyLibFacade->checkForNewSmilIndex();
+            MyLibFacade->initParser();
             break;
         case QQuickView::Loading:
             qDebug(MediaPlayer) << "QML loaded/compiled... ";

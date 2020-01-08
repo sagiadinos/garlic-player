@@ -17,3 +17,4 @@ Q_LOGGING_CATEGORY(Develop, "Develop")
 Q_LOGGING_CATEGORY(PlayLog, "PlayLog")
 Q_LOGGING_CATEGORY(EventLog, "EventLog")
 
+Q_LOGGING_CATEGORY(TaskExecution, "TaskExecution")
