@@ -7,6 +7,7 @@ Changelog
 	* get version number from github repository (finished)
 	* SMIL-index will be preloaded (finished)
 	* interactivity, touch and jump to previous, next playlist item
+	* change android builds from deprecated gcc to clang (finished)
 	* REST-Interface
 	* remote configuration change from CMS
 	* auto update for rooted Android devices
