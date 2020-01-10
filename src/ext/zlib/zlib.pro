@@ -7,7 +7,7 @@ TARGET = zlib
 INCLUDEPATH += .
 CONFIG += c++11 staticlib
 
-unix{
+unix:!android{
     #temporary ToDO
     # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
     # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13

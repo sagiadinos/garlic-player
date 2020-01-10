@@ -5,7 +5,7 @@ Garlic should be used online with web-based content managment systems like [Smil
 Offline usage via command-line is also possible.
 
 ## Libraries used
- - [Qt5](https://www.qt.io) >= 5.7 (5.9.8 recommended)
+ - [Qt5](https://www.qt.io) >= 5.7 (5.12.6 recommended)
  - [QtAV](http://www.qtav.org) >= 1.12.0 as alternative to QtMultimedia
  - [Quazip](http://quazip.sourceforge.net) 0.7.3 (included in ./src/ext)
  - [zlib](https://zlib.net) 1.2.11 (included in ./src/ext)

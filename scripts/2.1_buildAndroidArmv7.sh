@@ -23,7 +23,7 @@ export ANDROID_HOME=$BASE_PATH/Android
 export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi  
 export ANDROID_NDK_TOOLCHAIN_VERSION=4.9  
 export ANDROID_NDK_HOST=linux-x86_64  
-export ANDROID_NDK_PLATFORM=android-16  
+export ANDROID_NDK_PLATFORM=android-10  
 
 export JDK_PATH=/usr/lib/jvm/java-8-openjdk-amd64
 
