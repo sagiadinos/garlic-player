@@ -93,6 +93,7 @@ echo
 
 cp bin/garlic-player $GARLIC_DEPLOY_PATH/garlic-player/bin/
 mv $GARLIC_DEPLOY_BASE_PATH/garlic.sh $GARLIC_DEPLOY_PATH/garlic-player
+cp -P lib/libgarlic.so* $GARLIC_DEPLOY_PATH/garlic-player/lib
 
 echo 
 echo =========== create deb ============ 

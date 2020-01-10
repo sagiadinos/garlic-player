@@ -1,6 +1,6 @@
 #include "media/image.h"
 
-Image::Image(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r_id, parent)
+Image::Image(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia(mc, r_id, parent)
 {
     setRegionId(r_id);
     QString str(

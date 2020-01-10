@@ -2,9 +2,9 @@
 #define VIDEO_H
 
 #include "smilparser/media/video.h"
-#include "base_media.h"
+#include "player_base_media.h"
 
-class Video : public BaseMedia
+class Video : public PlayerBaseMedia
 {
         Q_OBJECT
     public:

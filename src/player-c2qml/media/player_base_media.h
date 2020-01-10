@@ -6,11 +6,11 @@
 #include "smilparser/media/base_media.h"
 #include "tools/logger.h"
 
-class BaseMedia : public QObject
+class PlayerBaseMedia : public QObject
 {
         Q_OBJECT
     public:
-        explicit BaseMedia(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
+        explicit PlayerBaseMedia(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
         virtual void          init(BaseMedia *media)   = 0;
         virtual void          deinit()   = 0;
         virtual void          setParentItem(QQuickItem *parent)   = 0;
@@ -21,7 +21,7 @@ class BaseMedia : public QObject
 
     protected:
         Logger&               MyLogger = Logger::getInstance();
-        BaseMedia               *MyMedia;
+        BaseMedia            *MyMedia;
         QString               start_time = "";
         QString               region_id  = "";
         QQuickItem           *createMediaItem(QQmlComponent *mc, QString str);

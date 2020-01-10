@@ -12,7 +12,7 @@ MediaFactory::MediaFactory(QQmlComponent *mc, QString r_id, QObject *parent) : Q
     QQmlEngine::setObjectOwnership(MyWeb.data(), QQmlEngine::CppOwnership);
 }
 
-BaseMedia *MediaFactory::initMedia(BaseMedia *media)
+PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
 {
     QString type   = media->objectName();
     if (type == "TImage")

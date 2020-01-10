@@ -21,7 +21,7 @@
 
 #include <QQuickItem> // interates QQmlComponent
 
-#include "head.h"
+#include "head_parser.h"
 #include "media/media_factory.h"
 
 class TRegion : public QQuickItem
@@ -39,7 +39,7 @@ protected:
     QQuickItem           *root_item;
     QQmlEngine           *engine;
     Region                region;
-    BaseMedia            *MyMedia = Q_NULLPTR;
+    PlayerBaseMedia            *MyMedia = Q_NULLPTR;
     QScopedPointer<QQmlComponent>       rectangle;
     QScopedPointer<QQmlComponent>       media_component;
     QScopedPointer<QQuickItem>          rectangle_item;

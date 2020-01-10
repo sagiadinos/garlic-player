@@ -1,6 +1,6 @@
 #include "web.h"
 
-Web::Web(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r_id, parent)
+Web::Web(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia(mc, r_id, parent)
 {
     setRegionId(r_id);
     QString module = "import QtWebView 1.1\n WebView ";

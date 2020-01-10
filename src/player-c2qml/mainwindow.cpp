@@ -22,6 +22,7 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 {
     MyScreen               = screen;
     MyLibFacade            = lib_facade;
+    MyInteractions         = new Interactions(lib_facade, this);
 }
 
 MainWindow::~MainWindow()

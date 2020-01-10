@@ -55,7 +55,7 @@ class MainWindow : public QQuickView
         const int                 FULLSCREEN    = 1;
         const int                 BIGFULLSCREEN = 2;
 
-        Interactions              MyInterActions;
+        Interactions             *MyInteractions;
         LibFacade                *MyLibFacade      = Q_NULLPTR;
         TScreen                  *MyScreen;
         QMap<QString, TRegion *>  regions_list;

@@ -1,11 +1,11 @@
 #ifndef MPIMAGE_H
 #define MPIMAGE_H
 
-#include "base_media.h"
+#include "player_base_media.h"
 #include "smilparser/media/image.h"
 #include <QQuickImageProvider>
 #include <QQuickImageResponse>
-class Image : public BaseMedia
+class Image : public PlayerBaseMedia
 {
         Q_OBJECT
     public:

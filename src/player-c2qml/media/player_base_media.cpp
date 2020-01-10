@@ -1,27 +1,27 @@
-#include "base_media.h"
+#include "player_base_media.h"
 
-BaseMedia::BaseMedia(QQmlComponent *mc, QString r_id, QObject *parent) : QObject(parent)
+PlayerBaseMedia::PlayerBaseMedia(QQmlComponent *mc, QString r_id, QObject *parent) : QObject(parent)
 {
     Q_UNUSED(mc);
     setRegionId(r_id);
 }
 
-QString BaseMedia::getRegionId() const
+QString PlayerBaseMedia::getRegionId() const
 {
     return region_id;
 }
 
-void BaseMedia::setRegionId(const QString &value)
+void PlayerBaseMedia::setRegionId(const QString &value)
 {
     region_id = value;
 }
 
-void BaseMedia::setStartTime()
+void PlayerBaseMedia::setStartTime()
 {
     start_time = MyLogger.getCurrentIsoDateTime();;
 }
 
-QString BaseMedia::createPlayLogXml()
+QString PlayerBaseMedia::createPlayLogXml()
 {
     if (start_time == "")
         return "";
@@ -34,7 +34,7 @@ QString BaseMedia::createPlayLogXml()
 }
 
 
-bool BaseMedia::load(QQuickItem *item)
+bool PlayerBaseMedia::load(QQuickItem *item)
 {
     QString source = MyMedia->getLoadablePath();
     bool ret = false;
@@ -52,7 +52,7 @@ bool BaseMedia::load(QQuickItem *item)
     return ret;
 }
 
-QQuickItem *BaseMedia::createMediaItem(QQmlComponent *mc, QString str)
+QQuickItem *PlayerBaseMedia::createMediaItem(QQmlComponent *mc, QString str)
 {
     mc->setData(str.toUtf8(), QUrl());
     if (mc->isError())
@@ -65,7 +65,7 @@ QQuickItem *BaseMedia::createMediaItem(QQmlComponent *mc, QString str)
 }
 
 
-bool BaseMedia::isFileExists(QString path)
+bool PlayerBaseMedia::isFileExists(QString path)
 {
     return QFileInfo::exists(path);
 }

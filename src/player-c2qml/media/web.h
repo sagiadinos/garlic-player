@@ -2,9 +2,9 @@
 #define WEB_H
 
 #include "smilparser/media/web.h"
-#include "base_media.h"
+#include "player_base_media.h"
 
-class Web : public BaseMedia
+class Web : public PlayerBaseMedia
 {
         Q_OBJECT
     public:

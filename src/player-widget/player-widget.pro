@@ -22,15 +22,32 @@ support_qtav {
     unix{    # QtAV has "this use of defined may not be portable" issues with newer gcc
         QMAKE_CXXFLAGS += -Wno-expansion-to-defined
     }
-
+    HEADERS  += \
+        mm_libs/qtav_decoder.cpp \
+        mm_libs/qtav_widget.cpp
+    SOURCES += \
+        mm_libs/qtav_decoder.cpp \
+        mm_libs/qtav_widget.cpp
 }
 support_libvlc{
     DEFINES += SUPPORT_LIBVLC
     LIBS += -lvlc -lX11
+    HEADERS  += \
+        mm_libs/vlc_decoder.cpp \
+        mm_libs/vlc_widget.cpp
+    SOURCES += \
+        mm_libs/vlc_decoder.cpp \
+        mm_libs/vlc_widget.cpp
 }
 support_qtmm {
      DEFINES += SUPPORT_QTMM
      QT += multimedia multimediawidgets
+    HEADERS  += \
+        mm_libs/qtmm_decoder.cpp \
+        mm_libs/qtmm_widget.cpp
+    SOURCES += \
+        mm_libs/qtmm_decoder.cpp \
+        mm_libs/qtmm_widget.cpp
 }
 
 DEFINES += QT_DEPRECATED_WARNINGS
@@ -53,12 +70,6 @@ SOURCES += \
     mainwindow.cpp \
     mediaplayer_wrapper.cpp \
     mediawidget_wrapper.cpp \
-    mm_libs/qtav_decoder.cpp \
-    mm_libs/qtav_widget.cpp \
-    mm_libs/qtmm_decoder.cpp \
-    mm_libs/qtmm_widget.cpp \
-    mm_libs/vlc_decoder.cpp \
-    mm_libs/vlc_widget.cpp \
     region.cpp
 
 HEADERS  += \
@@ -71,12 +82,6 @@ HEADERS  += \
     mainwindow.h \
     mediaplayer_wrapper.h \
     mediawidget_wrapper.h \
-    mm_libs/qtav_decoder.h \
-    mm_libs/qtav_widget.h \
-    mm_libs/qtmm_decoder.h \
-    mm_libs/qtmm_widget.h \
-    mm_libs/vlc_decoder.h \
-    mm_libs/vlc_widget.h \
     region.h
 
 # workaround for >Qt5.11 https://github.com/wang-bin/QtAV/issues/1231

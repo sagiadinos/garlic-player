@@ -31,8 +31,8 @@ INCLUDEPATH+=../ext/quazip/includes
 include(../player-common/common.pri)
 
 SOURCES += \
-    media/base_media.cpp \
     media/image.cpp \
+    media/player_base_media.cpp \
     media/video.cpp \
     media/web.cpp \
     media/audio.cpp \
@@ -42,8 +42,8 @@ SOURCES += \
     region.cpp
 
 HEADERS  += \
-    media/base_media.h \
     media/image.h \
+    media/player_base_media.h \
     media/video.h \
     media/web.h \
     media/audio.h \
@@ -54,6 +54,9 @@ HEADERS  += \
 unix:!android {
     QT += webengine
     LIBS += -L../lib -lgarlic -lquazip -lzlib
+    # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
+    # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
+    QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
 }
 android {
     QT += androidextras webview

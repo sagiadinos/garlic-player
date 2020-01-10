@@ -1,6 +1,6 @@
 #include "audio.h"
 
-Audio::Audio(QQmlComponent *mc, QString r_id, QObject *parent) : BaseMedia(mc, r_id, parent)
+Audio::Audio(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia(mc, r_id, parent)
 {
     setRegionId(r_id);
 #ifdef SUPPORT_QTAV
