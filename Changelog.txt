@@ -12,6 +12,7 @@ Changelog
 	* remote configuration change from CMS
 	* auto update for rooted Android devices
 	* code coverage (finished)
+	* customize tests
 	* reorganized code structure and name changes
 
 0.2.0 -> 0.3.0
