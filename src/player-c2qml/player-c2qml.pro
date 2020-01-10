@@ -53,14 +53,14 @@ HEADERS  += \
 
 unix:!android {
     QT += webengine
-    LIBS += -L../lib -lgarlic -lquazip -lzlib
+    LIBS += -L../lib -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
     # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
     # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
 }
 android {
     QT += androidextras webview
-    LIBS += -L../libandroid -lgarlic -lquazip -lzlib
+    LIBS += -L../libandroid -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
 }
 win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
