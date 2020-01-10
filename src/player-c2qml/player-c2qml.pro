@@ -20,7 +20,7 @@ support_qtav {
     QT      += av
 }
 
-DEFINES += QT_DEPRECATED_WARNINGS QUAZIP_STATIC
+DEFINES += QT_DEPRECATED_WARNINGS
 
 TARGET = garlic-player
 TEMPLATE = app
@@ -60,7 +60,7 @@ unix:!android {
 }
 android {
     QT += androidextras webview
-    LIBS += -L../libandroid -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
+    LIBS += -L../libandroid -lgarlic -lquazip -lzlib # libs compiled static
 }
 win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib

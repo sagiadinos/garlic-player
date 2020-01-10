@@ -9,9 +9,13 @@ DEFINES += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
 TARGET = garlic
 LIBS += -L../lib -lquazip -lzlib
 
-!android:DESTDIR = ../lib/
-android:DESTDIR = ../libandroid/
-
+!android{
+    DESTDIR = ../lib/
+}android{
+    DESTDIR = ../libandroid/
+    LIBS += -L../libandroid -lquazip -lzlib
+    CONFIG += staticlib
+}
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes
 
@@ -21,7 +25,7 @@ win32 {
     Debug:LIBS += -L../lib  -lquazipd -lzlib
 }
 
-unix{
+unix:!android{
     #temporary ToDO
     # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
     # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
