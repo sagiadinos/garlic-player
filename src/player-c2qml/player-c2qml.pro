@@ -41,7 +41,7 @@ android {
     ANDROID_EXTRA_LIBS += \
         $$ANDROID_LIBS/libssl.so \
         $$ANDROID_LIBS/libcrypto_1_0_0.so \
-         $$PWD/../libandroid/libgarlic.so \
+        $$OUT_PWD/../libandroid/libgarlic.so \
         $$ANDROID_LIBS/libcrypto.so
 }
 win32 {
