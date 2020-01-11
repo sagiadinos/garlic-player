@@ -22,6 +22,7 @@ android{
 }
 win32 {
     CONFIG += staticlib
+    DESTDIR = ../lib/
     Release:LIBS += -L../lib -lquazip -lzlib
     Debug:LIBS += -L../lib  -lquazipd -lzlib
 }
