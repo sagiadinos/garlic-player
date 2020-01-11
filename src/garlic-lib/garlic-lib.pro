@@ -2,35 +2,32 @@ include(../defaults.pri)
 
 QT       += core sql network xml widgets
 TEMPLATE  = lib
-CONFIG    += warn_on c++11 stl
+CONFIG   += warn_on c++11 stl
+DEFINES  += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
+TARGET    = garlic
 
-DEFINES += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
-
-TARGET = garlic
-LIBS += -L../lib -lquazip -lzlib
-
-!android{
+unix:!android{
     DESTDIR = ../lib/
-}android{
+    LIBS += -L../lib -lquazip -lzlib
+    #temporary ToDO
+    # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
+    # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
+    QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
+}
+
+android{
     DESTDIR = ../libandroid/
     LIBS += -L../libandroid -lquazip -lzlib
-    CONFIG += staticlib
+   # CONFIG += staticlib
 }
-INCLUDEPATH+=../ext/zlib/includes
-INCLUDEPATH+=../ext/quazip/includes
-
 win32 {
     CONFIG += staticlib
     Release:LIBS += -L../lib -lquazip -lzlib
     Debug:LIBS += -L../lib  -lquazipd -lzlib
 }
 
-unix:!android{
-    #temporary ToDO
-    # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
-    # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
-    QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
-}
+INCLUDEPATH+=../ext/zlib/includes
+INCLUDEPATH+=../ext/quazip/includes
 
 SOURCES += \
     files/base_manager.cpp \

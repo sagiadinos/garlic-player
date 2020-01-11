@@ -86,6 +86,6 @@ void DebugInfos::outputResourcesUsage()
         max_threads_used = current_threads;
         ui->MaxThreadsNumber->setText("Max Threads: " + QString::number(max_threads_used));
     }
-    ui->PlaylistTitle->setText(MyLibFacade->getHead()->getTitle());
+    ui->PlaylistTitle->setText(MyLibFacade->getConfiguration()->getPlayerName() + " (" + MyLibFacade->getConfiguration()->getVersion() + ") - " +MyLibFacade->getHead()->getTitle());
 
 }

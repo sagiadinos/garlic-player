@@ -4,6 +4,7 @@ set -e
 
 SCRIPTDIR=$(dirname "$0")
 source $SCRIPTDIR/env.sh
+source $SCRIPTDIR/writeVersionFromGithub.sh
 
 BASE_PATH=/home/niko            # Your full basic path to your develop tools do not use ~/ 
 
@@ -20,10 +21,11 @@ export ANDROID_API_VERSION=android-19
 
 # build runs without but not know if neccesary
 export ANDROID_HOME=$BASE_PATH/Android 
-export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi  
-export ANDROID_NDK_TOOLCHAIN_VERSION=4.9  
-export ANDROID_NDK_HOST=linux-x86_64  
-export ANDROID_NDK_PLATFORM=android-10  
+# not neccessary with clang
+#export ANDROID_NDK_TOOLCHAIN_PREFIX=arm-linux-androideabi  
+#export ANDROID_NDK_TOOLCHAIN_VERSION=4.9  
+#export ANDROID_NDK_HOST=linux-x86_64  
+#export ANDROID_NDK_PLATFORM=android-10  
 
 export JDK_PATH=/usr/lib/jvm/java-8-openjdk-amd64
 
@@ -36,7 +38,7 @@ cd $BUILD_DIR
 echo 
 echo ========== prepare build 
 echo 
-$QT_PATH_RUNTIME/bin/qmake -r -spec android-g++  $GARLIC_DIR/src/complete_c2qml.pro CONFIG+=$CONFIG_DEBUG_RELEASE CONFIG+=qml_$CONFIG_DEBUG_RELEASE
+$QT_PATH_RUNTIME/bin/qmake -r -spec android-clang  $GARLIC_DIR/src/complete_c2qml.pro CONFIG+=$CONFIG_DEBUG_RELEASE CONFIG+=qml_$CONFIG_DEBUG_RELEASE
 
 echo 
 echo ========== build 
@@ -57,4 +59,4 @@ $QT_PATH_RUNTIME/bin/androiddeployqt \
 	--jdk $JDK_PATH  \
 	--gradle 
 
-mv android-build/build/outputs/apk/android-build-debug.apk garlic-player-android-armv7-$DATE.apk
+mv android-build/build/outputs/apk/debug/android-build-debug.apk garlic-player-android-armv7-$DATE.apk

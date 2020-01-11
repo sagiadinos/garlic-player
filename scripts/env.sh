@@ -4,8 +4,8 @@ set -e
 SCRIPTDIR=$(dirname "$0")
 
 export QT_BASE_PATH=											# path to your qt base directory
-export QT_VERSION=5.9.9											# The Qt Version 5.7, 5.8, 5.9.2 etc
-export CONFIG_DEBUG_RELEASE=debug    							# set if debug or release
+export QT_VERSION=5.12.6											# The Qt Version 5.7, 5.8, 5.9.2 etc
+export CONFIG_DEBUG_RELEASE=release    							# set if debug or release
 export DEV_JOBS=$(grep -c "^processor" /proc/cpuinfo)			# determine how many cores can be used
 
 if [ -z "QT_BASE_PATH" ]; then
