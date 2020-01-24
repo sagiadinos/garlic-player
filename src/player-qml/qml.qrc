@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>main.qml</file>
-        <file>main_window.js</file>
-        <file>region.js</file>
-    </qresource>
-</RCC>
