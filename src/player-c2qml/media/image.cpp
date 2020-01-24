@@ -66,5 +66,5 @@ int Image::determineFillMode(QString smil_fit)
 
 void Image::doStateChanged(QString state)
 {
-    qDebug() << state << "from c++";
+    qDebug() << state << "doStateChanged";
 }

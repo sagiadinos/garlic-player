@@ -32,17 +32,19 @@ android {
     QT        += androidextras webview
     LIBS      += -L../libandroid -lgarlic
     DISTFILES += \
-       AndroidManifest.xml \
-       res/values/libs.xml
+       android/AndroidManifest.xml \
+       android/res/values/libs.xml \
+       android/src/com/sagiadinos/garlic/player/java/GarlicActivity.java
 
-    ANDROID_PACKAGE_SOURCE_DIR = $$PWD
-    ANDROID_LIBS = $$dirname(QMAKE_QMAKE)/../../../openssl-1.0.2/armeabi-v7a/lib/
+    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+#    ANDROID_LIBS = $$dirname(QMAKE_QMAKE)/../../../openssl-1.0.2/armeabi-v7a/lib/
 
     ANDROID_EXTRA_LIBS += \
-        $$ANDROID_LIBS/libssl.so \
-        $$ANDROID_LIBS/libcrypto_1_0_0.so \
-        $$OUT_PWD/../libandroid/libgarlic.so \
-        $$ANDROID_LIBS/libcrypto.so
+#        $$ANDROID_LIBS/libssl.so \
+#        $$ANDROID_LIBS/libcrypto_1_0_0.so \
+        $$OUT_PWD/../libandroid/libgarlic.so
+#        $$ANDROID_LIBS/libcrypto.so
+
 }
 win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
@@ -63,6 +65,7 @@ SOURCES += \
     region.cpp
 
 HEADERS  += \
+    Java2Cpp.h \
     media/image.h \
     media/player_base_media.h \
     media/video.h \
@@ -72,5 +75,10 @@ HEADERS  += \
     mainwindow.h \
     region.h
 RESOURCES += qml.qrc
+
+DISTFILES += \
+    android/src/com/sagiadinos/garlic/player/java/ConfigReceiver.java \
+    android/src/com/sagiadinos/garlic/player/java/SmilIndexReceiver.java
+
 
 

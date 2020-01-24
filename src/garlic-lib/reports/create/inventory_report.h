@@ -11,7 +11,7 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            CreateInventoryReport(TConfiguration *config, QObject *parent = nullptr);
+            CreateInventoryReport(MainConfiguration *config, QObject *parent = nullptr);
             void process(QList<DB::InventoryDataset> list);
         protected:
             QDomElement content_directory, object_info;

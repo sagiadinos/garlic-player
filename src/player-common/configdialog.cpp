@@ -1,6 +1,6 @@
 #include "configdialog.h"
 
-ConfigDialog::ConfigDialog(QWidget *parent, TConfiguration *Config) :  QDialog(parent), ui(new Ui::ConfigDialog)
+ConfigDialog::ConfigDialog(QWidget *parent, MainConfiguration *Config) :  QDialog(parent), ui(new Ui::ConfigDialog)
 {
     ui->setupUi(this);
     MyConfiguration = Config;

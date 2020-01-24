@@ -17,7 +17,7 @@ class FileDownloader : public TNetworkAccess
 {
         Q_OBJECT
     public:
-        explicit FileDownloader(QNetworkAccessManager* nam, TConfiguration *config, QObject* parent= nullptr);
+        explicit FileDownloader(QNetworkAccessManager* nam, MainConfiguration *config, QObject* parent= nullptr);
         ~FileDownloader();
 
         void    startDownload(QUrl url, QString file_name);

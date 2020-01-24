@@ -31,7 +31,7 @@ namespace Reporting
             Q_OBJECT
         public:
             explicit CreateSystemReport(
-                                  TConfiguration *config,
+                                  MainConfiguration *config,
                                   QObject *parent = nullptr);
             void process();
         protected:

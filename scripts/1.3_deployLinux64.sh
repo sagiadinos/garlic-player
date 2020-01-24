@@ -62,7 +62,6 @@ cp -P $QT_PATH_RUNTIME/lib/libQt5QuickWidgets.* $GARLIC_DEPLOY_PATH/garlic-playe
 cp -P $QT_PATH_RUNTIME/lib/libQt5Sql.* $GARLIC_DEPLOY_PATH/garlic-player/lib
 cp -P $QT_PATH_RUNTIME/lib/libQt5Svg.* $GARLIC_DEPLOY_PATH/garlic-player/lib
 cp -P $QT_PATH_RUNTIME/lib/libQt5WebChannel.* $GARLIC_DEPLOY_PATH/garlic-player/lib
-cp -P $QT_PATH_RUNTIME/lib/libQt5WebChannel.*.9 $GARLIC_DEPLOY_PATH/garlic-player/lib
 cp -P $QT_PATH_RUNTIME/lib/libQt5WebEngine.* $GARLIC_DEPLOY_PATH/garlic-player/lib
 cp -P $QT_PATH_RUNTIME/lib/libQt5WebEngineCore.* $GARLIC_DEPLOY_PATH/garlic-player/lib
 cp -P $QT_PATH_RUNTIME/lib/libQt5WebEngineWidgets.* $GARLIC_DEPLOY_PATH/garlic-player/lib
@@ -95,13 +94,14 @@ cp bin/garlic-player $GARLIC_DEPLOY_PATH/garlic-player/bin/
 mv $GARLIC_DEPLOY_BASE_PATH/garlic.sh $GARLIC_DEPLOY_PATH/garlic-player
 cp -P lib/libgarlic.so* $GARLIC_DEPLOY_PATH/garlic-player/lib
 
+
 echo 
 echo =========== create deb ============ 
 echo 
 
-dpkg -b $GARLIC_DEPLOY_BASE_PATH/ garlic-player-linux-x64-$DATE.deb
+dpkg -b $GARLIC_DEPLOY_BASE_PATH/ garlic-player-linux-x64-$DEPLOY_SUFFIX.deb
 
 echo 
 echo =========== create tar.xz ============ 
 echo 
-tar -cJf garlic-player-linux-x64-$DATE.tar.xz -C deb/garlic-player/opt .
+tar -cJf garlic-player-linux-x64-$DEPLOY_SUFFIX.tar.xz -C deb/garlic-player/opt .

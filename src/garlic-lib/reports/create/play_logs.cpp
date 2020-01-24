@@ -1,6 +1,6 @@
 #include "play_logs.h"
 
-Reporting::CreatePlayLogs::CreatePlayLogs(TConfiguration *config, QObject *parent) : Reporting::CreateBase(config, parent)
+Reporting::CreatePlayLogs::CreatePlayLogs(MainConfiguration *config, QObject *parent) : Reporting::CreateBase(config, parent)
 {
 
 }

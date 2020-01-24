@@ -18,7 +18,7 @@
 
 #include "download_queue.h"
 
-DownloadQueue::DownloadQueue(TConfiguration *config, QObject *parent) : QObject(parent)
+DownloadQueue::DownloadQueue(MainConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
 }

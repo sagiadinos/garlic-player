@@ -206,6 +206,10 @@ void MainWindow::createRegions()
 void MainWindow::deleteRegions()
 {
     int size = regions_list.size();
+    if (size == 0) // prevent to call functionx of deleted or not existing regions
+    {
+        return;
+    }
     qDeleteAll(regions_list);
     regions_list.clear();
     qDebug() << size << " region(s) deleted";
@@ -216,8 +220,7 @@ void MainWindow::deleteRegions()
 
 void MainWindow::prepareParsing()
 {
-    if (regions_list.size() > 0)
-        deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
+    deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
 
     createRegions();
     MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia

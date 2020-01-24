@@ -45,7 +45,8 @@ protected:
     QScopedPointer<QQuickItem>          rectangle_item;
 
     QScopedPointer<MediaFactory>        MyMediaFactory;
-    qreal                 root_width_px, root_height_px = 0;
+    qreal                 root_width_px = 0;
+    qreal                 root_height_px = 0;
     void                  resizeGeometry();
 };
 

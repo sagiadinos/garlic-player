@@ -18,7 +18,7 @@
 
 #include "base_manager.h"
 
-BaseManager::BaseManager(QObject *parent) : QObject(parent)
+Files::BaseManager::BaseManager(QObject *parent) : QObject(parent)
 {
     setParent(parent);
 }
@@ -26,7 +26,7 @@ BaseManager::BaseManager(QObject *parent) : QObject(parent)
 
 // ==================  protected methods =======================================
 
-bool BaseManager::isRemote(QString src)
+bool Files::BaseManager::isRemote(QString src)
 {
     if (src.mid(0, 4) == "http" || src.mid(0,3) == "ftp")
         return true;
@@ -35,12 +35,12 @@ bool BaseManager::isRemote(QString src)
 }
 
 
-bool BaseManager::isRelative(QString src)
+bool Files::BaseManager::isRelative(QString src)
 {
     return (src.at(0) != '/');
 }
 
-void BaseManager::renameDownloadedFile(QString file_path)
+void Files::BaseManager::renameDownloadedFile(QString file_path)
 {
     QFile file(file_path+FILE_DOWNLOADED_SUFFIX);
     if (file.exists())

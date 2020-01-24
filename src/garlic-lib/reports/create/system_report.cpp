@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "system_report.h"
 
-Reporting::CreateSystemReport::CreateSystemReport(TConfiguration *config,
+Reporting::CreateSystemReport::CreateSystemReport(MainConfiguration *config,
                            QObject *parent) : Reporting::CreateBase(config, parent)
 {
     MyConfiguration = config;

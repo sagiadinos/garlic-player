@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "downloader.h"
 
-Downloader::Downloader(TConfiguration *config, QObject *parent) : TNetworkAccess(config, parent)
+Downloader::Downloader(MainConfiguration *config, QObject *parent) : TNetworkAccess(config, parent)
 {
     manager_head.reset(new QNetworkAccessManager(this));
     connect(manager_head.data(), SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRequest(QNetworkReply*)));
@@ -212,9 +212,11 @@ bool Downloader::validContentType(QString content_type)
             !content_type.contains("audio/") &&
             !content_type.contains("application/smil") &&
             !content_type.contains("application/xml") &&
+            !content_type.contains("application/zip") &&
+            !content_type.contains("application/vnd.android.package-archive") &&
             !content_type.contains("application/widget"))
     {
-        return false;
+        return false; // Todo only for Test change it!
     }
     return true;
 }

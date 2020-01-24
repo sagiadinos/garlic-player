@@ -21,16 +21,18 @@
 #include <QFile>
 #include "download_queue.h"
 
-class BaseManager : public QObject
+namespace Files
 {
-        Q_OBJECT
-    public:
-        BaseManager(QObject *parent = Q_NULLPTR);
+    class BaseManager : public QObject
+    {
+            Q_OBJECT
+        public:
+            BaseManager(QObject *parent = Q_NULLPTR);
 
-    protected:
-        bool     isRemote(QString src);
-        bool     isRelative(QString src);
-        void     renameDownloadedFile(QString file_path);
-};
-
+        protected:
+            bool     isRemote(QString src);
+            bool     isRelative(QString src);
+            void     renameDownloadedFile(QString file_path);
+    };
+}
 #endif // BASE_MANAGER_H

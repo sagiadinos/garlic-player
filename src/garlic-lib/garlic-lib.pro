@@ -18,8 +18,8 @@ unix:!android{
 android{
     DESTDIR = ../libandroid/
     LIBS += -L../libandroid -lquazip -lzlib
-   # CONFIG += staticlib
 }
+
 win32 {
     CONFIG += staticlib
     DESTDIR = ../lib/
@@ -47,7 +47,7 @@ SOURCES += \
     smilparser/body_parser.cpp \
     smilparser/current_playing_media.cpp \
     smilparser/elements_container.cpp \
-    smilparser/head/firmware_update.cpp \
+    smilparser/head/firmware_downloader.cpp \
     smilparser/head/task_scheduler.cpp \
     smilparser/head/xml_configuration.cpp \
     smilparser/head_parser.cpp \
@@ -71,7 +71,6 @@ SOURCES += \
     smilparser/container/priorityclass.cpp \
     smilparser/container/seq.cpp \
     smilparser/factory.cpp \
-    tools/configuration.cpp \
     tools/logging_categories.cpp \
     smilparser/head/subscription.cpp \
     system_infos/memory.cpp \
@@ -93,6 +92,7 @@ SOURCES += \
     reports/inventory_report_manager.cpp \
     db/inventory_table.cpp \
     reports/create/inventory_report.cpp \
+    tools/main_configuration.cpp \
     tools/resource_monitor.cpp
 
 HEADERS += \
@@ -112,7 +112,7 @@ HEADERS += \
     smilparser/body_parser.h \
     smilparser/current_playing_media.h \
     smilparser/elements_container.h \
-    smilparser/head/firmware_update.h \
+    smilparser/head/firmware_downloader.h \
     smilparser/head/task_scheduler.h \
     smilparser/head/xml_configuration.h \
     smilparser/head_parser.h \
@@ -142,10 +142,10 @@ HEADERS += \
     system_infos/network.h \
     system_infos/cpu.h \
     system_infos/general.h \
-    tools/configuration.h \
     tools/logging_categories.h \
     tools/logger.h \
     tools/log_file.h \
+    tools/main_configuration.h \
     tools/resource_monitor.h \
     reports/create/base_reports.h \
     reports/create/system_report.h \
@@ -160,4 +160,6 @@ HEADERS += \
     db/inventory_table.h \
     lib_facade.h \
     version.h
+
+DISTFILES +=
 

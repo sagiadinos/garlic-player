@@ -45,7 +45,8 @@ public:
     void                stopShowMedia();
 
 protected:
-    qreal                 root_width_px, root_height_px = 0;
+    qreal                 root_width_px = 0;
+    qreal                 root_height_px = 0;
     QString               actual_media = "";
     Region                region;
     QScopedPointer<QStackedLayout>          layout;

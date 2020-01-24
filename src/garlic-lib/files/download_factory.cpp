@@ -5,7 +5,7 @@ Files::DownloadFactory::DownloadFactory(QObject *parent) : QObject(parent)
 
 }
 
-Downloader *Files::DownloadFactory::createDownloader(TConfiguration *config, QObject *parent)
+Downloader *Files::DownloadFactory::createDownloader(MainConfiguration *config, QObject *parent)
 {
     return new Downloader(config, parent);
 }

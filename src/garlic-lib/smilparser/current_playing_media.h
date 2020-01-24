@@ -9,14 +9,14 @@ class CurrentPlayingMedia : public QObject
 {
     Q_OBJECT
 public:
-    explicit CurrentPlayingMedia(MediaManager *mm, QObject *parent = nullptr);
+    explicit CurrentPlayingMedia(Files::MediaManager *mm, QObject *parent = nullptr);
     void         insert(BaseMedia *SmilMedia);
     void         remove(BaseMedia *SmilMedia);
     int          count();
     BaseMedia   *getFirstPlayingObject();
 protected:
     QSet<BaseMedia *>      currently_playing_smilobjects;
-    MediaManager          *MyMediaManager;
+    Files::MediaManager          *MyMediaManager;
 
 signals:
 

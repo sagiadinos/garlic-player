@@ -1,6 +1,6 @@
 #include "event_logs_manager.h"
 
-Reporting::EventLogsManager::EventLogsManager(TConfiguration *config, QObject *parent) : Reporting::BaseReportManager(config, parent)
+Reporting::EventLogsManager::EventLogsManager(MainConfiguration *config, QObject *parent) : Reporting::BaseReportManager(config, parent)
 {
     MyCreateEventLogs.reset(new Reporting::CreateEventLogs(MyConfiguration, this));
     log_dir.setPath(MyConfiguration->getPaths("logs"));

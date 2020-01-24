@@ -16,21 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#include "configuration.h"
+#include "main_configuration.h"
 #include <QXmlStreamReader>
 #include <QString>
 #include <memory>
 #include <mutex>
 
 // need to define static variable
-QString TConfiguration::log_directory = "";
+QString MainConfiguration::log_directory = "";
 
 
 /**
  * @brief TConfiguration::TConfiguration
  * @param UserConfig
  */
-TConfiguration::TConfiguration(QSettings *uc, QObject *parent) : QObject(parent)
+MainConfiguration::MainConfiguration(QSettings *uc, QObject *parent) : QObject(parent)
 {
     UserConfig = uc;
     determineUuid();
@@ -43,55 +43,55 @@ TConfiguration::TConfiguration(QSettings *uc, QObject *parent) : QObject(parent)
     determineUserAgent();
 }
 
-QString TConfiguration::getLogDir()
+QString MainConfiguration::getLogDir()
 {
-    return TConfiguration::log_directory;
+    return MainConfiguration::log_directory;
 }
 
-QString TConfiguration::getLastPlayedIndexPath()
+QString MainConfiguration::getLastPlayedIndexPath()
 {
     return getUserConfigByKey("last_played_index_path");
 }
 
-void TConfiguration::setLastPlayedIndexPath(const QString &value)
+void MainConfiguration::setLastPlayedIndexPath(const QString &value)
 {
     setUserConfigByKey("last_played_index_path", value);
 }
 
-QString TConfiguration::getUserConfigByKey(QString key)
+QString MainConfiguration::getUserConfigByKey(QString key)
 {
     return UserConfig->value(key, "").toString();
 }
 
-void TConfiguration::setUserConfigByKey(QString key, QString value)
+void MainConfiguration::setUserConfigByKey(QString key, QString value)
 {
     UserConfig->setValue(key, value);
 }
 
 
-QString TConfiguration::getPlayerName() const
+QString MainConfiguration::getPlayerName() const
 {
     return player_name;
 }
 
-void TConfiguration::setPlayerName(const QString &value)
+void MainConfiguration::setPlayerName(const QString &value)
 {
     player_name = value;
     setUserConfigByKey("player_name", value);
 }
 
-QString TConfiguration::createUuid()
+QString MainConfiguration::createUuid()
 {
     return QUuid::createUuid().toString().mid(1, 36);
 }
 
-QString TConfiguration::getUuid() const
+QString MainConfiguration::getUuid() const
 {
     return uuid;
 }
 
 
-void TConfiguration::determineUuid()
+void MainConfiguration::determineUuid()
 {
     uuid = getUserConfigByKey("uuid");
     if (getUuid() == "")
@@ -101,27 +101,22 @@ void TConfiguration::determineUuid()
     }
 }
 
-QString TConfiguration::getUserAgent() const
+QString MainConfiguration::getUserAgent() const
 {
    return user_agent;
 }
 
-void TConfiguration::setUserAgent(const QString &value)
-{
-    user_agent = value;
-}
-
-QString TConfiguration::getIndexUri()
+QString MainConfiguration::getIndexUri()
 {
     return index_uri;
 }
 
-void TConfiguration::setIndexUri(const QString &value)
+void MainConfiguration::setIndexUri(const QString &value)
 {
     index_uri = value;
 }
 
-bool TConfiguration::validateContentUrl(QString url_string)
+bool MainConfiguration::validateContentUrl(QString url_string)
 {
     QUrl    url(url_string, QUrl::StrictMode);
     bool    error = false;
@@ -165,12 +160,12 @@ bool TConfiguration::validateContentUrl(QString url_string)
     return true;
 }
 
-QString TConfiguration::getErrorText() const
+QString MainConfiguration::getErrorText() const
 {
     return error_text;
 }
 
-void TConfiguration::determineIndexUri(QString path)
+void MainConfiguration::determineIndexUri(QString path)
 {
     if (path != "")
     {
@@ -185,18 +180,10 @@ void TConfiguration::determineIndexUri(QString path)
     {
         checkConfigXML();
     }
-
-/*
-    deprectated cause relative path for index should not be permitted!
-    if (index_uri != "" && index_uri.mid(0, 4) != "http"  && index_uri.mid(0, 3) != "ftp" && index_uri.mid(0, 1) != "/") // https is includered in http!
-    {
-       setUserConfigByKey("index_uri", base_path+index_uri);
-       setIndexUri( base_path+index_uri);
-    }
-*/    determineIndexPath();
+    determineIndexPath();
 }
 
-void TConfiguration::setIndexPath(const QString &value)
+void MainConfiguration::setIndexPath(const QString &value)
 {
     index_path = value;
 }
@@ -205,7 +192,7 @@ void TConfiguration::setIndexPath(const QString &value)
  * determine the clean index path
  * e.g only the scheme://domain.tld/path_to/
  */
-void TConfiguration::determineIndexPath()
+void MainConfiguration::determineIndexPath()
 {
     if (index_uri.mid(0, 4) == "http" || index_uri.mid(0, 3) == "ftp")
     {
@@ -226,72 +213,67 @@ void TConfiguration::determineIndexPath()
 }
 
 
-QString TConfiguration::getIndexPath()
+QString MainConfiguration::getIndexPath()
 {
     return index_path;
 }
 
-void TConfiguration::setNetworkInterface(const QString &value)
+void MainConfiguration::setNetworkInterface(const QString &value)
 {
     setUserConfigByKey("Network/Interface", value);
 }
 
-QString TConfiguration::getNetworkInterface()
+QString MainConfiguration::getNetworkInterface()
 {
     return getUserConfigByKey("Network/Interface");
 }
 
-QString TConfiguration::getOS() const
+QString MainConfiguration::getOS() const
 {
     return os;
 }
 
-void TConfiguration::setOS(const QString &value)
-{
-    os = value;
-}
-
-QString TConfiguration::getValidatedContentUrl() const
+QString MainConfiguration::getValidatedContentUrl() const
 {
     return validated_content_url;
 }
 
-void TConfiguration::setValidatedContentUrl(const QString &value)
+void MainConfiguration::setValidatedContentUrl(const QString &value)
 {
     validated_content_url = value;
 }
 
-QString TConfiguration::getStartTime() const
+QString MainConfiguration::getStartTime() const
 {
     return start_time;
 }
 
-void TConfiguration::setStartTime(const QString &value)
+void MainConfiguration::setStartTime(const QString &value)
 {
     start_time = value;
 }
 
-QString TConfiguration::getTimeZone() const
+QString MainConfiguration::getTimeZone() const
 {
     return time_zone;
 }
 
-void TConfiguration::setTimeZone(const QString &value)
+void MainConfiguration::setTimeZone(const QString &value)
 {
     time_zone = value;
 }
 
-QString TConfiguration::getBasePath() const
+QString MainConfiguration::getBasePath() const
 {
     return base_path;
 }
 
-void TConfiguration::setBasePath(const QString &value)
+void MainConfiguration::setBasePath(const QString &value)
 {
     base_path = value;
 }
 
-void TConfiguration::determineBasePath(QString absolute_path_to_bin)
+void MainConfiguration::determineBasePath(QString absolute_path_to_bin)
 {
     if (absolute_path_to_bin.contains("/bin"))
         setBasePath(absolute_path_to_bin.mid(0, absolute_path_to_bin.length()-3)); // "/" is set when xyz/bin
@@ -309,7 +291,7 @@ void TConfiguration::determineBasePath(QString absolute_path_to_bin)
  * @param path_name
  * @return
  */
-QString TConfiguration::getPaths(QString path_name)
+QString MainConfiguration::getPaths(QString path_name)
 {
     QString ret = base_path;
     if (path_name == "cache")
@@ -322,7 +304,7 @@ QString TConfiguration::getPaths(QString path_name)
     return ret;
 }
 
-void TConfiguration::createDirectories()
+void MainConfiguration::createDirectories()
 {
 #if defined Q_OS_WIN32  // QStandardPaths::CacheLocation in windows 7 is set to appdir (bin), which should not be writable after installation in Program Files
     cache_dir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/cache/";
@@ -338,16 +320,15 @@ void TConfiguration::createDirectories()
 #endif
     createDirectoryIfNotExist(cache_dir);
     createDirectoryIfNotExist(log_dir);
-    TConfiguration::log_directory = log_dir;
+    MainConfiguration::log_directory = log_dir;
 }
 
-void TConfiguration::determineUserAgent()
+void MainConfiguration::determineUserAgent()
 {
-    setUserAgent("GAPI/1.0 (UUID:"+getUuid()+"; NAME:"+getPlayerName()+") garlic-"+getOS()+"/"+getVersion()+" (MODEL:Garlic)");
+    user_agent = "GAPI/1.0 (UUID:"+getUuid()+"; NAME:"+getPlayerName()+") garlic-"+getOS()+"/"+getVersion()+" (MODEL:Garlic)";
 }
 
-
-void TConfiguration::checkConfigXML()
+void MainConfiguration::checkConfigXML()
 {
     QFile file(base_path+"config.xml");
     if (file.exists() && file.open(QIODevice::ReadOnly))
@@ -369,16 +350,18 @@ void TConfiguration::checkConfigXML()
     }
 }
 
-void TConfiguration::createDirectoryIfNotExist(QString path)
+void MainConfiguration::createDirectoryIfNotExist(QString path)
 {
     QDir dir;
     dir.setPath(path);
     if (!dir.exists() && !dir.mkpath("."))
+    {
         qCritical(SmilParser) << "Failed to create " << dir.path() << "\r";
+    }
     return;
 }
 
-void TConfiguration::determinePlayerName()
+void MainConfiguration::determinePlayerName()
 {
     setPlayerName(getUserConfigByKey("player_name"));
     if (getPlayerName() == "")
@@ -387,36 +370,34 @@ void TConfiguration::determinePlayerName()
     }
 }
 
-void TConfiguration::determineOS()
+void MainConfiguration::determineOS()
 {
 #if defined  Q_OS_ANDROID
-    setOS("android");
+    os = OS_ANDROID;
 #elif defined Q_OS_BSD4
-    setOS("bsd4");
+    os = OS_BSD;
 #elif defined Q_OS_DARWIN
-    setOS("darwin");
+    os = OS_DARWIN;
 #elif defined Q_OS_FREEBSD
-    setOS("freebsd");
+    os = OS_BSD;
 #elif defined Q_OS_HURD
-    setOS("hurd");
+    os = OS_HURD;
 #elif defined Q_OS_IOS
-    setOS("ios");
+    os = OS_IOS;
 #elif defined Q_OS_LINUX
-    setOS("linux");
+    os = OS_LINUX;
 #elif defined Q_OS_NETBSD
-    setOS("netbsd");
+    os = OS_BSD;
 #elif defined Q_OS_OPENBSD
-    setOS("openbsd");
+    os = OS_BSD;
 #elif defined Q_OS_OSX
-    setOS("osx");
+    os = "osx";
 #elif defined Q_OS_WIN32
-    setOS("windows");
-#elif defined Q_OS_WINPHONE
-    setOS("winphone");
+    os = OS_WINDOWS;
 #elif defined Q_OS_WINRT
-    setOS("winrt");
+    os = OS_WINRT;
 #else
-    setOS("unknown");
+    os = OS_UNKNOWN;
 #endif
 }
 

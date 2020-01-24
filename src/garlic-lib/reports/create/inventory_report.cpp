@@ -1,6 +1,6 @@
 #include "inventory_report.h"
 
-Reporting::CreateInventoryReport::CreateInventoryReport(TConfiguration *config, QObject *parent) : Reporting::CreateBase(config, parent)
+Reporting::CreateInventoryReport::CreateInventoryReport(MainConfiguration *config, QObject *parent) : Reporting::CreateBase(config, parent)
 {
 
 }

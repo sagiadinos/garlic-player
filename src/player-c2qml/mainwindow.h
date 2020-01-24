@@ -24,14 +24,14 @@
 
 #include "region.h"
 #include "../player-common/configdialog.h"
-#ifdef SUPPORT_RPI
-    #include "../player-common/network_dialog.h"
-#endif
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
 #include "../player-common/interactions.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
+#if defined  Q_OS_ANDROID
+    #include <QtAndroidExtras>
+#endif
 
 #include "lib_facade.h"
 
@@ -49,33 +49,32 @@ class MainWindow : public QQuickView
         void                      setMainWindowSize(QSize size);
         QSize                     getMainWindowSize();
 
-
     protected:
         const int                 WINDOWED      = 0;
         const int                 FULLSCREEN    = 1;
         const int                 BIGFULLSCREEN = 2;
-
         Interactions             *MyInteractions;
         LibFacade                *MyLibFacade      = Q_NULLPTR;
         TScreen                  *MyScreen;
+        static LibFacade         *MyStaticLibFacade;
         QMap<QString, TRegion *>  regions_list;
         QSize                     mainwindow_size;
         int                       screen_state, num_touched = 0;
         void                      openDebugInfos();
-#ifdef SUPPORT_RPI
-        int                       openNetworkDialog();
-#endif
         QString                   selectRegion(QString region_name);
         void                      resizeEvent(QResizeEvent * event);
         void                      keyPressEvent(QKeyEvent *ke);
         bool                      event(QEvent *event);
         void                      createRegions();
         void                      deleteRegions();
+        void                      sendClosePlayerCorrect();
     protected slots:
         void                      prepareParsing();
         void                      startShowMedia(BaseMedia *media);
         void                      stopShowMedia(BaseMedia *media);
         void                      doStatusChanged(QQuickView::Status status);
+        void                      rebootOS();
+        void                      installSoftware(QString file_path);
 };
 
 #endif // MAINWINDOW_H

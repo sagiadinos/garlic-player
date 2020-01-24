@@ -1,6 +1,6 @@
 #include "play_logs_manager.h"
 
-Reporting::PlayLogsManager::PlayLogsManager(TConfiguration *config, QObject *parent) : Reporting::BaseReportManager(config, parent)
+Reporting::PlayLogsManager::PlayLogsManager(MainConfiguration *config, QObject *parent) : Reporting::BaseReportManager(config, parent)
 {
     MyCreatePlayLogs.reset(new Reporting::CreatePlayLogs(MyConfiguration, this));
     log_dir.setPath(MyConfiguration->getPaths("logs"));

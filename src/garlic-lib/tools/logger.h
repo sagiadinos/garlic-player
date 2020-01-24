@@ -9,7 +9,7 @@
 #include <iostream>
 #include <mutex>
 
-#include "configuration.h"
+#include "main_configuration.h"
 #include "log_file.h"
 #include "logging_categories.h"
 

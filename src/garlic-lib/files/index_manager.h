@@ -22,37 +22,39 @@
 #include <QTimerEvent>
 #include "base_manager.h"
 #include "index_model.h"
-#include "tools/configuration.h"
+#include "tools/main_configuration.h"
 
-class IndexManager : public BaseManager
+namespace Files
 {
-        Q_OBJECT
-    public:
-        explicit IndexManager(TConfiguration *config, QObject *parent=Q_NULLPTR);
-        void            init(QString src);
-        bool            load();
-        void            activateRefresh(int value);
-        void            deactivateRefresh();
-        QDomElement     getHead();
-        QDomElement     getBody();
-        void            lookUpForUpdatedIndex();
+    class IndexManager : public BaseManager
+    {
+            Q_OBJECT
+        public:
+            explicit IndexManager(MainConfiguration *config, QObject *parent=Q_NULLPTR);
+            void            init(QString src);
+            bool            load();
+            void            activateRefresh(int value);
+            void            deactivateRefresh();
+            QDomElement     getHead();
+            QDomElement     getBody();
+            void            lookUpForUpdatedIndex();
 
-    protected:
+        protected:
 
-        int             refresh_time = 0;
-        int             timer_id = 0;
-        TConfiguration *MyConfiguration;
-        IndexModel     *MyIndexModel;
-        Downloader     *MyDownloader;
-        QString         src_index_path;
-        bool            loadLocal(QString local_path);
-        void            timerEvent(QTimerEvent *event);
+            int             refresh_time = 0;
+            int             timer_id = 0;
+            MainConfiguration *MyConfiguration;
+            IndexModel     *MyIndexModel;
+            Downloader     *MyDownloader;
+            QString         src_index_path;
+            bool            loadLocal(QString local_path);
+            void            timerEvent(QTimerEvent *event);
 
-    protected slots:
-        void doSucceed(TNetworkAccess *downloader);
-    signals:
-        void newIndexDownloaded();
+        protected slots:
+            void doSucceed(TNetworkAccess *downloader);
+        signals:
+            void newIndexDownloaded();
 
-};
-
+    };
+}
 #endif // INDEX_MANAGER_H

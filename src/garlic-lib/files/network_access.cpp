@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "network_access.h"
 
-TNetworkAccess::TNetworkAccess(TConfiguration *config, QObject *parent) : QObject(parent)
+TNetworkAccess::TNetworkAccess(MainConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
 }

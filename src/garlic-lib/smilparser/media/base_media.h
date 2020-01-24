@@ -36,7 +36,7 @@ class BaseMedia : public BaseTimings
         QString           getBaseType() {return "media";}
         bool              parse(QDomElement element);
         void              resume(){play();}
-        void              registerFile(MediaManager *mm);
+        void              registerFile(Files::MediaManager *mm);
         bool              hasPlayingChilds(){return false;}
         BaseTimings      *getChildElementFromList(){return this;}
         TContainer       *getParentContainer(){return parent_container;}
@@ -51,11 +51,16 @@ class BaseMedia : public BaseTimings
     public slots:
         void              emitfinished();
     protected:
-        MediaManager     *MyMediaManager;
+        Files::MediaManager     *MyMediaManager;
         TContainer       *parent_container;
         QString           region = "";
-        QString           src, exec, type, fit = "";
-        QString           filename, cache_control, log_content_id  = "";
+        QString           src  = "";
+        QString           exec  = "";
+        QString           type   = "";
+        QString           fit = "";
+        QString           filename  = "";
+        QString           cache_control  = "";
+        QString           log_content_id  = "";
         bool              presentable = false;
         void              parseBaseMediaAttributes();
         void              parseBaseParameters();

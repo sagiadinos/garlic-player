@@ -1,7 +1,7 @@
 #ifndef CONFIGDIALOG_H
 #define CONFIGDIALOG_H
 
-#include "tools/configuration.h"
+#include "tools/main_configuration.h"
 #include <QDialog>
 
 namespace Ui
@@ -15,13 +15,13 @@ class ConfigDialog : public QDialog
 {
         Q_OBJECT
     public:
-        explicit ConfigDialog(QWidget *parent, TConfiguration *Config);
+        explicit ConfigDialog(QWidget *parent, MainConfiguration *Config);
         ~ConfigDialog();
 
 
 protected:
         Ui::ConfigDialog *ui;
-        TConfiguration   *MyConfiguration = NULL;
+        MainConfiguration   *MyConfiguration = NULL;
 
     protected slots:
         void accept();

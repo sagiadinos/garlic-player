@@ -1,6 +1,6 @@
 #include "current_playing_media.h"
 
-CurrentPlayingMedia::CurrentPlayingMedia(MediaManager *mm, QObject *parent) : QObject(parent)
+CurrentPlayingMedia::CurrentPlayingMedia(Files::MediaManager *mm, QObject *parent) : QObject(parent)
 {
     MyMediaManager = mm;
 }

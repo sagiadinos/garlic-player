@@ -1,17 +1,16 @@
 #include "task_scheduler.h"
 
-SmilHead::TaskScheduler::TaskScheduler(TConfiguration *config, QObject *parent) : BaseManager(parent)
+SmilHead::TaskScheduler::TaskScheduler(MainConfiguration *config, QObject *parent) : BaseManager(parent)
 {
     MyConfiguration           = config;
     TaskFileDownloader        = new Downloader(MyConfiguration, this);
-    connect(TaskFileDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceedParse(TNetworkAccess *)));
+    connect(TaskFileDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
 }
 
 
-void SmilHead::TaskScheduler::init(QString task_scheduler_path)
+void SmilHead::TaskScheduler::processFromUrl(QUrl url)
 {
-    task_scheduler_url = QUrl(task_scheduler_path);
-    TaskFileDownloader->processFile(task_scheduler_url, MyConfiguration->getPaths("cache")+"task_scheduler.xml");
+    TaskFileDownloader->processFile(url, MyConfiguration->getPaths("cache")+"task_scheduler.xml");
 }
 
 
@@ -50,7 +49,7 @@ bool SmilHead::TaskScheduler::loadDocument(QString file_path)
  * @brief SmilHead::TaskScheduler::doSucceed
  * @param network
  */
-void SmilHead::TaskScheduler::doSucceedParse(TNetworkAccess *network)
+void SmilHead::TaskScheduler::doSucceed(TNetworkAccess *network)
 {
     Q_UNUSED(network);
     renameDownloadedFile(MyConfiguration->getPaths("cache")+"task_scheduler.xml");
@@ -78,22 +77,6 @@ void SmilHead::TaskScheduler::doSucceedParse(TNetworkAccess *network)
         }
     }
     return;
-}
-
-void SmilHead::TaskScheduler::emitApplyConfiguration()
-{
-    qInfo(TaskExecution) << Logger::getInstance().createTaskExecutionLogEntry(MyUpdateSetting.task_id, "completed");
-    emit applyConfiguration();
-}
-
-void SmilHead::TaskScheduler::emitUpdateFirware()
-{
-    emit updateFirmware();
-}
-
-void SmilHead::TaskScheduler::emitShutdownPlayer()
-{
-    emit shutdownPlayer();
 }
 
 void SmilHead::TaskScheduler::parseFirmwareUpdate(QDomElement element)
@@ -136,10 +119,20 @@ void SmilHead::TaskScheduler::parseFirmwareUpdate(QDomElement element)
             MyFirmwareUpdate.checksum_method = el.text();
         }
     }
+
+    MyFirmwareDownloader.reset(new SmilHead::FirmwareDownloader(MyConfiguration, this));
+    connect(MyFirmwareDownloader.data(), SIGNAL(finishedSoftwareDownload(QString)), SLOT(emitInstallSoftware(QString)));
+
+    MyFirmwareDownloader.data()->processFromUrl(MyFirmwareUpdate.source_uri);
     return;
 
 }
 
+void SmilHead::TaskScheduler::emitInstallSoftware(QString file_path)
+{
+    qInfo(TaskExecution) << Logger::getInstance().createTaskExecutionLogEntry(MyFirmwareUpdate.task_id, "completed");
+    emit installSoftware(file_path);
+}
 
 void SmilHead::TaskScheduler::parseUpdateSetting(QDomElement element)
 {
@@ -180,8 +173,14 @@ void SmilHead::TaskScheduler::parseUpdateSetting(QDomElement element)
     MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyConfiguration, this));
     connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), SLOT(emitApplyConfiguration()));
 
-    MyXMLConfiguration.data()->init(MyUpdateSetting.source_uri);
+    MyXMLConfiguration.data()->processFromUrl(MyUpdateSetting.source_uri);
     return;
+}
+
+void SmilHead::TaskScheduler::emitApplyConfiguration()
+{
+    qInfo(TaskExecution) << Logger::getInstance().createTaskExecutionLogEntry(MyUpdateSetting.task_id, "completed");
+    emit applyConfiguration();
 }
 
 void SmilHead::TaskScheduler::parseShutdownPlayer(QDomElement element)
@@ -194,6 +193,13 @@ void SmilHead::TaskScheduler::parseShutdownPlayer(QDomElement element)
     if (hasUsedTaskId(MyShutdownPlayer.task_id, "shudown_player_task_id"))
         return;
 
+    emitShutdownPlayer();
+}
+
+void SmilHead::TaskScheduler::emitShutdownPlayer()
+{
+    qInfo(TaskExecution) << Logger::getInstance().createTaskExecutionLogEntry(MyShutdownPlayer.task_id, "completed");
+    emit reboot();
 }
 
 bool SmilHead::TaskScheduler::hasUsedTaskId(QString task_id, QString task_name)

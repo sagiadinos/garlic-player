@@ -18,7 +18,7 @@
 
 #include "head_parser.h"
 
-HeadParser::HeadParser(TConfiguration *config, QObject *parent) : QObject(parent)
+HeadParser::HeadParser(MainConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
     setDefaultValues();
@@ -144,7 +144,7 @@ void HeadParser::parseMetaData(QDomElement element, SmilHead::TaskScheduler *MyT
         }
         else if (subscription->getType() == "TaskSchedule")
         {
-            MyTasks->init(subscription->getAction());
+            MyTasks->processFromUrl(QUrl(subscription->getAction()));
         }
     }
 }

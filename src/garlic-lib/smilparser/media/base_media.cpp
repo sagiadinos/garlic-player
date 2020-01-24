@@ -74,7 +74,7 @@ void BaseMedia::stop()
 }
 
 
-void BaseMedia::registerFile(MediaManager *mm)
+void BaseMedia::registerFile(Files::MediaManager *mm)
 {
     MyMediaManager = mm;
     MyMediaManager->registerFile(src);

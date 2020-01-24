@@ -1,6 +1,6 @@
 #include "base_report_manager.h"
 
-Reporting::BaseReportManager::BaseReportManager(TConfiguration *config, QObject *parent) : QObject(parent)
+Reporting::BaseReportManager::BaseReportManager(MainConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration      = config;
     MyWebDav.reset(new WebDav(MyConfiguration));

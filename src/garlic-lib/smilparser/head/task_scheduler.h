@@ -5,8 +5,9 @@
 #include <QDomDocument>
 #include <QDomElement>
 #include <QFileInfo>
-#include "configuration.h"
+#include "main_configuration.h"
 #include "xml_configuration.h"
+#include "firmware_downloader.h"
 
 namespace SmilHead
 {
@@ -40,19 +41,19 @@ namespace SmilHead
         QString content_type     = "reboot";
     };
 
-    class TaskScheduler : public BaseManager
+    class TaskScheduler : public Files::BaseManager
     {
             Q_OBJECT
         public:
-            explicit TaskScheduler(TConfiguration *config, QObject *parent = nullptr);
-            void init(QString action);
+            explicit TaskScheduler(MainConfiguration *config, QObject *parent = nullptr);
+            void processFromUrl(QUrl url);
 
     protected:
-            TConfiguration *MyConfiguration;
+            MainConfiguration *MyConfiguration;
             Downloader     *TaskFileDownloader;
-            QUrl            task_scheduler_url;
             QDomDocument    document;
             QScopedPointer<SmilHead::XMLConfiguration> MyXMLConfiguration;
+            QScopedPointer<SmilHead::FirmwareDownloader> MyFirmwareDownloader;
             UpdateSettings  MyUpdateSetting;
             FirmwareUpdate  MyFirmwareUpdate;
             ShutdownPlayer  MyShutdownPlayer;
@@ -63,15 +64,15 @@ namespace SmilHead
             bool            hasUsedTaskId(QString task_id, QString task_name);
             bool            loadDocument(QString file_path);
     protected slots:
-            void doSucceedParse(TNetworkAccess *network);
+            void doSucceed(TNetworkAccess *network);
             void emitApplyConfiguration();
-            void emitUpdateFirware();
+            void emitInstallSoftware(QString file_path);
             void emitShutdownPlayer();
 
     signals:
         void                   applyConfiguration();
-        void                   updateFirmware();
-        void                   shutdownPlayer();
+        void                   installSoftware(QString file_path);
+        void                   reboot();
     };
 }
 #endif // TASKSCHEDULER_H

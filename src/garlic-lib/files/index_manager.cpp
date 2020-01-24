@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "index_manager.h"
 
-IndexManager::IndexManager(TConfiguration *config, QObject *parent) : BaseManager(parent)
+Files::IndexManager::IndexManager(MainConfiguration *config, QObject *parent) : BaseManager(parent)
 {
     MyConfiguration = config;
     MyDownloader    = new Downloader(MyConfiguration, this);
@@ -25,12 +25,12 @@ IndexManager::IndexManager(TConfiguration *config, QObject *parent) : BaseManage
     connect(MyDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
 }
 
-void IndexManager::init(QString src)
+void Files::IndexManager::init(QString src)
 {
     src_index_path = src;
 }
 
-void IndexManager::lookUpForUpdatedIndex()
+void Files::IndexManager::lookUpForUpdatedIndex()
 {
     if (src_index_path == "")
     {
@@ -48,7 +48,7 @@ void IndexManager::lookUpForUpdatedIndex()
         MyConfiguration->setLastPlayedIndexPath(src_index_path);
 }
 
-bool IndexManager::load()
+bool Files::IndexManager::load()
 {
     if (src_index_path == "")
     {
@@ -61,7 +61,7 @@ bool IndexManager::load()
         return loadLocal(src_index_path);
 }
 
-void IndexManager::activateRefresh(int value)
+void Files::IndexManager::activateRefresh(int value)
 {
     if (value == 0) // set not the timer, when no e.g. on index with no refresh time
         return;
@@ -70,7 +70,7 @@ void IndexManager::activateRefresh(int value)
     timer_id       = startTimer(refresh_time*1000);
 }
 
-void IndexManager::deactivateRefresh()
+void Files::IndexManager::deactivateRefresh()
 {
     if (timer_id == 0)
         return;
@@ -79,19 +79,19 @@ void IndexManager::deactivateRefresh()
     killTimer(timer_id);
 }
 
-QDomElement IndexManager::getHead()
+QDomElement Files::IndexManager::getHead()
 {
     return MyIndexModel->getHead();
 }
 
-QDomElement IndexManager::getBody()
+QDomElement Files::IndexManager::getBody()
 {
     return MyIndexModel->getBody();
 }
 
 // ==================  protected methods =======================================
 
-bool IndexManager::loadLocal(QString local_path)
+bool Files::IndexManager::loadLocal(QString local_path)
 {
     renameDownloadedFile(local_path);
     if (!QFile::exists(local_path))
@@ -108,7 +108,7 @@ bool IndexManager::loadLocal(QString local_path)
     return true;
 }
 
-void IndexManager::timerEvent(QTimerEvent *event)
+void Files::IndexManager::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timer_id)
         lookUpForUpdatedIndex();
@@ -117,7 +117,7 @@ void IndexManager::timerEvent(QTimerEvent *event)
 
 // ==================  protected slots =======================================
 
-void IndexManager::doSucceed(TNetworkAccess *downloader)
+void Files::IndexManager::doSucceed(TNetworkAccess *downloader)
 {
     Q_UNUSED(downloader); // This class have one permenent downloader instance so function paramter not used
 

@@ -18,7 +18,7 @@
 #include "media_manager.h"
 #include "media_manager.h"
 
-MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, TConfiguration *config, QObject *parent) : BaseManager(parent)
+Files::MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, MainConfiguration *config, QObject *parent) : BaseManager(parent)
 {
     MyConfiguration  = config;
     MyDownloadQueue  = dq;
@@ -27,18 +27,18 @@ MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, TConfiguration *co
     connect(MyDownloadQueue, SIGNAL(notcacheable(QString)), SLOT(doNotCacheable(QString)));
 }
 
-MediaManager::~MediaManager()
+Files::MediaManager::~MediaManager()
 {
 }
 
-void MediaManager::clearQueues()
+void Files::MediaManager::clearQueues()
 {
     delete MyDownloadQueue;
     delete MyMediaModel;
     return;
 }
 
-void MediaManager::registerFile(QString src)
+void Files::MediaManager::registerFile(QString src)
 {
     if (isRemote(src))
     {
@@ -58,7 +58,7 @@ void MediaManager::registerFile(QString src)
    registerUncached(src); // when local
 }
 
-void MediaManager::registerUncached(QString src)
+void Files::MediaManager::registerUncached(QString src)
 {
     if (MyMediaModel->findLocalBySrcPath(src) == "")
     {
@@ -66,7 +66,7 @@ void MediaManager::registerUncached(QString src)
     }
 }
 
-int MediaManager::checkCacheStatus(QString src)
+int Files::MediaManager::checkCacheStatus(QString src)
 {
     if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
     {
@@ -81,23 +81,23 @@ int MediaManager::checkCacheStatus(QString src)
     return status;
 }
 
-void MediaManager::insertCurrentlyPlaying(QString path)
+void Files::MediaManager::insertCurrentlyPlaying(QString path)
 {
     currently_playing.insert(path);
 }
 
-void MediaManager::removeCurrentlyPlaying(QString path)
+void Files::MediaManager::removeCurrentlyPlaying(QString path)
 {
     currently_playing.remove(path);
 }
 
-bool MediaManager::isCurrentlyPlaying(QString path)
+bool Files::MediaManager::isCurrentlyPlaying(QString path)
 {
     return (currently_playing.find(path) != currently_playing.end());
 }
 
 
-QString MediaManager::requestLoadablePath(QString src)
+QString Files::MediaManager::requestLoadablePath(QString src)
 {
     if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
     {
@@ -108,7 +108,7 @@ QString MediaManager::requestLoadablePath(QString src)
 
 // ==================  protected methods =======================================
 
-void MediaManager::handleRemoteFile(QString src)
+void Files::MediaManager::handleRemoteFile(QString src)
 {
     QString local_path = MyConfiguration->getPaths("cache") + MyMediaModel->determineHashedFilePath(src);
     QFileInfo fi(local_path);
@@ -121,12 +121,12 @@ void MediaManager::handleRemoteFile(QString src)
 
 // ==================  protected slots =======================================
 
-void MediaManager::doNotCacheable(QString src_file_path)
+void Files::MediaManager::doNotCacheable(QString src_file_path)
 {
     MyMediaModel->insertAvaibleLink(src_file_path);
 }
 
-void MediaManager::doSucceed(QString src_file_path, QString local_file_path)
+void Files::MediaManager::doSucceed(QString src_file_path, QString local_file_path)
 {
     if (MyMediaModel->findLocalBySrcPath(src_file_path) == "")
     {

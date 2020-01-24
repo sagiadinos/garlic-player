@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QDomDocument>
 #include <QDomElement>
-#include "tools/configuration.h"
+#include "tools/main_configuration.h"
 #include "files/disc_space.h"
 #include "system_infos/memory.h"
 
@@ -31,14 +31,14 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            explicit CreateBase(TConfiguration *config, QObject *parent = nullptr);
+            explicit CreateBase(MainConfiguration *config, QObject *parent = nullptr);
             void     init();
             QString  asXMLString();
 
         protected:
             QScopedPointer<DiscSpace>            MyDiscSpace;
             QScopedPointer<SystemInfos::Memory>  MyMemory;
-            TConfiguration       *MyConfiguration;
+            MainConfiguration       *MyConfiguration;
             QDomDocument          document;
             QDomElement           root, player, system_info;
             void                  createSystemInfo();

@@ -1,6 +1,6 @@
 #include "cmdparser.h"
 
-TCmdParser::TCmdParser(TConfiguration *config)
+TCmdParser::TCmdParser(MainConfiguration *config)
 {
     MyConfiguration = config;
     parser.setApplicationDescription(MyConfiguration->getDescription());

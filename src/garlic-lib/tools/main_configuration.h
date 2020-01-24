@@ -32,11 +32,22 @@
 /**
  * @brief The TConfiguration class
  */
-class TConfiguration  : public QObject
+class MainConfiguration  : public QObject
 {
     Q_OBJECT
     public:
-        explicit TConfiguration(QSettings *uc, QObject *parent = Q_NULLPTR);
+        const     QString        OS_ANDROID  = "android";
+        const     QString        OS_DARWIN   = "darwin";
+        const     QString        OS_HURD     = "hurd";
+        const     QString        OS_IOS      = "ios";
+        const     QString        OS_LINUX    = "linux";
+        const     QString        OS_NETBSD   = "bsd";
+        const     QString        OS_OSX      = "osx";
+        const     QString        OS_WINDOWS  = "windows";
+        const     QString        OS_WINRT    = "winrt";
+        const     QString        OS_UNKNOWN  = "unknown";                ;
+
+        explicit MainConfiguration(QSettings *uc, QObject *parent = Q_NULLPTR);
         QString         getVersion(){return version_from_git;}
         void            setAppName(QString value){app_name = value;}
         QString         getAppName(){return app_name;}
@@ -54,9 +65,7 @@ class TConfiguration  : public QObject
         QString         getPlayerName() const;
         void            setPlayerName(const QString &value);
         QString         getUserAgent() const;
-        void            setUserAgent(const QString &value);
         QString         getOS() const;
-        void            setOS(const QString &value);
         QString         getValidatedContentUrl() const;
         void            setValidatedContentUrl(const QString &value);
         QString         getStartTime() const;
@@ -85,9 +94,18 @@ class TConfiguration  : public QObject
 
 protected:
         QSettings      *UserConfig;
-        QString         uuid, player_name, user_agent, os, base_path, index_uri, index_path, validated_content_url = "";
-        QString         start_time, time_zone = "";
-        QString         cache_dir, log_dir = "";
+        QString         uuid = "";
+        QString         player_name = "";
+        QString         user_agent = "";
+        QString         os = "";
+        QString         base_path = "";
+        QString         index_uri = "";
+        QString         index_path = "";
+        QString         validated_content_url = "";
+        QString         start_time = "";
+        QString         time_zone = "";
+        QString         cache_dir = "";
+        QString         log_dir = "";
         QString         app_name = "garlic-player";
         QString         error_text = "";
         void            createDirectoryIfNotExist(QString path);

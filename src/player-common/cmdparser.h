@@ -5,13 +5,13 @@
 #include <QApplication>
 #include <QCommandLineOption>
 #include <QCommandLineParser>
-#include "tools/configuration.h"
+#include "tools/main_configuration.h"
 class TCmdParser : public QObject
 
 {
     Q_OBJECT
 public:
-    TCmdParser(TConfiguration *config);
+    TCmdParser(MainConfiguration *config);
     QString getWindowMode() const;
     void setWindowMode(const QString &value);
 
@@ -32,7 +32,7 @@ protected:
     int                  screen_select = 0;
     QString              index_url     = "";
     QCommandLineParser   parser;
-    TConfiguration       *MyConfiguration;
+    MainConfiguration       *MyConfiguration;
 
 };
 

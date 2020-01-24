@@ -18,15 +18,14 @@
 #include <QQmlApplicationEngine>
 
 #include "tools/logger.h"
-#include "mainwindow.h"
 #include "tools/resource_monitor.h"
 #include "../player-common/cmdparser.h"
 #include "../player-common/screen.h"
+#include "Java2Cpp.h"
+#include "mainwindow.h"
 
 #if defined  Q_OS_ANDROID
     #include <QtWebView>
-    #include <QtAndroidExtras/QAndroidJniEnvironment>
-    #include <QtAndroidExtras/QtAndroidExtras>
 #else
     #include <qtwebengineglobal.h>
 #endif
@@ -47,14 +46,15 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts); // Raspberry and POT needs this http://thebugfreeblog.blogspot.de/2018/01/pot-570-with-qt-5100-built-for-armv8.html
     QApplication app(argc, argv);
-    qmlRegisterType<LibFacade>("com.garlic.LibFacade", 1, 0, "LibFacade");
-    qmlRegisterType<ResourceMonitor>("com.garlic.ResourceMonitor", 1, 0, "ResourceMonitor");
 
 #if defined  Q_OS_ANDROID
     QtWebView::initialize();
+    QtAndroid::androidActivity().callMethod<void>("registerBroadcastReceiver");
 #endif
-
+    qmlRegisterType<LibFacade>("com.garlic.LibFacade", 1, 0, "LibFacade");
+    qmlRegisterType<ResourceMonitor>("com.garlic.ResourceMonitor", 1, 0, "ResourceMonitor");
     LibFacade      *MyLibFacade     = new LibFacade();
+    setGlobalLibFaceForJava(MyLibFacade);
     QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
     QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());
     QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName());
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     TCmdParser MyParser(MyLibFacade->getConfiguration());
     MyParser.addOptions();
 
-    if (!MyParser.parse(&app))
+   if (!MyParser.parse(&app))
         return 1;
 
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
     w.init();
 
 #if defined  Q_OS_ANDROID
+
     // preserve android screensaver https://stackoverflow.com/questions/44100627/how-to-disable-screensaver-on-qt-android-app
     // https://forum.qt.io/topic/57625/solved-keep-android-5-screen-on
 
@@ -102,6 +103,7 @@ int main(int argc, char *argv[])
     if (env->ExceptionCheck()) {
         env->ExceptionClear();
     }
+
     w.showFullScreen();
 #else
 

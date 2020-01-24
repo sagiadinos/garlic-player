@@ -1,16 +1,22 @@
 #include "xml_configuration.h"
 
-SmilHead::XMLConfiguration::XMLConfiguration(TConfiguration *config, QObject *parent) : BaseManager(parent)
+SmilHead::XMLConfiguration::XMLConfiguration(MainConfiguration *config, QObject *parent) : BaseManager(parent)
 {
     MyConfiguration      = config;
     XMLDownloader        = new Downloader(MyConfiguration, this);
-    connect(XMLDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceedParse(TNetworkAccess *)));
+    connect(XMLDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
 }
 
-
-void SmilHead::XMLConfiguration::init(QUrl config_url)
+void SmilHead::XMLConfiguration::processFromUrl(QUrl config_url)
 {
     XMLDownloader->processFile(config_url, MyConfiguration->getPaths("cache")+"configuration.xml");
+}
+
+void SmilHead::XMLConfiguration::processFromLocalFile(QString file_path)
+{
+    if (!loadDocument(file_path))
+        return;
+    parse();
 }
 
 bool SmilHead::XMLConfiguration::loadDocument(QString file_path)
@@ -44,13 +50,16 @@ bool SmilHead::XMLConfiguration::loadDocument(QString file_path)
 }
 
 
-void SmilHead::XMLConfiguration::doSucceedParse(TNetworkAccess *network)
+void SmilHead::XMLConfiguration::doSucceed(TNetworkAccess *network)
 {
     Q_UNUSED(network);
-    renameDownloadedFile(MyConfiguration->getPaths("cache")+"configuration.xml");
-    if (!loadDocument(MyConfiguration->getPaths("cache")+"configuration.xml"))
-        return;
+    QString path = MyConfiguration->getPaths("cache")+"configuration.xml";
+    renameDownloadedFile(path);
+    processFromLocalFile(path);
+}
 
+void SmilHead::XMLConfiguration::parse()
+{
     QDomNodeList node_list = document.elementsByTagName("prop");
     QString attr_name      = "";
     QString attr_value     = "";
@@ -67,72 +76,61 @@ void SmilHead::XMLConfiguration::doSucceedParse(TNetworkAccess *network)
         }
         else if (attr_name == "content.serverUrl")
         {
-            MyConfiguration->setUserConfigByKey("index_uri", attr_value);
             MyConfiguration->setIndexUri(attr_value);
+            MyConfiguration->setUserConfigByKey("index_uri", attr_value);
         }
         else if (attr_name == "display.brightness")
         {
             MyConfiguration->setUserConfigByKey("display/brightness", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "hardware.videoOut.0.rotation")
         {
             MyConfiguration->setUserConfigByKey("display/rotation", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "audio.soundlevel")
         {
             MyConfiguration->setUserConfigByKey("audio/soundlevel", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "hardware.audioOut.0.masterSoundLevel")
         {
             MyConfiguration->setUserConfigByKey("audio/soundlevel", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "time.tzDescription")
         {
             MyConfiguration->setUserConfigByKey("time/tzDescription", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "time.tzCode")
         {
             MyConfiguration->setUserConfigByKey("time/tzCode", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "time.autoUpdate.protocol")
         {
             MyConfiguration->setUserConfigByKey("time/protocol", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "time.autoUpdate.server")
         {
             MyConfiguration->setUserConfigByKey("time/server", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "task.scheduledReboot.days")
         {
             MyConfiguration->setUserConfigByKey("schedule/reboot_days", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "schedule.reboot.days")
         {
             MyConfiguration->setUserConfigByKey("schedule/reboot_days", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "schedule.reboot.time")
         {
             MyConfiguration->setUserConfigByKey("schedule/reboot_time", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
         else if (attr_name == "task.scheduledReboot.time")
         {
             MyConfiguration->setUserConfigByKey("schedule/reboot_time", attr_value);
-            MyConfiguration->setIndexUri(attr_value);
         }
     }
     emit finishedConfiguration();
 }
+
 
 QString SmilHead::XMLConfiguration::getAttribute(QDomElement element, QString attr_name)
 {

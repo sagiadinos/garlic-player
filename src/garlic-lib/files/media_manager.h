@@ -21,7 +21,7 @@
 #include <QSet>
 #include "base_manager.h"
 #include "media_model.h"
-#include "tools/configuration.h"
+#include "tools/main_configuration.h"
 
 /**
  * @brief The MediaManager class is the "interface" for handling playlist media
@@ -31,31 +31,34 @@
  * - transfer media files to MediaModel
  * - answers to a parser request with a playable filepath
  */
-class MediaManager : public BaseManager
+
+namespace Files
 {
-    Q_OBJECT
-public:
-    explicit MediaManager(MediaModel *mm, DownloadQueue *dq, TConfiguration *config, QObject *parent=Q_NULLPTR);
-    ~MediaManager();
-    void                  clearQueues();
-    void                  registerFile(QString src);
-    void                  registerUncached(QString src);
-    QString               requestLoadablePath(QString src);
-    int                   checkCacheStatus(QString src);
-    void                  insertCurrentlyPlaying(QString path);
-    void                  removeCurrentlyPlaying(QString path);
-    bool                  isCurrentlyPlaying(QString path);
+    class MediaManager : public BaseManager
+    {
+        Q_OBJECT
+    public:
+        explicit MediaManager(MediaModel *mm, DownloadQueue *dq, MainConfiguration *config, QObject *parent=Q_NULLPTR);
+        ~MediaManager();
+        void                  clearQueues();
+        void                  registerFile(QString src);
+        void                  registerUncached(QString src);
+        QString               requestLoadablePath(QString src);
+        int                   checkCacheStatus(QString src);
+        void                  insertCurrentlyPlaying(QString path);
+        void                  removeCurrentlyPlaying(QString path);
+        bool                  isCurrentlyPlaying(QString path);
 
-protected:
-    QSet<QString>         currently_playing;
-    int                   timer_id;
-    TConfiguration       *MyConfiguration;
-    DownloadQueue        *MyDownloadQueue;
-    MediaModel           *MyMediaModel;
-    void                  handleRemoteFile(QString src);
-protected slots:
-    void                  doSucceed(QString src_file_path, QString local_file_path);
-    void                  doNotCacheable(QString src_file_path);
-};
-
+    protected:
+        QSet<QString>         currently_playing;
+        int                   timer_id;
+        MainConfiguration       *MyConfiguration;
+        DownloadQueue        *MyDownloadQueue;
+        MediaModel           *MyMediaModel;
+        void                  handleRemoteFile(QString src);
+    protected slots:
+        void                  doSucceed(QString src_file_path, QString local_file_path);
+        void                  doNotCacheable(QString src_file_path);
+    };
+}
 #endif // MEDIA_MANAGER_H

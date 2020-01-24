@@ -2,7 +2,7 @@
 #define DOWNLOADFACTORY_H
 
 #include <QObject>
-#include "configuration.h"
+#include "main_configuration.h"
 #include "downloader.h"
 namespace Files
 {
@@ -11,7 +11,7 @@ namespace Files
         Q_OBJECT
     public:
         explicit DownloadFactory(QObject *parent = nullptr);
-        static Downloader *createDownloader(TConfiguration *config, QObject *parent);
+        static Downloader *createDownloader(MainConfiguration *config, QObject *parent);
 
     signals:
     };

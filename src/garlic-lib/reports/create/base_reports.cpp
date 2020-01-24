@@ -22,7 +22,7 @@
  * @param config
  * @param parent
  */
-Reporting::CreateBase::CreateBase(TConfiguration *config, QObject *parent) : QObject(parent)
+Reporting::CreateBase::CreateBase(MainConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
     MyDiscSpace.reset(new DiscSpace(MyConfiguration->getPaths("cache")));

@@ -24,20 +24,20 @@
 #include <QNetworkReply>
 #include <QUrl>
 #include "tools/logger.h"
-#include "configuration.h"
+#include "main_configuration.h"
 
 class TNetworkAccess : public QObject
 {
         Q_OBJECT
     public:
-        explicit TNetworkAccess(TConfiguration *config, QObject *parent = nullptr);
+        explicit TNetworkAccess(MainConfiguration *config, QObject *parent = nullptr);
         // getter/setter
         QByteArray getUserAgent();
         QUrl       getRemoteFileUrl();
         void       setRemoteFileUrl(QUrl value);
 
     protected:
-        TConfiguration   *MyConfiguration;
+        MainConfiguration   *MyConfiguration;
         QUrl              remote_file_url;
         QNetworkRequest   prepareNetworkRequest(QUrl remote_url);
 

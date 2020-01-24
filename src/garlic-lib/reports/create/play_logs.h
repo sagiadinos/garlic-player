@@ -9,7 +9,7 @@ namespace Reporting
     {
         Q_OBJECT
         public:
-            CreatePlayLogs(TConfiguration *config, QObject *parent);
+            CreatePlayLogs(MainConfiguration *config, QObject *parent);
             void process(QString file_name);
         protected:
             void mergeXml(QString file_name);

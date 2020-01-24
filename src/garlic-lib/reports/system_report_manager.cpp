@@ -1,6 +1,6 @@
 #include "system_report_manager.h"
 
-Reporting::SystemReportManager::SystemReportManager(TConfiguration *config, QObject *parent) : Reporting::BaseReportManager(config, parent)
+Reporting::SystemReportManager::SystemReportManager(MainConfiguration *config, QObject *parent) : Reporting::BaseReportManager(config, parent)
 {
     MyCreateSystemReport.reset(new Reporting::CreateSystemReport(MyConfiguration, this));
 }

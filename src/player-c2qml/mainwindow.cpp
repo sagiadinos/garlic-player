@@ -27,7 +27,7 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 
 MainWindow::~MainWindow()
 {
-    prepareParsing(); // region must be deleted at last, cause media pointer had to be deleted
+    deleteRegions(); // region must be deleted at last, cause media pointer had to be deleted
 }
 
 void MainWindow::init()
@@ -36,12 +36,12 @@ void MainWindow::init()
     connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(startShowMedia(BaseMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(stopShowMedia(BaseMedia *)));
     connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
+    connect(MyLibFacade, SIGNAL(rebootOS()), this, SLOT(rebootOS()));
+    connect(MyLibFacade, SIGNAL(installSoftware(QString)), this, SLOT(installSoftware(QString)));
     connect(engine(), SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit())); // to connect quit signal from QML
 
 #ifdef SUPPORT_QTAV
     setSource(QUrl(QStringLiteral("qrc:/root_qtav.qml")));
-#elif SUPPORT_RPI
-    setSource(QUrl(QStringLiteral("qrc:/root_qtm_rpi.qml")));
 #else
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
 #endif
@@ -95,13 +95,20 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             break;
 
             case Qt::Key_Q:
-                exit(0);
+                MyLibFacade->shutDownParsing();
+                sendClosePlayerCorrect();
+                delete MyLibFacade;
+                QApplication::quit();
+            break;
+            case Qt::Key_C: // delete anormal
+ //               MyLibFacade->shutDownParsing();
+ //               delete MyLibFacade;
+                QApplication::quit();
             break;
         }
     }
     return;
 }
-
 
 bool MainWindow::event(QEvent *event)
 {
@@ -131,17 +138,6 @@ int MainWindow::openConfigDialog()
     ConfigDialog MyConfigDialog(0, MyLibFacade->getConfiguration());
     return MyConfigDialog.exec();
 }
-
-#ifdef SUPPORT_RPI
-int MainWindow::openNetworkDialog()
-{
-#ifdef SUPPORT_RPI
-    NetworkDialog MyNetworkDialog(0, MyLibFacade->getConfiguration());
-    return MyNetworkDialog.exec();
-#endif
-    return 0;
-}
-#endif
 
 void MainWindow::resizeAsNormalFullScreen()
 {
@@ -210,22 +206,26 @@ void MainWindow::createRegions()
 void MainWindow::deleteRegions()
 {
     int size = regions_list.size();
+    if (size == 0) // prevent to call functionx of deleted or not existing regions
+    {
+        return;
+    }
+
     qDeleteAll(regions_list);
     regions_list.clear();
     qDebug() << size << " region(s) deleted";
 }
 
+
 // =================== protected slots ====================================
 
 void MainWindow::prepareParsing()
 {
-    if (regions_list.size() > 0) // prevent to call functionx of deleted or not existing regions
-        deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
+    deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
 
     createRegions();
     MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
-
 
 void MainWindow::startShowMedia(BaseMedia *media)
 {
@@ -275,3 +275,28 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
 
 }
 
+void MainWindow::rebootOS()
+{
+#if defined  Q_OS_ANDROID
+    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity", "rebootOS");
+#endif
+}
+
+void MainWindow::installSoftware(QString file_path)
+{
+   #if defined  Q_OS_ANDROID
+   QAndroidJniObject java_file_path = QAndroidJniObject::fromString(file_path);
+    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
+                                              "installSoftware",
+                                              "(Ljava/lang/String;)V",
+                                              java_file_path.object<jstring>());
+#endif
+}
+
+void MainWindow::sendClosePlayerCorrect()
+{
+#if defined  Q_OS_ANDROID
+    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity", "closePlayerCorrect");
+#endif
+    qDebug(MediaPlayer) << "send ClosePlayerCorrect" ;
+}

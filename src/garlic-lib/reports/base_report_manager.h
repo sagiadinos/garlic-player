@@ -12,7 +12,7 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            explicit BaseReportManager(TConfiguration *config, QObject *parent = nullptr);
+            explicit BaseReportManager(MainConfiguration *config, QObject *parent = nullptr);
             ~BaseReportManager();
             void                 init(QString action, int refresh);
             virtual void         handleSend() = 0;
@@ -20,9 +20,10 @@ namespace Reporting
             QScopedPointer<WebDav, QScopedPointerDeleteLater>  MyWebDav;
 
             int                  timer_id = 0;
-            QString              action_url, current_send_file_path = "";
+            QString              action_url = "";
+            QString              current_send_file_path = "";
             SubScription        *MySubscription;
-            TConfiguration      *MyConfiguration;
+            MainConfiguration      *MyConfiguration;
             void                 timerEvent(QTimerEvent *event);
          protected slots:
             virtual void         doSucceed(TNetworkAccess *uploader) = 0;

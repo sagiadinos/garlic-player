@@ -10,7 +10,7 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            InventoryReportManager(TConfiguration *config, DB::InventoryTable *inv_table, QObject *parent = nullptr);
+            InventoryReportManager(MainConfiguration *config, DB::InventoryTable *inv_table, QObject *parent = nullptr);
 
         protected:
             DB::InventoryTable *MyInventoryTable = Q_NULLPTR;

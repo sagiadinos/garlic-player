@@ -19,24 +19,29 @@
 
 LibFacade::LibFacade(QObject *parent) : QObject(parent)
 {
-    MyConfiguration.reset(new TConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player")));
-    MyIndexManager.reset(new IndexManager(MyConfiguration.data(), this));
+    MyConfiguration.reset(new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player")));
+    MyIndexManager.reset(new Files::IndexManager(MyConfiguration.data(), this));
     connect(MyIndexManager.data(), SIGNAL(newIndexDownloaded()), this, SLOT(loadIndex()));
-    timer_id = startTimer(300000); // every 300s for ressource monitor
+    resource_monitor_timer_id = startTimer(300000); // every 300s for ressource monitor
 
     MyTaskScheduler.reset(new SmilHead::TaskScheduler(MyConfiguration.data(), this));
 
     connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(loadIndex()));
-  //  connect(MyTaskScheduler.data(), SIGNAL(updateFirmware()), this, SLOT(loadIndex()));
-   // connect(MyTaskScheduler.data(), SIGNAL(reboot()), this, SLOT(loadIndex()));
+    connect(MyTaskScheduler.data(), SIGNAL(installSoftware(QString)), this, SLOT(emitInstallSoftware(QString)));
+    connect(MyTaskScheduler.data(), SIGNAL(reboot()), this, SLOT(reboot()));
 }
 
 LibFacade::~LibFacade()
 {
-    killTimer(timer_id);
+    killTimer(resource_monitor_timer_id);
+}
 
+void LibFacade::shutDownParsing()
+{
+    MyBodyParser.data()->endSmilParsing();
     MyIndexManager.data()->deactivateRefresh();
 }
+
 
 void LibFacade::initParser()
 {
@@ -45,7 +50,7 @@ void LibFacade::initParser()
     checkForNewSmilIndex();
 }
 
-TConfiguration *LibFacade::getConfiguration() const
+MainConfiguration *LibFacade::getConfiguration() const
 {
     return MyConfiguration.data();
 }
@@ -54,6 +59,21 @@ HeadParser *LibFacade::getHead() const
 {
     return MyHeadParser.data();
 }
+
+void LibFacade::setConfigFromExternal(QString config_path)
+{
+    MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyConfiguration.data(), this));
+    connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), this, SLOT(initParser()));
+    MyXMLConfiguration.data()->processFromLocalFile(config_path);
+}
+
+void LibFacade::setIndexFromExternal(QString index_path)
+{
+    MyConfiguration->setIndexUri(index_path);
+    MyConfiguration->setUserConfigByKey("index_uri", index_path);
+    loadIndex();
+}
+
 
 void LibFacade::beginSmilBodyParsing()
 {
@@ -77,7 +97,6 @@ void LibFacade::playSmilElement(int position, int zone)
     Q_UNUSED(position);
     Q_UNUSED(zone);
 }
-
 
 void LibFacade::initInventoryDataTable()
 {
@@ -111,6 +130,16 @@ void LibFacade::loadIndex()
     qDebug(Develop) << "end " << Q_FUNC_INFO;
 }
 
+void LibFacade::emitInstallSoftware(QString file_path)
+{
+    emit installSoftware(file_path);
+}
+
+void LibFacade::reboot()
+{
+    emit rebootOS();
+}
+
 void LibFacade::processHeader()
 {
     MyHeadParser.reset(new HeadParser(MyConfiguration.data(), this));
@@ -123,7 +152,7 @@ void LibFacade::initFileManager()
     MyMediaModel.reset(new MediaModel(this));
     MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data(), this));
     MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
-    MyMediaManager.reset(new MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
+    MyMediaManager.reset(new Files::MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
 }
 
 void LibFacade::checkForNewSmilIndex()

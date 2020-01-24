@@ -1,4 +1,4 @@
-/*************************************************************************************
+﻿/*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
     Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
@@ -44,29 +44,33 @@ class LibFacade : public QObject
     public:
         explicit LibFacade(QObject *parent = nullptr);
         ~LibFacade();
-        void               initParser();
-        TConfiguration    *getConfiguration() const;
+        MainConfiguration *getConfiguration() const;
         HeadParser        *getHead() const;
+        void               setConfigFromExternal(QString config_path);
+        void               setIndexFromExternal(QString index_path);
         void               beginSmilBodyParsing();
         // Interactions
         void               playNextSmilElement();
         void               playPreviousSmilElement();
         void               playSmilElement(int position, int zone = 1);
-
-    protected:
-        int                 timer_id;
-        QScopedPointer<DB::InventoryTable>  MyInventoryTable;
-        QScopedPointer<ElementsContainer>   MyElementsContainer;
-        QScopedPointer<CurrentPlayingMedia> MyCurrentPlayingMedia;
-        QScopedPointer<TConfiguration>      MyConfiguration;
-        QScopedPointer<MediaModel>          MyMediaModel;
-        QScopedPointer<DownloadQueue>       MyDownloadQueue;
-        QScopedPointer<IndexManager>        MyIndexManager ;
-        QScopedPointer<MediaManager>        MyMediaManager;
-        QScopedPointer<HeadParser>          MyHeadParser;
-        QScopedPointer<SmilHead::TaskScheduler>       MyTaskScheduler;
-        QScopedPointer<BodyParser>          MyBodyParser;
-        ResourceMonitor                     MyResourceMonitor;
+        void               shutDownParsing();
+public slots:
+        void               initParser();
+protected:
+        int                                     resource_monitor_timer_id;
+        QScopedPointer<DB::InventoryTable>      MyInventoryTable;
+        QScopedPointer<ElementsContainer>       MyElementsContainer;
+        QScopedPointer<CurrentPlayingMedia>     MyCurrentPlayingMedia;
+        QScopedPointer<MainConfiguration>       MyConfiguration;
+        QScopedPointer<MediaModel>              MyMediaModel;
+        QScopedPointer<DownloadQueue>           MyDownloadQueue;
+        QScopedPointer<Files::IndexManager>     MyIndexManager ;
+        QScopedPointer<Files::MediaManager>     MyMediaManager;
+        QScopedPointer<HeadParser>              MyHeadParser;
+        QScopedPointer<SmilHead::TaskScheduler> MyTaskScheduler;
+        QScopedPointer<SmilHead::XMLConfiguration> MyXMLConfiguration;
+        QScopedPointer<BodyParser>              MyBodyParser;
+        ResourceMonitor                         MyResourceMonitor;
         void               initInventoryDataTable();
         void               initFileManager();
         void               processHeader();
@@ -75,6 +79,8 @@ class LibFacade : public QObject
 
     protected slots:
         void               loadIndex();
+        void               emitInstallSoftware(QString file_path);
+        void               reboot();
         void               emitStartShowMedia(BaseMedia *media);
         void               emitStopShowMedia(BaseMedia *media);
 
@@ -82,6 +88,8 @@ class LibFacade : public QObject
         void               startShowMedia(BaseMedia *media);
         void               stopShowMedia(BaseMedia *media);
         void               newIndexLoaded();
+        void               rebootOS();
+        void               installSoftware(QString file_path);
 };
 
 #endif // LIB_FACADE_H

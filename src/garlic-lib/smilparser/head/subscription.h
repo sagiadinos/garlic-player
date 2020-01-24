@@ -36,8 +36,11 @@ class SubScription : public QObject
 
 
     protected:
-        QString   type, action, method = "";
-        int       refresh_interval, retry_interval = 3600;
+        QString   type = "";
+        QString   action = "";
+        QString   method = "";
+        int       refresh_interval = 3600;
+        int       retry_interval = 3600;
 };
 
 #endif // SUBSCRIPTION_LIST_H

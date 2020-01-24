@@ -18,7 +18,7 @@
 
 #include "body_parser.h"
 
-BodyParser::BodyParser(MediaManager *mm, ElementsContainer *ec, QObject *parent) : QObject(parent)
+BodyParser::BodyParser(Files::MediaManager *mm, ElementsContainer *ec, QObject *parent) : QObject(parent)
 {
     MyElementsContainer   = ec;
     MyMediaManager        = mm;

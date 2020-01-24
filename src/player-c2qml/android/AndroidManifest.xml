@@ -1,7 +1,16 @@
 <?xml version="1.0"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.sagiadinos.smilcontrol" android:versionName="v0.3.0" android:versionCode="384" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.sagiadinos.garlic.player" android:versionName="v0.3.0" android:versionCode="384" android:installLocation="auto">
   <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="garlic-player" android:icon="@drawable/icon">
-    <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="org.qtproject.qt5.android.bindings.QtActivity" android:label="-- %%INSERT_APP_NAME%% --" android:screenOrientation="unspecified" android:launchMode="singleTop">
+      <service android:process=":qt" android:name=".GarlicWatchDog" android:enabled="true">
+      <!-- android:process=":qt" is needed to force the service to run on a separate
+                                                            process than the Activity -->
+
+        <!-- Background running -->
+        <meta-data android:name="android.app.background_running" android:value="true"/>
+        <!-- Background running -->
+      </service>
+
+    <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="com.sagiadinos.garlic.player.java.GarlicActivity" android:label="-- %%INSERT_APP_NAME%% --" android:screenOrientation="unspecified" android:launchMode="singleTop">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -52,6 +61,10 @@
       <meta-data android:name="android.app.extract_android_style" android:value="full"/>
       <!-- extract android style -->
     </activity>
+
+    <receiver android:name="com.sagiadinos.garlic.player.java.SmilIndexReceiver" android:enabled="true" />
+    <receiver android:name="com.sagiadinos.garlic.player.java.ConfigReceiver" android:enabled="true"/>
+
     <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
   </application>
   <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19"/>

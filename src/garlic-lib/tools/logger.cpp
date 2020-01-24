@@ -5,12 +5,12 @@ std::once_flag Logger::initInstanceFlag;
 
 Logger::Logger(QObject *parent) : QObject(parent)
 {
-    qtdebug_log.reset(new LogFile(TConfiguration::getLogDir() + "qtdebug.log"));
-    debug_log.reset(new LogFile(TConfiguration::getLogDir() + "debug.log"));
+    qtdebug_log.reset(new LogFile(MainConfiguration::getLogDir() + "qtdebug.log"));
+    debug_log.reset(new LogFile(MainConfiguration::getLogDir() + "debug.log"));
     debug_log.data()->setMaxSize(10485760); // 10MiB
-    event_log.reset(new LogFile(TConfiguration::getLogDir() + "event_log.xml"));
-    play_log.reset(new LogFile(TConfiguration::getLogDir() + "play_log.xml"));
-    task_execution_log.reset(new LogFile(TConfiguration::getLogDir() + "task_execution_log.xml"));
+    event_log.reset(new LogFile(MainConfiguration::getLogDir() + "event_log.xml"));
+    play_log.reset(new LogFile(MainConfiguration::getLogDir() + "play_log.xml"));
+    task_execution_log.reset(new LogFile(MainConfiguration::getLogDir() + "task_execution_log.xml"));
 }
 
 void Logger::initSingleton()

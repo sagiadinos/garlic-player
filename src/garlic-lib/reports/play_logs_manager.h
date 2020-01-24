@@ -10,7 +10,7 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            PlayLogsManager(TConfiguration *config, QObject *parent = nullptr);
+            PlayLogsManager(MainConfiguration *config, QObject *parent = nullptr);
 
         protected:
             QStringList                     send_list;

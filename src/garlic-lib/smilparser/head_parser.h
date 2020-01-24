@@ -53,7 +53,7 @@ class HeadParser: public QObject
 {
         Q_OBJECT
     public:
-        explicit HeadParser(TConfiguration *config, QObject *parent = Q_NULLPTR);
+        explicit HeadParser(MainConfiguration *config, QObject *parent = Q_NULLPTR);
          ~HeadParser();
         void                   setDefaultValues();
         void                   parse(QDomElement head, SmilHead::TaskScheduler *MyTasks);
@@ -77,7 +77,7 @@ class HeadParser: public QObject
         QString                backgroundColor;
         QDomElement            head;
         QList<Region>          region_list;
-        TConfiguration        *MyConfiguration;
+        MainConfiguration     *MyConfiguration;
         void                   parseMeta(QDomElement element);
         void                   parseMetaData(QDomElement element, SmilHead::TaskScheduler *MyTasks);
         void                   parseLayout(QDomElement layout);
