@@ -37,13 +37,14 @@ android {
        android/src/com/sagiadinos/garlic/player/java/GarlicActivity.java
 
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
-#    ANDROID_LIBS = $$dirname(QMAKE_QMAKE)/../../../openssl-1.0.2/armeabi-v7a/lib/
 
+include(../ext/android_openssl/openssl.pri)
+
+#    ANDROID_LIBS = $$PWD/src/ext/android_openssl/arm
     ANDROID_EXTRA_LIBS += \
-#        $$ANDROID_LIBS/libssl.so \
-#        $$ANDROID_LIBS/libcrypto_1_0_0.so \
+#        $$ANDROID_LIBS/libssl_1_1.so \
+#        $$ANDROID_LIBS/libcrypto_1_1.so
         $$OUT_PWD/../libandroid/libgarlic.so
-#        $$ANDROID_LIBS/libcrypto.so
 
 }
 win32 {
