@@ -17,14 +17,18 @@ fi
 # create directory name
 export SHADOW_BUILD_DIR=build-$QT_VERSION-$CONFIG_DEBUG_RELEASE
 
-# check if called from jenkins use $BUILD number else the Date
+
+# check if called from jenkins to set correct paths
 if [ -z "$BUILD_NUMBER" ]; then
-	export GARLIC_DIR="NEED TO CUSTOMIZED"
-	export DEPLOY_SUFFIX=($(date +"%Y-%m-%d"))
+	export GARLIC_DIR=/home/niko/garlic-player/
+	source $SCRIPTDIR/writeVersionFromGithub.sh 
 else
 	export GARLIC_DIR=$PWD
-	export DEPLOY_SUFFIX=build-$BUILD_NUMBER
+	source $SCRIPTDIR/writeVersionFromGithub.sh
 fi
+
+export DEPLOY_SUFFIX=$GARLIC_VERSION
+
 # create diretory for deployed files
 export PACKAGE_DIR=../packages
 mkdir -p packages

@@ -4,13 +4,6 @@ set -e
 SCRIPTDIR=$(dirname "$0")
 source $SCRIPTDIR/envLinux64.sh
 
-#check if called from jenkins
-if [ -z "$BUILD_NUMBER" ]; then
-	source ../$SCRIPTDIR/writeVersionFromGithub.sh
-else
-	source $SCRIPTDIR/writeVersionFromGithub.sh
-fi
-
 echo 
 echo ========== prepare build 
 echo 
