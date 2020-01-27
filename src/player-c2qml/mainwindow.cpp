@@ -62,7 +62,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
     if (!ke->modifiers().testFlag(Qt::ControlModifier))
     {
- //       MyInteraction.handleKeyPress(ke->key());
+        MyInteractions->handleKeyPress(ke);
     }
     else
     {
@@ -115,7 +115,6 @@ bool MainWindow::event(QEvent *event)
     event->accept();
     if(event->type() == QEvent::TouchBegin)
     {
-//        QTouchEvent *touchEvent = static_cast<QTouchEvent*>(event);
         num_touched++;
         if (num_touched > 4)
         {

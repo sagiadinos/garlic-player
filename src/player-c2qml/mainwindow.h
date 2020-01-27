@@ -59,7 +59,8 @@ class MainWindow : public QQuickView
         static LibFacade         *MyStaticLibFacade;
         QMap<QString, TRegion *>  regions_list;
         QSize                     mainwindow_size;
-        int                       screen_state, num_touched = 0;
+        int                       screen_state = 0;
+        int                       num_touched = 0;
         void                      openDebugInfos();
         QString                   selectRegion(QString region_name);
         void                      resizeEvent(QResizeEvent * event);

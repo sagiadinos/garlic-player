@@ -15,7 +15,7 @@ public:
     int          count();
     BaseMedia   *getFirstPlayingObject();
 protected:
-    QSet<BaseMedia *>      currently_playing_smilobjects;
+    QSet<BaseMedia *>             currently_playing_smilobjects;
     Files::MediaManager          *MyMediaManager;
 
 signals:

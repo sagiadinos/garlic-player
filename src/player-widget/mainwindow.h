@@ -51,6 +51,7 @@ class MainWindow : public QMainWindow
         const int                 WINDOWED      = 0;
         const int                 FULLSCREEN    = 1;
         const int                 BIGFULLSCREEN = 2;
+        int                       num_touched   = 0;
         Interactions             *MyInteractions;
         QWidget                  *centralWidget;
         LibFacade                *MyLibFacade      = Q_NULLPTR;
@@ -65,6 +66,7 @@ class MainWindow : public QMainWindow
 #ifdef SUPPORT_EMBEDDED
         int                       openNetworkDialog();
 #endif
+        bool                      event(QEvent *event);
         QString                   selectRegion(QString region_name);
         void                      createRegions();
         void                      deleteRegions();

@@ -13,6 +13,7 @@ Changelog
 
 2. Improvements
 	* get version number in build enviroments from github repository
+	* replace deprecated QDesktopWidget members for screen determination
 	* SMIL-index will be preloaded
 	* path to a config.xml via command line
 	* reorganized code structure and name changes

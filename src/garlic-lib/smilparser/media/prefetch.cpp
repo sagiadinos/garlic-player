@@ -21,6 +21,7 @@ TPrefetch::TPrefetch(TContainer *pc, QObject *parent) : BaseMedia(parent)
 {
     parent_container = pc;
     setObjectName("TPrefetch");
+    is_media = false;
 }
 
 TPrefetch::~TPrefetch()

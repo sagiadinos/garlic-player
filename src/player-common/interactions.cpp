@@ -12,10 +12,10 @@ void Interactions::handleKeyPress(QKeyEvent *KeyEvent)
         case Qt::Key_Return:
             break;
         case Qt::Key_Right:
-            MyLibFacade->playNextSmilElement();
+            MyLibFacade->nextSmilMedia();
             break;
         case Qt::Key_Left:
-            MyLibFacade->playPreviousSmilElement();
+            MyLibFacade->previousSmilMedia();
             break;
         case Qt::Key_Tab:
             setZone();

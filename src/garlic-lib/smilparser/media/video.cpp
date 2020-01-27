@@ -22,7 +22,7 @@ TVideo::TVideo(TContainer *pc, QObject *parent) : TAudio(pc, parent)
 {
     parent_container = pc;
     setObjectName("TVideo");
-    presentable = true;
+    is_media = true;
 }
 
 

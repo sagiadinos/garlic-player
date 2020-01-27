@@ -83,17 +83,17 @@ void LibFacade::beginSmilBodyParsing()
     MyBodyParser->beginSmilParsing(MyIndexManager->getBody());
 }
 
-void LibFacade::playNextSmilElement()
+void LibFacade::nextSmilMedia(int zone)
 {
-
+    Q_UNUSED(zone);
 }
 
-void LibFacade::playPreviousSmilElement()
+void LibFacade::previousSmilMedia(int zone)
 {
-
+    Q_UNUSED(zone);
 }
 
-void LibFacade::playSmilElement(int position, int zone)
+void LibFacade::jumpToSmilMedia(int position, int zone)
 {
     Q_UNUSED(position);
     Q_UNUSED(zone);
@@ -122,7 +122,7 @@ void LibFacade::loadIndex()
     processHeader();
 
     MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
-    MyElementsContainer.reset(new ElementsContainer(this));
+    MyElementsContainer.reset(new ElementsContainer(MyHeadParser.data(), this));
 
     initFileManager();
 

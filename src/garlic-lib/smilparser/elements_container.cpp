@@ -1,33 +1,30 @@
 #include "elements_container.h"
 
-ElementsContainer::ElementsContainer(QObject *parent) : QObject(parent)
+ElementsContainer::ElementsContainer(HeadParser *hp, QObject *parent) : QObject(parent)
 {
-
+    MyHeadParser = hp;
+    QList<Region> *layout = MyHeadParser->getLayout();
+    for (int i = 0; i < layout->length(); i++)
+    {
+        regions.append(layout->at(i).regionName);
+    }
 }
 
 ElementsContainer::~ElementsContainer()
 {
-    qDeleteAll(all_elements_list);
-    // checking if qDeleteAll crashs
-/*    for(QHash<QString, BaseTimings *>::iterator  i = all_elements_list.begin(); i != all_elements_list.end(); i++)
-    {
-        BaseTimings                             *MyBaseTimings     = Q_NULLPTR;
-        MyBaseTimings = *i;
-        delete MyBaseTimings;
-    }
-*/
-    all_elements_list.clear();
+    qDeleteAll(elements_list);
+    elements_list.clear();
 
     // not neccesary do delete here cause same objects are in all_elements_list
-    all_presentable_media.clear();
+    media_list.clear();
 }
 
 BaseTimings *ElementsContainer::findSmilElement(QDomElement dom_element)
 {
     BaseTimings                             *MyBaseTimings     = Q_NULLPTR;
     QString                                  name              = dom_element.nodeName();
-    QHash<QString, BaseTimings *>::iterator  elements_iterator = all_elements_list.find(TBase::parseID(dom_element));
-    if (elements_iterator != all_elements_list.end())
+    QHash<QString, BaseTimings *>::iterator  elements_iterator = elements_list.find(TBase::parseID(dom_element));
+    if (elements_iterator != elements_list.end())
     {
         MyBaseTimings = *elements_iterator;
     }
@@ -39,7 +36,7 @@ BaseTimings *ElementsContainer::insertSmilElement(TContainer *parent_container, 
     BaseTimings *MyBaseTimings = TFactory::createBase(dom_element, parent_container, this);
     MyBaseTimings->parse(dom_element);
 
-    all_elements_list.insert(MyBaseTimings->getID(), MyBaseTimings);
+    elements_list.insert(MyBaseTimings->getID(), MyBaseTimings);
 
     if (MyBaseTimings->getBaseType() == "media")
     {
@@ -49,26 +46,68 @@ BaseTimings *ElementsContainer::insertSmilElement(TContainer *parent_container, 
     return MyBaseTimings;
 }
 
-BaseMedia *ElementsContainer::getMediaOnPosition(int position)
+BaseMedia *ElementsContainer::getMediaOnZoneAndPosition(int position, int zone)
+{
+    QMap<QString, QVector<BaseMedia *> *>::iterator i =  media_list.find(determineZoneName(zone));
+
+    if (i != media_list.end())
+    {
+        return getMediaOnPosition(position, *i.value());
+    }
+    return Q_NULLPTR;
+}
+
+BaseMedia *ElementsContainer::getMediaOnPosition(int position, QVector<BaseMedia *> list)
 {
     int array_position = position - 1;
 
     if (array_position < 0)
     {
-        return all_presentable_media.last();
+        return list.first();
     }
-    if (array_position > all_presentable_media.size())
+    if (array_position > list.size())
     {
-        return all_presentable_media.first();
+        return list.last();
     }
-    return all_presentable_media.at(array_position);
+    return list.at(array_position);
+
+}
+
+QString ElementsContainer::determineZoneName(int zone)
+{
+    int array_position = zone - 1;
+    if (array_position < 1)
+    {
+        return regions.first();
+    }
+
+    if (array_position > regions.size())
+    {
+        return regions.last();
+    }
+    // zone-1 cause arrays start as 0
+    return regions.at(zone-1);
 }
 
 void ElementsContainer::insertSmilMedia(BaseMedia *MyBaseMedia)
 {
-    if (MyBaseMedia->isPresentable())
+    if (!MyBaseMedia->isMedia())
     {
-        all_presentable_media.append(MyBaseMedia);
+        return;
+    }
+
+    QString s = MyBaseMedia->getRegion();
+
+    QMap<QString, QVector<BaseMedia *>*>::iterator i = media_list.find(s);
+    if (i != media_list.end())
+    {
+        i.value()->append(MyBaseMedia);
+    }
+    else
+    {
+        QVector<BaseMedia *> *vec = new QVector<BaseMedia *>;
+        vec->append(MyBaseMedia);
+        media_list.insert(s, vec);
     }
 
 }

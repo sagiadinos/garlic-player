@@ -235,7 +235,6 @@ void BodyParser::stopElement(BaseTimings *element)
     return;
 }
 
-
 void BodyParser::connectSlots(BaseTimings *element)
 {
     QString      base_type  = element->getBaseType();

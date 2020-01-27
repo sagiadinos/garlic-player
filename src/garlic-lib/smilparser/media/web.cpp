@@ -22,7 +22,7 @@ TWeb::TWeb(TContainer *pc, QObject *parent) : BaseMedia(parent)
 {
     parent_container = pc;
     setObjectName("TWeb");
-    presentable = true;
+    is_media = true;
 }
 
 TWeb::~TWeb()

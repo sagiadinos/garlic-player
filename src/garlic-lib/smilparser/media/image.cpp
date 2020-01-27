@@ -22,7 +22,7 @@ TImage::TImage(TContainer *pc, QObject *parent) : BaseMedia(parent)
 {
     parent_container = pc;
     setObjectName("TImage");
-    presentable = true;
+    is_media = true;
 }
 
 TImage::~TImage()

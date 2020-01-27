@@ -92,6 +92,22 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
     }
 }
 
+bool MainWindow::event(QEvent *event)
+{
+    event->accept();
+    if(event->type() == QEvent::TouchBegin)
+    {
+        num_touched++;
+        if (num_touched > 4)
+        {
+            openDebugInfos();
+            num_touched = 0;
+        }
+    }
+    return QMainWindow::event(event);
+}
+
+
 void MainWindow::openDebugInfos()
 {
     DebugInfos MyDebugInfos(MyLibFacade);

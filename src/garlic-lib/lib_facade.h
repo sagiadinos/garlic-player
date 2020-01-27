@@ -50,9 +50,9 @@ class LibFacade : public QObject
         void               setIndexFromExternal(QString index_path);
         void               beginSmilBodyParsing();
         // Interactions
-        void               playNextSmilElement();
-        void               playPreviousSmilElement();
-        void               playSmilElement(int position, int zone = 1);
+        void               nextSmilMedia(int zone = 1);
+        void               previousSmilMedia(int zone = 1);
+        void               jumpToSmilMedia(int position, int zone = 1);
         void               shutDownParsing();
 public slots:
         void               initParser();
