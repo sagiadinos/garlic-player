@@ -60,10 +60,11 @@ HeadParser *LibFacade::getHead() const
     return MyHeadParser.data();
 }
 
-void LibFacade::setConfigFromExternal(QString config_path)
+void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_parsing)
 {
     MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyConfiguration.data(), this));
-    connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), this, SLOT(initParser()));
+    if (restart_smil_parsing)
+        connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), this, SLOT(initParser()));
     MyXMLConfiguration.data()->processFromLocalFile(config_path);
 }
 

@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
     qInstallMessageHandler(handleMessages);
 
-    TCmdParser MyParser(MyLibFacade->getConfiguration());
+    TCmdParser MyParser(MyLibFacade);
     MyParser.addOptions();
 
    if (!MyParser.parse(&app))

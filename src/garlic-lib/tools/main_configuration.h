@@ -85,7 +85,6 @@ class MainConfiguration  : public QObject
         void            determineIndexUri(QString path);
         void            createDirectories();
         void            determineUserAgent();
-        void            checkConfigXML();
 
 
 

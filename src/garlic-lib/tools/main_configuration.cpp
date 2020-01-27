@@ -176,10 +176,6 @@ void MainConfiguration::determineIndexUri(QString path)
     {
         setIndexUri(getUserConfigByKey("index_uri"));
     }
-    else
-    {
-        checkConfigXML();
-    }
     determineIndexPath();
 }
 
@@ -326,28 +322,6 @@ void MainConfiguration::createDirectories()
 void MainConfiguration::determineUserAgent()
 {
     user_agent = "GAPI/1.0 (UUID:"+getUuid()+"; NAME:"+getPlayerName()+") garlic-"+getOS()+"/"+getVersion()+" (MODEL:Garlic)";
-}
-
-void MainConfiguration::checkConfigXML()
-{
-    QFile file(base_path+"config.xml");
-    if (file.exists() && file.open(QIODevice::ReadOnly))
-    {
-        QXmlStreamReader reader(&file);
-        while (!reader.atEnd())
-        {
-             reader.readNext();
-             if (reader.isStartElement())
-             {
-                 if (reader.name() == "prop" && reader.attributes().value("name") == "content.serverUrl")
-                 {
-                     setUserConfigByKey("index_uri", reader.attributes().value("value").toString());
-                     setIndexUri(reader.attributes().value("value").toString());
-                 }
-             }
-         }
-        file.rename(base_path+"config.xml", base_path+"config_readd0aeec17b69aed.xml");
-    }
 }
 
 void MainConfiguration::createDirectoryIfNotExist(QString path)

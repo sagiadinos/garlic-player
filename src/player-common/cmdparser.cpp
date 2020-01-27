@@ -1,9 +1,9 @@
 #include "cmdparser.h"
 
-TCmdParser::TCmdParser(MainConfiguration *config)
+TCmdParser::TCmdParser(LibFacade *facade)
 {
-    MyConfiguration = config;
-    parser.setApplicationDescription(MyConfiguration->getDescription());
+    MyLibFacade = facade;
+    parser.setApplicationDescription(MyLibFacade->getConfiguration()->getDescription());
 }
 
 void TCmdParser::addOptions()
@@ -12,6 +12,7 @@ void TCmdParser::addOptions()
     parser.addVersionOption();
     parser.addOptions(
     {
+        {{"c", "config.xml"}, "path to config.xml", "config.xml"},
         {{"m", "windows-mode"}, "fullscreen, bigscreen (when multimonitor) or windowed mode", "fullscreen|bigscreen|windowed"},
         {{"z", "windows-size"}, "size of windows (when windows mode) e.g. 980x540 means 980px width and 540px height", "width x height"},
         {{"s", "screen-select"}, "Starts in selected screen", "screen" }
@@ -25,22 +26,16 @@ bool TCmdParser::parse(QApplication *app)
     parser.process(*app);
     const QStringList args = parser.positionalArguments();
 
-    if (args.size() > 0)
-    {
-        if (MyConfiguration->validateContentUrl(args.at(0)))
-            MyConfiguration->determineIndexUri(MyConfiguration->getValidatedContentUrl());
-        else
-        {
-            QTextStream ts( stdout );
-            ts << "\n" << MyConfiguration->getErrorText() << "\n";
-            return false;
-        }
-    }
-    else
-        MyConfiguration->determineIndexUri("");
 
     if (parser.isSet("s"))
         setScreenSelect(parser.value("s").toInt());
+
+    if (parser.isSet("m"))
+    {
+        QString val = parser.value("m");
+        if (val == "fullscreen" || val == "bigscreen" || val == "windowed")
+            setWindowMode(val);
+    }
 
     if (parser.isSet("m"))
     {
@@ -60,6 +55,30 @@ bool TCmdParser::parse(QApplication *app)
                 setWindowSize(QSize(x, y));
         }
     }
+
+    if (parser.isSet("c"))
+    {
+        QFileInfo file(parser.value("c"));
+        if (file.exists())
+        {
+            MyLibFacade->setConfigFromExternal(file.absoluteFilePath(), false);
+        }
+    }
+
+    if (args.size() > 0)
+    {
+        if (MyLibFacade->getConfiguration()->validateContentUrl(args.at(0)))
+            MyLibFacade->getConfiguration()->determineIndexUri(MyLibFacade->getConfiguration()->getValidatedContentUrl());
+        else
+        {
+            QTextStream ts( stdout );
+            ts << "\n" << MyLibFacade->getConfiguration()->getErrorText() << "\n";
+            return false;
+        }
+    }
+    else
+        MyLibFacade->getConfiguration()->determineIndexUri("");
+
     return true;
 }
 

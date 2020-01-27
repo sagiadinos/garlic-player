@@ -46,7 +46,7 @@ class LibFacade : public QObject
         ~LibFacade();
         MainConfiguration *getConfiguration() const;
         HeadParser        *getHead() const;
-        void               setConfigFromExternal(QString config_path);
+        void               setConfigFromExternal(QString config_path, bool restart_smil_parsing = true);
         void               setIndexFromExternal(QString index_path);
         void               beginSmilBodyParsing();
         // Interactions
