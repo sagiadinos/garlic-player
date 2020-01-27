@@ -1,20 +1,23 @@
 Changelog
 ===========
 
-0.3.0 -> 0.4.0
+0.3.0 -> 0.4.0 (unreleased)
 ---------------------
 1. New Features (currently @work)
-	* get version number from github repository (finished)
-	* SMIL-index will be preloaded (finished)
-	* interactivity, touch and jump to previous, next playlist item
-	* change android builds from deprecated gcc to clang (finished)
-	* REST-Interface
 	* remote configuration change from CMS
-	* auto update for rooted Android devices
-	* code coverage (finished)
+	* auto update for for non-root Android devices (via Device Oner-App garlic-launcher)
+	* interactivity, touch and jump to previous, next playlist item
+	* REST-Interface
+	* code coverage
 	* customize tests
-	* reorganized code structure and name changes
 
+2. Improvements
+	* get version number in build enviroments from github repository
+	* SMIL-index will be preloaded
+	* path to a config.xml via command line
+	* reorganized code structure and name changes
+	* change android builds from deprecated gcc to clang > Qt 5.12.x
+	
 0.2.0 -> 0.3.0
 ---------------------
 

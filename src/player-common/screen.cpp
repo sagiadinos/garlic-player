@@ -1,16 +1,14 @@
 #include "screen.h"
 
-TScreen::TScreen(QDesktopWidget *dw, QObject *parent) : QObject(parent)
+TScreen::TScreen(QObject *parent) : QObject(parent)
 {
-     desktop_widget   = dw;
-     current_screen_id = desktop_widget->primaryScreen();
+     current_screen = QGuiApplication::primaryScreen();
      calculateWholeDisplayGeometrie();
 }
 
 QPoint TScreen::getWholeStartPoint()
 {
     return QPoint(whole_display_geometry.x(), whole_display_geometry.y());
-
 }
 
 QSize TScreen::getWholeSize()
@@ -20,51 +18,35 @@ QSize TScreen::getWholeSize()
 
 QPoint TScreen::getStartPointFromCurrentScreen()
 {
-    return desktop_widget->screenGeometry(getCurrentScreenId()).topLeft();
+    return current_screen->geometry().topLeft();
 }
 
 QRect TScreen::getQRectFromScreen()
 {
-    return desktop_widget->screenGeometry(getCurrentScreenId());
+    return current_screen->geometry();
 }
 
 
 QSize TScreen::getSizeFromCurrentScreen()
 {
-    QRect rect = desktop_widget->screenGeometry(getCurrentScreenId());
-    return rect.size();
+    return getQRectFromScreen().size();
 }
 
-int TScreen::getCurrentScreenId() const
+void TScreen::determineCurrentScreenId(const QPoint point)
 {
-    return current_screen_id;
-}
-
-void TScreen::determineCurrentScreenId(const QWidget *value)
-{
-    current_screen_id = desktop_widget->screenNumber(value);
-}
-
-void TScreen::setScreenId(const int id)
-{
-    current_screen_id = validateScreenId(id);
+    current_screen = QGuiApplication::screenAt(point);
 }
 
 void TScreen::calculateWholeDisplayGeometrie()
 {
-    for (int i = 0; i < desktop_widget->screenCount(); i++)
+    QList<QScreen *> listScreens = QGuiApplication::screens();
+    QList<QScreen *>::iterator j;
+    for (j = listScreens.begin(); j != listScreens.end(); j++)
     {
-        qInfo(Screen) << "Monitor: " << i << " Geometry:" << desktop_widget->screenGeometry(i);
-        QRect screenRect = desktop_widget->screen(i)->geometry();
-        whole_display_geometry = whole_display_geometry.united(screenRect); //union
+        QScreen *screen = *j;
+        qInfo(Screen) << "Monitor: " << screen->model() << screen->name() << " Geometry:" << screen->availableGeometry();
+        whole_display_geometry = whole_display_geometry.united(screen->availableGeometry()); //union
     }
+
     qInfo(Develop) << " DisplayGeometrie x:" << whole_display_geometry.x() << "y:" << whole_display_geometry.y() << "width:" << whole_display_geometry.width() << "height:" << whole_display_geometry.height();
-}
-
-int TScreen::validateScreenId(int screen_id)
-{
-    if (screen_id > -1 && screen_id < desktop_widget->screenCount())
-        return  screen_id;
-
-    return desktop_widget->primaryScreen();
 }

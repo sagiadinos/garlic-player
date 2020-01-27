@@ -12,7 +12,7 @@ void TCmdParser::addOptions()
     parser.addVersionOption();
     parser.addOptions(
     {
-        {{"c", "config.xml"}, "path to config.xml", "config.xml"},
+        {{"c", "config"}, "path to a config.xml", "config"},
         {{"m", "windows-mode"}, "fullscreen, bigscreen (when multimonitor) or windowed mode", "fullscreen|bigscreen|windowed"},
         {{"z", "windows-size"}, "size of windows (when windows mode) e.g. 980x540 means 980px width and 540px height", "width x height"},
         {{"s", "screen-select"}, "Starts in selected screen", "screen" }

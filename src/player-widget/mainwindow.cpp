@@ -140,7 +140,7 @@ void MainWindow::resizeAsBigFullScreen()
 
 void MainWindow::resizeAsWindow()
 {
-    MyScreen->determineCurrentScreenId(this);
+    MyScreen->determineCurrentScreenId(this->rect().topLeft());
     move(MyScreen->getStartPointFromCurrentScreen());
     setWindowFlags(Qt::Window);
     setCursor(Qt::ArrowCursor);

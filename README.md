@@ -40,6 +40,7 @@ both bugs are showstoppers for media player who should run 24/7, so do not use t
 ## Command line options
  - -h, --help          Displays this help.
  - -v, --version       Displays version information.
+ - -c, --config		   path to a config.xml
  - -m, --windows-mode  fullscreen, bigscreen (when multi monitor) or windowed mode
  - -z, --windows-size  size of windows (when windows mode) e.g. 980x540 means 980px width and 540px height
  - -s, --screen-select Starts in selected screen number

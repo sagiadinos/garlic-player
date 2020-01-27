@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     MyParser.parse(&app);
 
 
-    TScreen    MyScreen(QApplication::desktop());
+    TScreen    MyScreen(Q_NULLPTR);
 
     MainWindow w(&MyScreen, MyLibFacade);
 

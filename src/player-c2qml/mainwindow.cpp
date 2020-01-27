@@ -162,6 +162,7 @@ void MainWindow::resizeAsWindow()
     setFlags(Qt::Window);
     setCursor(Qt::ArrowCursor);
     showNormal();
+    MyScreen->determineCurrentScreenId(this->geometry().topLeft());
     setPosition(MyScreen->getStartPointFromCurrentScreen());
     resize(QSize(980, 540));
 }
