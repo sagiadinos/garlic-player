@@ -1,0 +1,4 @@
+[Project]
+CreatedFrom=garlic-lib.pro
+Manager=KDevQMakeManager
+Name=garlic-lib

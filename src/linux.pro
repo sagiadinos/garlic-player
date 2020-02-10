@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS = ./garlic-lib ./player-widget
+SUBDIRS = ./ext/zlib ./ext/quazip ./garlic-lib ./player-widget
 CONFIG  += ordered
