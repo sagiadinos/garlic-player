@@ -6,7 +6,7 @@ The basic lib for the player without dependencies to the view component and for 
 It integrates
 - SMIL parser
 - file classes for managing indexes, media, downloads, etc.
-- system infomation for reports and inspecting
+- system information for reports and inspecting
 - generating reports and sends them to a WebDav-Address 
 - configuration and loggings tools
 
