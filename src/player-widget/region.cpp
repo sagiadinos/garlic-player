@@ -48,14 +48,23 @@ void TRegion::startShowMedia(BaseMedia *media)
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyMedia = MyMediaFactory.initMedia(media);
-    layout.data()->addWidget(MyMedia->getView());
+
+    QWidget *widget = MyMedia->getView();
+    if (widget != Q_NULLPTR)
+    {
+        layout.data()->addWidget(widget);
+    }
     qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 void TRegion::stopShowMedia()
 {
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
-    layout.data()->removeWidget(MyMedia->getView());
+    QWidget *widget = MyMedia->getView();
+    if (widget != Q_NULLPTR)
+    {
+        layout.data()->removeWidget(widget);
+    }
     MyMedia->deinit();
     qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
