@@ -30,13 +30,6 @@ BodyParser::~BodyParser()
 {
 }
 
-void BodyParser::endSmilParsing()
-{
-    stop_all = true;
-    stopAllPlayingMedia();
-    return;
-}
-
 /**
  * @brief TSmil::beginSmilParsing
  * Here starts the parsing withthe body Tag
@@ -46,35 +39,82 @@ void BodyParser::endSmilParsing()
 void BodyParser::beginSmilParsing(QDomElement body)
 {
     MyBody.reset(new TBody(this));
-    connect(MyBody.data(), SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
+    connect(MyBody.data(), SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(useElement(TContainer *, QDomElement )));
     connect(MyBody.data(), SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
 
     connect(MyBody.data(), SIGNAL(preloadElement(TContainer *, QDomElement)), this, SLOT(preloadElement(TContainer *, QDomElement)));
-    connect(MyBody.data(), SIGNAL(finishPreload()), this, SLOT(finishedPreload()));
+    connect(MyBody.data(), SIGNAL(finishPreload()), this, SLOT(beginPlaying()));
 
-    if (MyBody.data()->parse(body))
+    MyBody.data()->preloadParse(body);
+    return;
+}
+
+void BodyParser::endSmilParsing()
+{
+    stop_all = true;
+
+    while (MyCurrentPlayingMedia->count() > 0) // stop all currently played media
     {
-        MyBody.data()->preload();
+        stopPlayingElement(MyCurrentPlayingMedia->getFirstPlayingObject());
     }
     return;
 }
 
-void BodyParser::stopAllPlayingMedia()
+
+void BodyParser::preloadElement(TContainer *parent_container, QDomElement element)
 {
-    while (MyCurrentPlayingMedia->count() > 0) // stop actual played media
+    BaseTimings *MyBaseTimings = ElementFactory::createBase(element, parent_container, this);
+    connectSlots(MyBaseTimings);
+
+    // Important! Slots needs to be connected before parsing!
+    // parsing emits a foundElement signal so without connected Slot no one
+    // can receive the signal and parsing will be interrupted
+    MyBaseTimings->preloadParse(element);
+
+    MyElementsContainer->insertSmilElement(MyBaseTimings);
+
+    // media must be initialised after parse
+    if (MyBaseTimings->getBaseType() == "media")
     {
-        stopPlayingElement(MyCurrentPlayingMedia->getFirstPlayingObject());
+        initMedia(qobject_cast<BaseMedia *> (MyBaseTimings));
     }
+
+    qDebug(Develop) << MyBaseTimings->getID() << " preloaded";
+    return;
 }
+
+void BodyParser::beginPlaying()
+{
+    MyBody.data()->prepareTimingsBeforePlaying();
+}
+
+/**
+ * @brief BodyParser::initMedia media must be init e.g. to start download
+ * @param MyMedia
+ */
+void BodyParser::initMedia(BaseMedia *MyMedia)
+{
+    // media must be initialised after parse, because register needs src
+    // and insertSmilMedia needs the region
+    MyMediaManager->registerFile(MyMedia->getSrc());
+    MyElementsContainer->insertSmilMedia(MyMedia);
+
+    MyMedia->setMediaManager(MyMediaManager);
+}
+
 
 /**
  * @brief TSmil::foundElement slot catches the signals from the containers and
  * @param parent
  * @param found_tag
  */
-void BodyParser::foundElement(TContainer *parent_container, QDomElement dom_element)
+void BodyParser::useElement(TContainer *parent_container, QDomElement dom_element)
 {
-    BaseTimings *MyBaseTimings = determineElements(parent_container, dom_element);
+    BaseTimings *MyBaseTimings = MyElementsContainer->findSmilElement(dom_element);
+    if (MyBaseTimings != Q_NULLPTR)
+    {
+        MyBaseTimings->prepareTimingsBeforePlaying(); // here we start
+    }
 
     if (parent_container->objectName() == "TExcl")  // increment active child to determine end of a excl
     {
@@ -85,11 +125,6 @@ void BodyParser::foundElement(TContainer *parent_container, QDomElement dom_elem
     return;
 }
 
-void BodyParser::preloadElement(TContainer *parent_container, QDomElement dom_element)
-{
-    determineElements(parent_container, dom_element);
-    return;
-}
 
 
 /**
@@ -137,11 +172,6 @@ void BodyParser::finishElement(TContainer *parent_container, BaseTimings *elemen
         parent_container->next(element);
     }
     return;
-}
-
-void BodyParser::finishedPreload()
-{
-    MyBody.data()->prepareTimingsBeforePlaying();
 }
 
 /**
@@ -195,29 +225,6 @@ void BodyParser::stopPlayingElement(BaseTimings *element)
     return;
 }
 
-BaseTimings* BodyParser::determineElements(TContainer *parent_container, QDomElement dom_element)
-{
-    BaseTimings *MyBaseTimings = MyElementsContainer->findSmilElement(dom_element);
-    QString      name          = dom_element.nodeName();
-
-    if (MyBaseTimings == Q_NULLPTR)
-    {
-        MyBaseTimings = MyElementsContainer->insertSmilElement(parent_container, dom_element);
-        connectSlots(MyBaseTimings);
-        qDebug(Develop) << MyBaseTimings->getID() << "inserted to Elementcontainer";
-        if (MyBaseTimings->getBaseType() == "container")
-        {
-            (qobject_cast<TContainer *> (MyBaseTimings))->preload();
-        }
-    }
-    else
-    {
-        MyBaseTimings->prepareTimingsBeforePlaying(); // here we start
-    }
-
-    return MyBaseTimings;
-}
-
 // ============================== private methods =======================================
 
 void BodyParser::stopElement(BaseTimings *element)
@@ -240,15 +247,19 @@ void BodyParser::connectSlots(BaseTimings *element)
     QString      base_type  = element->getBaseType();
     connect(element, SIGNAL(preloadElement(TContainer *, QDomElement )), this, SLOT(preloadElement(TContainer *, QDomElement )));
     if (base_type == "media")
+    {
         connectMediaSlots(qobject_cast<BaseMedia *> (element));
+    }
     else if (base_type == "container")
+    {
         connectContainerSlots(qobject_cast<TContainer *> (element));
+    }
 
 }
 
 void BodyParser::connectContainerSlots(TContainer *MyContainer)
 {
-    connect(MyContainer, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
+    connect(MyContainer, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(useElement(TContainer *, QDomElement )));
     connect(MyContainer, SIGNAL(startedContainer(TContainer *, BaseTimings *)), this, SLOT(startElement(TContainer *, BaseTimings *)));
     connect(MyContainer, SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
     if (MyContainer->objectName() == "TExcl")
@@ -262,7 +273,6 @@ void BodyParser::connectContainerSlots(TContainer *MyContainer)
 
 void BodyParser::connectMediaSlots(BaseMedia *media)
 {
-    media->registerFile(MyMediaManager);
     connect(media, SIGNAL(startedMedia(TContainer *, BaseTimings *)), this, SLOT(startElement(TContainer *, BaseTimings *)));
     connect(media, SIGNAL(finishedMedia(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
     return;

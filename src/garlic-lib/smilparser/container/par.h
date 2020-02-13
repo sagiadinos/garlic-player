@@ -27,8 +27,7 @@ class TPar : public TContainer
     public:
         explicit TPar(TContainer *pc, QObject *parent = Q_NULLPTR);
         ~TPar();
-        bool                parse(QDomElement element);
-        void                preload();
+        void                preloadParse(QDomElement element);
         void                next(BaseTimings *ended_element);
         BaseTimings        *getChildElementFromList();
         void                pause();
@@ -39,7 +38,7 @@ class TPar : public TContainer
 protected:
         void                traverseChilds();
     protected slots:
-        void                setDurationTimerBeforePlay();
+        void                prepareDurationTimerBeforePlay();
     private:
         QSet<BaseTimings *> activatable_childs;
         QString             endsync            = "last";

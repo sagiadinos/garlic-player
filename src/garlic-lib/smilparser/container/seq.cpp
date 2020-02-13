@@ -28,30 +28,19 @@ TSeq::~TSeq()
 {
 }
 
-bool TSeq::parse(QDomElement element)
+void TSeq::preloadParse(QDomElement element)
 {
     root_element   = element;
     parseTimingAttributes();
-    if (element.hasChildNodes())
+    if (root_element.hasChildNodes())
     {
-        active_element = element.firstChildElement();
+        active_element = root_element.firstChildElement();
         traverseChilds();
         if (active_element.tagName() == "metadata")
         {
             MyShuffle = new TShuffle(childs_list, this);
             MyShuffle->parse(active_element);
         }
-
-    }
-    return true;
-}
-
-void TSeq::preload()
-{
-    for (QList<QDomElement>::iterator i = childs_list.begin(); i != childs_list.end(); i++)
-    {
-        active_element        = *i;
-        emitPreLoad();
     }
 }
 
@@ -113,7 +102,7 @@ void TSeq::pause()
     status = _paused;
 }
 
-void TSeq::setDurationTimerBeforePlay()
+void TSeq::prepareDurationTimerBeforePlay()
 {
     if (startDurTimer() || isEndTimerActive() || childs_list.size() > 0)
     {
@@ -123,7 +112,7 @@ void TSeq::setDurationTimerBeforePlay()
     }
     else
     {
-        initInternalTimer();
+        skipElement();
     }
 }
 
@@ -181,6 +170,7 @@ void TSeq::traverseChilds()
         if (element.tagName() != "metadata" && element.tagName() != "") // e.g. comments
         {
             childs_list.append(element);
+            emit preloadElement(this, element);
         }
     }
     childs_list_iterator = childs_list.begin();

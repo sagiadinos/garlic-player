@@ -38,8 +38,9 @@ QString MediaModel::findLocalBySrcPath(QString src_file_path)
     QString ret ="";
     i_available_media_list = available_media_list.find(src_file_path);
     if (i_available_media_list != available_media_list.end())
+    {
         ret = i_available_media_list.value().first;
-
+    }
     return ret;
 }
 
@@ -48,8 +49,9 @@ int MediaModel::findStatusBySrcPath(QString src_file_path)
     int ret = 0;
     i_available_media_list = available_media_list.find(src_file_path);
     if (i_available_media_list != available_media_list.end())
+    {
         ret = i_available_media_list.value().second;
-
+    }
     return ret;
 }
 
@@ -60,8 +62,10 @@ void MediaModel::setStatusBySrcPath(QString src_file_path, int status)
 
 void MediaModel::insertAvaibleLink(QString src_file_path)
 {
-    if (findLocalBySrcPath(src_file_path) == "") // reloadable not neccessary cause caching is part of WebEngine
+    if (findLocalBySrcPath(src_file_path) == "")
+    {
         available_media_list.insert(src_file_path, qMakePair(src_file_path, MEDIA_AVAILABLE));
+    }
 }
 
 
@@ -69,7 +73,9 @@ void MediaModel::insertAvaibleFile(QString src_file_path, QString local_file_pat
 {
     QString path = determinePathByMedia(src_file_path, local_file_path);
     if (path == "")
+    {
         return;
+    }
     available_media_list.insert(src_file_path, qMakePair(path, MEDIA_AVAILABLE));
 }
 
@@ -86,6 +92,7 @@ QString MediaModel::determinePathByMedia(QString src_file_path, QString local_fi
     QFileInfo fi(local_file_path);
     QString path = fi.absoluteFilePath();
     QString real_file_path("");
+
     // Todo Maybe later a factory when ahref will be implemented
     if (fi.suffix() == "wgt")
     {
@@ -98,7 +105,9 @@ QString MediaModel::determinePathByMedia(QString src_file_path, QString local_fi
         }
     }
     else
+    {
         real_file_path = path;
+    }
 
     return real_file_path;
 }

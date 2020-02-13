@@ -5,7 +5,6 @@
 #include <QDomDocument>
 #include <QDomElement>
 #include <QFileInfo>
-#include "main_configuration.h"
 #include "base_manager.h"
 
 namespace SmilHead
@@ -20,7 +19,6 @@ namespace SmilHead
         void processFromLocalFile(QString file_path);
 
     protected:
-        MainConfiguration *MyConfiguration;
         Downloader        *XMLDownloader;
         QDomDocument       document;
         bool               loadDocument(QString file_path);

@@ -5,7 +5,7 @@
 #include <QHash>
 #include <QVector>
 #include "head_parser.h"
-#include "smilparser/factory.h"
+#include "smilparser/element_factory.h"
 
 class ElementsContainer : public QObject
 {
@@ -14,7 +14,8 @@ public:
     explicit ElementsContainer(HeadParser *hp, QObject *parent = nullptr);
     ~ElementsContainer();
     BaseTimings  *findSmilElement(QDomElement dom_element);
-    BaseTimings  *insertSmilElement(TContainer *parent_container, QDomElement dom_element);
+    void          insertSmilElement(BaseTimings *MyBaseTimings);
+    void          insertSmilMedia(BaseMedia *MyBaseMedia);
     BaseMedia    *getMediaOnZoneAndPosition(int position, int zone);
 
 private:
@@ -24,7 +25,6 @@ private:
     QMap<QString, QVector<BaseMedia *> *>  media_list;
     BaseMedia                             *getMediaOnPosition(int position, QVector<BaseMedia *> list);
     QString                                determineZoneName(int zone);
-    void                                   insertSmilMedia(BaseMedia *MyBaseMedia);
 
 
 signals:

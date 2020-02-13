@@ -9,12 +9,11 @@ TPriorityClass::~TPriorityClass()
 {
 }
 
-bool TPriorityClass::parse(QDomElement dom_element)
+void TPriorityClass::preloadParse(QDomElement element)
 {
-    root_element   = dom_element;
+    root_element   = element;
     setAttributes();
     traverseChilds();
-    return true;
 }
 
 bool TPriorityClass::findElement(QDomElement dom_element)

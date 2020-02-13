@@ -1,8 +1,7 @@
 #include "task_scheduler.h"
 
-SmilHead::TaskScheduler::TaskScheduler(MainConfiguration *config, QObject *parent) : BaseManager(parent)
+SmilHead::TaskScheduler::TaskScheduler(MainConfiguration *config, QObject *parent) : BaseManager(config, parent)
 {
-    MyConfiguration           = config;
     TaskFileDownloader        = new Downloader(MyConfiguration, this);
     connect(TaskFileDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
 }

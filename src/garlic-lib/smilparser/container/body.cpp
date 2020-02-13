@@ -29,40 +29,27 @@ TBody::~TBody()
     childs_list.clear();
 }
 
-bool TBody::parse(QDomElement element)
+void TBody::preloadParse(QDomElement element)
 {
-    bool ret       = false;
     root_element   = element;
-    active_element = element;
     parseTimingAttributes();
     id             = "body";  // useful for debug
-    if (element.hasChildNodes())
+    if (root_element.hasChildNodes())
     {
-        active_element = element.firstChildElement();
+        active_element   = root_element.firstChildElement();
         traverseChilds();
-        childs_list_iterator       = childs_list.begin();
-        active_element = *childs_list_iterator;
-        ret = true;
     }
     else
-       finishedActiveDuration();
-    return ret;
-}
-
-void TBody::preload()
-{
-    for (QList<QDomElement>::iterator i = childs_list.begin(); i != childs_list.end(); i++)
     {
-        active_element        = *i;
-        emitPreLoad();
+        active_element = root_element;
+        finishedActiveDuration();
     }
-    active_element = childs_list.first();
     emit finishPreload();
 }
 
 void TBody::prepareTimingsBeforePlaying()
 {
-   setDurationTimerBeforePlay();
+   prepareDurationTimerBeforePlay();
 }
 
 bool TBody::isChildPlayable(BaseTimings *element)
@@ -71,10 +58,10 @@ bool TBody::isChildPlayable(BaseTimings *element)
     return true;
 }
 
-void TBody::setDurationTimerBeforePlay()
+void TBody::prepareDurationTimerBeforePlay()
 {
     emitFoundElement();
-    emit startedContainer(parent_container, this);
+  //  emit startedContainer(parent_container, this);
     return;
 }
 
@@ -86,6 +73,7 @@ void TBody::next(BaseTimings *ended_element)
     if (childs_list_iterator < childs_list.end())  // cause .end() pointing to the imaginary item after the last item in the vector
     {
         active_element = *childs_list_iterator;
+        QString s = active_element.tagName();
         emitFoundElement();
     }
     else
@@ -103,6 +91,8 @@ void TBody::traverseChilds()
         if (element.tagName() != "")
         {
             childs_list.append(element);
+            emit preloadElement(this, element);
         }
     }
+    childs_list_iterator = childs_list.begin();
 }

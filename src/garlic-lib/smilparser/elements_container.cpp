@@ -22,7 +22,6 @@ ElementsContainer::~ElementsContainer()
 BaseTimings *ElementsContainer::findSmilElement(QDomElement dom_element)
 {
     BaseTimings                             *MyBaseTimings     = Q_NULLPTR;
-    QString                                  name              = dom_element.nodeName();
     QHash<QString, BaseTimings *>::iterator  elements_iterator = elements_list.find(TBase::parseID(dom_element));
     if (elements_iterator != elements_list.end())
     {
@@ -31,19 +30,31 @@ BaseTimings *ElementsContainer::findSmilElement(QDomElement dom_element)
     return MyBaseTimings;
 }
 
-BaseTimings *ElementsContainer::insertSmilElement(TContainer *parent_container, QDomElement dom_element)
+void ElementsContainer::insertSmilElement(BaseTimings *MyBaseTimings)
 {
-    BaseTimings *MyBaseTimings = TFactory::createBase(dom_element, parent_container, this);
-    MyBaseTimings->parse(dom_element);
-
     elements_list.insert(MyBaseTimings->getID(), MyBaseTimings);
+}
 
-    if (MyBaseTimings->getBaseType() == "media")
+void ElementsContainer::insertSmilMedia(BaseMedia *MyBaseMedia)
+{
+    if (!MyBaseMedia->isMedia())
     {
-        insertSmilMedia(qobject_cast<BaseMedia *> (MyBaseTimings));
+        return;
     }
 
-    return MyBaseTimings;
+    QString s = MyBaseMedia->getRegion();
+
+    QMap<QString, QVector<BaseMedia *>*>::iterator i = media_list.find(s);
+    if (i != media_list.end())
+    {
+        i.value()->append(MyBaseMedia);
+    }
+    else
+    {
+        QVector<BaseMedia *> *vec = new QVector<BaseMedia *>;
+        vec->append(MyBaseMedia);
+        media_list.insert(s, vec);
+    }
 }
 
 BaseMedia *ElementsContainer::getMediaOnZoneAndPosition(int position, int zone)
@@ -89,25 +100,4 @@ QString ElementsContainer::determineZoneName(int zone)
     return regions.at(zone-1);
 }
 
-void ElementsContainer::insertSmilMedia(BaseMedia *MyBaseMedia)
-{
-    if (!MyBaseMedia->isMedia())
-    {
-        return;
-    }
 
-    QString s = MyBaseMedia->getRegion();
-
-    QMap<QString, QVector<BaseMedia *>*>::iterator i = media_list.find(s);
-    if (i != media_list.end())
-    {
-        i.value()->append(MyBaseMedia);
-    }
-    else
-    {
-        QVector<BaseMedia *> *vec = new QVector<BaseMedia *>;
-        vec->append(MyBaseMedia);
-        media_list.insert(s, vec);
-    }
-
-}

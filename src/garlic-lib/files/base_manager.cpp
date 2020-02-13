@@ -18,31 +18,30 @@
 
 #include "base_manager.h"
 
-Files::BaseManager::BaseManager(QObject *parent) : QObject(parent)
+Files::BaseManager::BaseManager(MainConfiguration *config, QObject *parent) : QObject(parent)
 {
+    MyConfiguration = config;
     setParent(parent);
 }
 
 
 // ==================  protected methods =======================================
 
+
 bool Files::BaseManager::isRemote(QString src)
 {
-    if (src.mid(0, 4) == "http" || src.mid(0,3) == "ftp")
-        return true;
-    else
-        return false;
+    return (src.mid(0, 4) == "http" || src.mid(0,3) == "ftp");
 }
-
 
 bool Files::BaseManager::isRelative(QString src)
 {
-    return (src.at(0) != '/');
+    QString sub_string = src.mid(0, 5).toUpper();
+    return (src.at(0) != '/' && sub_string != "DATA:" && sub_string != "FILE:" && !isRemote(src));
 }
 
 void Files::BaseManager::renameDownloadedFile(QString file_path)
 {
-    QFile file(file_path+FILE_DOWNLOADED_SUFFIX);
+    QFile file(file_path + FILE_DOWNLOADED_SUFFIX);
     if (file.exists())
     {
         QFile::remove(file_path); // rename cannot overwrite

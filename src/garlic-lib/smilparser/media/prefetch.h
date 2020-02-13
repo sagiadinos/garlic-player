@@ -27,7 +27,7 @@ public:
     explicit TPrefetch(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TPrefetch();
 public slots:
-    void     setDurationTimerBeforePlay();
+    void     prepareDurationTimerBeforePlay();
 protected:
     void     setAttributes();
 };

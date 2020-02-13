@@ -30,31 +30,30 @@ TExcl::~TExcl()
 {
 }
 
-bool TExcl::parse(QDomElement element)
+void TExcl::preloadParse(QDomElement element)
 {
     root_element   = element;
-    parseTimingAttributes();
-    if (element.hasChildNodes())
-        traverseChilds();
-    else
-        return false;
-    return true;
-}
+    if (!root_element.hasChildNodes())
+    {
+        active_element = root_element;
+        return;
+    }
 
-void TExcl::preload()
-{
+    parseTimingAttributes();
+    traverseChilds();
+
+    // collect from prioritclasses
     for (QHash<int, TPriorityClass *>::iterator i_priorities = ar_priorities.begin(); i_priorities != ar_priorities.end(); i_priorities++)
     {
         QList<QDomElement> element_list = i_priorities.value()->getChildList();
         for (QList<QDomElement>::iterator i = element_list.begin(); i != element_list.end(); i++)
         {
-            active_element        = *i;
-            emitPreLoad();
+            emit preloadElement(this, *i);
         }
     }
 }
 
-void TExcl::setDurationTimerBeforePlay()
+void TExcl::prepareDurationTimerBeforePlay()
 {
     if (startDurTimer() || isEndTimerActive() || ar_priorities.size() > 0)
     {
@@ -65,7 +64,7 @@ void TExcl::setDurationTimerBeforePlay()
     {
         ActivePriorityClass    = NULL;
         NewActivePriorityClass = NULL;
-        initInternalTimer();
+        skipElement();
     }
 }
 
@@ -277,24 +276,30 @@ void TExcl::pause()
 void TExcl::traverseChilds()
 {
     QDomNodeList  priority_class_childs       = root_element.elementsByTagName("priorityClass");
-    int           count_priority_class_childs = priority_class_childs.length();
-    if (count_priority_class_childs > 0)
+    if (priority_class_childs.length() > 0)
     {
-        for (int i = 0; i < count_priority_class_childs; i++)
-            parsePriorityClass(priority_class_childs.item(i).toElement());
+        traversePriorityClasses(priority_class_childs);
     }
     else
     {
-        if (root_element.childNodes().length() > 0) // put the eLements directly into one standard priorityclass object;
-            parsePriorityClass(root_element);
+        parsePriorityClass(root_element);
     }
 }
+
+void TExcl::traversePriorityClasses(QDomNodeList  priority_class_childs)
+{
+    for (int i = 0; i < priority_class_childs.length(); i++)
+    {
+        parsePriorityClass(priority_class_childs.item(i).toElement());
+    }
+}
+
 
 void TExcl::parsePriorityClass(QDomElement element)
 {
     TPriorityClass * MyPriorityClass = new TPriorityClass(this);
     ar_priorities.insert(ar_priorities.size(), MyPriorityClass); // create a priority class object
-    MyPriorityClass->parse(element);
+    MyPriorityClass->preloadParse(element);
     return;
 }
 

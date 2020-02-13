@@ -46,6 +46,7 @@ SOURCES += \
     smilparser/base_timings.cpp \
     smilparser/body_parser.cpp \
     smilparser/current_playing_media.cpp \
+    smilparser/element_factory.cpp \
     smilparser/elements_container.cpp \
     smilparser/head/firmware_downloader.cpp \
     smilparser/head/task_scheduler.cpp \
@@ -58,6 +59,7 @@ SOURCES += \
     smilparser/media/unknown.cpp \
     smilparser/media/video.cpp \
     smilparser/media/web.cpp \
+    smilparser/media/widget.cpp \
     smilparser/timings/enhanced_timer.cpp \
     smilparser/trigger/clock_value.cpp \
     smilparser/timings/simple_timer.cpp \
@@ -70,7 +72,6 @@ SOURCES += \
     smilparser/container/par.cpp \
     smilparser/container/priorityclass.cpp \
     smilparser/container/seq.cpp \
-    smilparser/factory.cpp \
     tools/logging_categories.cpp \
     smilparser/head/subscription.cpp \
     system_infos/memory.cpp \
@@ -111,6 +112,7 @@ HEADERS += \
     files/wgt.h \
     smilparser/body_parser.h \
     smilparser/current_playing_media.h \
+    smilparser/element_factory.h \
     smilparser/elements_container.h \
     smilparser/head/firmware_downloader.h \
     smilparser/head/task_scheduler.h \
@@ -123,6 +125,7 @@ HEADERS += \
     smilparser/media/unknown.h \
     smilparser/media/video.h \
     smilparser/media/web.h \
+    smilparser/media/widget.h \
     smilparser/timings/enhanced_timer.h \
     smilparser/trigger/clock_value.h \
     smilparser/timings/simple_timer.h \
@@ -134,7 +137,6 @@ HEADERS += \
     smilparser/container/seq.h \
     smilparser/container/container.h \
     smilparser/container/excl.h \
-    smilparser/factory.h \
     smilparser/base_timings.h \
     smilparser/base.h \
     smilparser/head/subscription.h \

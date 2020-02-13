@@ -28,11 +28,11 @@ TPrefetch::~TPrefetch()
 {
 }
 
-void TPrefetch::setDurationTimerBeforePlay()
+void TPrefetch::prepareDurationTimerBeforePlay()
 {
     MyMediaManager->registerFile(src); // ";
     qDebug(Develop) << src << "register from prefetch";
-    initInternalTimer();
+    skipElement();
 }
 
 void TPrefetch::setAttributes()

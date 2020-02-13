@@ -48,7 +48,7 @@ void BaseTimings::prepareTimingsBeforePlaying()
     }
     else
     {
-        setDurationTimerBeforePlay();
+        prepareDurationTimerBeforePlay();
     }
 }
 
@@ -99,7 +99,7 @@ void BaseTimings::prepareTimingsBeforeResume()
         status          = _waiting;
         return; // not go further when a begin trigger is set
     }
-    setDurationTimerBeforePlay();
+    prepareDurationTimerBeforePlay();
 
 }
 
@@ -118,10 +118,10 @@ void BaseTimings::finishedSimpleDuration()
 // ========================= protected methods ======================================================
 
 /**
- * @brief TBaseTiming::initInternalTimer
+ * @brief TBaseTiming::skipElement
  * this is needed to prevent a recursion stack overflow when download is not complete
  */
-void BaseTimings::initInternalTimer()
+void BaseTimings::skipElement()
 {
     if (InternalTimer == Q_NULLPTR)
     {
@@ -244,6 +244,6 @@ void BaseTimings::setRepeatCount(QString rC)
 
 void BaseTimings::releasePlay()
 {
-    setDurationTimerBeforePlay();
+    prepareDurationTimerBeforePlay();
 }
 

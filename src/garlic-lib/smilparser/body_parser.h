@@ -35,8 +35,8 @@ class BodyParser : public QObject
 public:
     explicit BodyParser(Files::MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
     ~BodyParser();
-    void                               endSmilParsing();
     void                               beginSmilParsing(QDomElement body);
+    void                               endSmilParsing();
 
 protected:
     QDomElement                        parser;
@@ -46,22 +46,22 @@ protected:
     bool                               stop_all = false;
     ElementsContainer                 *MyElementsContainer;
     CurrentPlayingMedia               *MyCurrentPlayingMedia;
-    void                               stopAllPlayingMedia();
     void                               emitStartShowMedia(BaseMedia *media);
     void                               stopElement(BaseTimings *element);
     void                               emitStopShowMedia(BaseMedia *media);
 
     void                               connectSlots(BaseTimings *element);
-    void                               connectMediaSlots(BaseMedia *media);
+    void                               connectMediaSlots(BaseMedia *SmilMedia);
     void                               connectContainerSlots(TContainer *MyContainer);
     BaseTimings                       *determineElements(TContainer *parent_container, QDomElement dom_element);
 protected slots:
-    void                               foundElement(TContainer *parent_container, QDomElement dom_element);
+    void                               useElement(TContainer *parent_container, QDomElement dom_element);
     void                               preloadElement(TContainer *parent_container, QDomElement dom_element);
     void                               startElement(TContainer *parent_container, BaseTimings *element);
     void                               finishElement(TContainer *parent_container, BaseTimings *element);
-    void                               finishedPreload();
+    void                               beginPlaying();
 
+    void                               initMedia(BaseMedia *MyMedia);
     void                               resumeQueuedElement(BaseTimings *element);
     void                               pausePlayingElement(BaseTimings *element);
     void                               stopPlayingElement(BaseTimings *element);

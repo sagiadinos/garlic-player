@@ -22,43 +22,45 @@ BaseMedia::BaseMedia(QObject *parent) : BaseTimings(parent)
 {
 }
 
-bool BaseMedia::parse(QDomElement element)
+void BaseMedia::preloadParse(QDomElement element)
 {
     root_element   = element;
     setAttributes();     // special for every media type
     parseBaseParameters(); // in this class
-    return true;
 }
 
-QString BaseMedia::parseSrc(QDomElement element)
-{
-    QString ret = "";
-    if (element.hasAttribute("src"))
-        ret = element.attribute("src");
-    return ret;
-}
-
-bool BaseMedia::isDownloaded()
-{
-    // FIXME MediaModel::_no_exist as static member constant do not work =>look at https://stackoverflow.com/questions/5391973/undefined-reference-to-static-const-int
-    return (MyMediaManager->checkCacheStatus(src) == MEDIA_AVAILABLE || MyMediaManager->checkCacheStatus(src) == MEDIA_UNCACHABLE);
-}
 
 QString BaseMedia::getLoadablePath()
 {
-    return MyMediaManager->requestLoadablePath(src);
-}
+    if (getCacheControl() == CACHE_CONTROL_ONLY_IF_CACHED)
+    {
+        if (MyMediaManager->checkCacheStatus(src) == MEDIA_AVAILABLE || MyMediaManager->checkCacheStatus(src) == MEDIA_UNCACHABLE)
+        {
+            return MyMediaManager->requestLoadablePath(src);
+        }
+        else
+        {
+            return "";
+        }
+    }
+    else
+    {
+        if (MyMediaManager->checkCacheStatus(src) == MEDIA_AVAILABLE)
+        {
+            return MyMediaManager->requestLoadablePath(src);
+        }
+        else
+        {
+            return src;
+        }
 
+    }
+}
 
 void BaseMedia::play()
 {
     qDebug() << getID()  << "played";
     status = _playing;
-}
-
-void BaseMedia::emitPreLoad()
-{
-    emit preloadElement(parent_container, root_element);
 }
 
 void BaseMedia::pause()
@@ -74,11 +76,9 @@ void BaseMedia::stop()
 }
 
 
-void BaseMedia::registerFile(Files::MediaManager *mm)
+void BaseMedia::setMediaManager(Files::MediaManager *mm)
 {
     MyMediaManager = mm;
-    MyMediaManager->registerFile(src);
-    qDebug(Develop) << src << " registered media";
 }
 
 void BaseMedia::parseBaseMediaAttributes()
@@ -89,7 +89,7 @@ void BaseMedia::parseBaseMediaAttributes()
     fit    = getAttributeFromRootElement("fit");
     type   = getAttributeFromRootElement("type");
     exec   = getAttributeFromRootElement("exec");
-    src    = parseSrc(root_element);
+    src    = getAttributeFromRootElement("src");
 }
 
 void BaseMedia::emitfinished()
@@ -100,24 +100,41 @@ void BaseMedia::emitfinished()
 
 void BaseMedia::parseBaseParameters()
 {
-    cache_control = filename = log_content_id = "";
-    if (root_element.hasChildNodes())
-    {
-        QDomNodeList childs = root_element.childNodes();
-        QDomElement param;
-        for (int i = 0; i < childs.length(); i++)
-        {
-            param = childs.item(i).toElement();
-            if (param.tagName() == "param" && param.hasAttribute("name") && param.hasAttribute("value"))
-            {
-                if (param.attribute("name") == "cacheControl")
-                    cache_control = param.attribute("value");
-                else if (param.attribute("name") == "filename")
-                    filename = param.attribute("value");
-                else if (param.attribute("name") == "logContentId")
-                    log_content_id = param.attribute("value");
-            }
-        }
+    if (!root_element.hasChildNodes())
+     return;
 
+    QDomNodeList childs = root_element.childNodes();
+    for (int i = 0; i < childs.length(); i++)
+    {
+        setAdditionalParameters(childs.item(i).toElement());
     }
 }
+
+void BaseMedia::setAdditionalParameters(QDomElement param)
+{
+    if (param.tagName() != "param" || !param.hasAttribute("name") || !param.hasAttribute("value"))
+        return;
+
+    if (param.attribute("name") == "cacheControl")
+    {
+        cache_control = determineCacheControl(param.attribute("value"));
+    }
+    else if (param.attribute("name") == "filename")
+    {
+        filename = param.attribute("value");
+    }
+    else if (param.attribute("name") == "logContentId")
+    {
+        log_content_id = param.attribute("value");
+    }
+}
+
+int BaseMedia::determineCacheControl(QString value)
+{
+    if (value.toUpper() == "ONLYIFCACHED")
+    {
+        return CACHE_CONTROL_ONLY_IF_CACHED;
+    }
+    return CACHE_CONTROL_USE_CACHE;
+}
+

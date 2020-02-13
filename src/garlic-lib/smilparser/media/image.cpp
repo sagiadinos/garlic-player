@@ -29,16 +29,16 @@ TImage::~TImage()
 {
 }
 
-void TImage::setDurationTimerBeforePlay()
+void TImage::prepareDurationTimerBeforePlay()
 {
-    if (isDownloaded() && (startDurTimer() || isEndTimerActive()))
+    if (startDurTimer() || isEndTimerActive())
     {
         if (!is_resumed)
             emit startedMedia(parent_container, this);
     }
     else
     {
-        initInternalTimer();
+        skipElement();
     }
 }
 

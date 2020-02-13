@@ -29,17 +29,15 @@ TAudio::~TAudio()
 {
 }
 
-void TAudio::setDurationTimerBeforePlay()
+void TAudio::prepareDurationTimerBeforePlay()
 {
-    if (isDownloaded())
+    if (startDurTimer() || !is_resumed) // it doesn' matter if there is an dur set cause videos/audio have an own media duration
     {
-        startDurTimer(); // it doesn' matter if there is an dur set cause videos/audio have an own media duration
-        if (!is_resumed)
-            emit startedMedia(parent_container, this);
+        emit startedMedia(parent_container, this);
     }
     else
     {
-        initInternalTimer();
+        skipElement();
     }
 }
 

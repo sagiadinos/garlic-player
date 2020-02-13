@@ -1,8 +1,7 @@
 #include "xml_configuration.h"
 
-SmilHead::XMLConfiguration::XMLConfiguration(MainConfiguration *config, QObject *parent) : BaseManager(parent)
+SmilHead::XMLConfiguration::XMLConfiguration(MainConfiguration *config, QObject *parent) : BaseManager(config, parent)
 {
-    MyConfiguration      = config;
     XMLDownloader        = new Downloader(MyConfiguration, this);
     connect(XMLDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
 }

@@ -18,9 +18,8 @@
 #include "media_manager.h"
 #include "media_manager.h"
 
-Files::MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, MainConfiguration *config, QObject *parent) : BaseManager(parent)
+Files::MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, MainConfiguration *config, QObject *parent) : BaseManager(config, parent)
 {
-    MyConfiguration  = config;
     MyDownloadQueue  = dq;
     MyMediaModel     = mm;
     connect(MyDownloadQueue, SIGNAL(succeed(QString, QString)), SLOT(doSucceed(QString, QString)));
@@ -40,29 +39,26 @@ void Files::MediaManager::clearQueues()
 
 void Files::MediaManager::registerFile(QString src)
 {
+    if (isRelative(src)) // when media is relative we need the Indexpath set in front
+    {
+        src = MyConfiguration->getIndexPath() + src;
+    }
     if (isRemote(src))
     {
         handleRemoteFile(src);
         return;
     }
-    if (isRelative(src)) // when media is relative we need the Indexpath set in front
-    {
-        src = MyConfiguration->getIndexPath() + src;
-        if (isRemote(src)) // check if new media path could be on remote server
-        {
-            handleRemoteFile(src);
-            return;
-        }
-    }
 
-   registerUncached(src); // when local
+    // if we reach here the can be a local file or a "data:" string
+    // look at https://en.wikipedia.org/wiki/Data_URI_scheme
+    registerUncached(src);
 }
 
 void Files::MediaManager::registerUncached(QString src)
 {
     if (MyMediaModel->findLocalBySrcPath(src) == "")
     {
-        MyMediaModel->insertAvaibleFile(src, src); // src and local path are identically if src path is local or a simple website
+        MyMediaModel->insertAvaibleLink(src);
     }
 }
 
@@ -99,6 +95,7 @@ bool Files::MediaManager::isCurrentlyPlaying(QString path)
 
 QString Files::MediaManager::requestLoadablePath(QString src)
 {
+    // check if it is in cache first
     if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
     {
         src = MyConfiguration->getIndexPath() + src;

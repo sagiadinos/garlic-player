@@ -40,6 +40,10 @@ void PlayerAudio::init(BaseMedia *media)
         if (SmilMedia->getLogContentId() != "")
             setStartTime();
      }
+     else
+     {
+        SmilMedia->finishedSimpleDuration();
+    }
 }
 
 void PlayerAudio::deinit()

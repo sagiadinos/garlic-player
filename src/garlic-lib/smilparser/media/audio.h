@@ -33,7 +33,7 @@ protected:
     void                    setAttributes();
     bool                    loadMedia();
 protected slots:
-    void                    setDurationTimerBeforePlay();
+    void                    prepareDurationTimerBeforePlay();
 };
 
 #endif // TAUDIO_H

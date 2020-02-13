@@ -29,7 +29,6 @@ PlayerImage::~PlayerImage()
 void PlayerImage::init(BaseMedia *media)
 {
     SmilMedia = media;
-
     QString path = SmilMedia->getLoadablePath();
     if (isFileExists(path))
     {

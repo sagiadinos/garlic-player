@@ -35,6 +35,7 @@ PlayerVideo::~PlayerVideo()
 void PlayerVideo::init(BaseMedia *media)
 {
    SmilMedia  = media;
+
    QString path = SmilMedia->getLoadablePath();
    if (isFileExists(path))
    {
@@ -45,7 +46,12 @@ void PlayerVideo::init(BaseMedia *media)
        if (SmilMedia->getLogContentId() != "")
            setStartTime();
    }
+   else
+   {
+      SmilMedia->finishedSimpleDuration();
+   }
 }
+
 
 void PlayerVideo::deinit()
 {

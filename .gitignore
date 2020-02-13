@@ -1,7 +1,6 @@
 execute_tests
 favorites
 build*
-*build*
 bin
 lib
 libandroid

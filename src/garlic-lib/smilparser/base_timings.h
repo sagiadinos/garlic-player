@@ -57,12 +57,11 @@ class BaseTimings : public TBase
         virtual QString       getBaseType() = 0;
         virtual BaseTimings  *getChildElementFromList() = 0;
         virtual bool          hasPlayingChilds() = 0;
-        virtual void          emitPreLoad() = 0;
-                void          initInternalTimer();
+                void          skipElement();
     public slots:
         virtual void          emitfinished() = 0;
                 void          finishedSimpleDuration();
-        virtual void          setDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
+        virtual void          prepareDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
     protected:
                 EnhancedTimer *BeginTimer = Q_NULLPTR;
                 EnhancedTimer *EndTimer = Q_NULLPTR;

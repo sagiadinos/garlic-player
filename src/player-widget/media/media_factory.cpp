@@ -48,6 +48,11 @@ PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
         MyWeb.data()->init(media);
         return MyWeb.data();
     }
+    else if (type == "TWidget")
+    {
+        MyWeb.data()->init(media);
+        return MyWeb.data();
+    }
     else
         return Q_NULLPTR;
 }

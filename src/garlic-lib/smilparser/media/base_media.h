@@ -26,51 +26,57 @@ class BaseMedia : public BaseTimings
 {
         Q_OBJECT
     public:
+    const     int        CACHE_CONTROL_USE_CACHE  = 0;
+    const     int        CACHE_CONTROL_ONLY_IF_CACHED  = 1;
+
         explicit BaseMedia(QObject *parent = Q_NULLPTR);
-        QString              getRegion(){return region;}
-        QString              getFit(){return fit;}
-        QString              getSrc() {return src;}
-        QString              getLogContentId() {return log_content_id;}
-        QString              getFileName() {return filename;}
-        QString              getCacheControl() {return cache_control;}
-        QString              getBaseType() {return "media";}
-        bool                 parse(QDomElement element);
-        void                 resume(){play();}
-        void                 registerFile(Files::MediaManager *mm);
-        bool                 hasPlayingChilds(){return false;}
-        BaseTimings         *getChildElementFromList(){return this;}
-        TContainer          *getParentContainer(){return parent_container;}
-        static  QString      parseSrc(QDomElement element);
-        bool                 isDownloaded();
-        bool                 isMedia(){return is_media;}
+
+        void                 preloadParse(QDomElement element);
+        void                 setMediaManager(Files::MediaManager *mm);
         QString              getLoadablePath();
         void                 pause();
         void                 stop();
         void                 play();
-        void                 emitPreLoad();
+
+
+        QString              getRegion()       {return region;}
+        QString              getFit()          {return fit;}
+        QString              getSrc()          {return src;}
+        QString              getLogContentId() {return log_content_id;}
+        QString              getFileName()     {return filename;}
+        int                  getCacheControl() {return cache_control;}
+        QString              getBaseType()     {return "media";}
+        bool                 isMedia()         {return is_media;}
+        void                 resume(){play();}
+        bool                 hasPlayingChilds(){return false;}
+        BaseTimings         *getChildElementFromList(){return this;}
+        TContainer          *getParentContainer(){return parent_container;}
     public slots:
         void                 emitfinished();
+
     protected:
         Files::MediaManager *MyMediaManager;
         TContainer          *parent_container;
-        QString              region = "";
-        QString              src  = "";
-        QString              exec  = "";
-        QString              type   = "";
-        QString              fit = "";
-        QString              filename  = "";
-        QString              cache_control  = "";
+        QString              region          = "";
+        QString              src             = "";
+        QString              exec            = "";
+        QString              type            = "";
+        QString              fit             = "";
+        QString              filename        = "";
+        int                  cache_control   = 0;
         QString              log_content_id  = "";
-        bool                 is_media = false;
+        bool                 is_media        = false;
         void                 parseBaseMediaAttributes();
         void                 parseBaseParameters();
         virtual void         setAttributes() = 0;
+
     private:
+        void setAdditionalParameters(QDomElement param);
+        int                  determineCacheControl(QString value);
+
     signals:
         void                 startedMedia(TContainer *parent , BaseTimings *element);
         void                 finishedMedia(TContainer *parent , BaseTimings *element);
-        void                 preloadElement(TContainer *parent, QDomElement);
-
 };
 
 #endif // MEDIA_H

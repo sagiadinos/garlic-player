@@ -75,11 +75,6 @@ void TContainer::setChildActive(bool active)
     is_child_active = active;
 }
 
-void TContainer::emitPreLoad()
-{
-    emit preloadElement(this, active_element);
-}
-
 bool TContainer::hasPlayingChilds()
 {
     if (activatable_childs.size() > 0)

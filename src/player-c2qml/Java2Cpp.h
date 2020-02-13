@@ -1,3 +1,5 @@
+#if defined Q_OS_ANDROID
+
 #ifndef JAVA2CPP_H
 #define JAVA2CPP_H
 
@@ -41,3 +43,4 @@ JNIEXPORT void JNICALL Java_com_sagiadinos_garlic_player_java_SmilIndexReceiver_
 }
 #endif
 #endif // JAVA2CPP_H
+#endif

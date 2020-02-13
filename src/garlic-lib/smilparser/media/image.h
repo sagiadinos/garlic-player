@@ -28,7 +28,7 @@ public:
     explicit TImage(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TImage();
 public slots:
-    void     setDurationTimerBeforePlay();
+    void     prepareDurationTimerBeforePlay();
 protected:
     void     setAttributes();
 };

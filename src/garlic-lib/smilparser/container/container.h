@@ -34,7 +34,6 @@ class TContainer : public BaseTimings
     public:
         explicit TContainer(QObject *parent = Q_NULLPTR);
         virtual void                          next(BaseTimings *ended_element) = 0;
-        virtual void                          preload() = 0;
                 QHash<QString, BaseTimings *> getContainerObjects();
                 QString                       getIdOfActiveElement();
         virtual bool                          isChildPlayable(BaseTimings *element) = 0;
@@ -46,7 +45,6 @@ class TContainer : public BaseTimings
                 void                          setPlayedElement(BaseTimings *element);
                 BaseTimings                  *getPlayedElement();
                 void                          setChildActive(bool active);
-                void                          emitPreLoad();
     public slots:
                 void                          emitfinished();
     protected:
@@ -60,7 +58,7 @@ class TContainer : public BaseTimings
 
                 QDomElement                   active_element;
                 virtual void                  traverseChilds() = 0;
-                void emitFoundElement();
+                void                          emitFoundElement();
     signals:
                 void                          foundElement(TContainer *, QDomElement);
                 void                          startedContainer(TContainer * , BaseTimings *);

@@ -5,7 +5,6 @@
 #include <QDomDocument>
 #include <QDomElement>
 #include <QFileInfo>
-#include "main_configuration.h"
 #include "xml_configuration.h"
 #include "firmware_downloader.h"
 
@@ -49,7 +48,6 @@ namespace SmilHead
             void processFromUrl(QUrl url);
 
     protected:
-            MainConfiguration *MyConfiguration;
             Downloader     *TaskFileDownloader;
             QDomDocument    document;
             QScopedPointer<SmilHead::XMLConfiguration> MyXMLConfiguration;

@@ -6,8 +6,8 @@
 
 class Web : public PlayerBaseMedia
 {
-        Q_OBJECT
-    public:
+    Q_OBJECT
+public:
         Web(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
         ~Web();
         void          init(BaseMedia *media);
@@ -16,6 +16,8 @@ class Web : public PlayerBaseMedia
     protected:
         QScopedPointer<QQuickItem>   web_item;
         QQmlComponent                *media_component;
+    private:
+        QString sanitizeUri(QString uri);
 };
 
 #endif // WEB_H

@@ -11,7 +11,7 @@
 
 class PlayerWeb : public PlayerBaseMedia
 {
-        Q_OBJECT
+    Q_OBJECT
     public:
         PlayerWeb(QObject *parent = nullptr);
         ~PlayerWeb();
@@ -23,6 +23,8 @@ class PlayerWeb : public PlayerBaseMedia
         QWebEngineView  *browser;
     protected slots:
         void             doLoadFinished(bool has_succeeded);
+    private:
+        QString          sanitizeUri(QString uri);
 };
 
 #endif // WEB_H

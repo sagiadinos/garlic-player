@@ -36,7 +36,7 @@ class TBase : public QObject
     Q_OBJECT
 public:
     explicit TBase(QObject *parent = 0);
-    virtual bool          parse(QDomElement element) = 0;
+    virtual void          preloadParse(QDomElement element) = 0;
             QString       getID(){return id;}
             QString       getTitle(){return title;}
             QString       getLang(){return lang;}

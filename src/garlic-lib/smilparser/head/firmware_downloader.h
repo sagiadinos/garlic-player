@@ -13,7 +13,6 @@ namespace SmilHead
         void processFromUrl(QUrl firmware_url);
 
     protected:
-        MainConfiguration *MyConfiguration;
         Downloader     *MyDownloader;
         QString         download_file_path = "";
     protected slots:

@@ -28,7 +28,8 @@ class TPriorityClass : public TBase
 public:
     explicit TPriorityClass(QObject *parent = 0);
     ~TPriorityClass();
-    bool                          parse(QDomElement dom_element);
+    void                          preloadParse(QDomElement element);
+
     QString                       getPeers(){return peers;}
     QString                       getHigher(){return higher;}
     QString                       getLower(){return lower;}

@@ -23,7 +23,7 @@ void Web::init(BaseMedia *media)
 {
     MyMedia = media;
     web_item.data()->setVisible(true);
-    web_item.data()->setProperty("url", MyMedia->getLoadablePath());
+    web_item.data()->setProperty("url", sanitizeUri(MyMedia->getLoadablePath()));
     if (MyMedia->getLogContentId() != "")
         setStartTime();
 }
@@ -39,4 +39,14 @@ void Web::deinit()
 void Web::setParentItem(QQuickItem *parent)
 {
     web_item.data()->setParentItem(parent);
+}
+
+QString Web::sanitizeUri(QString uri)
+{
+    // add file scheme if neccessary
+    if (uri.at(0) == "/")
+    {
+        uri = "file://" + uri;
+    }
+    return uri;
 }

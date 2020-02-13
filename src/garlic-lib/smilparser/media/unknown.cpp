@@ -8,10 +8,10 @@ Unknown::Unknown(TContainer *pc, QObject *parent) : BaseMedia(parent)
 
 }
 
-void Unknown::setDurationTimerBeforePlay()
+void Unknown::prepareDurationTimerBeforePlay()
 {
     qDebug(Develop) << src << " Unknown tag";
-    initInternalTimer();
+    skipElement();
 }
 
 void Unknown::setAttributes()

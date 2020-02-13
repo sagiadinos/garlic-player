@@ -27,8 +27,7 @@ class TBody : public TContainer
 public:
     explicit TBody(QObject *parent = Q_NULLPTR);
     ~TBody();
-    bool      parse(QDomElement element);
-    void      preload();
+    void      preloadParse(QDomElement element);
     void      prepareTimingsBeforePlaying();
     void      endPlay(){}
     void      next(BaseTimings *ended_element);
@@ -40,7 +39,7 @@ public:
 protected:
     void      traverseChilds();
 public slots:
-    void      setDurationTimerBeforePlay();
+    void      prepareDurationTimerBeforePlay();
 private:
 signals:
     void      finishPreload();

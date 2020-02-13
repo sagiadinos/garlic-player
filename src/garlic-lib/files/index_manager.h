@@ -22,7 +22,6 @@
 #include <QTimerEvent>
 #include "base_manager.h"
 #include "index_model.h"
-#include "tools/main_configuration.h"
 
 namespace Files
 {
@@ -43,7 +42,6 @@ namespace Files
 
             int             refresh_time = 0;
             int             timer_id = 0;
-            MainConfiguration *MyConfiguration;
             IndexModel     *MyIndexModel;
             Downloader     *MyDownloader;
             QString         src_index_path;

@@ -20,6 +20,7 @@
 
 #include <QFile>
 #include "download_queue.h"
+#include "tools/main_configuration.h"
 
 namespace Files
 {
@@ -27,12 +28,14 @@ namespace Files
     {
             Q_OBJECT
         public:
-            BaseManager(QObject *parent = Q_NULLPTR);
+            BaseManager(MainConfiguration *config, QObject *parent = Q_NULLPTR);
 
         protected:
-            bool     isRemote(QString src);
-            bool     isRelative(QString src);
-            void     renameDownloadedFile(QString file_path);
+            MainConfiguration *MyConfiguration;
+            bool               isRemote(QString src);
+            QString            sanitizeUri(QString uri);
+            bool               isRelative(QString src);
+            void               renameDownloadedFile(QString file_path);
     };
 }
 #endif // BASE_MANAGER_H

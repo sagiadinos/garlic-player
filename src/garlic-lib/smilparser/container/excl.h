@@ -33,8 +33,7 @@ class TExcl : public TContainer
         const       int         _pause_active      = 3;
         const       int         _pause_new         = 4; // defer
 
-        bool                 parse(QDomElement element);
-        void                 preload();
+        void                 preloadParse(QDomElement element);
         void                 next(BaseTimings *ended_element);
         int                  interruptActualPlaying(QDomElement started_element, BaseTimings *element);
         bool                 isChildPlayable(BaseTimings *element);
@@ -43,13 +42,14 @@ class TExcl : public TContainer
         void                 play();
         void                 resume();
     public slots:
-        void      setDurationTimerBeforePlay();
+        void      prepareDurationTimerBeforePlay();
     protected:
         QDomElement                           played_dom_element;
         TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
         QHash<int, TPriorityClass *>          ar_priorities;
         TPriorityClass                       *findPriorityClass(QDomElement dom_element);
         void                                  traverseChilds();
+        void                                  traversePriorityClasses(QDomNodeList priority_class_childs);
         void                                  parsePriorityClass(QDomElement element);
         int                                   priorityStop(QDomElement dom_element, BaseTimings *element);
         int                                   priorityPause(QDomElement dom_element, BaseTimings *element);

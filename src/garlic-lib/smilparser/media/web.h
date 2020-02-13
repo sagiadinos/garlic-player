@@ -28,7 +28,7 @@ public:
     explicit TWeb(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TWeb();
 public slots:
-    void            setDurationTimerBeforePlay();
+    void            prepareDurationTimerBeforePlay();
 protected:
     void            setAttributes();
 };

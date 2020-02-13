@@ -46,7 +46,6 @@ void TRegion::paintEvent(QPaintEvent *event)
 
 void TRegion::startShowMedia(BaseMedia *media)
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyMedia = MyMediaFactory.initMedia(media);
 
     QWidget *widget = MyMedia->getView();
@@ -54,19 +53,21 @@ void TRegion::startShowMedia(BaseMedia *media)
     {
         layout.data()->addWidget(widget);
     }
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 void TRegion::stopShowMedia()
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
+    // MyMedia can be null, when file path not found
+    if (MyMedia == Q_NULLPTR)
+    {
+        return;
+    }
     QWidget *widget = MyMedia->getView();
     if (widget != Q_NULLPTR)
     {
         layout.data()->removeWidget(widget);
     }
     MyMedia->deinit();
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 /**

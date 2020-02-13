@@ -40,21 +40,25 @@ void PlayerWeb::init(BaseMedia *media)
     SmilMedia = media;
     browser = new QWebEngineView;
     connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
+
     // Deactivate caching for testing
     browser->page()->profile()->setHttpCacheType(QWebEngineProfile::NoCache);
     browser->lower();
 
-    QUrl url(media->getLoadablePath());
-    browser->load(url);
+    browser->load(sanitizeUri(media->getLoadablePath()));
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
 
 void PlayerWeb::deinit()
 {
+    if (browser == Q_NULLPTR)
+        return;
+
     browser->load(QUrl(""));
     browser->close();
     delete  browser;
+    browser = Q_NULLPTR;
     if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }
@@ -76,4 +80,14 @@ void PlayerWeb::doLoadFinished(bool has_succeeded)
         QString code = QStringLiteral("document.body.style.overflow = 'hidden';");
         browser->page()->runJavaScript(code);
     }
+}
+
+QString PlayerWeb::sanitizeUri(QString uri)
+{
+    // add file scheme if neccessary
+    if (uri.at(0) == "/")
+    {
+        uri = "file://" + uri;
+    }
+    return uri;
 }

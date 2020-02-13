@@ -21,7 +21,6 @@
 #include <QSet>
 #include "base_manager.h"
 #include "media_model.h"
-#include "tools/main_configuration.h"
 
 /**
  * @brief The MediaManager class is the "interface" for handling playlist media
@@ -52,7 +51,6 @@ namespace Files
     protected:
         QSet<QString>         currently_playing;
         int                   timer_id;
-        MainConfiguration       *MyConfiguration;
         DownloadQueue        *MyDownloadQueue;
         MediaModel           *MyMediaModel;
         void                  handleRemoteFile(QString src);

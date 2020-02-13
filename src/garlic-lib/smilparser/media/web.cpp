@@ -30,18 +30,18 @@ TWeb::~TWeb()
 }
 
 
-void TWeb::setDurationTimerBeforePlay()
+void TWeb::prepareDurationTimerBeforePlay()
 {
-    if (isDownloaded() && (startDurTimer() || isEndTimerActive()))
+    // do not mind if cached
+    if (startDurTimer() || isEndTimerActive())
     {
         if (!is_resumed)
             emit startedMedia(parent_container, this);
     }
     else
     {
-        initInternalTimer();
+        skipElement();
     }
-    return;
 }
 
 void TWeb::setAttributes()

@@ -50,7 +50,7 @@ protected:
     QString               actual_media = "";
     Region                region;
     QScopedPointer<QStackedLayout>          layout;
-    PlayerBaseMedia             *MyMedia = Q_NULLPTR;
+    PlayerBaseMedia      *MyMedia = Q_NULLPTR;
     MediaFactory          MyMediaFactory;
     void                  resizeGeometry();
 };

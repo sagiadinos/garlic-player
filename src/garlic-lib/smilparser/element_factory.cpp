@@ -15,13 +15,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include "factory.h"
+#include "element_factory.h"
 
-TFactory::TFactory(QObject *parent) : QObject(parent)
+ElementFactory::ElementFactory(QObject *parent) : QObject(parent)
 {
 }
 
-BaseTimings* TFactory::createBase(QDomElement dom_element, TContainer *parent_container, QObject *parent)
+BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *parent_container, QObject *parent)
 {
     QString tag_name = dom_element.tagName();
     QString type     = "";
@@ -41,7 +41,7 @@ BaseTimings* TFactory::createBase(QDomElement dom_element, TContainer *parent_co
         else if (dom_element.attribute("type").contains("text"))
            type = "text";
         else if (dom_element.attribute("type").contains("application/widget"))
-           type = "text";
+           type = "widget";
     }
 
     if (type == "img")
@@ -59,6 +59,10 @@ BaseTimings* TFactory::createBase(QDomElement dom_element, TContainer *parent_co
     else if (type == "text")
     {
         return new TWeb(parent_container, parent);
+    }
+    else if (type == "widget")
+    {
+        return new TWidget(parent_container, parent);
     }
     else if (type == "prefetch")
     {

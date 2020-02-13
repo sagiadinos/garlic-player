@@ -1,6 +1,6 @@
 #include "firmware_downloader.h"
 
-SmilHead::FirmwareDownloader::FirmwareDownloader(MainConfiguration *config, QObject *parent) : BaseManager(parent)
+SmilHead::FirmwareDownloader::FirmwareDownloader(MainConfiguration *config, QObject *parent) : BaseManager(config, parent)
 {
     MyConfiguration           = config;
     MyDownloader        = new Downloader(MyConfiguration, this);

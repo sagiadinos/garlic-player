@@ -28,7 +28,7 @@ TPar::~TPar()
 {
 }
 
-bool TPar::parse(QDomElement element)
+void TPar::preloadParse(QDomElement element)
 {
     root_element   = element;
     parseTimingAttributes();
@@ -36,19 +36,9 @@ bool TPar::parse(QDomElement element)
     {
         traverseChilds();
     }
-    return false;
 }
 
-void TPar::preload()
-{
-    for (QList<QDomElement>::iterator i = childs_list.begin(); i != childs_list.end(); i++)
-    {
-        active_element        = *i;
-        emitPreLoad();
-    }
-}
-
-void TPar::setDurationTimerBeforePlay()
+void TPar::prepareDurationTimerBeforePlay()
 {
     if (startDurTimer() || isEndTimerActive() || childs_list.size() > 0)
     {
@@ -60,7 +50,7 @@ void TPar::setDurationTimerBeforePlay()
     }
     else
     {
-        initInternalTimer();
+        skipElement();
     }
 }
 
@@ -139,7 +129,10 @@ void TPar::traverseChilds()
     for (int i = 0; i < count_childs; i++)
     {
         if (childs.item(i).toElement().tagName() != "") // e.g. comments
+        {
             childs_list.append(childs.item(i).toElement());
+            emit preloadElement(this, childs.item(i).toElement());
+        }
     }
 }
 

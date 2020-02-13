@@ -31,8 +31,7 @@ class TSeq : public TContainer
     public:
         explicit TSeq(TContainer *pc, QObject *parent = Q_NULLPTR);
                 ~TSeq();
-        bool         parse(QDomElement element);
-        void         preload();
+        void         preloadParse(QDomElement element);
         void         next(BaseTimings *ended_element);
         void         pause();
         void         stop();
@@ -40,7 +39,7 @@ class TSeq : public TContainer
         void         resume();
         bool         isChildPlayable(BaseTimings *element);
     public slots:
-        void         setDurationTimerBeforePlay();
+        void         prepareDurationTimerBeforePlay();
     protected:
         TShuffle    *MyShuffle = Q_NULLPTR;
         int          count             = 0;

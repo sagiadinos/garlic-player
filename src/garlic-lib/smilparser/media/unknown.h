@@ -13,7 +13,7 @@ class Unknown : public BaseMedia
 public:
     explicit Unknown(TContainer *pc, QObject *parent = Q_NULLPTR);
 public slots:
-    void     setDurationTimerBeforePlay();
+    void     prepareDurationTimerBeforePlay();
 protected:
     void     setAttributes();
 
