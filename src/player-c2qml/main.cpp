@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts); // Raspberry and POT needs this http://thebugfreeblog.blogspot.de/2018/01/pot-570-with-qt-5100-built-for-armv8.html
     QApplication app(argc, argv);
 
+    LibFacade      *MyLibFacade     = new LibFacade();
 #if defined Q_OS_ANDROID
     QtWebView::initialize();
     QtAndroid::androidActivity().callMethod<void>("registerBroadcastReceiver");
@@ -55,7 +56,6 @@ int main(int argc, char *argv[])
 #endif
     qmlRegisterType<LibFacade>("com.garlic.LibFacade", 1, 0, "LibFacade");
     qmlRegisterType<ResourceMonitor>("com.garlic.ResourceMonitor", 1, 0, "ResourceMonitor");
-    LibFacade      *MyLibFacade     = new LibFacade();
     QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
     QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());
     QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName());
