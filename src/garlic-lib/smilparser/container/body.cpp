@@ -20,8 +20,8 @@
 
 TBody::TBody(QObject *parent) : TContainer(parent)
 {
-    setObjectName("TBody");
     parent_container       = Q_NULLPTR;
+    setObjectName("TBody");
 }
 
 TBody::~TBody()

@@ -107,7 +107,7 @@ void TestMediaModel::testInsertAvaibleFile()
 
 void TestMediaModel::testDeterminePathByMediaIfWgt()
 {
-    TConfiguration *MyConfiguration = new TConfiguration(new QSettings);
+    MainConfiguration *MyConfiguration = new MainConfiguration(new QSettings);
     MyConfiguration->setUserAgent("This-is-my-agent");
     I_MediaModel *MyMediaModel = new I_MediaModel;
     QFile file(":/test.wgt");

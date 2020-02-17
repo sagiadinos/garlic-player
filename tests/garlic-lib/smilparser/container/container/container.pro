@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-03-26T02:43:55
+# Project created by QtCreator 2016-03-04T23:33:06
 #
 #-------------------------------------------------
 include(../../../../../src/defaults.pri)
@@ -12,7 +12,7 @@ CONFIG   += console testcase c++11
 CONFIG   -= app_bundle
 TEMPLATE = app
 
-TARGET = tst_shuffle
-SOURCES += tst_shuffle.cpp
+TARGET = tst_container
+SOURCES += tst_container.cpp
 
 include(../../../../tests.pri)

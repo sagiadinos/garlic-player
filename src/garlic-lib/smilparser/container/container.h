@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#ifndef TPLAYLIST_H
-#define TPLAYLIST_H
+#ifndef TCONTAINER_H
+#define TCONTAINER_H
 
 #include "base_timings.h"
 #include <QList>
@@ -67,4 +67,4 @@ class TContainer : public BaseTimings
 
 };
 
-#endif // TPLAYLIST_H
+#endif // TCONTAINER_H

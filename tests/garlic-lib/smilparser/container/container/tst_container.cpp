@@ -18,7 +18,7 @@
 #include <QString>
 #include <QtTest>
 
-#include "smilparser/container.h"
+#include "container.h"
 
 class InhertitedTContainer : public TContainer
 {
@@ -27,23 +27,23 @@ public:
     InhertitedTContainer(TBase * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
     QString       getType(){return "test base playlist";}
 
-    bool          parse(QDomElement element){Q_UNUSED(element);return true;}                // virtual
+    void          preloadParse(QDomElement element){Q_UNUSED(element);}                            // virtual
     void          childEnded(TBase *element){ Q_UNUSED(element);}                           // virtual
     void          play(){}                                                                  // virtual
     void          pause(){}                                                                 // virtual
     void          stop(){}                                                                  // virtual
     void          resume(){}                                                                // virtual
-    TBaseTiming  *getChildElementFromList(){ return this;}                                  // virtual
-    bool          isChildPlayable(TBaseTiming *element){Q_UNUSED(element); return true;}    // virtual
-    void          next(TBaseTiming *element){Q_UNUSED(element);}                            // virtual
+    BaseTimings  *getChildElementFromList(){ return this;}                                  // virtual
+    bool          isChildPlayable(BaseTimings *element){Q_UNUSED(element); return true;}    // virtual
+    void          next(BaseTimings *element){Q_UNUSED(element);}                            // virtual
 
     // for testing
-    QString   test_reactByTag(){return reactByTag();}
     void      setActiveElement(QDomElement element){active_element = element;}
 public slots:
     void      emitfinished(){}                                                              // virtual
 protected:
-    void      setDurationTimerBeforePlay(){}                                                // virtual
+    void      prepareDurationTimerBeforePlay(){}                                                // virtual
+    void      traverseChilds(){}
 };
 
 
@@ -55,10 +55,11 @@ public:
     TestTContainer(){}
 
 private Q_SLOTS:
-    void test_reactByTag();
-    void test_reactByTagForRef();
+//    void test_reactByTag();
+//    void test_reactByTagForRef();
 };
 
+/**
 
 void TestTContainer::test_reactByTag()
 {
@@ -124,7 +125,7 @@ void TestTContainer::test_reactByTagForRef()
     QCOMPARE(MyPlaylist.test_reactByTag(), QString("text"));
     return;
 }
-
+*/
 
 QTEST_APPLESS_MAIN(TestTContainer)
 

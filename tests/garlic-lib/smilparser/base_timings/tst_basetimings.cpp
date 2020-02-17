@@ -18,22 +18,22 @@
 #include <QString>
 #include <QtTest>
 
-#include "smilparser/base_timing.h"
+#include "smilparser/base_timings.h"
 
-class InhertitedTBaseTiming : public TBaseTiming
+class InhertitedBaseTimings : public BaseTimings
 {
     Q_OBJECT
 public:
-    InhertitedTBaseTiming(QObject * parent = 0){Q_UNUSED(parent);initTimer();setObjectName("TestBaseTimings");}
+    InhertitedBaseTimings(QObject * parent = 0){Q_UNUSED(parent);setObjectName("TestBaseTimings");}
     QString       getType(){return "test timings for elements";}
-    bool          parse(QDomElement element) {root_element = element;setTimingAttributes();return true;}
+    void          preloadParse(QDomElement element) {root_element = element;}
     void          emitfinished(){emit signal_end();}
     void          play(){status = _playing;}                // virtual
     void          pause(){status = _paused;}                // virtual
     void          stop(){status = _stopped;}                // virtual
     void          resume(){status = _playing;}              // virtual
     QString       getBaseType(){return  "test base";}       // virtual
-    TBaseTiming  *getChildElementFromList(){ return this;}  // virtual
+    BaseTimings  *getChildElementFromList(){ return this;}  // virtual
     bool          hasPlayingChilds(){return true;}          // virtual
 
     // for Test
@@ -46,9 +46,9 @@ public:
     int           getRepeatCount(){return repeatCount;}
     bool          getIndefinite(){return indefinite;}
 protected:
-    void       setDurationTimerBeforePlay() // behaves like TImage and TWeb
+    void       prepareDurationTimerBeforePlay() // behaves like TImage and TWeb
     {
-        if (hasDurAttribute())
+        if (startDurTimer())
         {
             play();
             emit signal_begin();
@@ -77,7 +77,7 @@ private Q_SLOTS:
 void TestTBaseTiming::test_checkRepeatCountStatus()
 {
     // test with default
-    InhertitedTBaseTiming MyContainer;
+    InhertitedBaseTimings MyContainer;
     MyContainer.setForRepeatCountCheck(2, 0, true);
     QCOMPARE(MyContainer.test_checkRepeatCountStatus(), true);
     MyContainer.setForRepeatCountCheck(2, 0, false);
@@ -97,11 +97,11 @@ void TestTBaseTiming::test_TimingsOnly()
     QDomElement element = document.firstChild().toElement();
     QCOMPARE(element.tagName(), QString("img"));
     // start, then pause and look on the remaining times
-    InhertitedTBaseTiming *MyTest1 = new InhertitedTBaseTiming(NULL);
-    MyTest1->parse(element);
-    MyTest1->prepareTimerBeforePlaying();
+    InhertitedBaseTimings *MyTest1 = new InhertitedBaseTimings(NULL);
+    MyTest1->preloadParse(element);
+    MyTest1->prepareTimingsBeforePlaying();
     QCOMPARE(MyTest1->getStatus(),  MyTest1->_stopped);
-    MyTest1->prepareTimerBeforePausing();
+    MyTest1->prepareTimingsBeforePausing();
     QCOMPARE(MyTest1->getID(), QString("test1"));
     QCOMPARE(MyTest1->getRemainingBegin(), int(0));
     QCOMPARE(MyTest1->getRemainingEnd(), int(0));
@@ -111,10 +111,10 @@ void TestTBaseTiming::test_TimingsOnly()
     element = document.firstChild().toElement();
     QCOMPARE(element.tagName(), QString("img"));
     // start, then pause and look on the remaining times
-    InhertitedTBaseTiming *MyTest2 = new InhertitedTBaseTiming(NULL);
-    MyTest2->parse(element);
-    MyTest2->prepareTimerBeforePlaying();
-    MyTest2->prepareTimerBeforePausing();
+    InhertitedBaseTimings *MyTest2 = new InhertitedBaseTimings(NULL);
+    MyTest2->preloadParse(element);
+    MyTest2->prepareTimingsBeforePlaying();
+    MyTest2->prepareTimingsBeforePausing();
     QCOMPARE(MyTest2->getID(), QString("test2"));
     QVERIFY(MyTest2->getRemainingBegin() > 1950); // Test with tolerances value should be 2000
     QVERIFY(MyTest2->getRemainingBegin() < 2050);
@@ -126,14 +126,14 @@ void TestTBaseTiming::test_TimingsOnly()
     element = document.firstChild().toElement();
     QCOMPARE(element.tagName(), QString("img"));
     // start, then pause and look on the remaining times
-    InhertitedTBaseTiming *MyTest3 = new InhertitedTBaseTiming(NULL);
-    MyTest3->parse(element);
-    MyTest3->prepareTimerBeforePlaying();
+    InhertitedBaseTimings *MyTest3 = new InhertitedBaseTimings(NULL);
+    MyTest3->preloadParse(element);
+    MyTest3->prepareTimingsBeforePlaying();
     QCOMPARE(MyTest3->getID(), QString("test3"));
     QCOMPARE(MyTest3->getRemainingBegin(), int(0));
     QCOMPARE(MyTest3->getStatus(),  MyTest3->_playing);
 
-    MyTest3->prepareTimerBeforePausing();
+    MyTest3->prepareTimingsBeforePausing();
     QVERIFY(MyTest3->getRemainingEnd() > 3950); // Test with tolerances value should be 4000
     QVERIFY(MyTest3->getRemainingEnd() < 4050);
 
@@ -147,4 +147,4 @@ void TestTBaseTiming::test_TimingsOnly()
 
 QTEST_MAIN(TestTBaseTiming)
 
-#include "tst_basetiming.moc"
+#include "tst_basetimings.moc"

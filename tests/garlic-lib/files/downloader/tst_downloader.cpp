@@ -33,7 +33,7 @@ public:
     TestDownloader(){}
 
 private:
-    TConfiguration *getConfig(QByteArray agent);
+    MainConfiguration *getConfig(QByteArray agent);
 
 private Q_SLOTS:
     void cleanup();
@@ -50,10 +50,10 @@ private Q_SLOTS:
     void testDownloadWebSiteWith301Redirect();
 };
 
-TConfiguration *TestDownloader::getConfig(QByteArray agent)
+MainConfiguration *TestDownloader::getConfig(QByteArray agent)
 {
     QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    TConfiguration *MyConfig  = new TConfiguration(Settings);
+    MainConfiguration *MyConfig  = new MainConfiguration(Settings);
     MyConfig->setUserAgent(agent);
     return MyConfig;
 }
@@ -79,7 +79,7 @@ void TestDownloader::cleanup()
 
 void TestDownloader::testObjectCreateAndDelete()
 {
-    TConfiguration *MyConfig  = getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
+    MainConfiguration *MyConfig  = getConfig("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
     Downloader *MyDownloader  = new Downloader(MyConfig);
     Downloader *MyDownloader1 = new Downloader(MyConfig);
     Downloader *MyDownloader2 = new Downloader(MyConfig);
@@ -107,7 +107,7 @@ void TestDownloader::testObjectCreateAndDelete()
 void TestDownloader::testAgentString()
 {
     QByteArray agent("This is a user agent");
-    TConfiguration *MyConfig  = getConfig(agent);
+    MainConfiguration *MyConfig  = getConfig(agent);
     Downloader *MyDownloader = new Downloader(MyConfig);
     QUrl url("http://testing.smil-admin.com/garlic/test.php?action=show_agent_string");
     QFileInfo fi("./agent.txt");

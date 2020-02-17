@@ -33,7 +33,6 @@ namespace Files
         protected:
             MainConfiguration *MyConfiguration;
             bool               isRemote(QString src);
-            QString            sanitizeUri(QString uri);
             bool               isRelative(QString src);
             void               renameDownloadedFile(QString file_path);
     };

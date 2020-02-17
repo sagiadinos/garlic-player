@@ -64,7 +64,9 @@ class MainConfiguration  : public QObject
         QString         getUuid() const;
         QString         getPlayerName() const;
         void            setPlayerName(const QString &value);
-        QString         getUserAgent() const;
+        void            setLogDir(const QString &value){log_dir = value;}
+        void            setUserAgent(const QString &value){user_agent = value;}
+        QString         getUserAgent() const {return user_agent;}
         QString         getOS() const;
         QString         getValidatedContentUrl() const;
         void            setValidatedContentUrl(const QString &value);
@@ -85,9 +87,6 @@ class MainConfiguration  : public QObject
         void            determineIndexUri(QString path);
         void            createDirectories();
         void            determineUserAgent();
-
-
-
         bool validateContentUrl(QString url_string);
         QString getErrorText() const;
 

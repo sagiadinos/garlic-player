@@ -101,11 +101,6 @@ void MainConfiguration::determineUuid()
     }
 }
 
-QString MainConfiguration::getUserAgent() const
-{
-   return user_agent;
-}
-
 QString MainConfiguration::getIndexUri()
 {
     return index_uri;

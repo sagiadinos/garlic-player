@@ -26,7 +26,7 @@ class InhertitedTBase : public TBase
 public:
     InhertitedTBase(TBase * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
     QString   getType(){return "test base";}
-    bool      parse(QDomElement element){Q_UNUSED(element);return true;} // virtual
+    void      preloadParse(QDomElement element){Q_UNUSED(element);} // virtual
     void      test_setBaseAttributes(){setBaseAttributes();}
     void      setActiveElement(QDomElement element){root_element = element;}
 

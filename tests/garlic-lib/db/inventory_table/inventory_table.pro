@@ -5,7 +5,6 @@
 #-------------------------------------------------
 include(../../../../src/defaults.pri)
 
-
 QT       += sql testlib
 QT       -= gui
 
@@ -15,6 +14,5 @@ TEMPLATE = app
 
 TARGET = tst_inventorytable
 SOURCES += tst_inventorytable.cpp
-
 include(../../../tests.pri)
 RESOURCES     = resources.qrc

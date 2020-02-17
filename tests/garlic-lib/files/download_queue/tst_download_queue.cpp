@@ -6,7 +6,7 @@ class I_DownloadQueue : public DownloadQueue
 {
     Q_OBJECT
 public:
-    explicit I_DownloadQueue(TConfiguration *config) : DownloadQueue(config){}
+    explicit I_DownloadQueue(MainConfiguration *config) : DownloadQueue(config){}
     void test_doSucceed(TNetworkAccess *Downloader){doSucceed(Downloader);}
     void test_doNotCacheable(TNetworkAccess *Downloader){doNotCacheable(Downloader);}
     void test_doNotModified(TNetworkAccess *Downloader){doNotModified(Downloader);}
@@ -21,7 +21,7 @@ class TestDownloadQueue : public QObject
 
     public:
 private:
-    TConfiguration *getConfig();
+    MainConfiguration *getConfig();
     private Q_SLOTS:
         void initTestCase(){qInstallMessageHandler(noMessageOutput);}
         void testInsertQueue();
@@ -31,10 +31,10 @@ private:
         void testDoFailed();
 };
 
-TConfiguration *TestDownloadQueue::getConfig()
+MainConfiguration *TestDownloadQueue::getConfig()
 {
     QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    TConfiguration *MyConfig  = new TConfiguration(Settings);
+    MainConfiguration *MyConfig  = new MainConfiguration(Settings);
     MyConfig->setUserAgent("GAPI/1.0 (UUID:f9d65c88-e4cd-43b4-89eb-5c338e54bcae; NAME:TestTDownload) xxxxxx-xx/x.x.x (MODEL:GARLIC)");
     return MyConfig;
 }
@@ -69,7 +69,7 @@ void TestDownloadQueue::testInsertQueue()
 
 void TestDownloadQueue::testDoSuccess()
 {
-    TConfiguration *MyConfig = getConfig();
+    MainConfiguration *MyConfig = getConfig();
     I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(MyConfig);
     Downloader *MyDownloader = new Downloader(MyConfig);
     QFileInfo fi(":/test.png");
@@ -93,7 +93,7 @@ void TestDownloadQueue::testDoSuccess()
 
 void TestDownloadQueue::testDoNotCacheable()
 {
-    TConfiguration *MyConfig = getConfig();
+    MainConfiguration *MyConfig = getConfig();
     I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(MyConfig);
     Downloader *MyDownloader = new Downloader(MyConfig);
     MyDownloader->setLocalFileInfo(QFileInfo(":/test.png"));
@@ -115,7 +115,7 @@ void TestDownloadQueue::testDoNotCacheable()
 
 void TestDownloadQueue::testDoNotModified()
 {
-    TConfiguration *MyConfig = getConfig();
+    MainConfiguration *MyConfig = getConfig();
     I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(MyConfig);
     Downloader *MyDownloader = new Downloader(MyConfig);
     MyDownloader->setLocalFileInfo(QFileInfo(":/test.png"));
@@ -137,7 +137,7 @@ void TestDownloadQueue::testDoNotModified()
 
 void TestDownloadQueue::testDoFailed()
 {
-    TConfiguration *MyConfig = getConfig();
+    MainConfiguration *MyConfig = getConfig();
     I_DownloadQueue *MyDownloadQueue = new I_DownloadQueue(MyConfig);
     Downloader *MyDownloader = new Downloader(MyConfig);
     MyDownloader->setLocalFileInfo(QFileInfo(":/test.png"));
