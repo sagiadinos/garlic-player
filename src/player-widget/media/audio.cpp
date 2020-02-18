@@ -39,12 +39,12 @@ void PlayerAudio::init(BaseMedia *media)
         MediaDecoder.data()->setVolume(MyParser->getSoundLevel());
         if (SmilMedia->getLogContentId() != "")
             setStartTime();
-     }
-     else
-     {
-        SmilMedia->finishedSimpleDuration();
     }
-}
+    else
+    {
+         SmilMedia->finishedNotFound();
+    }
+ }
 
 void PlayerAudio::deinit()
 {

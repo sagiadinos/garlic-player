@@ -31,7 +31,7 @@ TAudio::~TAudio()
 
 void TAudio::prepareDurationTimerBeforePlay()
 {
-    if (startDurTimer() || !is_resumed) // it doesn' matter if there is an dur set cause videos/audio have an own media duration
+    if (startDurTimer() || !is_resumed)
     {
         emit startedMedia(parent_container, this);
     }

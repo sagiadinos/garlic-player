@@ -103,15 +103,25 @@ void BaseTimings::prepareTimingsBeforeResume()
 
 }
 
+void BaseTimings::finishedNotFound()
+{
+    // to fix https://github.com/sagiadinos/garlic-player/issues/12
+    // when a lonely element (e.g video without dur) in a repeatcount=indefinite playlist not found,
+    // a finishedActiveDuration will cause segmentation fault (heap crash) after some some hundreds runs
+    // so we need to wait some milliseconds when timer is set.
+    if (!isBeginTimerActive() && isEndTimerActive() && isDurTimerActive())
+    {
+        skipElement();
+    }
+}
+
 void BaseTimings::finishedSimpleDuration()
 {
-    qDebug() << getID() << "start finish Simple Duration ";
+    qDebug() << getID() << "finish Simple Duration ";
     if (!checkRepeatCountStatus() && !isEndTimerActive())
     {
-        qDebug() << getID() << "jump to finishedActiveDuration";
         finishedActiveDuration();
     }
-    qDebug() << getID() << "end finish Simple Duration";
 }
 
 
@@ -218,6 +228,19 @@ void BaseTimings::resetInternalRepeatCount()
     internal_count = 1;
 }
 
+bool BaseTimings::isBeginTimerActive()
+{
+    if (BeginTimer == Q_NULLPTR)
+    {
+        return false;
+    }
+    else
+    {
+        return BeginTimer->isActive();
+    }
+}
+
+
 bool BaseTimings::isEndTimerActive()
 {
     if (EndTimer == Q_NULLPTR)
@@ -227,6 +250,18 @@ bool BaseTimings::isEndTimerActive()
     else
     {
         return EndTimer->isActive();
+    }
+}
+
+bool BaseTimings::isDurTimerActive()
+{
+    if (DurTimer == Q_NULLPTR)
+    {
+        return false;
+    }
+    else
+    {
+        return DurTimer->isActive();
     }
 }
 

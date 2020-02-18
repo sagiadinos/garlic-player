@@ -38,6 +38,10 @@ void PlayerImage::init(BaseMedia *media)
         if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
+    else
+    {
+         SmilMedia->finishedNotFound();
+    }
 }
 
 void PlayerImage::deinit()

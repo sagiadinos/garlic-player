@@ -245,7 +245,6 @@ void BodyParser::stopElement(BaseTimings *element)
 void BodyParser::connectSlots(BaseTimings *element)
 {
     QString      base_type  = element->getBaseType();
-    connect(element, SIGNAL(preloadElement(TContainer *, QDomElement )), this, SLOT(preloadElement(TContainer *, QDomElement )));
     if (base_type == "media")
     {
         connectMediaSlots(qobject_cast<BaseMedia *> (element));
@@ -254,11 +253,11 @@ void BodyParser::connectSlots(BaseTimings *element)
     {
         connectContainerSlots(qobject_cast<TContainer *> (element));
     }
-
 }
 
 void BodyParser::connectContainerSlots(TContainer *MyContainer)
 {
+    connect(MyContainer, SIGNAL(preloadElement(TContainer *, QDomElement )), this, SLOT(preloadElement(TContainer *, QDomElement )));
     connect(MyContainer, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(useElement(TContainer *, QDomElement )));
     connect(MyContainer, SIGNAL(startedContainer(TContainer *, BaseTimings *)), this, SLOT(startElement(TContainer *, BaseTimings *)));
     connect(MyContainer, SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));

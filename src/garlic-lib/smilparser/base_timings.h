@@ -57,6 +57,7 @@ class BaseTimings : public TBase
         virtual QString       getBaseType() = 0;
         virtual BaseTimings  *getChildElementFromList() = 0;
         virtual bool          hasPlayingChilds() = 0;
+                void          finishedNotFound();
                 void          skipElement();
     public slots:
         virtual void          emitfinished() = 0;
@@ -76,7 +77,9 @@ class BaseTimings : public TBase
                 void           resetInternalRepeatCount();
                 bool           startDurTimer();
                 bool           checkRepeatCountStatus();
+                bool           isBeginTimerActive();
                 bool           isEndTimerActive();
+                bool           isDurTimerActive();
     protected slots:
                 void           releasePlay();
                 void           finishedActiveDuration();

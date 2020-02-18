@@ -27,7 +27,7 @@ public:
     InhertitedTContainer(TBase * parent = 0){Q_UNUSED(parent);setObjectName("testBasePlaylist");}
     QString       getType(){return "test base playlist";}
 
-    void          preloadParse(QDomElement element){Q_UNUSED(element);}                            // virtual
+    void          preloadParse(QDomElement element){Q_UNUSED(element);}                     // virtual
     void          childEnded(TBase *element){ Q_UNUSED(element);}                           // virtual
     void          play(){}                                                                  // virtual
     void          pause(){}                                                                 // virtual

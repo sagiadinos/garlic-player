@@ -48,7 +48,7 @@ void PlayerVideo::init(BaseMedia *media)
    }
    else
    {
-      SmilMedia->finishedSimpleDuration();
+        SmilMedia->finishedNotFound();
    }
 }
 

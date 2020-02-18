@@ -174,15 +174,13 @@ void LibFacade::timerEvent(QTimerEvent *event)
 
 void LibFacade::emitStartShowMedia(BaseMedia *media)
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     emit startShowMedia(media);
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
+    qDebug(Develop) << Q_FUNC_INFO;
 }
 
 void LibFacade::emitStopShowMedia(BaseMedia *media)
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     emit stopShowMedia(media);
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
+    qDebug(Develop) << Q_FUNC_INFO;
 }
 

@@ -20,6 +20,7 @@ public:
 
     void     initTimer();
     void     deleteTimer();
+    bool     isActive(){return MyTimer->isActive();}
     void     start();
     void     pause();
     void     resume();
