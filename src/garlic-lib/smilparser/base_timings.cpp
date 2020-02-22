@@ -117,7 +117,6 @@ void BaseTimings::finishedNotFound()
 
 void BaseTimings::finishedSimpleDuration()
 {
-    qDebug() << getID() << "finish Simple Duration ";
     if (!checkRepeatCountStatus() && !isEndTimerActive())
     {
         finishedActiveDuration();
@@ -135,14 +134,12 @@ void BaseTimings::skipElement()
 {
     if (InternalTimer == Q_NULLPTR)
     {
-        qDebug() << getID() << "init internal timer";
         InternalTimer = new QTimer(this);
         connect(InternalTimer, SIGNAL(timeout()), this, SLOT(emitfinished()));
         InternalTimer->setSingleShot(true);
         InternalTimer->setTimerType(Qt::PreciseTimer);
     }
     InternalTimer->start(300);
-    qDebug() << getID() << "start internal timer";
 }
 
 

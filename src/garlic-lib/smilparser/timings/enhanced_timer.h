@@ -12,6 +12,7 @@ class EnhancedTimer : public QObject
 public:
     enum Constants
     {
+        TYPE_NOT_SET        = 0,
         TYPE_OFFSET         = 1, // same as clock value but depends on type of container https://www.w3.org/TR/REC-smil/smil-timing.html#Timing-OffsetValueSyntax
         TYPE_SYNCBASE       = 2,
         TYPE_EVENT          = 3,
@@ -38,7 +39,7 @@ public:
     bool        remainingRepeats();
 protected:
     int         remaining = 0;
-    int         type    = TYPE_INDEFINITE;
+    int         type  = TYPE_NOT_SET;
     qint64      pause_start;
     QTimer     *MyTimer = Q_NULLPTR;
     ClockValue  MyClockValue;
