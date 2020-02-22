@@ -13,7 +13,7 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 TARGET = tst_head
-SOURCES += tst_head.cpp
+SOURCES += tst_head_parser.cpp
 
 include(../../../tests.pri)
 RESOURCES += head_complex.smil head_simple.smil

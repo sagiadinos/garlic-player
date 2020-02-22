@@ -18,14 +18,14 @@
 #include <QString>
 #include <QtTest>
 
-#include "smilparser/head.h"
+#include "smilparser/head_parser.h"
 
-class TestTHead : public QObject
+class TestHeadParser : public QObject
 {
     Q_OBJECT
 
 public:
-    TestTHead(){}
+    TestHeadParser(){}
 private:
     QDomElement getTestSmilFile(QString file_string);
 
@@ -35,10 +35,10 @@ private Q_SLOTS:
     void test_getHeadValuesFromComplexSmil();
 };
 
-void TestTHead::test_getDefaultValues()
+void TestHeadParser::test_getDefaultValues()
 {
     QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    THead MySmilHead(new TConfiguration(Settings));
+    HeadParser MySmilHead(new MainConfiguration(Settings));
     QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("black"));
     QCOMPARE(MySmilHead.getTitle(), QString("No Title"));
     QList<Region> *region_list = MySmilHead.getLayout();
@@ -52,12 +52,12 @@ void TestTHead::test_getDefaultValues()
     QCOMPARE(region_list->at(0).backgroundColor, QString("transparent"));
 }
 
-void TestTHead::test_getHeadValuesFromSimpleSmil()
+void TestHeadParser::test_getHeadValuesFromSimpleSmil()
 {
     QDomElement head = getTestSmilFile(":/head_simple.smil");
     QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    THead MySmilHead(new TConfiguration(Settings));
-    MySmilHead.parse(head);
+    HeadParser MySmilHead(new MainConfiguration(Settings));
+    MySmilHead.parse(head, new SmilHead::TaskScheduler(new MainConfiguration(Settings), this));
     QCOMPARE(MySmilHead.getTitle(), QString("Simple SMIL header for testing"));
     QCOMPARE(MySmilHead.getRootBackgroundColor(), QString("black"));
     QList<Region> *region_list = MySmilHead.getLayout();
@@ -73,12 +73,12 @@ void TestTHead::test_getHeadValuesFromSimpleSmil()
 
 }
 
-void TestTHead::test_getHeadValuesFromComplexSmil()
+void TestHeadParser::test_getHeadValuesFromComplexSmil()
 {
     QDomElement head = getTestSmilFile(":/head_complex.smil");
     QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    THead MySmilHead(new TConfiguration(Settings));
-    MySmilHead.parse(head);
+    HeadParser MySmilHead(new MainConfiguration(Settings));
+    MySmilHead.parse(head, new SmilHead::TaskScheduler(new MainConfiguration(Settings), this));
 
     QCOMPARE(MySmilHead.getRefreshTime(), int(2)); // works only in debug enviroment in release value should be 30
     QCOMPARE(MySmilHead.getTitle(), QString("Complex SMIL header for testing"));
@@ -126,7 +126,7 @@ void TestTHead::test_getHeadValuesFromComplexSmil()
     QCOMPARE(region_list->at(4).backgroundColor, QString("transparent"));
 }
 
-QDomElement TestTHead::getTestSmilFile(QString file_string)
+QDomElement TestHeadParser::getTestSmilFile(QString file_string)
 {
     QFile file(file_string);
     QDomDocument document;
@@ -135,6 +135,6 @@ QDomElement TestTHead::getTestSmilFile(QString file_string)
     return document.firstChildElement().firstChildElement();
 }
 
-QTEST_MAIN(TestTHead)
+QTEST_MAIN(TestHeadParser)
 
-#include "tst_head.moc"
+#include "tst_head_parser.moc"
