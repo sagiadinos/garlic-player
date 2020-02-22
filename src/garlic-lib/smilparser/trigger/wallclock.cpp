@@ -45,9 +45,9 @@ bool WallClock::remainingRepeats()
     return false;
 }
 
-qint64 WallClock::getNextTimerTrigger()
+qint64 WallClock::getNextTimerTrigger(QDateTime current)
 {
-    return getNextTrigger(QDateTime::currentDateTime());
+    return getNextTrigger(current);
 }
 
 // ================================ protected methods ===============================================
