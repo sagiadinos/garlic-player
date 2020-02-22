@@ -12,6 +12,7 @@ class Unknown : public BaseMedia
     Q_OBJECT
 public:
     explicit Unknown(TContainer *pc, QObject *parent = Q_NULLPTR);
+    void     registerInMediaManager(Files::MediaManager *mm);
 public slots:
     void     prepareDurationTimerBeforePlay();
 protected:

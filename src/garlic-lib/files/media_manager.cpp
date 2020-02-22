@@ -28,6 +28,7 @@ Files::MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, MainConfigu
 
 Files::MediaManager::~MediaManager()
 {
+
 }
 
 void Files::MediaManager::clearQueues()
@@ -51,15 +52,12 @@ void Files::MediaManager::registerFile(QString src)
 
     // if we reach here the can be a local file or a "data:" string
     // look at https://en.wikipedia.org/wiki/Data_URI_scheme
-    registerUncached(src);
+    MyMediaModel->insertAsLocalFile(src);
 }
 
-void Files::MediaManager::registerUncached(QString src)
+void Files::MediaManager::registerAsUncachable(QString src)
 {
-    if (MyMediaModel->findLocalBySrcPath(src) == "")
-    {
-        MyMediaModel->insertAvaibleLink(src);
-    }
+    MyMediaModel->insertAsUncachable(src);
 }
 
 int Files::MediaManager::checkCacheStatus(QString src)
@@ -72,7 +70,7 @@ int Files::MediaManager::checkCacheStatus(QString src)
     if (status == MEDIA_MODIFIED && !isCurrentlyPlaying(src))
     {
         renameDownloadedFile(requestLoadablePath(src));
-        MyMediaModel->setStatusBySrcPath(src, MEDIA_AVAILABLE);
+        MyMediaModel->setStatusBySrcPath(src, MEDIA_CACHED);
     }
     return status;
 }
@@ -111,7 +109,7 @@ void Files::MediaManager::handleRemoteFile(QString src)
     QFileInfo fi(local_path);
     if (fi.exists() && MyMediaModel->findLocalBySrcPath(src) == "") // use cached, cause network could be unreachable
     {
-        MyMediaModel->insertAvaibleFile(src, local_path);
+        MyMediaModel->insertCacheableFile(src, local_path);
     }
     MyDownloadQueue->insertQueue(src, local_path);
 }
@@ -120,14 +118,14 @@ void Files::MediaManager::handleRemoteFile(QString src)
 
 void Files::MediaManager::doNotCacheable(QString src_file_path)
 {
-    MyMediaModel->insertAvaibleLink(src_file_path);
+    MyMediaModel->insertAsUncachable(src_file_path);
 }
 
 void Files::MediaManager::doSucceed(QString src_file_path, QString local_file_path)
 {
     if (MyMediaModel->findLocalBySrcPath(src_file_path) == "")
     {
-        MyMediaModel->insertAvaibleFile(src_file_path, local_file_path);
+        MyMediaModel->insertCacheableFile(src_file_path, local_file_path);
     }
     else
     {

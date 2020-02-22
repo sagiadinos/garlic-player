@@ -84,6 +84,8 @@ void PlayerWeb::doLoadFinished(bool has_succeeded)
 
 QString PlayerWeb::sanitizeUri(QString uri)
 {
+    if (uri.isEmpty())
+        return "";
     // add file scheme if neccessary
     if (uri.at(0) == "/")
     {

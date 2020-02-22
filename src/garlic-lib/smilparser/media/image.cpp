@@ -25,6 +25,12 @@ TImage::TImage(TContainer *pc, QObject *parent) : BaseMedia(parent)
     is_media = true;
 }
 
+void TImage::registerInMediaManager(Files::MediaManager *mm)
+{
+    MyMediaManager = mm;
+    MyMediaManager->registerFile(src);
+}
+
 TImage::~TImage()
 {
 }

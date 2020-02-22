@@ -52,7 +52,6 @@ void PlayerVideo::init(BaseMedia *media)
    }
 }
 
-
 void PlayerVideo::deinit()
 {
     MediaDecoder.data()->stop();

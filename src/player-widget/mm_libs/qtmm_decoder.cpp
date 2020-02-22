@@ -20,7 +20,10 @@ void QtMMDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
 
 bool QtMMDecoder::load(QString file_path)
 {
-    current_media_path = file_path;
+    if (file_path.mid(0, 3) == "///")
+        current_media_path = file_path.mid(2, file_path.length()-2);
+    else
+        current_media_path = file_path;
     MediaDecoder.data()->setMedia(QMediaContent(QUrl::fromLocalFile(current_media_path)));
     return (MediaDecoder.data()->mediaStatus() != QMediaPlayer::NoMedia && MediaDecoder.data()->mediaStatus() != QMediaPlayer::InvalidMedia);
 }

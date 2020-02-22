@@ -27,6 +27,7 @@
 #include <QPaintEvent>
 #include <QStyle>
 #include <QStyleOption>
+#include <QGraphicsOpacityEffect>
 #include "head_parser.h"
 
 

@@ -96,10 +96,8 @@ void BodyParser::initMedia(BaseMedia *MyMedia)
 {
     // media must be initialised after parse, because register needs src
     // and insertSmilMedia needs the region
-    MyMediaManager->registerFile(MyMedia->getSrc());
     MyElementsContainer->insertSmilMedia(MyMedia);
-
-    MyMedia->setMediaManager(MyMediaManager);
+    MyMedia->registerInMediaManager(MyMediaManager);
 }
 
 

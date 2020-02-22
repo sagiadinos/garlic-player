@@ -29,6 +29,12 @@ TAudio::~TAudio()
 {
 }
 
+void TAudio::registerInMediaManager(Files::MediaManager *mm)
+{
+    MyMediaManager = mm;
+    MyMediaManager->registerFile(src);
+}
+
 void TAudio::prepareDurationTimerBeforePlay()
 {
     if (startDurTimer() || !is_resumed)

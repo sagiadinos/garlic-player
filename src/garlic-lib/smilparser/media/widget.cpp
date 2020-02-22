@@ -13,6 +13,13 @@ TWidget::~TWidget()
 {
 }
 
+void TWidget::registerInMediaManager(Files::MediaManager *mm)
+{
+    MyMediaManager = mm;
+    MyMediaManager->registerFile(src);
+}
+
+
 void TWidget::prepareDurationTimerBeforePlay()
 {
     if (startDurTimer() || isEndTimerActive())

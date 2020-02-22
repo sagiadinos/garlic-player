@@ -109,7 +109,7 @@ bool EnhancedTimer::resume()
 
 bool EnhancedTimer::isActive()
 {
-    return MyTimer->isActive();
+    return (MyTimer != Q_NULLPTR && MyTimer->isActive());
 }
 
 bool EnhancedTimer::remainingRepeats()

@@ -28,6 +28,12 @@ TPrefetch::~TPrefetch()
 {
 }
 
+void TPrefetch::registerInMediaManager(Files::MediaManager *mm)
+{
+    MyMediaManager = mm;
+    MyMediaManager->registerFile(src);
+}
+
 void TPrefetch::prepareDurationTimerBeforePlay()
 {
     MyMediaManager->registerFile(src); // ";

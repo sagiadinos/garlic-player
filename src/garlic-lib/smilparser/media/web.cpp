@@ -29,6 +29,11 @@ TWeb::~TWeb()
 {
 }
 
+void TWeb::registerInMediaManager(Files::MediaManager *mm)
+{
+    MyMediaManager = mm;
+    MyMediaManager->registerAsUncachable(src);
+}
 
 void TWeb::prepareDurationTimerBeforePlay()
 {

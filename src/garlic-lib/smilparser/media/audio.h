@@ -28,6 +28,7 @@ public:
     explicit TAudio(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TAudio();
     QString                 getSoundLevel(){return soundLevel;}
+    void                    registerInMediaManager(Files::MediaManager *mm);
 protected:
     QString                 soundLevel = "100%";
     void                    setAttributes();

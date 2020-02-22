@@ -32,26 +32,32 @@ void BaseMedia::preloadParse(QDomElement element)
 
 QString BaseMedia::getLoadablePath()
 {
+    // local media should be played always regardless of the cache mode
+    if (MyMediaManager->checkCacheStatus(src) == MEDIA_IS_LOCAL)
+    {
+        return MyMediaManager->requestLoadablePath(src);
+    }
+
     if (getCacheControl() == CACHE_CONTROL_ONLY_IF_CACHED)
     {
-        if (MyMediaManager->checkCacheStatus(src) == MEDIA_AVAILABLE || MyMediaManager->checkCacheStatus(src) == MEDIA_UNCACHABLE)
+        if (MyMediaManager->checkCacheStatus(src) == MEDIA_CACHED)
         {
             return MyMediaManager->requestLoadablePath(src);
         }
         else
         {
-            return "";
+            return "not_cached_yet"; // only cachable media can be loaded
         }
     }
     else
     {
-        if (MyMediaManager->checkCacheStatus(src) == MEDIA_AVAILABLE)
+        if (MyMediaManager->checkCacheStatus(src) == MEDIA_UNCACHABLE)
         {
-            return MyMediaManager->requestLoadablePath(src);
+            return src;
         }
         else
         {
-            return src;
+            return MyMediaManager->requestLoadablePath(src);
         }
 
     }
@@ -73,12 +79,6 @@ void BaseMedia::stop()
 {
     qDebug() << getID() << "stopped";
     status = _stopped;
-}
-
-
-void BaseMedia::setMediaManager(Files::MediaManager *mm)
-{
-    MyMediaManager = mm;
 }
 
 void BaseMedia::parseBaseMediaAttributes()

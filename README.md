@@ -116,7 +116,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 - **automatic refresh** via metatags in SMIL header
 - **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav like described in [a-smil.org Reporting](http://www.a-smil.org/index.php/Reporting)
 
-## actual supported remote features via downloader
+## currently supported remote features via downloader
  - http downloads and caching
  - caching of remote SMIL index file
  - caching of remote media files

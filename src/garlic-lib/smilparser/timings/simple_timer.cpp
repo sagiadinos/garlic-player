@@ -50,7 +50,7 @@ void SimpleTimer::deleteTimer()
 
 void SimpleTimer::start()
 {
-    if (type != TYPE_CLOCKVALUE)
+    if (MyTimer == Q_NULLPTR && type != TYPE_CLOCKVALUE)
         return;
 
     MyTimer->start(MyClockValue.getNextTimerTrigger());
@@ -58,7 +58,7 @@ void SimpleTimer::start()
 
 void SimpleTimer::resume()
 {
-    if (type != TYPE_CLOCKVALUE)
+    if (MyTimer == Q_NULLPTR && type != TYPE_CLOCKVALUE)
         return;
 
     MyTimer->start(remaining);
@@ -67,7 +67,7 @@ void SimpleTimer::resume()
 
 void SimpleTimer::pause()
 {
-    if (MyTimer->isActive())
+    if (MyTimer != Q_NULLPTR && MyTimer->isActive())
     {
         remaining = MyTimer->remainingTime();
         MyTimer->stop();
@@ -77,7 +77,7 @@ void SimpleTimer::pause()
 
 void SimpleTimer::stop()
 {
-    if (MyTimer->isActive())
+    if (MyTimer != Q_NULLPTR && MyTimer->isActive())
     {
         MyTimer->stop();
     }

@@ -60,23 +60,30 @@ void MediaModel::setStatusBySrcPath(QString src_file_path, int status)
     available_media_list[src_file_path] = qMakePair(findLocalBySrcPath(src_file_path), status);
 }
 
-void MediaModel::insertAvaibleLink(QString src_file_path)
+void MediaModel::insertAsUncachable(QString src_file_path)
 {
     if (findLocalBySrcPath(src_file_path) == "")
     {
-        available_media_list.insert(src_file_path, qMakePair(src_file_path, MEDIA_AVAILABLE));
+        available_media_list.insert(src_file_path, qMakePair(src_file_path, MEDIA_UNCACHABLE));
     }
 }
 
+void MediaModel::insertAsLocalFile(QString src_file_path)
+{
+    if (findLocalBySrcPath(src_file_path) == "")
+    {
+        available_media_list.insert(src_file_path, qMakePair(src_file_path, MEDIA_IS_LOCAL));
+    }
+}
 
-void MediaModel::insertAvaibleFile(QString src_file_path, QString local_file_path)
+void MediaModel::insertCacheableFile(QString src_file_path, QString local_file_path)
 {
     QString path = determinePathByMedia(src_file_path, local_file_path);
     if (path == "")
     {
         return;
     }
-    available_media_list.insert(src_file_path, qMakePair(path, MEDIA_AVAILABLE));
+    available_media_list.insert(src_file_path, qMakePair(path, MEDIA_CACHED));
 }
 
 QString MediaModel::determineHashedFilePath(QString src_file_path)

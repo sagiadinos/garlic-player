@@ -43,13 +43,21 @@ int main(int argc, char *argv[])
 #if QT_VERSION < 0x059300
         qputenv("QML_DISABLE_DISK_CACHE", "true"); // due to https://bugreports.qt.io/browse/QTBUG-56935
 #endif
-
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts); // Raspberry and POT needs this http://thebugfreeblog.blogspot.de/2018/01/pot-570-with-qt-5100-built-for-armv8.html
+
     QApplication app(argc, argv);
 
     LibFacade      *MyLibFacade     = new LibFacade();
 #if defined Q_OS_ANDROID
+    auto  result = QtAndroid::checkPermission(QString("android.permission.WRITE_EXTERNAL_STORAGE"));
+    if(result == QtAndroid::PermissionResult::Denied)
+    {
+        QtAndroid::PermissionResultMap resultHash = QtAndroid::requestPermissionsSync(QStringList({"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"}));
+        if(resultHash["aandroid.permission.WRITE_EXTERNAL_STORAGE"] == QtAndroid::PermissionResult::Denied)
+            return 0;
+    }
+
     QtWebView::initialize();
     QtAndroid::androidActivity().callMethod<void>("registerBroadcastReceiver");
     setGlobalLibFaceForJava(MyLibFacade);

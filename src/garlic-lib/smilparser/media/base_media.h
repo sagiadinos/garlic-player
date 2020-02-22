@@ -32,7 +32,6 @@ class BaseMedia : public BaseTimings
         explicit BaseMedia(QObject *parent = Q_NULLPTR);
 
         void                 preloadParse(QDomElement element);
-        void                 setMediaManager(Files::MediaManager *mm);
         QString              getLoadablePath();
         void                 pause();
         void                 stop();
@@ -47,6 +46,8 @@ class BaseMedia : public BaseTimings
         int                  getCacheControl() {return cache_control;}
         QString              getBaseType()     {return "media";}
         bool                 isMedia()         {return is_media;}
+        virtual void         registerInMediaManager(Files::MediaManager *mm) = 0;
+
         void                 resume(){play();}
         bool                 hasPlayingChilds(){return false;}
         BaseTimings         *getChildElementFromList(){return this;}

@@ -26,6 +26,7 @@ class TPrefetch : public BaseMedia
 public:
     explicit TPrefetch(TContainer *pc, QObject *parent = Q_NULLPTR);
     ~TPrefetch();
+    void     registerInMediaManager(Files::MediaManager *mm);
 public slots:
     void     prepareDurationTimerBeforePlay();
 protected:

@@ -41,7 +41,7 @@ namespace Files
         ~MediaManager();
         void                  clearQueues();
         void                  registerFile(QString src);
-        void                  registerUncached(QString src);
+        void                  registerAsUncachable(QString src);
         QString               requestLoadablePath(QString src);
         int                   checkCacheStatus(QString src);
         void                  insertCurrentlyPlaying(QString path);

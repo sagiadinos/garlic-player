@@ -49,7 +49,11 @@ void TRegion::startShowMedia(BaseMedia *media)
     MyMedia = MyMediaFactory.initMedia(media);
 
     QWidget *widget = MyMedia->getView();
-    if (widget != Q_NULLPTR)
+/*    QGraphicsOpacityEffect * effect = new QGraphicsOpacityEffect(widget);
+    effect->setOpacity(0.1);
+    widget->setGraphicsEffect(effect);
+    widget->setWindowOpacity(0.1);
+  */  if (widget != Q_NULLPTR)
     {
         layout.data()->addWidget(widget);
     }
@@ -63,6 +67,7 @@ void TRegion::stopShowMedia()
         return;
     }
     QWidget *widget = MyMedia->getView();
+
     if (widget != Q_NULLPTR)
     {
         layout.data()->removeWidget(widget);
@@ -80,6 +85,7 @@ void TRegion::stopShowMedia()
  */
 void TRegion::setRootSize(int w, int h)
 {
+
     root_width_px  = w;
     root_height_px = h;
     resizeGeometry();
