@@ -131,7 +131,7 @@ int MainWindow::openNetworkDialog()
 
 int MainWindow::openConfigDialog()
 {
-    ConfigDialog MyConfigDialog(0, MyLibFacade->getConfiguration());
+    ConfigDialog MyConfigDialog(this, MyLibFacade->getConfiguration());
     return MyConfigDialog.exec();
 }
 
@@ -156,7 +156,6 @@ void MainWindow::resizeAsBigFullScreen()
 
 void MainWindow::resizeAsWindow()
 {
-    MyScreen->determineCurrentScreenId(this->rect().topLeft());
     move(MyScreen->getStartPointFromCurrentScreen());
     setWindowFlags(Qt::Window);
     setCursor(Qt::ArrowCursor);

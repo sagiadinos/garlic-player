@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
 
     TScreen    MyScreen(Q_NULLPTR);
+    MyScreen.selectCurrentScreen(MyParser.getScreenSelect());
     MainWindow w(&MyScreen, MyLibFacade);
 
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);

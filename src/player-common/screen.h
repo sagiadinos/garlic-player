@@ -15,6 +15,7 @@ public:
     explicit TScreen(QObject *parent = Q_NULLPTR);
     QPoint   getWholeStartPoint();
     QSize    getWholeSize();
+    void     selectCurrentScreen(int screen_id);
     QPoint   getStartPointFromCurrentScreen();
     QSize    getSizeFromCurrentScreen();
     void     determineCurrentScreenId(QPoint point);
@@ -22,6 +23,7 @@ public:
 public slots:
 
 protected:
+    QList<QScreen *> listScreens;
     QRect           whole_display_geometry;
     QScreen        *current_screen = Q_NULLPTR;
     void            calculateWholeDisplayGeometrie();

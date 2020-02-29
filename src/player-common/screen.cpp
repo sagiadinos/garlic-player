@@ -16,6 +16,16 @@ QSize TScreen::getWholeSize()
     return QSize(whole_display_geometry.width(), whole_display_geometry.height());
 }
 
+void TScreen::selectCurrentScreen(int screen_id)
+{
+    if (screen_id < 0)
+        current_screen = listScreens.first();
+    else if (screen_id > listScreens.size())
+        current_screen = listScreens.last();
+    else
+        current_screen = listScreens.at(screen_id);
+}
+
 QPoint TScreen::getStartPointFromCurrentScreen()
 {
     return current_screen->geometry().topLeft();
@@ -27,6 +37,7 @@ QRect TScreen::getQRectFromScreen()
 }
 
 
+
 QSize TScreen::getSizeFromCurrentScreen()
 {
     return getQRectFromScreen().size();
@@ -34,12 +45,15 @@ QSize TScreen::getSizeFromCurrentScreen()
 
 void TScreen::determineCurrentScreenId(const QPoint point)
 {
-    current_screen = QGuiApplication::screenAt(point);
+    if (QGuiApplication::screenAt(point) != Q_NULLPTR)
+    {
+        current_screen = QGuiApplication::screenAt(point);
+    }
 }
 
 void TScreen::calculateWholeDisplayGeometrie()
 {
-    QList<QScreen *> listScreens = QGuiApplication::screens();
+    listScreens = QGuiApplication::screens();
     QList<QScreen *>::iterator j;
     for (j = listScreens.begin(); j != listScreens.end(); j++)
     {

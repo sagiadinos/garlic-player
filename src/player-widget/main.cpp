@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
 
     TScreen    MyScreen(Q_NULLPTR);
 
+    MyScreen.selectCurrentScreen(MyParser.getScreenSelect());
     MainWindow w(&MyScreen, MyLibFacade);
 
     bool is_index = true;
