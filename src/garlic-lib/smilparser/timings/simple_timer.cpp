@@ -30,24 +30,6 @@ void SimpleTimer::parse(QString attr_value)
     return;
 }
 
-void SimpleTimer::initTimer()
-{
-    MyTimer = new QTimer(this);
-    connect(MyTimer, SIGNAL(timeout()), this, SLOT(emitTimeout()));
-    MyTimer->setSingleShot(true);
-    MyTimer->setTimerType(Qt::PreciseTimer);
-}
-
-void SimpleTimer::deleteTimer()
-{
-    if (MyTimer != Q_NULLPTR)
-    {
-        stop();
-        delete MyTimer;
-        MyTimer = Q_NULLPTR;
-    }
-}
-
 void SimpleTimer::start()
 {
     if (MyTimer == Q_NULLPTR && type != TYPE_CLOCKVALUE)
@@ -89,6 +71,23 @@ int SimpleTimer::getRemaining() const
     return remaining;
 }
 
+void SimpleTimer::initTimer()
+{
+    MyTimer = new QTimer(this);
+    connect(MyTimer, SIGNAL(timeout()), this, SLOT(emitTimeout()));
+    MyTimer->setSingleShot(true);
+    MyTimer->setTimerType(Qt::PreciseTimer);
+}
+
+void SimpleTimer::deleteTimer()
+{
+    if (MyTimer != Q_NULLPTR)
+    {
+        stop();
+        delete MyTimer;
+        MyTimer = Q_NULLPTR;
+    }
+}
 void SimpleTimer::emitTimeout()
 {
     emit timeout();

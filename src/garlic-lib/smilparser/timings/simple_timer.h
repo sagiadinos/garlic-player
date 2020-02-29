@@ -18,25 +18,25 @@ public:
     explicit SimpleTimer(QObject *parent = nullptr);
     ~SimpleTimer();
 
-    void     initTimer();
-    void     deleteTimer();
-    bool     isActive(){return MyTimer->isActive();}
-    void     start();
-    void     pause();
-    void     resume();
-    void     stop();
-    int      getType(){return type;}
-    int      getRemaining() const;
-    void     parse(QString s_value);
+    void         parse(QString s_value);
+    bool         isActive(){return MyTimer->isActive();}
+    void         start();
+    void         pause();
+    void         resume();
+    void         stop();
+    int          getType(){return type;}
+    int          getRemaining() const;
 
 protected:
-    QTimer       *MyTimer = Q_NULLPTR;
-    ClockValue    MyClockValue;
-    qint64        pause_start;
-    int           remaining = 0;
-    int           type = 3;
+    QTimer      *MyTimer = Q_NULLPTR;
+    ClockValue   MyClockValue;
+    qint64       pause_start;
+    int          remaining = 0;
+    int          type = 3;
+    void         initTimer();
+    void         deleteTimer();
 protected slots:
-  void   emitTimeout();
+    void         emitTimeout();
 
 signals:
     void timeout();
