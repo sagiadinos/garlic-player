@@ -284,7 +284,7 @@ void MainWindow::rebootOS()
 
 void MainWindow::installSoftware(QString file_path)
 {
-   #if defined  Q_OS_ANDROID
+#if defined  Q_OS_ANDROID
    QAndroidJniObject java_file_path = QAndroidJniObject::fromString(file_path);
     QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
                                               "installSoftware",

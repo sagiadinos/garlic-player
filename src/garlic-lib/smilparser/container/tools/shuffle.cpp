@@ -69,12 +69,8 @@ QDomElement TShuffle::getNextItem()
 void TShuffle::randomizePlaylist()
 {
     shuffle_list = dom_list;
-    // Knuth shuffle
-    int length = shuffle_list.length();
-    for (int i = length - 1; i > 0; --i)
-    {
-        shuffle_list.swap(i, qrand() % (i + 1));
-    }
+    std::random_shuffle(shuffle_list.begin(), shuffle_list.end());
+
     shuffle_iterator = shuffle_list.begin();
     return;
 }
