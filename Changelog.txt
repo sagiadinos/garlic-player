@@ -3,13 +3,12 @@ Changelog
 
 0.3.0 -> 0.4.0 (unreleased)
 ---------------------
-1. New Features (currently @work)
-	* remote configuration change from CMS
+1. New Features
+	* remote configuration changes from CMS
 	* auto update for for non-root Android devices (via Device Owner-App garlic-launcher)
 	* interactivity, touch and jump to previous, next playlist item
 	* REST-Interface
 	* code coverage
-	* customize tests
 
 2. Improvements
 	* integrate version number in build enviroments from github repository

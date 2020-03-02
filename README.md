@@ -51,7 +51,7 @@ SMIL_INDEX        Path to SMIL index
 Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 
 ## Features
- - Support for multiple screens
+ - Support for multiple screens (not on Android)
  - Logging
  - 301 redirect support
  - lot's of video formats 

@@ -137,6 +137,7 @@ int MainWindow::openConfigDialog()
 
 void MainWindow::resizeAsNormalFullScreen()
 {
+    move(MyScreen->getStartPointFromCurrentScreen());
     setCursor(Qt::BlankCursor);
     showFullScreen();
     screen_state = FULLSCREEN;
