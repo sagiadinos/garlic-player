@@ -89,3 +89,14 @@ void DebugInfos::outputResourcesUsage()
     ui->PlaylistTitle->setText(MyLibFacade->getConfiguration()->getPlayerName() + " (" + MyLibFacade->getConfiguration()->getVersion() + ") - " +MyLibFacade->getHead()->getTitle());
 
 }
+
+void DebugInfos::on_close_dialog_clicked()
+{
+
+    QDialog::accept();
+}
+
+void DebugInfos::on_close_player_clicked()
+{
+    QApplication::quit();
+}

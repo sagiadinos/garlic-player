@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>772</width>
-    <height>260</height>
+    <height>270</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -113,6 +113,24 @@
           <string>Max Threads:</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="close_player">
+           <property name="text">
+            <string>close player</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="close_dialog">
+           <property name="text">
+            <string>close dialog</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>

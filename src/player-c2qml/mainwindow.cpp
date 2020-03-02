@@ -112,17 +112,24 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 
 bool MainWindow::event(QEvent *event)
 {
-    event->accept();
-    if(event->type() == QEvent::TouchBegin)
+    if(event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd)
     {
-        num_touched++;
-        if (num_touched > 4)
+        event->accept();
+        if(event->type() == QEvent::TouchBegin)
         {
-            openDebugInfos();
-            num_touched = 0;
+            start_touch_time.start();
+        }
+        else if (static_cast<QTouchEvent*>(event)->touchPoints().count() == 3 && event->type() == QEvent::TouchUpdate)
+        {
+            int ms = start_touch_time.elapsed();
+            if (ms > 8000)
+            {
+                openDebugInfos();
+            }
         }
     }
     return QQuickView::event(event);
+
 }
 
 void MainWindow::openDebugInfos()

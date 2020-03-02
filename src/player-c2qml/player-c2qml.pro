@@ -38,12 +38,11 @@ android {
 
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
-include(../ext/android_openssl/openssl.pri)
+    # comment the oppenssl include when you want to debug otherwise it crashs when start debugging
+    # see https://github.com/KDAB/android_openssl/issues/10
+    include(../ext/android_openssl/openssl.pri)
 
-#    ANDROID_LIBS = $$PWD/src/ext/android_openssl/arm
     ANDROID_EXTRA_LIBS += \
-#        $$ANDROID_LIBS/libssl_1_1.so \
-#        $$ANDROID_LIBS/libcrypto_1_1.so
         $$OUT_PWD/../libandroid/libgarlic.so
 
 }

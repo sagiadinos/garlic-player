@@ -1,5 +1,6 @@
 SOURCES += \
     $$PWD/interactions.cpp \
+    $$PWD/touch_manager.cpp \
     ../player-common/cmdparser.cpp \
     ../player-common/debug_infos.cpp \
     ../player-common/configdialog.cpp \
@@ -7,6 +8,7 @@ SOURCES += \
 
 HEADERS  += \
     $$PWD/interactions.h \
+    $$PWD/touch_manager.h \
     ../player-common/cmdparser.h \
     ../player-common/configdialog.h \
     ../player-common/debug_infos.h \
