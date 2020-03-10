@@ -40,7 +40,7 @@ android {
 
     # comment the oppenssl include when you want to debug otherwise it crashs when start debugging
     # see https://github.com/KDAB/android_openssl/issues/10
-    include(../ext/android_openssl/openssl.pri)
+   # include(../ext/android_openssl/openssl.pri)
 
     ANDROID_EXTRA_LIBS += \
         $$OUT_PWD/../libandroid/libgarlic.so
