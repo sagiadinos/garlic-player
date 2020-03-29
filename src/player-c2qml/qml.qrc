@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>root_qtm.qml</file>
         <file>root_qtav.qml</file>
-        <file>root_qtm_rpi.qml</file>
         <file>ContextMenu.qml</file>
     </qresource>
 </RCC>

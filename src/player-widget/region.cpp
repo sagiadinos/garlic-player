@@ -19,9 +19,10 @@
 #include "region.h"
 #include <QLayout>
 
-TRegion::TRegion(QWidget *parent) : QWidget(parent)
+TRegion::TRegion(LibFacade *lf, QWidget *parent) : QWidget(parent)
 {
     setParent(parent);
+    MyLibFacade = lf;
     layout.reset(new QStackedLayout(this));
     layout.data()->setMargin(0);
     setLayout(layout.data());
@@ -35,11 +36,10 @@ TRegion::~TRegion()
  * @brief TRegion::paintEvent needed to draw a background color setted in smil layout header
  * @param event
  */
-void TRegion::paintEvent(QPaintEvent *event)
+void TRegion::paintEvent(QPaintEvent *)
 {
-    QWidget::paintEvent(event);
     QStyleOption o;
-    o.initFrom(this);
+    o.init(this);
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
@@ -94,7 +94,7 @@ void TRegion::setRootSize(int w, int h)
 void TRegion::setRegion(Region r)
 {
     region = r;
-    setStyleSheet("background-color:"+region.backgroundColor+";");
+    determineStylesheets();
 }
 
 void TRegion::resizeGeometry()
@@ -109,6 +109,55 @@ void TRegion::resizeGeometry()
         MyMedia->changeSize(qRound(wr), qRound(hr));
 }
 
+void TRegion::determineStylesheets()
+{
+    QString style_sheet = "background: "+region.backgroundColor;
+    style_sheet += " " + determineBackgroundImage();
+    style_sheet += " " + determineBackgroundImageRepeat() + ";";
+    setStyleSheet(style_sheet);
+}
 
+QString TRegion::determineBackgroundImage()
+{
+    QString ret = "";
+    // currently we do not support sub regions (inherited)
+    if (region.backgroundImage.toLower() != "none" && region.backgroundImage.toLower() != "inherited")
+    {
+        ret = "url(\""+MyLibFacade->requestLoaddableMediaPath(region.backgroundImage)+"\")";
+        has_background_image = true;
+    }
+    return ret;
+}
+
+QString TRegion::determineBackgroundImageRepeat()
+{
+    if (!has_background_image)
+        return "";
+
+    QString ret = "";
+    if (region.backgroundRepeat.toLower() == "repeat")
+    {
+        ret = "repeat";
+    }
+    else if (region.backgroundRepeat.toLower() == "repeatx")
+    {
+        ret = "repeat-x";
+    }
+    else if (region.backgroundRepeat.toLower() == "repeaty")
+    {
+        ret = "repeat-y";
+    }
+    else if (region.backgroundRepeat.toLower() == "norepeat")
+    {
+        ret = "no-repeat";
+    }
+  // sub regions snot supported so no inherited neccesary
+    else if (region.backgroundRepeat.toLower() == "inherited")
+    {
+        ret = "repeat";
+    }
+
+    return ret;
+}
 
 

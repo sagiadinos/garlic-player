@@ -18,9 +18,10 @@
 
 #include "head_parser.h"
 
-HeadParser::HeadParser(MainConfiguration *config, QObject *parent) : QObject(parent)
+HeadParser::HeadParser(MainConfiguration *config, Files::MediaManager *mm, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
+    MyMediaManager  = mm;
     setDefaultValues();
 }
 
@@ -43,7 +44,8 @@ void HeadParser::setDefaultValues()
     default_region.width           = 1;
     default_region.height          = 1;
     default_region.z_index         = 0;
-    default_region.backgroundColor = "transparent";
+    default_region.backgroundImage = "none";
+    default_region.backgroundRepeat= "repeat";
     region_list.append(default_region);            void process();
 
 }
@@ -168,6 +170,10 @@ void HeadParser::parseRootLayout(QDomElement root_layout)
         height = root_layout.attribute("height").toInt();
     if (root_layout.hasAttribute("backgroundColor"))
         backgroundColor = root_layout.attribute("backgroundColor");
+    if (root_layout.hasAttribute("backgroundImage"))
+        backgroundImage = root_layout.attribute("backgroundImage");
+    if (root_layout.hasAttribute("backgroundRepeat"))
+        backgroundRepeat = root_layout.attribute("backgroundRepeat");
 }
 
 void HeadParser::parseRegions(QDomNodeList childs)
@@ -195,6 +201,13 @@ void HeadParser::parseRegions(QDomNodeList childs)
                 region.z_index         = element.attribute("z-index").toInt();
             if (element.hasAttribute("backgroundColor"))
                 region.backgroundColor = element.attribute("backgroundColor");
+            if (element.hasAttribute("backgroundImage"))
+            {
+                region.backgroundImage = element.attribute("backgroundImage");
+                handleBackgroundImage(region.backgroundImage);
+            }
+            if (element.hasAttribute("backgroundRepeat"))
+                region.backgroundRepeat = element.attribute("backgroundRepeat");
             region_list.append(region);
             std::sort(region_list.begin(), region_list.end()); // sort z-indexes ascending to place Widgets corect in mainwindow
         }
@@ -207,6 +220,14 @@ void HeadParser::parseRegions(QDomNodeList childs)
 
     }
     qDebug() << childs.length() << "regions found in SMIL layout-tag and " << region_list.length() << " regions were initialized ";
+}
+
+void HeadParser::handleBackgroundImage(QString value)
+{
+  if (value.toLower() != "none" && value.toLower() != "inherited")
+  {
+      MyMediaManager->registerFile(value);
+  }
 }
 
 

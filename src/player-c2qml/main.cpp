@@ -58,6 +58,14 @@ int main(int argc, char *argv[])
     QtWebView::initialize();
     QtAndroid::androidActivity().callMethod<void>("registerBroadcastReceiver");
     setGlobalLibFaceForJava(MyLibFacade);
+
+    QString config_xml_path = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/config.xml";
+    QFile config_file(config_xml_path);
+    if (config_file.exists())
+    {
+        MyLibFacade->setConfigFromExternal(config_xml_path);
+    }
+
 #endif
     qmlRegisterType<LibFacade>("com.garlic.LibFacade", 1, 0, "LibFacade");
     qmlRegisterType<ResourceMonitor>("com.garlic.ResourceMonitor", 1, 0, "ResourceMonitor");

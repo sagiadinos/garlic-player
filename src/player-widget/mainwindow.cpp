@@ -77,18 +77,9 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             }
             setCursor(Qt::BlankCursor);
             break;
-#ifdef SUPPORT_EMBEDDED
-        case Qt::Key_N:
-            setCursor(Qt::ArrowCursor);
-            if (openNetworkDialog() == QDialog::Accepted)
-                MyLibFacade->checkForNewSmilIndex();
-            setCursor(Qt::BlankCursor);
-            break;
-#endif
         case Qt::Key_Q:
              QApplication::quit();
-
-        break;
+            break;
     }
 }
 
@@ -121,17 +112,9 @@ void MainWindow::openCommandline()
     process.waitForFinished(-1); // will wait forever until finished
 }
 
-#ifdef SUPPORT_EMBEDDED
-int MainWindow::openNetworkDialog()
-{
-    NetworkDialog MyNetworkDialog(0, MyLibFacade->getConfiguration());
-    return MyNetworkDialog.exec();
-}
-#endif
-
 int MainWindow::openConfigDialog()
 {
-    ConfigDialog MyConfigDialog(this, MyLibFacade->getConfiguration());
+    ConfigDialog MyConfigDialog(Q_NULLPTR, MyLibFacade->getConfiguration());
     return MyConfigDialog.exec();
 }
 
@@ -211,7 +194,7 @@ void MainWindow::createRegions()
     QMap<QString, TRegion *>::iterator j;
     for (int i = 0; i < region_list->length(); i++)
     {
-        j = regions_list.insert(region_list->at(i).regionName, new TRegion(this));
+        j = regions_list.insert(region_list->at(i).regionName, new TRegion(MyLibFacade, this));
         regions_list[j.key()]->setRegion(region_list->at(i));
         regions_list[j.key()]->setRootSize(width(), height());
         regions_list[j.key()]->show();

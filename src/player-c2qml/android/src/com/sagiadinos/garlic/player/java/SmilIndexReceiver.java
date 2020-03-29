@@ -8,6 +8,9 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 
+/**
+* if usb stick plugged we need a new index
+*/
 public class SmilIndexReceiver extends BroadcastReceiver
 {
     String path;

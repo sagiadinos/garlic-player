@@ -24,15 +24,11 @@
 
 #include "region.h"
 #include "../player-common/configdialog.h"
-#ifdef SUPPORT_EMBEDDED
-    #include "../player-common/network_dialog.h"
-#endif
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
 #include "../player-common/interactions.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
-#include "lib_facade.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -63,9 +59,6 @@ class MainWindow : public QMainWindow
         void                      keyPressEvent(QKeyEvent *ke);
         void                      openDebugInfos();
         void                      openCommandline();
-#ifdef SUPPORT_EMBEDDED
-        int                       openNetworkDialog();
-#endif
         bool                      event(QEvent *event);
         QString                   selectRegion(QString region_name);
         void                      createRegions();

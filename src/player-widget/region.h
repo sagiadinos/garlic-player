@@ -29,6 +29,7 @@
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
 #include "head_parser.h"
+#include "lib_facade.h"
 
 
 #include "media/media_factory.h"
@@ -37,9 +38,9 @@ class TRegion : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TRegion(QWidget *parent);
+    explicit TRegion(LibFacade *lf, QWidget *parent);
     ~TRegion();
-    void                paintEvent(QPaintEvent *event);
+    void                paintEvent(QPaintEvent *);
     void                setRootSize(int w, int h);
     void                setRegion(Region region);
     void                startShowMedia(BaseMedia *media);
@@ -50,10 +51,15 @@ protected:
     qreal                 root_height_px = 0;
     QString               actual_media = "";
     Region                region;
+    LibFacade            *MyLibFacade;
     QScopedPointer<QStackedLayout>          layout;
     PlayerBaseMedia      *MyMedia = Q_NULLPTR;
     MediaFactory          MyMediaFactory;
+    bool                  has_background_image = false;
     void                  resizeGeometry();
+    void                  determineStylesheets();
+    QString               determineBackgroundImage();
+    QString               determineBackgroundImageRepeat();
 };
 
 #endif // TREGION_H

@@ -16,6 +16,7 @@ void SmilHead::XMLConfiguration::processFromLocalFile(QString file_path)
     if (!loadDocument(file_path))
         return;
     parse();
+    QFile::remove(file_path);
 }
 
 bool SmilHead::XMLConfiguration::loadDocument(QString file_path)

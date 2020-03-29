@@ -6,7 +6,7 @@ Audio::Audio(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia
 #ifdef SUPPORT_QTAV
     QString module = "import QtAV 1.7\n";
 #else
-    QString module = "import QtMultimedia 5.7\n";
+    QString module = "import QtMultimedia 5.12\n";
 #endif
     // FIXIT! Audio QML cannot be created
     // Qt Bug is reported https://bugreports.qt.io/browse/QTBUG-64763

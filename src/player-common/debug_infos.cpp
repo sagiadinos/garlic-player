@@ -15,6 +15,10 @@ DebugInfos::DebugInfos(LibFacade *lib_facade, QWidget *parent) :  QDialog(parent
 
 void DebugInfos::setCurrentFilePlayed(BaseMedia *media)
 {
+    if (media == Q_NULLPTR)
+    {
+        return;
+    }
     ui->CurrentFileInUse->setText(preparePlayedMediaText(media));
 }
 
@@ -38,6 +42,11 @@ void DebugInfos::timerEvent(QTimerEvent *event)
 
 QString DebugInfos::preparePlayedMediaText(BaseMedia *media)
 {
+    if (media == Q_NULLPTR)
+    {
+        return "";
+    }
+
     QString key = media->getRegion();
     QString value = media->getTitle();
 
@@ -86,13 +95,17 @@ void DebugInfos::outputResourcesUsage()
         max_threads_used = current_threads;
         ui->MaxThreadsNumber->setText("Max Threads: " + QString::number(max_threads_used));
     }
-    ui->PlaylistTitle->setText(MyLibFacade->getConfiguration()->getPlayerName() + " (" + MyLibFacade->getConfiguration()->getVersion() + ") - " +MyLibFacade->getHead()->getTitle());
+    QString title = "";
+    if (MyLibFacade->getHead() != Q_NULLPTR)
+    {
+        title = MyLibFacade->getHead()->getTitle();
+    }
+    ui->PlaylistTitle->setText(MyLibFacade->getConfiguration()->getPlayerName() + " (" + MyLibFacade->getConfiguration()->getVersion() + ") - " + title);
 
 }
 
 void DebugInfos::on_close_dialog_clicked()
 {
-
     QDialog::accept();
 }
 

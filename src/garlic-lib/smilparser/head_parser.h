@@ -27,6 +27,7 @@
 
 #include "head/subscription.h"
 #include "head/task_scheduler.h"
+#include "files/media_manager.h"
 #include "reports/system_report_manager.h"
 #include "reports/event_logs_manager.h"
 #include "reports/play_logs_manager.h"
@@ -44,7 +45,9 @@ struct Region
     qreal width;
     qreal height;
     int z_index;
-    QString backgroundColor;
+    QString backgroundColor = "black";
+    QString backgroundImage;
+    QString backgroundRepeat;
     bool operator<(const Region& other) const {return z_index < other.z_index;} // use for sorting a list of Regions
 };
 
@@ -53,7 +56,7 @@ class HeadParser: public QObject
 {
         Q_OBJECT
     public:
-        explicit HeadParser(MainConfiguration *config, QObject *parent = Q_NULLPTR);
+        explicit HeadParser(MainConfiguration *config, Files::MediaManager *mm,  QObject *parent = Q_NULLPTR);
          ~HeadParser();
         void                   setDefaultValues();
         void                   parse(QDomElement head, SmilHead::TaskScheduler *MyTasks);
@@ -74,15 +77,19 @@ class HeadParser: public QObject
         Region                 default_region;
         QString                title;
         int                    refresh, width, height;
-        QString                backgroundColor;
+        QString                backgroundColor = "black";
+        QString                backgroundImage;
+        QString                backgroundRepeat;
         QDomElement            head;
         QList<Region>          region_list;
         MainConfiguration     *MyConfiguration;
+        Files::MediaManager   *MyMediaManager;
         void                   parseMeta(QDomElement element);
         void                   parseMetaData(QDomElement element, SmilHead::TaskScheduler *MyTasks);
         void                   parseLayout(QDomElement layout);
         void                   parseRootLayout(QDomElement root_layout);
         void                   parseRegions(QDomNodeList childs);
+        void                   handleBackgroundImage(QString value);
         qreal                  calculatePercentBasedOnRoot(QString value, qreal root);
 };
 

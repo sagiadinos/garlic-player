@@ -7,11 +7,13 @@ Changelog
 	* remote configuration changes from CMS
 	* auto update for for non-root Android devices (via Device Owner-App garlic-launcher)
 	* interactivity, touch and jump to previous, next playlist item
+	* work together with garlic-launcher API
 	* REST-Interface
 	* code coverage
 
 2. Improvements
 	* integrate version number in build enviroments from github repository
+	* get uuid from operating system if possible
 	* replace deprecated QDesktopWidget members for screen determination
 	* SMIL-index will be preloaded by default before play
 	* path to a config.xml via command line

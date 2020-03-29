@@ -49,6 +49,7 @@ class LibFacade : public QObject
         void               setConfigFromExternal(QString config_path, bool restart_smil_parsing = true);
         void               setIndexFromExternal(QString index_path);
         void               beginSmilBodyParsing();
+        QString            requestLoaddableMediaPath(QString path);
         // Interactions
         void               nextSmilMedia(int zone = 1);
         void               previousSmilMedia(int zone = 1);

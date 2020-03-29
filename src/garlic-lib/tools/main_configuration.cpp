@@ -82,7 +82,12 @@ void MainConfiguration::setPlayerName(const QString &value)
 
 QString MainConfiguration::createUuid()
 {
-    return QUuid::createUuid().toString().mid(1, 36);
+    QString id = QString::fromUtf8(QSysInfo::machineUniqueId());
+    if (id.isEmpty())
+    {
+        id = QUuid::createUuid().toString();
+    }
+    return id.mid(1, 36);// must start from 1 cause uuid will created as {uuid}
 }
 
 QString MainConfiguration::getUuid() const

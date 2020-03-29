@@ -5,7 +5,7 @@ Web::Web(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia(mc,
     setRegionId(r_id);
     QString module = "import QtWebView 1.1\n WebView ";
     media_component = mc;
-    QString str("import QtQuick 2.7\n"+
+    QString str("import QtQuick 2.12\n"+
                 module + "{\n \
                         id: "+getRegionId()+"_web;\n \
                         anchors.fill: parent;\n \

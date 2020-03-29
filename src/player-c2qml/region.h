@@ -19,7 +19,7 @@
 #ifndef TREGION_H
 #define TREGION_H
 
-#include <QQuickItem> // interates QQmlComponent
+#include <QQuickItem>
 
 #include "head_parser.h"
 #include "media/media_factory.h"
@@ -39,7 +39,7 @@ protected:
     QQuickItem           *root_item;
     QQmlEngine           *engine;
     Region                region;
-    PlayerBaseMedia            *MyMedia = Q_NULLPTR;
+    PlayerBaseMedia                    *MyMedia = Q_NULLPTR;
     QScopedPointer<QQmlComponent>       rectangle;
     QScopedPointer<QQmlComponent>       media_component;
     QScopedPointer<QQuickItem>          rectangle_item;

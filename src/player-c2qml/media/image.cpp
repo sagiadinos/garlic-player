@@ -4,7 +4,7 @@ Image::Image(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia
 {
     setRegionId(r_id);
     QString str(
-                "import QtQuick 2.7\n \
+                "import QtQuick 2.12\n \
                     Image {\n  \
                         id: "+getRegionId()+"_image; \
                         anchors.fill: parent; \n \

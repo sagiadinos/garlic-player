@@ -2,6 +2,7 @@ package com.sagiadinos.garlic.player.java;
 
 
 import android.content.Context;
+import android.os.Environment;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
     public GarlicActivity()
     {
         m_instance = this;
+
     }
 
     public void registerBroadcastReceiver()
@@ -26,6 +28,15 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         SmilIndexReceiver MySmilIndexReceiver = new SmilIndexReceiver();
         registerReceiver(MySmilIndexReceiver, filter2);
     }
+
+    public void lookForConfigXML()
+    {
+        String config_file_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/config.xml" ;
+        Intent intent = new Intent("com.sagiadinos.garlic.player.java.ConfigReceiver");
+        intent.putExtra("config_path", config_file_path);
+        sendBroadcast(intent);
+    }
+
 
     public static void rebootOS()
     {

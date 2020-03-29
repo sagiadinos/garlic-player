@@ -51,11 +51,14 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
     rectangle.reset(new QQmlComponent(engine));
     media_component.reset(new QQmlComponent(engine));
 
-    QString str("import QtQuick 2.7\nRectangle {color: \""+region.backgroundColor+"\"}");
+    if (region.backgroundColor.isEmpty()) // otherwise  component is not created
+    {
+        region.backgroundColor = "black";
+    }
+    QString str("import QtQuick 2.12\nRectangle {color: \""+region.backgroundColor+"\"}");
     rectangle.data()->setData(str.toUtf8(), QUrl());
 
-    rectangle_item.reset(qobject_cast<QQuickItem *>(rectangle->create()));
-
+    rectangle_item.reset(qobject_cast<QQuickItem *>(rectangle.data()->create()));
     rectangle_item.data()->setParentItem(root_item);
     MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, this));
 }

@@ -64,7 +64,7 @@ void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_par
 {
     MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyConfiguration.data(), this));
     if (restart_smil_parsing)
-        connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), this, SLOT(initParser()));
+        connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), this, SLOT(reboot()));
     MyXMLConfiguration.data()->processFromLocalFile(config_path);
 }
 
@@ -75,12 +75,16 @@ void LibFacade::setIndexFromExternal(QString index_path)
     loadIndex();
 }
 
-
 void LibFacade::beginSmilBodyParsing()
 {
     connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));
     connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(emitStopShowMedia(BaseMedia *)));
     MyBodyParser->beginSmilParsing(MyIndexManager->getBody());
+}
+
+QString LibFacade::requestLoaddableMediaPath(QString path)
+{
+    return MyMediaManager.data()->requestLoadablePath(path);
 }
 
 void LibFacade::nextSmilMedia(int zone)
@@ -105,6 +109,7 @@ void LibFacade::initInventoryDataTable()
     MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
 }
 
+
 void LibFacade::loadIndex()
 {
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
@@ -119,12 +124,12 @@ void LibFacade::loadIndex()
     if (!MyIndexManager.data()->load())
         return;
 
+    initFileManager();
+
     processHeader();
 
     MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
     MyElementsContainer.reset(new ElementsContainer(MyHeadParser.data(), this));
-
-    initFileManager();
 
     MyBodyParser.reset(new BodyParser(MyMediaManager.data(), MyElementsContainer.data(), this));
     emit newIndexLoaded();
@@ -143,7 +148,7 @@ void LibFacade::reboot()
 
 void LibFacade::processHeader()
 {
-    MyHeadParser.reset(new HeadParser(MyConfiguration.data(), this));
+    MyHeadParser.reset(new HeadParser(MyConfiguration.data(), MyMediaManager.data(), this));
     MyHeadParser.data()->setInventoryTable(MyInventoryTable.data()); // must set before parse
     MyHeadParser.data()->parse(MyIndexManager->getHead(), MyTaskScheduler.data());
 }

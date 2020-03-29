@@ -6,7 +6,7 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia
 #ifdef SUPPORT_QTAV
     QString module = "import QtAV 1.7\n";
 #else
-    QString module = "import QtMultimedia 5.7\n";
+    QString module = "import QtMultimedia 5.12\n";
 #endif
     qml = "import QtQuick 2.7\n"+
                     module +
