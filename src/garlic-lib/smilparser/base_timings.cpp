@@ -139,7 +139,7 @@ void BaseTimings::skipElement()
         InternalTimer->setSingleShot(true);
         InternalTimer->setTimerType(Qt::PreciseTimer);
     }
-    InternalTimer->start(300);
+    InternalTimer->start(1000);
 }
 
 

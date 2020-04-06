@@ -37,6 +37,12 @@ TImage::~TImage()
 
 void TImage::prepareDurationTimerBeforePlay()
 {
+    if (getLoadablePath().isEmpty())
+    {
+        skipElement();
+        return;
+    }
+
     if (startDurTimer() || isEndTimerActive())
     {
         if (!is_resumed)
