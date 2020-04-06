@@ -48,6 +48,8 @@ class LibFacade : public QObject
         HeadParser        *getHead() const;
         void               setConfigFromExternal(QString config_path, bool restart_smil_parsing = true);
         void               setIndexFromExternal(QString index_path);
+        void               reloadWithNewIndex(QString index_path);
+        void               initFromLauncher(QString uuid, QString smil_index_url);
         void               beginSmilBodyParsing();
         QString            requestLoaddableMediaPath(QString path);
         // Interactions

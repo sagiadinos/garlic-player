@@ -33,14 +33,20 @@ QString MainConfiguration::log_directory = "";
 MainConfiguration::MainConfiguration(QSettings *uc, QObject *parent) : QObject(parent)
 {
     UserConfig = uc;
-    determineUuid();
-    determinePlayerName();
+    uuid        = getUserConfigByKey("uuid");
+    player_name = getUserConfigByKey("player_name");
+    time_zone   = QTimeZone::systemTimeZoneId();
     determineOS();
-    setTimeZone(QTimeZone::systemTimeZoneId());
+
     // ugly workaround from https://stackoverflow.com/questions/21976264/qt-isodate-formatted-date-time-including-timezone
     // cause otherwise we get no time zone in date string
     setStartTime(QDateTime::currentDateTime().toOffsetFromUtc(QDateTime::currentDateTime().offsetFromUtc()).toString(Qt::ISODate));
-    determineUserAgent();
+}
+
+void MainConfiguration::setUuid(const QString &value)
+{
+    uuid = value;
+    setUserConfigByKey("uuid", value);
 }
 
 QString MainConfiguration::getLogDir()
@@ -68,52 +74,31 @@ void MainConfiguration::setUserConfigByKey(QString key, QString value)
     UserConfig->setValue(key, value);
 }
 
-
-QString MainConfiguration::getPlayerName() const
-{
-    return player_name;
-}
-
 void MainConfiguration::setPlayerName(const QString &value)
 {
     player_name = value;
     setUserConfigByKey("player_name", value);
 }
 
+void MainConfiguration::determinePlayerName()
+{
+    setPlayerName(getUserConfigByKey("player_name"));
+    if (getPlayerName() == "")
+    {
+        setPlayerName(getUuid().mid(24,12));
+    }
+}
+
 QString MainConfiguration::createUuid()
 {
-    QString id = QString::fromUtf8(QSysInfo::machineUniqueId());
-    if (id.isEmpty())
-    {
-        id = QUuid::createUuid().toString();
-    }
+    QString id = QUuid::createUuid().toString();
     return id.mid(1, 36);// must start from 1 cause uuid will created as {uuid}
-}
-
-QString MainConfiguration::getUuid() const
-{
-    return uuid;
-}
-
-
-void MainConfiguration::determineUuid()
-{
-    uuid = getUserConfigByKey("uuid");
-    if (getUuid() == "")
-    {
-        uuid = createUuid();
-        UserConfig->setValue("uuid", getUuid());
-    }
-}
-
-QString MainConfiguration::getIndexUri()
-{
-    return index_uri;
 }
 
 void MainConfiguration::setIndexUri(const QString &value)
 {
     index_uri = value;
+    setUserConfigByKey("index_uri", value);
 }
 
 bool MainConfiguration::validateContentUrl(QString url_string)
@@ -156,23 +141,16 @@ bool MainConfiguration::validateContentUrl(QString url_string)
     if (error)
         return false;
 
-
     return true;
 }
 
-QString MainConfiguration::getErrorText() const
+void MainConfiguration::determineIndexUri(const QString &value)
 {
-    return error_text;
-}
-
-void MainConfiguration::determineIndexUri(QString path)
-{
-    if (path != "")
+    if (!value.isEmpty())
     {
-        setUserConfigByKey("index_uri", path);
-        setIndexUri(path);
+        setIndexUri(value);
     }
-    else if (getUserConfigByKey("index_uri") != "") // get from intern config
+    else if (!getUserConfigByKey("index_uri").isEmpty()) // get from intern config
     {
         setIndexUri(getUserConfigByKey("index_uri"));
     }
@@ -183,6 +161,7 @@ void MainConfiguration::setIndexPath(const QString &value)
 {
     index_path = value;
 }
+
 /**
  * @brief TConfiguration::determineIndexPath
  * determine the clean index path
@@ -209,30 +188,6 @@ void MainConfiguration::determineIndexPath()
 }
 
 
-QString MainConfiguration::getIndexPath()
-{
-    return index_path;
-}
-
-void MainConfiguration::setNetworkInterface(const QString &value)
-{
-    setUserConfigByKey("Network/Interface", value);
-}
-
-QString MainConfiguration::getNetworkInterface()
-{
-    return getUserConfigByKey("Network/Interface");
-}
-
-QString MainConfiguration::getOS() const
-{
-    return os;
-}
-
-QString MainConfiguration::getValidatedContentUrl() const
-{
-    return validated_content_url;
-}
 
 void MainConfiguration::setValidatedContentUrl(const QString &value)
 {
@@ -247,21 +202,6 @@ QString MainConfiguration::getStartTime() const
 void MainConfiguration::setStartTime(const QString &value)
 {
     start_time = value;
-}
-
-QString MainConfiguration::getTimeZone() const
-{
-    return time_zone;
-}
-
-void MainConfiguration::setTimeZone(const QString &value)
-{
-    time_zone = value;
-}
-
-QString MainConfiguration::getBasePath() const
-{
-    return base_path;
 }
 
 void MainConfiguration::setBasePath(const QString &value)
@@ -307,7 +247,7 @@ void MainConfiguration::createDirectories()
     log_dir   = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/logs/";
 #elif defined  Q_OS_ANDROID
     // Using CacheLocation in Android is dangerous, cause that is limited App-Storage which flooding soon and crash the Player
-    // GenericDataLocation should be /sdcard
+    // GenericDataLo//cation should be /sdcard
     cache_dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" +getAppName() + "/cache/";
     log_dir   = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + getAppName() + "/logs/";
 #else
@@ -333,15 +273,6 @@ void MainConfiguration::createDirectoryIfNotExist(QString path)
         qCritical(SmilParser) << "Failed to create " << dir.path() << "\r";
     }
     return;
-}
-
-void MainConfiguration::determinePlayerName()
-{
-    setPlayerName(getUserConfigByKey("player_name"));
-    if (getPlayerName() == "")
-    {
-        setPlayerName(getUuid().mid(24,12));
-    }
 }
 
 void MainConfiguration::determineOS()

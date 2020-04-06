@@ -18,10 +18,11 @@
 
 #include "mainwindow.h"
 
-MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
+MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade, PlayerConfiguration *pc)
 {
     MyScreen               = screen;
     MyLibFacade            = lib_facade;
+    MyPlayerConfiguration  = pc;
     MyInteractions         = new Interactions(lib_facade, this);
 }
 
@@ -85,24 +86,17 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
                 openDebugInfos();
                 setCursor(Qt::BlankCursor);
                 break;
-            case Qt::Key_S:  // Ctrl-C will not work with qwebengineview
-                setCursor(Qt::ArrowCursor);
-                if (openConfigDialog() == QDialog::Accepted)
-                {
-                    MyLibFacade->initParser();
-                }
-                setCursor(Qt::BlankCursor);
+            case Qt::Key_S:  // Ctrl-C will not work during qwebengineview
+                openConfigDialog();
             break;
 
-            case Qt::Key_Q:
+            case Qt::Key_Q: // quit app normal
                 MyLibFacade->shutDownParsing();
                 sendClosePlayerCorrect();
-                delete MyLibFacade;
+            //    delete MyLibFacade;
                 QApplication::quit();
             break;
-            case Qt::Key_C: // delete anormal
- //               MyLibFacade->shutDownParsing();
- //               delete MyLibFacade;
+            case Qt::Key_C: // quit app not normal e.g. to simulate a crash
                 QApplication::quit();
             break;
         }
@@ -141,8 +135,20 @@ void MainWindow::openDebugInfos()
 
 int MainWindow::openConfigDialog()
 {
+    int ret = QDialog::Rejected;
+    if (MyPlayerConfiguration->hasLauncher())
+    {
+        return ret;
+    }
     ConfigDialog MyConfigDialog(0, MyLibFacade->getConfiguration());
-    return MyConfigDialog.exec();
+    setCursor(Qt::ArrowCursor);
+    if (MyConfigDialog.exec() == QDialog::Accepted)
+    {
+        MyLibFacade->initParser();
+        ret = QDialog::Accepted;
+    }
+    setCursor(Qt::BlankCursor);
+    return ret;
 }
 
 void MainWindow::resizeAsNormalFullScreen()
@@ -264,7 +270,7 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             qDebug(MediaPlayer) << "No QML source set";
             break;
         case QQuickView::Ready:
-            MyLibFacade->initParser();
+//            MyLibFacade->initParser(); temporary set in main.cpp
             break;
         case QQuickView::Loading:
             qDebug(MediaPlayer) << "QML loaded/compiled... ";

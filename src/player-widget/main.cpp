@@ -20,7 +20,7 @@
 #include "mainwindow.h"
 #include "../player-common/cmdparser.h"
 #include "../player-common/screen.h"
-
+#include "../player-common/player_configuration.h"
 
 void handleMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -34,13 +34,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     LibFacade      *MyLibFacade     = new LibFacade();
-    QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
-    QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());
-    QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName() + " - " + MyLibFacade->getConfiguration()->getVersion());
-
-    QDir dir(".");
-    MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // Run in terminal could cause absolute path returns user homedirectory in QtCreator
-    MyLibFacade->getConfiguration()->createDirectories();
+    PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyLibFacade->getConfiguration());
+    MyPlayerConfiguration->determineInitConfigValues();
 
 #ifdef QT_DEBUG
  //   QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
@@ -54,36 +49,29 @@ int main(int argc, char *argv[])
     MyParser.addOptions();
     MyParser.parse(&app);
 
-
     TScreen    MyScreen(Q_NULLPTR);
 
     MyScreen.selectCurrentScreen(MyParser.getScreenSelect());
     MainWindow w(&MyScreen, MyLibFacade);
 
-    bool is_index = true;
-    if (MyLibFacade->getConfiguration()->getIndexUri() == "")
+    // do not start without an index uri
+    if (!MyPlayerConfiguration->hasLauncher() && MyLibFacade->getConfiguration()->getIndexUri() == "" && w.openConfigDialog() == QDialog::Rejected)
     {
-        if (w.openConfigDialog() == QDialog::Rejected)
-            is_index = false;
+        return 1;
     }
 
-    int ret = 0;
-    if (is_index)
+    QString val = MyParser.getWindowMode();
+    if (val == "fullscreen")
+        w.resizeAsNormalFullScreen();
+    else if (val == "bigscreen")
+        w.resizeAsBigFullScreen();
+    else if (val == "windowed")
     {
-        QString val = MyParser.getWindowMode();
-        if (val == "fullscreen")
-            w.resizeAsNormalFullScreen();
-        else if (val == "bigscreen")
-            w.resizeAsBigFullScreen();
-        else if (val == "windowed")
-        {
-            w.setMainWindowSize(MyParser.getWindowSize());
-            w.resizeAsWindow();
-        }
-
-        MyLibFacade->initParser();
-
-        ret = app.exec();
+        w.setMainWindowSize(MyParser.getWindowSize());
+        w.resizeAsWindow();
     }
-    return ret;
+
+    MyLibFacade->initParser();
+
+    return app.exec();
 }

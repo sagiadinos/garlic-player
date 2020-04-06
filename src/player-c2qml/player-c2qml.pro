@@ -38,12 +38,18 @@ android {
 
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
-    # comment the oppenssl include when you want to debug otherwise it crashs when start debugging
+    # include only in release otherwise it crashs when start debugging
     # see https://github.com/KDAB/android_openssl/issues/10
-   # include(../ext/android_openssl/openssl.pri)
+    Release:include(../ext/android_openssl/openssl.pri)
 
     ANDROID_EXTRA_LIBS += \
         $$OUT_PWD/../libandroid/libgarlic.so
+
+    HEADERS  += \
+        Java2Cpp.h \
+        android_manager.h
+    SOURCES += android_manager.cpp
+
 
 }
 win32 {
@@ -65,7 +71,6 @@ SOURCES += \
     region.cpp
 
 HEADERS  += \
-    Java2Cpp.h \
     media/image.h \
     media/player_base_media.h \
     media/video.h \

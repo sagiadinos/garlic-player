@@ -55,6 +55,7 @@ class MediaModel : public QObject
 
         //Getter/Setter
         QMap<QString, QPair<QString, int> >           getAvailableMediaList() const {return available_media_list;}
+        int                                           countAvailableMedia(){return available_media_list.size();}
         void                                          setAvailableMediaList(const QMap<QString, QPair<QString, int> > &value) {available_media_list = value;}
         QString                                       determineHashedFilePath(QString src_file_path);
 

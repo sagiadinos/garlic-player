@@ -1,5 +1,6 @@
 SOURCES += \
     $$PWD/interactions.cpp \
+    ../player-common/player_configuration.cpp \
     $$PWD/touch_manager.cpp \
     ../player-common/cmdparser.cpp \
     ../player-common/debug_infos.cpp \
@@ -8,6 +9,7 @@ SOURCES += \
 
 HEADERS  += \
     $$PWD/interactions.h \
+    ../player-common/player_configuration.h \
     $$PWD/touch_manager.h \
     ../player-common/cmdparser.h \
     ../player-common/configdialog.h \
@@ -18,8 +20,3 @@ FORMS += \
     ../player-common/configdialog.ui \
     ../player-common/debug_infos.ui
 
-#unix:!android | !win32 {
-#    SOURCES += ../player-common/network_dialog.cpp
-#    HEADERS += ../player-common/network_dialog.h
-#    FORMS   +=  ../player-common/networkdialog.ui
-#}

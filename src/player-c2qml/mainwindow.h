@@ -27,6 +27,7 @@
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
 #include "../player-common/interactions.h"
+#include "../player-common/player_configuration.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
 #if defined  Q_OS_ANDROID
@@ -39,7 +40,7 @@ class MainWindow : public QQuickView
 {
     Q_OBJECT
     public:
-        MainWindow(TScreen *screen, LibFacade *lib_facade);
+        MainWindow(TScreen *screen, LibFacade *lib_facade, PlayerConfiguration *pc);
         ~MainWindow();
         void                      init();
         int                       openConfigDialog();
@@ -55,6 +56,7 @@ class MainWindow : public QQuickView
         const int                 BIGFULLSCREEN = 2;
         Interactions             *MyInteractions;
         LibFacade                *MyLibFacade      = Q_NULLPTR;
+        PlayerConfiguration      *MyPlayerConfiguration      = Q_NULLPTR;
         TScreen                  *MyScreen;
         static LibFacade         *MyStaticLibFacade;
         QMap<QString, TRegion *>  regions_list;

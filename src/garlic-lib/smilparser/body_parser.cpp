@@ -71,13 +71,13 @@ void BodyParser::preloadElement(TContainer *parent_container, QDomElement elemen
     // can receive the signal and parsing will be interrupted
     MyBaseTimings->preloadParse(element);
 
-    MyElementsContainer->insertSmilElement(MyBaseTimings);
 
     // media must be initialised after parse
     if (MyBaseTimings->getBaseType() == "media")
     {
         initMedia(qobject_cast<BaseMedia *> (MyBaseTimings));
     }
+    MyElementsContainer->insertSmilElement(MyBaseTimings);
 
     qDebug(Develop) << MyBaseTimings->getID() << " preloaded";
     return;
@@ -96,8 +96,8 @@ void BodyParser::initMedia(BaseMedia *MyMedia)
 {
     // media must be initialised after parse, because register needs src
     // and insertSmilMedia needs the region
-    MyElementsContainer->insertSmilMedia(MyMedia);
     MyMedia->registerInMediaManager(MyMediaManager);
+    MyElementsContainer->insertSmilMedia(MyMedia);
 }
 
 

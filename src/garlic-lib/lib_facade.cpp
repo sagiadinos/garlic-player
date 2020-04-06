@@ -20,6 +20,7 @@
 LibFacade::LibFacade(QObject *parent) : QObject(parent)
 {
     MyConfiguration.reset(new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player")));
+
     MyIndexManager.reset(new Files::IndexManager(MyConfiguration.data(), this));
     connect(MyIndexManager.data(), SIGNAL(newIndexDownloaded()), this, SLOT(loadIndex()));
     resource_monitor_timer_id = startTimer(300000); // every 300s for ressource monitor
@@ -40,6 +41,18 @@ void LibFacade::shutDownParsing()
 {
     MyBodyParser.data()->endSmilParsing();
     MyIndexManager.data()->deactivateRefresh();
+}
+
+void LibFacade::initFromLauncher(QString uuid, QString smil_index_url)
+{
+    if (getConfiguration()->getUuid() != uuid)
+    {
+        getConfiguration()->setUuid(uuid);
+    }
+    if (getConfiguration()->getIndexUri() != smil_index_url)
+    {
+        getConfiguration()->setIndexUri(smil_index_url);
+    }
 }
 
 
@@ -71,9 +84,20 @@ void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_par
 void LibFacade::setIndexFromExternal(QString index_path)
 {
     MyConfiguration->setIndexUri(index_path);
-    MyConfiguration->setUserConfigByKey("index_uri", index_path);
+}
+
+/**
+ * When new index/content_url came from an external source like a launcher at runtime
+ *
+ * @brief LibFacade::reloadWithNewIndex
+ * @param index_path
+ */
+void LibFacade::reloadWithNewIndex(QString index_path)
+{
+    setIndexFromExternal(index_path);
     loadIndex();
 }
+
 
 void LibFacade::beginSmilBodyParsing()
 {

@@ -77,7 +77,6 @@ void SmilHead::XMLConfiguration::parse()
         else if (attr_name == "content.serverUrl")
         {
             MyConfiguration->setIndexUri(attr_value);
-            MyConfiguration->setUserConfigByKey("index_uri", attr_value);
         }
         else if (attr_name == "display.brightness")
         {

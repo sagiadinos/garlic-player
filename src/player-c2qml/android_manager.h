@@ -15,49 +15,24 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#if defined Q_OS_ANDROID
+#ifndef LAUNCHERMANAGER_H
+#define LAUNCHERMANAGER_H
 
-#ifndef JAVA2CPP_H
-#define JAVA2CPP_H
+#include <QObject>
+#include <QtAndroidExtras>
 
-#include <jni.h>
-#include "lib_facade.h"
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// Todo find a bedder solution
-LibFacade *GlobalLibfacede;
-
-void setGlobalLibFaceForJava(LibFacade *glf)
+class AndroidManager
 {
-    GlobalLibfacede = glf;
-}
+    public:
+        AndroidManager();
+        bool hasLauncher();
+        bool checkPermissiones();
+        void disableScreenSaver();
+        void sendCloseCorrect();
+        QString getSmilIndexFromLauncher();
+        QString getUUIDFromLauncher();
+    protected:
+        QAndroidJniObject MyActivity;
+};
 
-JNIEXPORT void JNICALL Java_com_sagiadinos_garlic_player_java_ConfigReceiver_getConfigPath(
-        JNIEnv *env /*env*/,
-        jobject /*this_obj*/,
-        jstring path)
-{
-    const char *str = env->GetStringUTFChars(path, NULL);
-    GlobalLibfacede->setConfigFromExternal(str);
-
-}
-
-JNIEXPORT void JNICALL Java_com_sagiadinos_garlic_player_java_SmilIndexReceiver_getSmilIndexPath(
-        JNIEnv *env /*env*/,
-        jobject /*this_obj*/,
-        jstring path)
-{
-    const char *str = env->GetStringUTFChars(path, NULL);
-    GlobalLibfacede->reloadWithNewIndex(str);
-}
-
-
-#ifdef __cplusplus
-}
-#endif
-#endif // JAVA2CPP_H
-#endif
+#endif // LAUNCHERMANAGER_H

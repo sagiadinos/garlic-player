@@ -21,9 +21,11 @@
 #include "tools/resource_monitor.h"
 #include "../player-common/cmdparser.h"
 #include "../player-common/screen.h"
+#include "../player-common/player_configuration.h"
 
 #if defined  Q_OS_ANDROID
     #include "Java2Cpp.h"
+    #include "android_manager.h"
     #include <QtWebView>
 #else
     #include <qtwebengineglobal.h>
@@ -45,37 +47,33 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    LibFacade      *MyLibFacade     = new LibFacade();
+    LibFacade            *MyLibFacade           = new LibFacade();
+    PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyLibFacade->getConfiguration());
+
 #if defined Q_OS_ANDROID
-    auto  result = QtAndroid::checkPermission(QString("android.permission.WRITE_EXTERNAL_STORAGE"));
-    if(result == QtAndroid::PermissionResult::Denied)
+    AndroidManager *MyAndroidManager = new AndroidManager();
+    if (!MyAndroidManager->checkPermissiones())
     {
-        QtAndroid::PermissionResultMap resultHash = QtAndroid::requestPermissionsSync(QStringList({"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"}));
-        if(resultHash["aandroid.permission.WRITE_EXTERNAL_STORAGE"] == QtAndroid::PermissionResult::Denied)
-            return 0;
+        MyAndroidManager->sendCloseCorrect();
+        QApplication::quit();
+    }
+
+    if (MyAndroidManager->hasLauncher())
+    {
+        MyPlayerConfiguration->setHasLauncher(MyAndroidManager->hasLauncher());
+        MyPlayerConfiguration->setUuidFromLauncher(MyAndroidManager->getUUIDFromLauncher());
+        MyPlayerConfiguration->setSmilIndexUriFromLauncher(MyAndroidManager->getSmilIndexFromLauncher());
     }
 
     QtWebView::initialize();
-    QtAndroid::androidActivity().callMethod<void>("registerBroadcastReceiver");
     setGlobalLibFaceForJava(MyLibFacade);
-
-    QString config_xml_path = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/config.xml";
-    QFile config_file(config_xml_path);
-    if (config_file.exists())
-    {
-        MyLibFacade->setConfigFromExternal(config_xml_path);
-    }
-
 #endif
+
     qmlRegisterType<LibFacade>("com.garlic.LibFacade", 1, 0, "LibFacade");
     qmlRegisterType<ResourceMonitor>("com.garlic.ResourceMonitor", 1, 0, "ResourceMonitor");
-    QApplication::setApplicationName(MyLibFacade->getConfiguration()->getAppName());
-    QApplication::setApplicationVersion(MyLibFacade->getConfiguration()->getVersion());
-    QApplication::setApplicationDisplayName(MyLibFacade->getConfiguration()->getAppName());
 
-    QDir dir(".");
-    MyLibFacade->getConfiguration()->determineBasePath(dir.absolutePath()); // When run in terminal absolute path returns user homedirectory in QtCreator
-    MyLibFacade->getConfiguration()->createDirectories();
+    MyPlayerConfiguration->determineInitConfigValues();
+
 
     qInstallMessageHandler(handleMessages);
 
@@ -89,36 +87,19 @@ int main(int argc, char *argv[])
 
     TScreen    MyScreen(Q_NULLPTR);
     MyScreen.selectCurrentScreen(MyParser.getScreenSelect());
-    MainWindow w(&MyScreen, MyLibFacade);
+    MainWindow w(&MyScreen, MyLibFacade, MyPlayerConfiguration);
 
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);
 
-    if (MyLibFacade->getConfiguration()->getIndexUri() == "" && w.openConfigDialog() == QDialog::Rejected)
+    if (MyLibFacade->getConfiguration()->getIndexUri().isEmpty() && w.openConfigDialog() == QDialog::Rejected)
+    {
         return 0;
-
+    }
     w.init();
 
 #if defined  Q_OS_ANDROID
 
-    // preserve android screensaver https://stackoverflow.com/questions/44100627/how-to-disable-screensaver-on-qt-android-app
-    // https://forum.qt.io/topic/57625/solved-keep-android-5-screen-on
-
-    QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative", "activity", "()Landroid/app/Activity;");
-    if (activity.isValid())
-    {
-        QAndroidJniObject window = activity.callObjectMethod("getWindow", "()Landroid/view/Window;");
-        if (window.isValid())
-        {
-            const int FLAG_KEEP_SCREEN_ON = 128;
-            window.callMethod<void>("addFlags", "(I)V", FLAG_KEEP_SCREEN_ON);
-        }
-    }
-    // not to crash in Android > 5.x Clear any possible pending exceptions.
-    QAndroidJniEnvironment env;
-    if (env->ExceptionCheck()) {
-        env->ExceptionClear();
-    }
-
+    MyAndroidManager->disableScreenSaver();
     w.showFullScreen();
 #else
 
@@ -135,5 +116,7 @@ int main(int argc, char *argv[])
         w.resizeAsWindow();
     }
 #endif
+    MyLibFacade->initParser();
+
     return app.exec();
 }

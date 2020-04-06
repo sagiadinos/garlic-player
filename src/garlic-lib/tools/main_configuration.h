@@ -47,7 +47,7 @@ class MainConfiguration  : public QObject
         const     QString        OS_WINRT    = "winrt";
         const     QString        OS_UNKNOWN  = "unknown";                ;
 
-        explicit MainConfiguration(QSettings *uc, QObject *parent = Q_NULLPTR);
+        explicit        MainConfiguration(QSettings *uc, QObject *parent = Q_NULLPTR);
         QString         getVersion(){return version_from_git;}
         void            setAppName(QString value){app_name = value;}
         QString         getAppName(){return app_name;}
@@ -56,39 +56,43 @@ class MainConfiguration  : public QObject
         static QString  log_directory;
         static QString  getLogDir();
 
-        QString         getLastPlayedIndexPath();
         void            setLastPlayedIndexPath(const QString &value);
         QString         getUserConfigByKey(QString key);
         void            setUserConfigByKey(QString key, QString value);
         QString         createUuid();
-        QString         getUuid() const;
-        QString         getPlayerName() const;
+        void            setUuid(const QString &value);
         void            setPlayerName(const QString &value);
+        void            determinePlayerName();
+
+        // easy getter
+        QString         getUuid() const {return uuid;}
+        QString         getPlayerName() const {return player_name;}
         void            setLogDir(const QString &value){log_dir = value;}
         void            setUserAgent(const QString &value){user_agent = value;}
         QString         getUserAgent() const {return user_agent;}
-        QString         getOS() const;
-        QString         getValidatedContentUrl() const;
+        QString         getIndexUri(){return index_uri;}
+        QString         getOS() const {return os;}
+        QString         getValidatedContentUrl() const {return validated_content_url;}
+        QString         getIndexPath(){return index_path;}
+        QString         getTimeZone() const {return time_zone;}
+        QString         getBasePath() const{return base_path;};
+        QString         getErrorText() const {return error_text;};
+
         void            setValidatedContentUrl(const QString &value);
+        QString         getLastPlayedIndexPath();
         QString         getStartTime() const;
         void            setStartTime(const QString &value);
-        QString         getTimeZone() const;
-        void            setTimeZone(const QString &value);
         QString         getPaths(QString path_name);
         void            setIndexUri(const QString &value);
-        QString         getIndexUri();
         void            setIndexPath(const QString &value);
-        QString         getIndexPath();
         void            setNetworkInterface(const QString &value);
         QString         getNetworkInterface();
-        QString         getBasePath() const;
         void            setBasePath(const QString &value);
         void            determineBasePath(QString absolute_path_to_bin);
-        void            determineIndexUri(QString path);
+        void            determineIndexUri(const QString &value);
         void            createDirectories();
         void            determineUserAgent();
-        bool validateContentUrl(QString url_string);
-        QString getErrorText() const;
+        bool            validateContentUrl(QString url_string);
 
 protected:
         QSettings      *UserConfig;
@@ -108,8 +112,6 @@ protected:
         QString         error_text = "";
         void            createDirectoryIfNotExist(QString path);
         void            determineIndexPath();
-        void            determineUuid();
-        void            determinePlayerName();
         void            determineOS();
 };
 
