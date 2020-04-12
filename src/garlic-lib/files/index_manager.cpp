@@ -44,7 +44,10 @@ void Files::IndexManager::lookUpForUpdatedIndex()
         MyConfiguration->setLastPlayedIndexPath(MyConfiguration->getPaths("cache")+"index.smil");
     }
     else
+    {
         MyConfiguration->setLastPlayedIndexPath(src_index_path);
+        emit readyForLoading();
+    }
 }
 
 bool Files::IndexManager::load()
@@ -96,21 +99,24 @@ bool Files::IndexManager::loadLocal(QString local_path)
     if (!QFile::exists(local_path))
     {
         QStringList list;
-        list << "instanceId" << "display:0"
-             << "resourceURI" << src_index_path;
-        qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("SMIL_NOT_AVAILABLE",list);
+        list << "instanceId" << "display:0" << "resourceURI" << src_index_path;
+        qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("SMIL_NOT_AVAILABLE", list);
         return false;
     }
 
     if (!MyIndexModel->loadDocument(local_path))
+    {
         return false;
+    }
     return true;
 }
 
 void Files::IndexManager::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timer_id)
+    {
         lookUpForUpdatedIndex();
+    }
 }
 
 
@@ -120,5 +126,5 @@ void Files::IndexManager::doSucceed(TNetworkAccess *downloader)
 {
     Q_UNUSED(downloader); // This class have one permenent downloader instance so function paramter not used
 
-    emit newIndexDownloaded();
+    emit readyForLoading();
 }

@@ -51,7 +51,7 @@ namespace Files
         protected slots:
             void doSucceed(TNetworkAccess *downloader);
         signals:
-            void newIndexDownloaded();
+            void readyForLoading();
 
     };
 }

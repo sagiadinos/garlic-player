@@ -42,11 +42,12 @@ void LibFacade::init(MainConfiguration *config)
     MyConfiguration.reset(config);
 
     MyIndexManager.reset(new Files::IndexManager(MyConfiguration.data(), this));
-    connect(MyIndexManager.data(), SIGNAL(newIndexDownloaded()), this, SLOT(loadIndex()));
+    connect(MyIndexManager.data(), SIGNAL(readyForLoading()), this, SLOT(loadIndex()));
 
     resource_monitor_timer_id = startTimer(300000); // every 300s for ressource monitor
 
     MyTaskScheduler.reset(new SmilHead::TaskScheduler(MyConfiguration.data(), this));
+    // maybe call initParser() is better here, so we do not need a second MyIndexManager.data()->init in loadInded()
     connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(loadIndex()));
     connect(MyTaskScheduler.data(), SIGNAL(installSoftware(QString)), this, SLOT(emitInstallSoftware(QString)));
     connect(MyTaskScheduler.data(), SIGNAL(reboot()), this, SLOT(reboot()));
@@ -64,7 +65,8 @@ void LibFacade::shutDownParsing()
 
 void LibFacade::initParser()
 {
-    loadIndex();
+    MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
+    MyIndexManager.data()->lookUpForUpdatedIndex();
 }
 
 
@@ -85,7 +87,7 @@ void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_par
 void LibFacade::reloadWithNewIndex(QString index_path)
 {
     MyConfiguration->setIndexUri(index_path);
-    loadIndex();
+    initParser();
 }
 
 
@@ -125,7 +127,6 @@ void LibFacade::loadIndex()
         MyIndexManager.data()->deactivateRefresh();
     }
 
-    MyIndexManager.data()->lookUpForUpdatedIndex();
     // Start with this only when it is absolutly sure that in the player component is no activity anymore.
     if (!MyIndexManager.data()->load())
         return;
@@ -143,6 +144,7 @@ void LibFacade::initFileManager()
     MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data(), this));
     MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
     MyMediaManager.reset(new Files::MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
+    qDebug(Develop) <<  " end initFileManager" ;
 }
 
 void LibFacade::processHeadParsing()
@@ -151,6 +153,7 @@ void LibFacade::processHeadParsing()
     connect(MyHeadParser.data(), SIGNAL(parsingCompleted()), this, SLOT(processBodyParsing()));
 
     MyHeadParser.data()->parse(MyIndexManager->getHead(), MyTaskScheduler.data());
+    qDebug(Develop) <<  " end processHeadParsing" ;
 }
 
 void LibFacade::processBodyParsing()
@@ -163,6 +166,7 @@ void LibFacade::processBodyParsing()
     connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));
     connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(emitStopShowMedia(BaseMedia *)));
     MyBodyParser->beginPreloading(MyIndexManager->getBody());
+    qDebug(Develop) <<  " end processBodyParsing" ;
 }
 
 void LibFacade::preparedForPlaying()
@@ -170,6 +174,7 @@ void LibFacade::preparedForPlaying()
     MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
 
     emit readyForPlaying();
+    qDebug(Develop) <<  " emit readyForPlaying" ;
 }
 
 void LibFacade::timerEvent(QTimerEvent *event)
