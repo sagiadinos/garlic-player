@@ -47,7 +47,6 @@ void LibFacade::init(MainConfiguration *config)
     resource_monitor_timer_id = startTimer(300000); // every 300s for ressource monitor
 
     MyTaskScheduler.reset(new SmilHead::TaskScheduler(MyConfiguration.data(), this));
-    // maybe call initParser() is better here, so we do not need a second MyIndexManager.data()->init in loadInded()
     connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(loadIndex()));
     connect(MyTaskScheduler.data(), SIGNAL(installSoftware(QString)), this, SLOT(emitInstallSoftware(QString)));
     connect(MyTaskScheduler.data(), SIGNAL(reboot()), this, SLOT(reboot()));
@@ -66,7 +65,15 @@ void LibFacade::shutDownParsing()
 void LibFacade::initParser()
 {
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
-    MyIndexManager.data()->lookUpForUpdatedIndex();
+    if (MyIndexManager->exists())
+    {
+        loadIndex();
+    }
+    else
+    {
+        MyIndexManager.data()->lookUpForUpdatedIndex();
+    }
+
 }
 
 

@@ -43,7 +43,7 @@ void Files::IndexManager::lookUpForUpdatedIndex()
         // especially needed to ensure cache play first, when switching between local and remote indexes
         MyConfiguration->setLastPlayedIndexPath(MyConfiguration->getPaths("cache")+"index.smil");
     }
-    else
+    else if (MyConfiguration->getLastPlayedIndexPath() != src_index_path)
     {
         MyConfiguration->setLastPlayedIndexPath(src_index_path);
         emit readyForLoading();
@@ -79,6 +79,11 @@ void Files::IndexManager::deactivateRefresh()
 
     refresh_time   = 0;
     killTimer(timer_id);
+}
+
+bool Files::IndexManager::exists()
+{
+   return QFile::exists(MyConfiguration->getLastPlayedIndexPath());
 }
 
 QDomElement Files::IndexManager::getHead()

@@ -46,7 +46,7 @@ QString BaseMedia::getLoadablePath()
         }
         else
         {
-            return "not_cached_yet"; // only cachable media can be loaded
+            return ""; // only cachable media can be loaded
         }
     }
     else
