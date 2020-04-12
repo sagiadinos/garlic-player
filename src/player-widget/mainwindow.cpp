@@ -26,7 +26,7 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     MyLibFacade            = lib_facade;
     connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(startShowMedia(BaseMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(stopShowMedia(BaseMedia *)));
-    connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
+    connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
 }
@@ -87,7 +87,7 @@ bool MainWindow::event(QEvent *event)
 {
     event->accept();
     if(event->type() == QEvent::TouchBegin)
-    {
+    {http://indexes.smil-admin.com
         num_touched++;
         if (num_touched > 4)
         {
@@ -222,7 +222,7 @@ void MainWindow::prepareParsing()
     deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
 
     createRegions();
-    MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+    MyLibFacade->beginSmilPlaying(); // begin playing not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
 
 

@@ -36,20 +36,25 @@ BodyParser::~BodyParser()
  *
  * @param body
  */
-void BodyParser::beginSmilParsing(QDomElement body)
+void BodyParser::beginPreloading(QDomElement body)
 {
     MyBody.reset(new TBody(this));
     connect(MyBody.data(), SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(useElement(TContainer *, QDomElement )));
     connect(MyBody.data(), SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
 
     connect(MyBody.data(), SIGNAL(preloadElement(TContainer *, QDomElement)), this, SLOT(preloadElement(TContainer *, QDomElement)));
-    connect(MyBody.data(), SIGNAL(finishPreload()), this, SLOT(beginPlaying()));
+    connect(MyBody.data(), SIGNAL(finishPreload()), this, SLOT(emitPreloadingBodyCompleted()));
 
     MyBody.data()->preloadParse(body);
     return;
 }
 
-void BodyParser::endSmilParsing()
+void BodyParser::beginPlaying()
+{
+    MyBody.data()->prepareTimingsBeforePlaying();
+}
+
+void BodyParser::endPlaying()
 {
     stop_all = true;
 
@@ -81,11 +86,6 @@ void BodyParser::preloadElement(TContainer *parent_container, QDomElement elemen
 
     qDebug(Develop) << MyBaseTimings->getID() << " preloaded";
     return;
-}
-
-void BodyParser::beginPlaying()
-{
-    MyBody.data()->prepareTimingsBeforePlaying();
 }
 
 /**
@@ -221,6 +221,11 @@ void BodyParser::stopPlayingElement(BaseTimings *element)
     element->prepareTimingsBeforeStop();
     stopElement(element);
     return;
+}
+
+void BodyParser::emitPreloadingBodyCompleted()
+{
+    emit preloadingBodyCompleted();
 }
 
 // ============================== private methods =======================================

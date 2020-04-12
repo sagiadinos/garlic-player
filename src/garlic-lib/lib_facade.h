@@ -44,13 +44,12 @@ class LibFacade : public QObject
     public:
         explicit LibFacade(QObject *parent = nullptr);
         ~LibFacade();
-        MainConfiguration *getConfiguration() const;
-        HeadParser        *getHead() const;
+        void               init(MainConfiguration *config);
+        MainConfiguration *getConfiguration() const {return MyConfiguration.data();}
+        HeadParser        *getHead() const {return MyHeadParser.data();}
         void               setConfigFromExternal(QString config_path, bool restart_smil_parsing = true);
-        void               setIndexFromExternal(QString index_path);
         void               reloadWithNewIndex(QString index_path);
-        void               initFromLauncher(QString uuid, QString smil_index_url);
-        void               beginSmilBodyParsing();
+        void               beginSmilPlaying();
         QString            requestLoaddableMediaPath(QString path);
         // Interactions
         void               nextSmilMedia(int zone = 1);
@@ -74,10 +73,8 @@ protected:
         QScopedPointer<SmilHead::XMLConfiguration> MyXMLConfiguration;
         QScopedPointer<BodyParser>              MyBodyParser;
         ResourceMonitor                         MyResourceMonitor;
-        void               initInventoryDataTable();
         void               initFileManager();
-        void               processHeader();
-        void               checkForNewSmilIndex();
+        void               processHeadParsing();
         void               timerEvent(QTimerEvent *event);
 
     protected slots:
@@ -86,11 +83,13 @@ protected:
         void               reboot();
         void               emitStartShowMedia(BaseMedia *media);
         void               emitStopShowMedia(BaseMedia *media);
+        void               processBodyParsing();
+        void               preparedForPlaying();
 
     signals:
         void               startShowMedia(BaseMedia *media);
         void               stopShowMedia(BaseMedia *media);
-        void               newIndexLoaded();
+        void               readyForPlaying();
         void               rebootOS();
         void               installSoftware(QString file_path);
 };

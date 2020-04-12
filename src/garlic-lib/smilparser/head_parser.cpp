@@ -18,10 +18,11 @@
 
 #include "head_parser.h"
 
-HeadParser::HeadParser(MainConfiguration *config, Files::MediaManager *mm, QObject *parent) : QObject(parent)
+HeadParser::HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, QObject *parent) : QObject(parent)
 {
-    MyConfiguration = config;
-    MyMediaManager  = mm;
+    MyConfiguration  = config;
+    MyMediaManager   = mm;
+    MyInventoryTable = it;
     setDefaultValues();
 }
 
@@ -37,6 +38,8 @@ void HeadParser::setDefaultValues()
     width                          = 1366;
     height                         = 768;
     backgroundColor                = "black";
+    backgroundImage                = "none";
+    backgroundRepeat               = "repeat";
     region_list.clear();
     default_region.regionName      = "screen";
     default_region.top             = 0;
@@ -92,10 +95,6 @@ void HeadParser::setRootLayout(int w, int h)
     return;
 }
 
-void HeadParser::setInventoryTable(DB::InventoryTable *value)
-{
-    MyInventoryTable = value;
-}
 
 void HeadParser::parseMeta(QDomElement element)
 {
@@ -105,8 +104,8 @@ void HeadParser::parseMeta(QDomElement element)
     {
         refresh = element.attribute("content").toInt();
         #ifdef QT_NO_DEBUG
-            if (refresh < 31) // make sure that impaciently clients do not stress the cms too much but only in release mode
-                refresh = 30;
+            if (refresh < 61) // make sure that impaciently  user do not hammering CMS or Server
+                refresh = 60;
         #endif
     }
 }
@@ -160,6 +159,17 @@ void HeadParser::parseLayout(QDomElement layout)
     nodelist = layout.elementsByTagName("region");
     if (nodelist.length() > 0)
         parseRegions(nodelist);
+
+    // wait for download backgroundimages
+    if (has_backgroundimage)
+    {
+        timer_id = startTimer(1000);
+        timer_counter = 0;
+    }
+    else
+    {
+        emit parsingCompleted();
+    }
 }
 
 void HeadParser::parseRootLayout(QDomElement root_layout)
@@ -224,10 +234,11 @@ void HeadParser::parseRegions(QDomNodeList childs)
 
 void HeadParser::handleBackgroundImage(QString value)
 {
-  if (value.toLower() != "none" && value.toLower() != "inherited")
-  {
-      MyMediaManager->registerFile(value);
-  }
+    if (value.toLower() != "none" && value.toLower() != "inherited")
+    {
+        MyMediaManager->registerFile(value);
+        has_backgroundimage = true;
+    }
 }
 
 
@@ -249,4 +260,52 @@ qreal HeadParser::calculatePercentBasedOnRoot(QString value, qreal root)
       ret = 0;
     return ret/100; // to have a easy calculatable value for resize zones
 }
+
+/**
+ * @brief HeadParser::timerEvent
+ * checks if backgroudimages are loadable
+ * @param event
+ */
+void HeadParser::timerEvent(QTimerEvent *event)
+{
+
+    timer_counter++;
+    if (timer_counter > MAX_SECONDS_WAIT) // do not wait more than 10s
+    {
+        killTimer(event->timerId());
+        emit parsingCompleted();
+        return;
+    }
+
+    if (backgroundImage != "none" && !isMediaLoadable(backgroundImage))
+    {
+       return;
+    }
+
+    for (int i = 0; i < region_list.length(); i++)
+    {
+        if (region_list.at(i).backgroundImage != "none" && !isMediaLoadable(region_list.at(i).backgroundImage))
+        {
+            return;
+        }
+    }
+
+    // if we reach this point it means we have all backgroundimages available
+    killTimer(event->timerId());
+    emit parsingCompleted();
+}
+
+
+
+
+bool HeadParser::isMediaLoadable(QString src)
+{
+    if (MyMediaManager->checkCacheStatus(src) == MEDIA_IS_LOCAL || MyMediaManager->checkCacheStatus(src) == MEDIA_CACHED)
+    {
+        return true;
+    }
+    return false;
+}
+
+
 

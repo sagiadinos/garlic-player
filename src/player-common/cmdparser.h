@@ -11,7 +11,7 @@ class TCmdParser : public QObject
 {
     Q_OBJECT
 public:
-    TCmdParser(LibFacade *facade);
+    TCmdParser(MainConfiguration *facade);
     QString getWindowMode() const;
     void setWindowMode(const QString &value);
 
@@ -25,14 +25,14 @@ public:
     void setIndexUrl(const QString &value);
 
     void addOptions();
-    bool parse(QApplication *app);
+    bool parse(QApplication *app, LibFacade *MyLibFacade);
 protected:
     QString              window_mode   = "windowed";
     QSize                window_size   = QSize(980,540);
     int                  screen_select = 0;
     QString              index_url     = "";
     QCommandLineParser   parser;
-    LibFacade           *MyLibFacade;
+    MainConfiguration   *MyMainConfiguration;
 
 };
 

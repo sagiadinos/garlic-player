@@ -33,9 +33,12 @@ int main(int argc, char *argv[])
   //  QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
 
-    LibFacade      *MyLibFacade     = new LibFacade();
-    PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyLibFacade->getConfiguration());
+    MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
+    PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
     MyPlayerConfiguration->determineInitConfigValues();
+
+    LibFacade      *MyLibFacade     = new LibFacade();
+    MyLibFacade->init(MyMainConfiguration);
 
 #ifdef QT_DEBUG
  //   QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
@@ -45,9 +48,9 @@ int main(int argc, char *argv[])
 #endif
     qInstallMessageHandler(handleMessages);
 
-    TCmdParser MyParser(MyLibFacade);
+    TCmdParser MyParser(MyMainConfiguration);
     MyParser.addOptions();
-    MyParser.parse(&app);
+    MyParser.parse(&app, MyLibFacade);
 
     TScreen    MyScreen(Q_NULLPTR);
 
@@ -55,7 +58,7 @@ int main(int argc, char *argv[])
     MainWindow w(&MyScreen, MyLibFacade);
 
     // do not start without an index uri
-    if (!MyPlayerConfiguration->hasLauncher() && MyLibFacade->getConfiguration()->getIndexUri() == "" && w.openConfigDialog() == QDialog::Rejected)
+    if (!MyPlayerConfiguration->hasLauncher() && MyMainConfiguration->getIndexUri() == "" && w.openConfigDialog() == QDialog::Rejected)
     {
         return 1;
     }

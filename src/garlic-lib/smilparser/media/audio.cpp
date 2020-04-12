@@ -37,6 +37,12 @@ void TAudio::registerInMediaManager(Files::MediaManager *mm)
 
 void TAudio::prepareDurationTimerBeforePlay()
 {
+    if (getLoadablePath().isEmpty())
+    {
+        skipElement();
+        return;
+    }
+
     if (startDurTimer() || !is_resumed)
     {
         emit startedMedia(parent_container, this);

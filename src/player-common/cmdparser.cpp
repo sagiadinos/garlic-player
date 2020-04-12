@@ -1,9 +1,9 @@
 #include "cmdparser.h"
 
-TCmdParser::TCmdParser(LibFacade *facade)
+TCmdParser::TCmdParser(MainConfiguration *config)
 {
-    MyLibFacade = facade;
-    parser.setApplicationDescription(MyLibFacade->getConfiguration()->getDescription());
+    MyMainConfiguration = config;
+    parser.setApplicationDescription(MyMainConfiguration->getDescription());
 }
 
 void TCmdParser::addOptions()
@@ -21,7 +21,7 @@ void TCmdParser::addOptions()
     parser.setOptionsAfterPositionalArgumentsMode(QCommandLineParser::ParseAsOptions);
 }
 
-bool TCmdParser::parse(QApplication *app)
+bool TCmdParser::parse(QApplication *app, LibFacade *MyLibFacade)
 {
     parser.process(*app);
     const QStringList args = parser.positionalArguments();
@@ -67,17 +67,17 @@ bool TCmdParser::parse(QApplication *app)
 
     if (args.size() > 0)
     {
-        if (MyLibFacade->getConfiguration()->validateContentUrl(args.at(0)))
-            MyLibFacade->getConfiguration()->determineIndexUri(MyLibFacade->getConfiguration()->getValidatedContentUrl());
+        if (MyMainConfiguration->validateContentUrl(args.at(0)))
+           MyMainConfiguration->determineIndexUri(MyMainConfiguration->getValidatedContentUrl());
         else
         {
             QTextStream ts( stdout );
-            ts << "\n" << MyLibFacade->getConfiguration()->getErrorText() << "\n";
+            ts << "\n" << MyMainConfiguration->getErrorText() << "\n";
             return false;
         }
     }
     else
-        MyLibFacade->getConfiguration()->determineIndexUri("");
+        MyMainConfiguration->determineIndexUri("");
 
     return true;
 }

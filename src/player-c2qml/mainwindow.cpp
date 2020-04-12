@@ -36,7 +36,8 @@ void MainWindow::init()
     connect (this, SIGNAL(statusChanged(QQuickView::Status)), this, SLOT(doStatusChanged(QQuickView::Status)));
     connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(startShowMedia(BaseMedia *)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(stopShowMedia(BaseMedia *)));
-    connect(MyLibFacade, SIGNAL(newIndexLoaded()), this, SLOT(prepareParsing()));
+    connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
+
     connect(MyLibFacade, SIGNAL(rebootOS()), this, SLOT(rebootOS()));
     connect(MyLibFacade, SIGNAL(installSoftware(QString)), this, SLOT(installSoftware(QString)));
     connect(engine(), SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit())); // to connect quit signal from QML
@@ -235,9 +236,9 @@ void MainWindow::deleteRegions()
 void MainWindow::prepareParsing()
 {
     deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
-
     createRegions();
-    MyLibFacade->beginSmilBodyParsing(); // begin parse not before Layout ist build to prevent crash in MainWindow::startShowMedia
+
+    MyLibFacade->beginSmilPlaying(); // begin playing not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
 
 void MainWindow::startShowMedia(BaseMedia *media)

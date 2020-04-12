@@ -45,9 +45,9 @@ struct Region
     qreal width;
     qreal height;
     int z_index;
-    QString backgroundColor = "black";
-    QString backgroundImage;
-    QString backgroundRepeat;
+    QString backgroundColor  = "black";
+    QString backgroundImage  = "none";
+    QString backgroundRepeat = "repeat";
     bool operator<(const Region& other) const {return z_index < other.z_index;} // use for sorting a list of Regions
 };
 
@@ -56,7 +56,7 @@ class HeadParser: public QObject
 {
         Q_OBJECT
     public:
-        explicit HeadParser(MainConfiguration *config, Files::MediaManager *mm,  QObject *parent = Q_NULLPTR);
+        explicit HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, QObject *parent = Q_NULLPTR);
          ~HeadParser();
         void                   setDefaultValues();
         void                   parse(QDomElement head, SmilHead::TaskScheduler *MyTasks);
@@ -65,21 +65,23 @@ class HeadParser: public QObject
         QString                getTitle();
         QList<Region>         *getLayout();
         void                   setRootLayout(int w, int h);
-        void                   setInventoryTable(DB::InventoryTable *value);
     protected:
+        const     int        MAX_SECONDS_WAIT  = 10;
 
-        DB::InventoryTable *MyInventoryTable = Q_NULLPTR;
+        DB::InventoryTable                            *MyInventoryTable = Q_NULLPTR;
         QScopedPointer<Reporting::SystemReportManager> MySystemReportManager;
         QScopedPointer<Reporting::InventoryReportManager> MyInventoryReportManager;
         QScopedPointer<Reporting::EventLogsManager>    MyEventLogsManager;
         QScopedPointer<Reporting::PlayLogsManager>    MyPlayLogsManager;
-
+        int                    timer_id = 0;
+        int                    timer_counter = 0;
         Region                 default_region;
         QString                title;
+        bool                   has_backgroundimage = false;
         int                    refresh, width, height;
         QString                backgroundColor = "black";
-        QString                backgroundImage;
-        QString                backgroundRepeat;
+        QString                backgroundImage = "none";;
+        QString                backgroundRepeat= "repeat";;
         QDomElement            head;
         QList<Region>          region_list;
         MainConfiguration     *MyConfiguration;
@@ -91,6 +93,11 @@ class HeadParser: public QObject
         void                   parseRegions(QDomNodeList childs);
         void                   handleBackgroundImage(QString value);
         qreal                  calculatePercentBasedOnRoot(QString value, qreal root);
+        void                   timerEvent(QTimerEvent *event);
+    private:
+        bool                   isMediaLoadable(QString src);
+    signals:
+        void                   parsingCompleted();
 };
 
 #endif // HEAD_H

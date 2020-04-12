@@ -46,9 +46,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts); // Raspberry and POT needs this http://thebugfreeblog.blogspot.de/2018/01/pot-570-with-qt-5100-built-for-armv8.html
 
     QApplication app(argc, argv);
+    MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
+    PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
 
-    LibFacade            *MyLibFacade           = new LibFacade();
-    PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyLibFacade->getConfiguration());
+    LibFacade  *MyLibFacade = new LibFacade();
+    MyLibFacade->init(MyMainConfiguration);
 
 #if defined Q_OS_ANDROID
     AndroidManager *MyAndroidManager = new AndroidManager();
@@ -77,10 +79,10 @@ int main(int argc, char *argv[])
 
     qInstallMessageHandler(handleMessages);
 
-    TCmdParser MyParser(MyLibFacade);
+    TCmdParser MyParser(MyMainConfiguration);
     MyParser.addOptions();
 
-   if (!MyParser.parse(&app))
+    if (!MyParser.parse(&app, MyLibFacade))
         return 1;
 
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
@@ -91,7 +93,7 @@ int main(int argc, char *argv[])
 
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);
 
-    if (MyLibFacade->getConfiguration()->getIndexUri().isEmpty() && w.openConfigDialog() == QDialog::Rejected)
+    if (MyMainConfiguration->getIndexUri().isEmpty() && w.openConfigDialog() == QDialog::Rejected)
     {
         return 0;
     }

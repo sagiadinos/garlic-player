@@ -30,6 +30,7 @@ const     int        MEDIA_CACHED          = 1;
 const     int        MEDIA_MODIFIED        = 2;
 const     int        MEDIA_UNCACHABLE      = 3;
 const     int        MEDIA_IS_LOCAL        = 4;
+const     int        MEDIA_DOWNLOAD_FAILED = 5;
 
 /**
  * @brief The FileModel class handles the file management list

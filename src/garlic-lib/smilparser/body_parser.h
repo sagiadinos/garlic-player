@@ -35,8 +35,9 @@ class BodyParser : public QObject
 public:
     explicit BodyParser(Files::MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
     ~BodyParser();
-    void                               beginSmilParsing(QDomElement body);
-    void                               endSmilParsing();
+    void                               beginPreloading(QDomElement body);
+    void                               beginPlaying();
+    void                               endPlaying();
 
 protected:
     QDomElement                        parser;
@@ -59,16 +60,17 @@ protected slots:
     void                               preloadElement(TContainer *parent_container, QDomElement dom_element);
     void                               startElement(TContainer *parent_container, BaseTimings *element);
     void                               finishElement(TContainer *parent_container, BaseTimings *element);
-    void                               beginPlaying();
 
     void                               initMedia(BaseMedia *MyMedia);
     void                               resumeQueuedElement(BaseTimings *element);
     void                               pausePlayingElement(BaseTimings *element);
     void                               stopPlayingElement(BaseTimings *element);
+    void                               emitPreloadingBodyCompleted();
 
 signals:
     void                               startShowMedia(BaseMedia *media);
     void                               stopShowMedia(BaseMedia *media);
+    void                               preloadingBodyCompleted();
 };
 
 #endif // SMILPARSER_H
