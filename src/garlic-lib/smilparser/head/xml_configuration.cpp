@@ -8,6 +8,8 @@ SmilHead::XMLConfiguration::XMLConfiguration(MainConfiguration *config, QObject 
 
 void SmilHead::XMLConfiguration::processFromUrl(QUrl config_url)
 {
+    QFile::remove(MyConfiguration->getPaths("cache")+"configuration.xml"); // remove old file
+
     XMLDownloader->processFile(config_url, MyConfiguration->getPaths("cache")+"configuration.xml");
 }
 
@@ -16,7 +18,6 @@ void SmilHead::XMLConfiguration::processFromLocalFile(QString file_path)
     if (!loadDocument(file_path))
         return;
     parse();
-    QFile::remove(file_path);
 }
 
 bool SmilHead::XMLConfiguration::loadDocument(QString file_path)
@@ -70,6 +71,8 @@ void SmilHead::XMLConfiguration::parse()
         if (attr_value == "")
             continue;
 
+        // most are unused and will be proceed by a launcher concept (only android currently)
+        // However, let them here, cause maybe a linux launcher could work better together with the player
         if (attr_name == "info.playerName")
         {
             MyConfiguration->setPlayerName(attr_value);

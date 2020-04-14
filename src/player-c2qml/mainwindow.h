@@ -76,6 +76,7 @@ class MainWindow : public QQuickView
         void                      startShowMedia(BaseMedia *media);
         void                      stopShowMedia(BaseMedia *media);
         void                      doStatusChanged(QQuickView::Status status);
+        void                      sendConfig();
         void                      rebootOS();
         void                      installSoftware(QString file_path);
 };

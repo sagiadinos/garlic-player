@@ -9,6 +9,7 @@ SmilHead::TaskScheduler::TaskScheduler(MainConfiguration *config, QObject *paren
 
 void SmilHead::TaskScheduler::processFromUrl(QUrl url)
 {
+    QFile::remove(MyConfiguration->getPaths("cache")+"task_scheduler.xml"); // remove old file
     TaskFileDownloader->processFile(url, MyConfiguration->getPaths("cache")+"task_scheduler.xml");
 }
 

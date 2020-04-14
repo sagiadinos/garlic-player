@@ -43,7 +43,6 @@ public class ConfigReceiver extends BroadcastReceiver
         }
 
        path = intent.getStringExtra("config_path");
-       System.out.println(path + " is cumming");
 
        getConfigPath(path);
     }

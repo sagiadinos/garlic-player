@@ -61,6 +61,7 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         ConfigReceiver MyConfigReceiver = new ConfigReceiver();
         registerReceiver(MyConfigReceiver, filter);
 
+        // needed when USB Stick enters with local SMIL File
         IntentFilter filter2 = new IntentFilter("com.sagiadinos.garlic.player.java.SmilIndexReceiver");
         SmilIndexReceiver MySmilIndexReceiver = new SmilIndexReceiver();
         registerReceiver(MySmilIndexReceiver, filter2);
@@ -91,14 +92,6 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
     }
 
 
-    public void lookForConfigXML()
-    {
-        String config_file_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/config.xml" ;
-        Intent intent = new Intent("com.sagiadinos.garlic.player.java.ConfigReceiver");
-        intent.putExtra("config_path", config_file_path);
-        sendBroadcast(intent);
-    }
-
     public static boolean isPackageInstalled(Context c, String targetPackage)
     {
         PackageManager pm = m_instance.getPackageManager();
@@ -113,12 +106,20 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         return true;
     }
 
+
     public static void rebootOS()
     {
         Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.RebootReceiver");
         m_instance.sendBroadcast(intent);
-
     }
+
+    public static void applyConfig(String config_path)
+    {
+        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.ConfigXMLReceiver");
+        intent.putExtra("config_path", config_path);
+        m_instance.sendBroadcast(intent);
+    }
+
     public static void installSoftware(String apk_path)
     {
         Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.InstallAppReceiver");
@@ -139,7 +140,6 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
          intent.putExtra("package_name", package_name);
          m_instance.sendBroadcast(intent);
     }
-
 
     private void retrieveSmilIndex()
     {

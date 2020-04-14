@@ -14,7 +14,6 @@ Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 #comment out the next line when you want to use QTMultimedia instead of QtAV
 #CONFIG  += support_qtav
-
 support_qtav {
     DEFINES += SUPPORT_QTAV
     QT      += av
@@ -38,9 +37,10 @@ android {
 
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
-    # include only in release otherwise it crashs when start debugging
+    # release build crashs when start debugging
     # see https://github.com/KDAB/android_openssl/issues/10
-    Release:include(../ext/android_openssl/openssl.pri)
+    Release:include(../ext/android_openssl/master/openssl.pri)
+    Debug:include(../ext/android_openssl/debug_crash_fix/openssl.pri)
 
     ANDROID_EXTRA_LIBS += \
         $$OUT_PWD/../libandroid/libgarlic.so

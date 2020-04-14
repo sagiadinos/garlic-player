@@ -38,6 +38,7 @@ void MainWindow::init()
     connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(stopShowMedia(BaseMedia *)));
     connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
 
+    connect(MyLibFacade, SIGNAL(newConfig()), this, SLOT(sendConfig()));
     connect(MyLibFacade, SIGNAL(rebootOS()), this, SLOT(rebootOS()));
     connect(MyLibFacade, SIGNAL(installSoftware(QString)), this, SLOT(installSoftware(QString)));
     connect(engine(), SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit())); // to connect quit signal from QML
@@ -114,10 +115,10 @@ bool MainWindow::event(QEvent *event)
         {
             start_touch_time.start();
         }
-        else if (static_cast<QTouchEvent*>(event)->touchPoints().count() == 3 && event->type() == QEvent::TouchUpdate)
+        else if (static_cast<QTouchEvent*>(event)->touchPoints().count() == 1 && event->type() == QEvent::TouchUpdate)
         {
             int ms = start_touch_time.elapsed();
-            if (ms > 8000)
+            if (ms > 10000)
             {
                 openDebugInfos();
             }
@@ -271,7 +272,7 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             qDebug(MediaPlayer) << "No QML source set";
             break;
         case QQuickView::Ready:
-//            MyLibFacade->initParser(); temporary set in main.cpp
+            MyLibFacade->initParser();
             break;
         case QQuickView::Loading:
             qDebug(MediaPlayer) << "QML loaded/compiled... ";
@@ -286,6 +287,18 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             }
             break;
     }
+
+}
+
+void MainWindow::sendConfig()
+{
+#if defined  Q_OS_ANDROID
+    QAndroidJniObject java_file_path = QAndroidJniObject::fromString(MyLibFacade->getConfiguration()->getPaths("cache")+"configuration.xml");
+    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
+                                              "applyConfig",
+                                              "(Ljava/lang/String;)V",
+                                              java_file_path.object<jstring>());
+#endif
 
 }
 

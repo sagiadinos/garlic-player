@@ -47,7 +47,7 @@ void LibFacade::init(MainConfiguration *config)
     resource_monitor_timer_id = startTimer(300000); // every 300s for ressource monitor
 
     MyTaskScheduler.reset(new SmilHead::TaskScheduler(MyConfiguration.data(), this));
-    connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(loadIndex()));
+    connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(changeConfig()));
     connect(MyTaskScheduler.data(), SIGNAL(installSoftware(QString)), this, SLOT(emitInstallSoftware(QString)));
     connect(MyTaskScheduler.data(), SIGNAL(reboot()), this, SLOT(reboot()));
 
@@ -65,7 +65,10 @@ void LibFacade::shutDownParsing()
 void LibFacade::initParser()
 {
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
-    if (MyIndexManager->exists())
+    MyIndexManager.data()->lookUpForUpdatedIndex();
+    loadIndex();
+
+/*    if (MyIndexManager->exists())
     {
         loadIndex();
     }
@@ -73,7 +76,7 @@ void LibFacade::initParser()
     {
         MyIndexManager.data()->lookUpForUpdatedIndex();
     }
-
+*/
 }
 
 
@@ -143,6 +146,19 @@ void LibFacade::loadIndex()
     processHeadParsing();
 
 }
+
+void LibFacade::changeConfig()
+{
+    if (has_launcher)
+    {
+        emit newConfig();
+    }
+    else
+    {
+        loadIndex();
+    }
+}
+
 
 
 void LibFacade::initFileManager()

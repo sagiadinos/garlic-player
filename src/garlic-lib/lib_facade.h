@@ -48,6 +48,8 @@ class LibFacade : public QObject
         MainConfiguration *getConfiguration() const {return MyConfiguration.data();}
         HeadParser        *getHead() const {return MyHeadParser.data();}
         void               setConfigFromExternal(QString config_path, bool restart_smil_parsing = true);
+        void               toggleLauncher(bool value){has_launcher = value;}
+
         void               reloadWithNewIndex(QString index_path);
         void               beginSmilPlaying();
         QString            requestLoaddableMediaPath(QString path);
@@ -60,6 +62,7 @@ public slots:
         void               initParser();
 protected:
         int                                     resource_monitor_timer_id;
+        bool                                    has_launcher = false;
         QScopedPointer<DB::InventoryTable>      MyInventoryTable;
         QScopedPointer<ElementsContainer>       MyElementsContainer;
         QScopedPointer<CurrentPlayingMedia>     MyCurrentPlayingMedia;
@@ -79,6 +82,7 @@ protected:
 
     protected slots:
         void               loadIndex();
+        void               changeConfig();
         void               emitInstallSoftware(QString file_path);
         void               reboot();
         void               emitStartShowMedia(BaseMedia *media);
@@ -90,6 +94,7 @@ protected:
         void               startShowMedia(BaseMedia *media);
         void               stopShowMedia(BaseMedia *media);
         void               readyForPlaying();
+        void               newConfig();
         void               rebootOS();
         void               installSoftware(QString file_path);
 };

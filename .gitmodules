@@ -1,3 +1,8 @@
-[submodule "src/ext/android_openssl"]
-	path = src/ext/android_openssl
+[submodule "src/ext/android_openssl/master"]
+	path = src/ext/android_openssl/master
 	url = https://github.com/KDAB/android_openssl.git
+	branch = master
+[submodule "src/ext/android_openssl/debug_crash_fix"]
+	path = src/ext/android_openssl/debug_crash_fix
+	url = https://github.com/KDAB/android_openssl.git
+	branch = debug_crash_fix

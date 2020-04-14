@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
 
     if (MyAndroidManager->hasLauncher())
     {
+        MyLibFacade->toggleLauncher(MyAndroidManager->hasLauncher());
         MyPlayerConfiguration->setHasLauncher(MyAndroidManager->hasLauncher());
         MyPlayerConfiguration->setUuidFromLauncher(MyAndroidManager->getUUIDFromLauncher());
         MyPlayerConfiguration->setSmilIndexUriFromLauncher(MyAndroidManager->getSmilIndexFromLauncher());
@@ -118,7 +119,6 @@ int main(int argc, char *argv[])
         w.resizeAsWindow();
     }
 #endif
-    MyLibFacade->initParser();
 
     return app.exec();
 }
