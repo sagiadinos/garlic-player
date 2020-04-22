@@ -22,6 +22,12 @@ void TWidget::registerInMediaManager(Files::MediaManager *mm)
 
 void TWidget::prepareDurationTimerBeforePlay()
 {
+    if (getLoadablePath().isEmpty())
+    {
+        skipElement();
+        return;
+    }
+
     if (startDurTimer() || isEndTimerActive())
     {
         if (!is_resumed)
