@@ -87,7 +87,7 @@ bool MainWindow::event(QEvent *event)
 {
     event->accept();
     if(event->type() == QEvent::TouchBegin)
-    {http://indexes.smil-admin.com
+    {
         num_touched++;
         if (num_touched > 4)
         {
