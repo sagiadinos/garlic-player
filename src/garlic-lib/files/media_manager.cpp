@@ -66,13 +66,17 @@ int Files::MediaManager::checkCacheStatus(QString src)
     {
         src = MyConfiguration->getIndexPath() + src;
     }
-    int status = MyMediaModel->findStatusBySrcPath(src);
-    if (status == MEDIA_MODIFIED && !isCurrentlyPlaying(src))
+
+    if (!isCurrentlyPlaying(src))
     {
-        renameDownloadedFile(requestLoadablePath(src));
-        MyMediaModel->setStatusBySrcPath(src, MEDIA_CACHED);
+        QString local_path = requestLoadablePath(src);
+        if (src.contains(".wgt"))
+        {
+            local_path = local_path.mid(0, local_path.length() - 11) + ".wgt";
+        }
+        handleUpdated(local_path, src);
     }
-    return status;
+    return MyMediaModel->findStatusBySrcPath(src);
 }
 
 void Files::MediaManager::insertCurrentlyPlaying(QString path)
@@ -98,10 +102,24 @@ QString Files::MediaManager::requestLoadablePath(QString src)
     {
         src = MyConfiguration->getIndexPath() + src;
     }
+
     return MyMediaModel->findLocalBySrcPath(src);
 }
 
 // ==================  protected methods =======================================
+
+void Files::MediaManager::handleUpdated(QString local_path, QString src)
+{
+    if (QFile::exists(local_path + FILE_DOWNLOADED_SUFFIX))
+    {
+        renameDownloadedFile(local_path);
+        if (src.contains(".wgt"))
+        {
+            MyMediaModel->handleWgt(local_path); // extract etc...
+        }
+        MyMediaModel->setStatusBySrcPath(src, MEDIA_CACHED);
+    }
+}
 
 void Files::MediaManager::handleRemoteFile(QString src)
 {

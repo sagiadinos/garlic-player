@@ -53,6 +53,7 @@ namespace Files
         int                   timer_id;
         DownloadQueue        *MyDownloadQueue;
         MediaModel           *MyMediaModel;
+        void                  handleUpdated(QString local_path, QString src);
         void                  handleRemoteFile(QString src);
     protected slots:
         void                  doSucceed(QString src_file_path, QString local_file_path);

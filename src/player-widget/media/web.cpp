@@ -45,6 +45,7 @@ void PlayerWeb::init(BaseMedia *media)
     // browser->page()->profile()->setHttpCacheType(QWebEngineProfile::NoCache);
 
     browser->page()->settings()->setAttribute(QWebEngineSettings::PlaybackRequiresUserGesture, false); // auto play video and audio
+
     browser->load(sanitizeUri(media->getLoadablePath()));
     if (SmilMedia->getLogContentId() != "")
         setStartTime();

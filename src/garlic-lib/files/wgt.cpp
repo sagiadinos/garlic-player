@@ -48,12 +48,7 @@ QString Wgt::handleRealPath()
     QString real_file_path = "";
     if (!extract())
         return "";
-    #if defined  Q_OS_WIN
-       real_file_path = "file:/"+local_file_path.mid(0, local_file_path.length()-4)+"/index.html"; // Windows needs file:// for opening absolute local_file_path in WebEngine
-    #else
-        real_file_path = "file://"+local_file_path.mid(0, local_file_path.length()-4)+"/index.html"; // Linux needs file:/// for opening absolute local_file_path in WebEngine
-    #endif
-    return real_file_path;
+    return local_file_path.mid(0, local_file_path.length()-4)+"/index.html";
 }
 
 qint64 Wgt::calculateUncompressedSize()
