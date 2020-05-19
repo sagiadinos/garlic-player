@@ -11,7 +11,7 @@
 	<!--
 	
 		sequence should be:
-		begin, 1, 5sec. video, 2, 4sec google.com, 3, 4, end
+		begin, 1, 5sec. video, 2, 4sec google.com, 3, 4s nothing, 4, end
 		
 	-->
 		<img xml:id="img_begin" src="../images/begin.jpg" dur="2s" fit="meetbest" />

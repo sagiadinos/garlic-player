@@ -173,6 +173,7 @@ bool TExcl::isChildPlayable(BaseTimings *element)
     }
     else if (interrupt == _pause_new)
         emit pauseElement(element);
+
     qDebug() << NewActivePriorityClass->getID() << "is the new ActivePriorityClass after check interrupt " << ActivePriorityClass->getID();
     ActivePriorityClass = NewActivePriorityClass; // Change Active everytime!
     return playable;
@@ -189,6 +190,7 @@ void TExcl::next(BaseTimings *ended_element)
     qDebug() << ended_element->getID() << "ended Element (TExcl::next)";
     setChildActive(false);
     childEnded(ended_element);
+
     // if elements are in queues starts resume or starts them
     QHash<int, TPriorityClass *>::iterator      ar_priorities_iterator;
     TPriorityClass                             *MyPriorityClass;
@@ -200,11 +202,14 @@ void TExcl::next(BaseTimings *ended_element)
             qDebug() << MyPriorityClass->getID() << "is the new ActivePriorityClass after get from Queue";
             ActivePriorityClass = MyPriorityClass; // important to change the now active Playlist
             setChildActive(true);
+
             played_element = MyPriorityClass->getFromQueue();
             emit resumeElement(played_element);
+
             return; // make sure do not move, until queue is not epty
         }
     }
+
     if (!hasPlayingChilds())
     {
         if(checkRepeatCountStatus())

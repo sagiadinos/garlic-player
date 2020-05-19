@@ -56,7 +56,7 @@ protected:
     void                               connectContainerSlots(TContainer *MyContainer);
     BaseTimings                       *determineElements(TContainer *parent_container, QDomElement dom_element);
 protected slots:
-    void                               useElement(TContainer *parent_container, QDomElement dom_element);
+    void                               foundElement(TContainer *parent_container, QDomElement dom_element);
     void                               preloadElement(TContainer *parent_container, QDomElement dom_element);
     void                               startElement(TContainer *parent_container, BaseTimings *element);
     void                               finishElement(TContainer *parent_container, BaseTimings *element);

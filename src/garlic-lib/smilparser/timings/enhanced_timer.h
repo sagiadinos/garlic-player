@@ -35,7 +35,6 @@ public:
     int         getType(){return type;}
     bool        resume();
     bool        isActive();
-    WallClock   getWallClock();
     bool        remainingRepeats();
 protected:
     int         remaining = 0;

@@ -32,7 +32,7 @@ protected:
     int       repeats = 0;
     QDateTime datetime;
     IsoPeriod period;
-    int       remaining_repeats;
+    int       remaining_repeats = 0;
     qint64    getNextTrigger(QDateTime current);
     int       analyseRepeats(QString r_value);
     qint64    analyseRemainingRepeats(QDateTime actual);

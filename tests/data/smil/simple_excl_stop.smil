@@ -16,7 +16,7 @@
 		
 	-->
 
-	<img xml:id="img begin" src="../images/begin.jpg" fit="meetbest" dur="2s" />
+		<img xml:id="img begin" src="../images/begin.jpg" fit="meetbest" dur="2s" />
 		<excl xml:id="excl1">
 			<priorityClass peers="stop">
 				<img xml:id="imgA0001" src="../images/0001.jpg" begin="0s" dur="1s" fit="meetbest" />

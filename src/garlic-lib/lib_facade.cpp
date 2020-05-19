@@ -67,16 +67,6 @@ void LibFacade::initParser()
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
     MyIndexManager.data()->lookUpForUpdatedIndex();
     loadIndex();
-
-/*    if (MyIndexManager->exists())
-    {
-        loadIndex();
-    }
-    else
-    {
-        MyIndexManager.data()->lookUpForUpdatedIndex();
-    }
-*/
 }
 
 

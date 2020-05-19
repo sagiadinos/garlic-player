@@ -28,6 +28,26 @@ BaseTimings::BaseTimings(QObject * parent) : TBase(parent)
 
 BaseTimings::~BaseTimings()
 {
+    if (BeginTimer != Q_NULLPTR)
+    {
+        BeginTimer->stop();
+        delete BeginTimer;
+    }
+    if (DurTimer != Q_NULLPTR)
+    {
+       DurTimer->stop();
+       delete DurTimer;
+    }
+    if (EndTimer != Q_NULLPTR)
+    {
+        EndTimer->stop();
+        delete EndTimer;
+    }
+    if (InternalTimer != Q_NULLPTR)
+    {
+        InternalTimer->stop();
+        delete InternalTimer;
+    }
     qDebug()<< "delete " << objectName();
 }
 
@@ -139,7 +159,7 @@ void BaseTimings::skipElement()
         InternalTimer->setSingleShot(true);
         InternalTimer->setTimerType(Qt::PreciseTimer);
     }
-    InternalTimer->start(1000);
+    InternalTimer->start(500);
 }
 
 

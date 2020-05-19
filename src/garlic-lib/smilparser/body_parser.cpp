@@ -39,7 +39,7 @@ BodyParser::~BodyParser()
 void BodyParser::beginPreloading(QDomElement body)
 {
     MyBody.reset(new TBody(this));
-    connect(MyBody.data(), SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(useElement(TContainer *, QDomElement )));
+    connect(MyBody.data(), SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
     connect(MyBody.data(), SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
 
     connect(MyBody.data(), SIGNAL(preloadElement(TContainer *, QDomElement)), this, SLOT(preloadElement(TContainer *, QDomElement)));
@@ -106,7 +106,7 @@ void BodyParser::initMedia(BaseMedia *MyMedia)
  * @param parent
  * @param found_tag
  */
-void BodyParser::useElement(TContainer *parent_container, QDomElement dom_element)
+void BodyParser::foundElement(TContainer *parent_container, QDomElement dom_element)
 {
     BaseTimings *MyBaseTimings = MyElementsContainer->findSmilElement(dom_element);
     if (MyBaseTimings != Q_NULLPTR)
@@ -122,8 +122,6 @@ void BodyParser::useElement(TContainer *parent_container, QDomElement dom_elemen
 
     return;
 }
-
-
 
 /**
  * @brief TSmil::startedElement slot catch the start signal from a element and check if it is allowed to play.
@@ -261,7 +259,7 @@ void BodyParser::connectSlots(BaseTimings *element)
 void BodyParser::connectContainerSlots(TContainer *MyContainer)
 {
     connect(MyContainer, SIGNAL(preloadElement(TContainer *, QDomElement )), this, SLOT(preloadElement(TContainer *, QDomElement )));
-    connect(MyContainer, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(useElement(TContainer *, QDomElement )));
+    connect(MyContainer, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
     connect(MyContainer, SIGNAL(startedContainer(TContainer *, BaseTimings *)), this, SLOT(startElement(TContainer *, BaseTimings *)));
     connect(MyContainer, SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
     if (MyContainer->objectName() == "TExcl")
