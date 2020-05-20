@@ -48,7 +48,7 @@ class BaseMedia : public BaseTimings
         bool                 isMedia()         {return is_media;}
         virtual void         registerInMediaManager(Files::MediaManager *mm) = 0;
 
-        void                 resume(){play();}
+        void                 resume();
         bool                 hasPlayingChilds(){return false;}
         BaseTimings         *getChildElementFromList(){return this;}
         TContainer          *getParentContainer(){return parent_container;}

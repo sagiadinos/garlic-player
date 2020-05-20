@@ -76,7 +76,6 @@ void BodyParser::preloadElement(TContainer *parent_container, QDomElement elemen
     // can receive the signal and parsing will be interrupted
     MyBaseTimings->preloadParse(element);
 
-
     // media must be initialised after parse
     if (MyBaseTimings->getBaseType() == "media")
     {

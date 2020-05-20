@@ -42,11 +42,8 @@ void TPar::prepareDurationTimerBeforePlay()
 {
     if (startDurTimer() || isEndTimerActive() || childs_list.size() > 0)
     {
-        if (!is_resumed)
-        {
-            resetInternalRepeatCount();
-            emit startedContainer(parent_container, this);
-        }
+        resetInternalRepeatCount();
+        emit startedContainer(parent_container, this);
     }
     else
     {

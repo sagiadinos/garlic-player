@@ -69,6 +69,11 @@ void BaseMedia::play()
     status = _playing;
 }
 
+void BaseMedia::resume()
+{
+    play();
+}
+
 void BaseMedia::pause()
 {
     qDebug() << getID() << "paused ";

@@ -107,8 +107,7 @@ void TSeq::prepareDurationTimerBeforePlay()
     if (startDurTimer() || isEndTimerActive() || childs_list.size() > 0)
     {
         resetInternalRepeatCount();
-        if (!is_resumed)
-            emit startedContainer(parent_container, this);
+        emit startedContainer(parent_container, this);
     }
     else
     {

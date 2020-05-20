@@ -43,7 +43,7 @@ void TAudio::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (startDurTimer() || !is_resumed)
+    if (startDurTimer())
     {
         emit startedMedia(parent_container, this);
     }

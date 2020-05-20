@@ -57,8 +57,7 @@ void TExcl::prepareDurationTimerBeforePlay()
 {
     if (startDurTimer() || isEndTimerActive() || ar_priorities.size() > 0)
     {
-        if (!is_resumed)
-            emit startedContainer(parent_container, this);
+        emit startedContainer(parent_container, this);
     }
     else // when end or duration is not specified or no child elements stop imediately
     {

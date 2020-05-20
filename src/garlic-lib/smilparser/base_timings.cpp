@@ -54,8 +54,6 @@ BaseTimings::~BaseTimings()
 
 void BaseTimings::prepareTimingsBeforePlaying()
 {
-    is_resumed         = false;
-
     if (EndTimer != Q_NULLPTR)
     {
         EndTimer->start();
@@ -81,6 +79,7 @@ void BaseTimings::prepareTimingsBeforePausing()
     if (DurTimer != Q_NULLPTR)
     {
        DurTimer->pause();
+       qDebug() << getID() << " remaining ms:" << DurTimer->getRemaining();
     }
     if (EndTimer != Q_NULLPTR)
     {
@@ -107,7 +106,6 @@ void BaseTimings::prepareTimingsBeforeStop()
 
 void BaseTimings::prepareTimingsBeforeResume()
 {
-    is_resumed = true;
     if (EndTimer != Q_NULLPTR && !EndTimer->resume())
     {
         finishedActiveDuration();
@@ -119,8 +117,11 @@ void BaseTimings::prepareTimingsBeforeResume()
         status          = _waiting;
         return; // not go further when a begin trigger is set
     }
-    prepareDurationTimerBeforePlay();
 
+    if (DurTimer != Q_NULLPTR)
+    {
+        DurTimer->resume();
+    }
 }
 
 void BaseTimings::finishedNotFound()

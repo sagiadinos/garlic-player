@@ -30,8 +30,7 @@ void TWidget::prepareDurationTimerBeforePlay()
 
     if (startDurTimer() || isEndTimerActive())
     {
-        if (!is_resumed)
-            emit startedMedia(parent_container, this);
+        emit startedMedia(parent_container, this);
     }
     else
     {

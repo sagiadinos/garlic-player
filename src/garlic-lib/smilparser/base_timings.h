@@ -71,7 +71,7 @@ class BaseTimings : public TBase
                 int            status         = 0;
                 int            repeatCount    = 0;
                 bool           indefinite     = false;
-                bool           is_resumed     = false;
+//                bool           is_resumed     = false;
                 int            internal_count = 1;
                 void           parseTimingAttributes();
                 void           resetInternalRepeatCount();

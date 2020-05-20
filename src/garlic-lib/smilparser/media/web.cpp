@@ -37,11 +37,11 @@ void TWeb::registerInMediaManager(Files::MediaManager *mm)
 
 void TWeb::prepareDurationTimerBeforePlay()
 {
+
     // do not mind if cached
     if (startDurTimer() || isEndTimerActive())
     {
-        if (!is_resumed)
-            emit startedMedia(parent_container, this);
+        emit startedMedia(parent_container, this);
     }
     else
     {
