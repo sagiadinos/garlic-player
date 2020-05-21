@@ -31,19 +31,19 @@ Audio::~Audio()
 
 void Audio::init(BaseMedia *media)
 {
-    MyMedia = media;
-    QString source = MyMedia->getLoadablePath();
+    SmilMedia = media;
+    QString source = SmilMedia->getLoadablePath();
     if (isFileExists(source))
     {
         audio_item.data()->setProperty("source", "file:"+source);
-        if (MyMedia->getLogContentId() != "")
+        if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
 }
 
 void Audio::deinit()
 {
-    if (MyMedia->getLogContentId() != "")
+    if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
     audio_item.data()->setProperty("source", "");
 }
@@ -55,6 +55,6 @@ void Audio::setParentItem(QQuickItem *parent)
 
 void Audio::finished()
 {
-    MyMedia->finishedSimpleDuration();
+    SmilMedia->finishedSimpleDuration();
 }
 

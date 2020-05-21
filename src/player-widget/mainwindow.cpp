@@ -239,5 +239,5 @@ void MainWindow::startShowMedia(BaseMedia *media)
 void MainWindow::stopShowMedia(BaseMedia *media)
 {
     if (regions_list.size() > 0)// prevent to call function of deleted or nonexisting regions
-        regions_list[selectRegion(media->getRegion())]->stopShowMedia();
+        regions_list[selectRegion(media->getRegion())]->stopShowMedia(media);
 }

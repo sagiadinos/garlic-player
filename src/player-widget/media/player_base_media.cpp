@@ -22,6 +22,11 @@ PlayerBaseMedia::PlayerBaseMedia(QObject *parent) : QObject(parent)
 
 }
 
+BaseMedia *PlayerBaseMedia::getSmilMedia()
+{
+    return SmilMedia;
+}
+
 void PlayerBaseMedia::setStartTime()
 {
     start_time = MyLogger.getCurrentIsoDateTime();;

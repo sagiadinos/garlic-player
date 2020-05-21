@@ -21,16 +21,16 @@ Web::~Web()
 
 void Web::init(BaseMedia *media)
 {
-    MyMedia = media;
+    SmilMedia = media;
     web_item.data()->setVisible(true);
-    web_item.data()->setProperty("url", sanitizeUri(MyMedia->getLoadablePath()));
-    if (MyMedia->getLogContentId() != "")
+    web_item.data()->setProperty("url", sanitizeUri(SmilMedia->getLoadablePath()));
+    if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
 
 void Web::deinit()
 {
-    if (MyMedia->getLogContentId() != "")
+    if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
     web_item.data()->setProperty("url", "");
     web_item.data()->setVisible(false);

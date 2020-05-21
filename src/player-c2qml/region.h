@@ -33,7 +33,7 @@ public:
     void                setRootSize(int w, int h);
     void                setRegion(Region r, QQmlEngine *e);
     void                startShowMedia(BaseMedia *media);
-    void                stopShowMedia();
+    void                stopShowMedia(BaseMedia *media);
 
 protected:
     QQuickItem           *root_item;

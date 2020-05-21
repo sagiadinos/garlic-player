@@ -12,6 +12,7 @@
         public:
             explicit PlayerBaseMedia(QObject *parent = nullptr);
             virtual void          init(BaseMedia *media)   = 0;
+            BaseMedia            *getSmilMedia();
             virtual void          deinit() = 0;
             virtual QWidget      *getView()= 0;
             virtual void          changeSize(int w, int h) = 0;

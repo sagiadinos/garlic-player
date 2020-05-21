@@ -44,7 +44,7 @@ public:
     void                setRootSize(int w, int h);
     void                setRegion(Region region);
     void                startShowMedia(BaseMedia *media);
-    void                stopShowMedia();
+    void                stopShowMedia(BaseMedia *media);
 
 protected:
     qreal                 root_width_px = 0;

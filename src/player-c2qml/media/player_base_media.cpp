@@ -21,12 +21,17 @@ void PlayerBaseMedia::setStartTime()
     start_time = MyLogger.getCurrentIsoDateTime();;
 }
 
+BaseMedia *PlayerBaseMedia::getSmilMedia()
+{
+    return SmilMedia;
+}
+
 QString PlayerBaseMedia::createPlayLogXml()
 {
     if (start_time == "")
         return "";
 
-    QString xml = MyLogger.createPlayLogEntry(start_time, MyMedia->getLogContentId());
+    QString xml = MyLogger.createPlayLogEntry(start_time, SmilMedia->getLogContentId());
 
     // set times to Zero
     start_time = "";
@@ -36,7 +41,7 @@ QString PlayerBaseMedia::createPlayLogXml()
 
 bool PlayerBaseMedia::load(QQuickItem *item)
 {
-    QString source = MyMedia->getLoadablePath();
+    QString source = SmilMedia->getLoadablePath();
     bool ret = false;
     if (isFileExists(source))
     {
@@ -46,7 +51,7 @@ bool PlayerBaseMedia::load(QQuickItem *item)
     else
     {
         QStringList list;
-        list  << "resourceURI: " << MyMedia->getSrc();
+        list  << "resourceURI: " << SmilMedia->getSrc();
         qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_NOT_AVAILABLE", list);
     }
     return ret;

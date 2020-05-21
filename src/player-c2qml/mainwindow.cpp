@@ -260,7 +260,7 @@ void MainWindow::stopShowMedia(BaseMedia *media)
         return;
 
     QString region_name = selectRegion(media->getRegion());
-    regions_list[region_name]->stopShowMedia();
+    regions_list[region_name]->stopShowMedia(media);
     return;
 }
 

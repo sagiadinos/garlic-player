@@ -27,18 +27,18 @@ Image::~Image()
 
 void Image::init(BaseMedia *media)
 {
-    MyMedia = media;
+    SmilMedia = media;
     if (load(image_item.data()))
     {
-        image_item.data()->setProperty("fillMode", determineFillMode(MyMedia->getFit()));
-        if (MyMedia->getLogContentId() != "")
+        image_item.data()->setProperty("fillMode", determineFillMode(SmilMedia->getFit()));
+        if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
 }
 
 void Image::deinit()
 {
-    if (MyMedia->getLogContentId() != "")
+    if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
     image_item.data()->setProperty("source","");
 }

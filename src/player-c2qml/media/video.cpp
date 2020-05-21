@@ -28,7 +28,7 @@ Video::~Video()
 
 void Video::init(BaseMedia *media)
 {
-    MyMedia = media;
+    SmilMedia = media;
     if (load(video_item.data()))
     {
         // cannot be connected once in constructor due to again Android/QMultimedia problems
@@ -38,15 +38,15 @@ void Video::init(BaseMedia *media)
         TVideo *MyVideo = qobject_cast<TVideo *> (media);
         float vol = determineVolume(MyVideo->getSoundLevel());
         video_item.data()->setProperty("volume", vol);
-        video_item.data()->setProperty("fillMode", determineFillMode(MyMedia->getFit()));
-        if (MyMedia->getLogContentId() != "")
+        video_item.data()->setProperty("fillMode", determineFillMode(SmilMedia->getFit()));
+        if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
 }
 
 void Video::deinit()
 {
-    if (MyMedia->getLogContentId() != "")
+    if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 
     video_item.data()->setProperty("source", "");
@@ -87,11 +87,11 @@ void Video::finished()
     if (video_item.data()->property("error").toInt() != 0)
     {
         QStringList list;
-         list  << "resourceURI" << MyMedia->getSrc()
+         list  << "resourceURI" << SmilMedia->getSrc()
               << "error"<< video_item.data()->property("error").toString()
               << "errorMessage" << video_item.data()->property("errorString").toString();
         qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_PLAYBACK_ERROR", list);
     }
-    MyMedia->finishedSimpleDuration();
+    SmilMedia->finishedSimpleDuration();
 
 }

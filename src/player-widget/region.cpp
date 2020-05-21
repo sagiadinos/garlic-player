@@ -59,10 +59,13 @@ void TRegion::startShowMedia(BaseMedia *media)
     }
 }
 
-void TRegion::stopShowMedia()
+void TRegion::stopShowMedia(BaseMedia *media)
 {
+
     // MyMedia can be null, when file path not found
-    if (MyMedia == Q_NULLPTR)
+    // Workaround: sometimes e.g. peers defer another media which is not shown currently
+    // can be have the advice to stop. So check first and if different ignore;
+    if (MyMedia == Q_NULLPTR || MyMedia->getSmilMedia() != media)
     {
         return;
     }

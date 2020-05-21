@@ -71,8 +71,12 @@ void TRegion::startShowMedia(BaseMedia *media)
     qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
-void TRegion::stopShowMedia()
+void TRegion::stopShowMedia(BaseMedia *media)
 {
+    if (MyMedia->getSmilMedia() != media)
+    {
+        return;
+    }
     qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyMedia->setParentItem(NULL);
     MyMedia->deinit();    

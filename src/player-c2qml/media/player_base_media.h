@@ -14,6 +14,7 @@ class PlayerBaseMedia : public QObject
         virtual void          init(BaseMedia *media)   = 0;
         virtual void          deinit()   = 0;
         virtual void          setParentItem(QQuickItem *parent)   = 0;
+        BaseMedia            *getSmilMedia();
         QString               getRegionId() const;
         void                  setStartTime();
         QString               createPlayLogXml();
@@ -21,7 +22,7 @@ class PlayerBaseMedia : public QObject
 
     protected:
         Logger&               MyLogger = Logger::getInstance();
-        BaseMedia            *MyMedia;
+        BaseMedia            *SmilMedia;
         QString               start_time = "";
         QString               region_id  = "";
         QQuickItem           *createMediaItem(QQmlComponent *mc, QString str);

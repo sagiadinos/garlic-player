@@ -175,6 +175,8 @@ bool TExcl::isChildPlayable(BaseTimings *element)
     }
     else if (interrupt == _pause_new)
     {
+        // Attention! Not elegant!
+        // in player app make sure that it should stop only currently playing media
         emit pauseElement(element);
     }
 
