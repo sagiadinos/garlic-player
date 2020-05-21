@@ -213,12 +213,12 @@ void LibFacade::reboot()
 void LibFacade::emitStartShowMedia(BaseMedia *media)
 {
     emit startShowMedia(media);
-    qDebug(Develop) << Q_FUNC_INFO;
+    qDebug(Develop) << "emitStartShowMedia " << media->getID();
 }
 
 void LibFacade::emitStopShowMedia(BaseMedia *media)
 {
     emit stopShowMedia(media);
-    qDebug(Develop) << Q_FUNC_INFO;
+    qDebug(Develop) << "emitStopShowMedia " << media->getID();
 }
 

@@ -166,12 +166,17 @@ bool TExcl::isChildPlayable(BaseTimings *element)
     else if (interrupt == _stop_new) // stop caller when peers = never
     {
         childEnded(element);
-        emit stopElement(element);
         if(played_element == element)
+        {
             setChildActive(false);
+        }
+        // element->prepareTimingsBeforeStart() was called so we need to stop here the timings;
+        element->prepareTimingsBeforeStop();
     }
     else if (interrupt == _pause_new)
+    {
         emit pauseElement(element);
+    }
 
     qDebug() << NewActivePriorityClass->getID() << "is the new ActivePriorityClass after check interrupt " << ActivePriorityClass->getID();
     ActivePriorityClass = NewActivePriorityClass; // Change Active everytime!

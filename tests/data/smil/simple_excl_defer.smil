@@ -8,7 +8,12 @@
 		</layout>
 	</head>
 	<body>
-		<!-- 1, 5, 4, 3, 2, 6, 7, 8, 9, 10, 1, 6, 7, 8, 9, 10 -->
+		<!--
+	
+			sequence should be:
+			begin, 1, 5, 4, 3, 2, 6, 7, 8, 9, 10, 1, 6, 7, 8, 9, 10, end
+		
+		-->
 		<img xml:id="img begin" src="../images/begin.jpg" fit="meetbest" dur="2s" />
 		<excl xml:id="excl1_dur">
 			<priorityClass peers="defer">

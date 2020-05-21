@@ -113,12 +113,13 @@ void BodyParser::foundElement(TContainer *parent_container, QDomElement dom_elem
         MyBaseTimings->prepareTimingsBeforePlaying(); // here we start
     }
 
+    // must be here and cannot be moved into TExcl::isChildPlayable
+    // try to fix this!
     if (parent_container->objectName() == "TExcl")  // increment active child to determine end of a excl
     {
         TExcl   *MyExclParent   = qobject_cast<TExcl *> (parent_container);
         MyExclParent->childStarted(MyBaseTimings);
     }
-
     return;
 }
 
