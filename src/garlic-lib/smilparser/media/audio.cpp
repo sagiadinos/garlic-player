@@ -43,14 +43,9 @@ void TAudio::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (startDurTimer())
-    {
-        emit startedMedia(parent_container, this);
-    }
-    else
-    {
-        skipElement();
-    }
+    startDurTimer(); // audio/video not need a dur timer, but if there is one it mist be started
+
+    emit startedMedia(parent_container, this);
 }
 
 // ====================  protected methods =================================
