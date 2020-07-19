@@ -30,6 +30,19 @@ support_qtav {
     SOURCES += \
         mm_libs/qtav_decoder.cpp \
         mm_libs/qtav_widget.cpp
+
+    # workaround for >Qt5.11 https://github.com/wang-bin/QtAV/issues/1231
+    unix:!mac {
+       LIBS += -L$$QT.core.libs -lQtAV
+    }
+    unix:mac {
+        INCLUDEPATH  += $$QT.core.libs/QtAV.framework/Versions/1/Headers
+        QMAKE_LFLAGS += -F$$QT.core.libs
+        LIBS         += -framework QtAV
+    }
+    win32 {
+        LIBS += -L$$QT.core.libs -lQtAV1
+    }
 }
 
 support_libvlc{
@@ -55,17 +68,6 @@ support_qtmm {
 }
 
 
-# workaround for >Qt5.11 https://github.com/wang-bin/QtAV/issues/1231
-unix:!mac {
-    LIBS += -L$$QT.core.libs -lQtAV
-}
-
-unix:mac {
-    INCLUDEPATH  += $$QT.core.libs/QtAV.framework/Versions/1/Headers
-    QMAKE_LFLAGS += -F$$QT.core.libs
-    LIBS         += -framework QtAV
-}
-
 unix:!android{
     LIBS += -L../lib -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
     # hide some annoying GCC compiler warnings
@@ -77,7 +79,6 @@ unix:!android{
 }
 
 win32 {
-    LIBS += -L$$QT.core.libs -lQtAV1
     #libgarlic is static compiled in windows
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
     Debug:LIBS += -L../lib -lgarlic -lquazipd -lzlib

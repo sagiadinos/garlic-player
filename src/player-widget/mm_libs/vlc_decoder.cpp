@@ -7,6 +7,11 @@ VlcDecoder::VlcDecoder(QObject *parent) : QObject(parent)
     vlcInstance = libvlc_new(0, Q_NULLPTR);
 }
 
+VlcDecoder::~VlcDecoder()
+{
+    libvlc_release(vlcInstance);
+}
+
 void VlcDecoder::setVideoOutput(MediaWidgetWrapper *renderer)
 {
     Renderer = renderer;
@@ -21,11 +26,15 @@ bool VlcDecoder::load(QString file_path)
 {
     current_media_path = file_path;
     libvlc_media_t *vlcMedia = libvlc_media_new_path(vlcInstance, current_media_path.toStdString().c_str());
-    if (vlcMedia == nullptr)
+    if (vlcMedia == NULL)
         return false;
 
     vlcPlayer = libvlc_media_player_new_from_media(vlcMedia);
+
     libvlc_media_release(vlcMedia);
+
+    if (vlcPlayer == NULL)
+        return false;
 
     /* Integrate the video in the interface */
 #if defined(Q_OS_MAC)
@@ -41,6 +50,9 @@ bool VlcDecoder::load(QString file_path)
 
 void VlcDecoder::setVolume(QString percent)
 {
+    if (vlcPlayer == NULL)
+        return;
+
     int vol = 0;
     if (percent.endsWith('%'))
         vol = percent.mid(0, percent.length()-1).toInt();
@@ -49,34 +61,72 @@ void VlcDecoder::setVolume(QString percent)
 
 void VlcDecoder::unload()
 {
+    libvlc_media_player_release(vlcPlayer);
 }
 
 void VlcDecoder::play()
 {
+    if (vlcPlayer == NULL)
+        return;
+
     libvlc_media_player_play(vlcPlayer);
 
     /* A timer to update the sliders */
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updatePosition()));
-    timer->start(100);
+    PositionTimer.reset(new QTimer(this));
+    connect(PositionTimer.data(), SIGNAL(timeout()), this, SLOT(updatePosition()));
+    PositionTimer.data()->start(100);
 
 }
 
 void VlcDecoder::stop()
 {
+    if (vlcPlayer == NULL)
+        return;
+
     libvlc_media_player_stop(vlcPlayer);
     libvlc_media_player_release(vlcPlayer);
-
 }
 
 void VlcDecoder::updatePosition()
 {
-    if (vlcPlayer == nullptr)
+    if (vlcPlayer == NULL)
         return;
 
-    if (libvlc_media_player_get_state(vlcPlayer) == libvlc_Ended)
-        emit finished();
 
+    libvlc_state_t status = libvlc_media_player_get_state(vlcPlayer);
+
+    switch (status)
+    {
+        case libvlc_Opening:
+            qInfo(Develop) << "Loaded media " << current_media_path;
+            break;
+        case libvlc_Buffering:
+            qInfo(Develop) << "Buffered media " << current_media_path;
+            break;
+        case libvlc_Playing:
+         //   qInfo(Develop) << "Playing media " << current_media_path;
+            break;
+        case libvlc_Paused:
+            qInfo(Develop) << "paused media " << current_media_path;
+            break;
+        case libvlc_Stopped:
+            qWarning(Develop) << "stopped media " << current_media_path;
+            PositionTimer.data()->stop();
+            break;
+        case libvlc_Ended:
+            qInfo(Develop) << "End of media " << current_media_path;
+            PositionTimer.data()->stop();
+            emit finished();
+            break;
+        case libvlc_Error:
+            qWarning(Develop) << "Error" << current_media_path;
+            break;
+
+        case libvlc_NothingSpecial:
+        default:
+            break;
+
+    }
 }
 
 void VlcDecoder::displayErrorMessage()

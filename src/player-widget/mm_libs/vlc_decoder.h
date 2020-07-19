@@ -15,6 +15,7 @@ class VlcDecoder: public QObject
     Q_OBJECT
 public:
     VlcDecoder(QObject *parent = nullptr);
+   ~VlcDecoder();
     void                setVideoOutput(MediaWidgetWrapper *renderer);
     void                removeVideoOutput(MediaWidgetWrapper *renderer);
     bool                load(QString file_path);
@@ -28,11 +29,11 @@ public slots:
     void                stop();
 
 protected:
-    QString             current_media_path;
-    libvlc_instance_t       *vlcInstance;
-    libvlc_media_player_t   *vlcPlayer;
-    MediaWidgetWrapper       *Renderer;
-
+    QString                  current_media_path;
+    libvlc_instance_t       *vlcInstance = NULL;
+    libvlc_media_player_t   *vlcPlayer = NULL;
+    MediaWidgetWrapper      *Renderer;
+    QScopedPointer<QTimer>   PositionTimer;
 protected slots:
     void updatePosition();
     void displayErrorMessage();
