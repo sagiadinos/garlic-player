@@ -2,19 +2,61 @@
 
 #include "vlc_decoder.h"
 
+void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
+{
+    Q_UNUSED(ctx); Q_UNUSED(data);
+
+    char *result;
+    if (vasprintf(&result, fmt, args) < 0)
+    {
+        return;
+    }
+
+    QString message(result);
+    free(result);
+
+    switch (level)
+    {
+        case LIBVLC_ERROR:
+            qCritical(message.toUtf8().data(), NULL);
+            break;
+        case LIBVLC_WARNING:
+            qWarning(message.toUtf8().data(), NULL);
+            break;
+        case LIBVLC_NOTICE:
+            qInfo(message.toUtf8().data(), NULL);
+            break;
+        case LIBVLC_DEBUG:
+        default:
+            qDebug(message.toUtf8().data(), NULL);
+            break;
+    }
+}
+
+
 VlcDecoder::VlcDecoder(QObject *parent) : QObject(parent)
 {
     vlcInstance = libvlc_new(0, Q_NULLPTR);
+    libvlc_log_set(vlcInstance, logCallback, NULL);
+    vlcPlayer    = libvlc_media_player_new(vlcInstance);
 }
 
 VlcDecoder::~VlcDecoder()
 {
+    libvlc_media_player_release(vlcPlayer);
     libvlc_release(vlcInstance);
 }
 
 void VlcDecoder::setVideoOutput(MediaWidgetWrapper *renderer)
 {
     Renderer = renderer;
+#if defined(Q_OS_MAC)
+    libvlc_media_player_set_nsobject(vlcPlayer, (void *)Renderer->getVideoWidget()->winId());
+#elif defined(Q_OS_UNIX)
+    libvlc_media_player_set_xwindow(vlcPlayer, Renderer->getVideoRenderer()->winId());
+#elif defined(Q_OS_WIN)
+    libvlc_media_player_set_hwnd(vlcPlayer, Renderer->getVideoRenderer()->winId());
+#endif
 }
 
 void VlcDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
@@ -25,25 +67,11 @@ void VlcDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
 bool VlcDecoder::load(QString file_path)
 {
     current_media_path = file_path;
-    libvlc_media_t *vlcMedia = libvlc_media_new_path(vlcInstance, current_media_path.toStdString().c_str());
+    vlcMedia = libvlc_media_new_path(vlcInstance, current_media_path.toStdString().c_str());
     if (vlcMedia == NULL)
         return false;
 
-    vlcPlayer = libvlc_media_player_new_from_media(vlcMedia);
-
-    libvlc_media_release(vlcMedia);
-
-    if (vlcPlayer == NULL)
-        return false;
-
-    /* Integrate the video in the interface */
-#if defined(Q_OS_MAC)
-    libvlc_media_player_set_nsobject(vlcPlayer, (void *)Renderer->getVideoWidget()->winId());
-#elif defined(Q_OS_UNIX)
-    libvlc_media_player_set_xwindow(vlcPlayer, Renderer->getVideoRenderer()->winId());
-#elif defined(Q_OS_WIN)
-    libvlc_media_player_set_hwnd(vlcPlayer, Renderer->getVideoRenderer()->winId());
-#endif
+    libvlc_media_player_set_media(vlcPlayer, vlcMedia);
 
     return true;
 }
@@ -61,7 +89,8 @@ void VlcDecoder::setVolume(QString percent)
 
 void VlcDecoder::unload()
 {
-    libvlc_media_player_release(vlcPlayer);
+    libvlc_media_player_set_media(vlcPlayer, NULL);
+    libvlc_media_release(vlcMedia);
 }
 
 void VlcDecoder::play()
@@ -84,7 +113,6 @@ void VlcDecoder::stop()
         return;
 
     libvlc_media_player_stop(vlcPlayer);
-    libvlc_media_player_release(vlcPlayer);
 }
 
 void VlcDecoder::updatePosition()

@@ -32,6 +32,7 @@ protected:
     QString                  current_media_path;
     libvlc_instance_t       *vlcInstance = NULL;
     libvlc_media_player_t   *vlcPlayer = NULL;
+    libvlc_media_t          *vlcMedia = NULL;
     MediaWidgetWrapper      *Renderer;
     QScopedPointer<QTimer>   PositionTimer;
 protected slots:
