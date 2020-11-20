@@ -107,13 +107,13 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 - **shuffle play** in seq container via metadata
 - **automatic refresh** via metatags in SMIL header
 - **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav like described in [a-smil.org Reporting](http://www.a-smil.org/index.php/Reporting)
-
-## currently supported remote features via downloader
  - http downloads and caching
  - caching of remote SMIL index file
  - caching of remote media files
  - refresh via meta tag in cyclic timer periods
  - http 301 redirects for index and media
+ - change config.xml during plaback
+ - remote update
 
 ## HotKeys
  - toogle fullscreen with Ctrl-F
@@ -122,9 +122,8 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
  - open configuration dialog with Ctrl-S
 
 ## future ToDo's
- - change config.xml during plaback
  - interactivity trigger (touch, keyboard, ean-codes)
  - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
- - **administration functions** as described in [a-smil.org Maintance tasks](http://www.a-smil.org/index.php/Maintenance_tasks)
+- REST Api 
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)
