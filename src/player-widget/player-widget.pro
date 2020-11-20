@@ -84,6 +84,11 @@ win32 {
     Debug:LIBS += -L../lib -lgarlic -lquazipd -lzlib
 }
 
+macx {
+    #libgarlic is static compiled in osx
+    LIBS += -L../lib -lgarlic -lquazip -lzlib
+}
+
 SOURCES += \
     media/image.cpp \
     media/player_base_media.cpp \

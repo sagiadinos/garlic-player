@@ -27,6 +27,12 @@ win32 {
     Debug:LIBS += -L../lib  -lquazipd -lzlib
 }
 
+macx {
+    CONFIG += staticlib
+    DESTDIR = ../lib/
+    LIBS += -L../lib -lquazip -lzlib
+}
+
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes
 
