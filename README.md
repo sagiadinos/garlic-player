@@ -3,37 +3,29 @@
 The goal is to create a as most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet Digital Signage needs.
 Garlic should be used online with web-based content managment systems like [SmilControl](https://smil-control.com) or other.
 Offline usage via command-line is also possible.
+Garlic is able to play local and remote (via http) SMIL Files with the features described below.
 
 ## Libraries used
- - [Qt5](https://www.qt.io) >= 5.10 (5.12.6 recommended)
- - [QtAV](http://www.qtav.org) >= 1.12.0 as alternative to QtMultimedia
+ - [Qt5](https://www.qt.io) >= 5.10 (5.12.x recommended)
+ - [QtAV](http://www.qtav.org) >= 1.13.0 as alternative to QtMultimedia
  - [Quazip](http://quazip.sourceforge.net) 0.7.3 (included in ./src/ext)
  - [zlib](https://zlib.net) 1.2.11 (included in ./src/ext)
 
-## OS targets:
-
-Linux, Windows, Raspberry Pi 3/4, Android, OSX, later iOS
-Garlic is able to play local and remote (via http) SMIL Files with the features described below.
-Compilations were tested with:
- - Kde Neon Ubuntu 16.04 based (Do not use QtMultimedia cause gstreamer 1.8 seems to have a mem leak)
- - Kubuntu 16.10, 17.04, 17.10, 18.04 (native)
- - Debian: Jessie and Stretch
- - Rasperian Stretch rpi 3 with hardware video acceleration from [POT](https://github.com/carlonluca/pot) (experimental)
- - Rasperian Stretch rpi 4 (experimental)
- - Tinker Board (Linaro OS 1.8) 
- - Android armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2, 7.1 and 9)
- - Windows 7 i64 (VS2015 Community Version)
- - Windows 10 i64 (VS2015 Community Version)
- - OSX High Sierra (Clang)
+## Current Operating System Supported
+ - Linux
+ - Windows
+ - Android
+ - OSX (CI is prepared)
+  
+  ### Successful tested with:
+ - Linux 64Bit: Kde Neon, Kubuntu, Debian, Arch
+ - Raspberry Pi: 3 and 4 and with a 64Bit rpi 4 (experimental)
+ - Tinker Board: (Linaro OS 1.8) 
+ - Android Armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2, 7.1 and 9)
+ - Windows 64Bit: 7, 8 and 10
+ - MacOS: High Sierra and Catalina 
  
 For Android player-c2qml is needed, cause QtMultimedia-Widgets are not supported.
-
-Attention!
-
- - Qt 5.9.1 QML Image Type, used in player-c2qml has a [mem leak](https://bugreports.qt.io/browse/QTBUG-61754)
- - Qt 5.9.3 has also a [video player bug](https://bugreports.qt.io/browse/QTBUG-64764) on Android
- 
-both bugs are showstoppers for media player who should run 24/7, so do not use this Qt-versions
 
 *garlic.sh [options] SMIL_INDEX*
 
