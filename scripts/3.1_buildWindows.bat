@@ -127,7 +127,7 @@ rem ===============================================
 rem create copy of the Visual Studio runtime
 rem =============================================== 
 if not exist deployment\packages\com.microsoft.vcredist.x64\data mkdir deployment\packages\com.microsoft.vcredist.x64\data
-move bin\vcredist_x64.exe deployment\packages\com.microsoft.vcredist.x64\data
+copy /Y %DEPLOYMENT_HELPER_PATH%\bin\vcredist_x64.exe deployment\packages\com.microsoft.vcredist.x64\data
 
 rem =============================================== 
 rem create copy xaudio2 install

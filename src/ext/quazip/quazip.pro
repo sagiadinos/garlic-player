@@ -5,7 +5,6 @@ QT -= gui
 !android:DESTDIR = ../../lib/
 android:DESTDIR = ../../libandroid/
 
-
 # The ABI version.
 
 !win32:VERSION = 1.0.0

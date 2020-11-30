@@ -280,7 +280,7 @@ void MainConfiguration::determineOS()
 #if defined  Q_OS_ANDROID
     os = OS_ANDROID;
 #elif defined Q_OS_BSD4
-    os = OS_BSD;
+    os = OS_OSX;
 #elif defined Q_OS_DARWIN
     os = OS_DARWIN;
 #elif defined Q_OS_FREEBSD
