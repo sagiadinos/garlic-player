@@ -63,13 +63,13 @@ QString MainWindow::selectRegion(QString region_name)
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
-    if (!ke->modifiers().testFlag(Qt::ControlModifier))
+/*    if (!ke->modifiers().testFlag(Qt::ControlModifier))
     {
         MyInteractions->handleKeyPress(ke);
     }
     else
     {
-        switch (ke->key())
+*/        switch (ke->key())
         {
             case Qt::Key_F:
             if (screen_state != FULLSCREEN)
@@ -102,20 +102,22 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
                 QApplication::quit();
             break;
         }
-    }
+//    }
     return;
 }
 
 bool MainWindow::event(QEvent *event)
 {
-    if(event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd)
+    if(event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd
+            || event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease)
     {
         event->accept();
-        if(event->type() == QEvent::TouchBegin)
+        if(event->type() == QEvent::TouchBegin || event->type() == QEvent::MouseButtonPress)
         {
             start_touch_time.start();
         }
-        else if (static_cast<QTouchEvent*>(event)->touchPoints().count() == 1 && event->type() == QEvent::TouchUpdate)
+        else if ((event->type() == QEvent::TouchUpdate && static_cast<QTouchEvent*>(event)->touchPoints().count() == 1)
+                 || event->type() == QEvent::MouseButtonRelease)
         {
             int ms = start_touch_time.elapsed();
             if (ms > 10000)
