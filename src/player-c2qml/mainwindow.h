@@ -71,6 +71,7 @@ class MainWindow : public QQuickView
         void                      createRegions();
         void                      deleteRegions();
         void                      sendClosePlayerCorrect();
+        void                      quitApplication();
     protected slots:
         void                      prepareParsing();
         void                      startShowMedia(BaseMedia *media);

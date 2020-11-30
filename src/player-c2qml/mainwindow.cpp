@@ -93,10 +93,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             break;
 
             case Qt::Key_Q: // quit app normal
-                MyLibFacade->shutDownParsing();
-                sendClosePlayerCorrect();
-            //    delete MyLibFacade;
-                QApplication::quit();
+                quitApplication();
             break;
             case Qt::Key_C: // quit app not normal e.g. to simulate a crash
                 QApplication::quit();
@@ -133,7 +130,10 @@ bool MainWindow::event(QEvent *event)
 void MainWindow::openDebugInfos()
 {
     DebugInfos MyDebugInfos(MyLibFacade);
-    MyDebugInfos.exec();
+    if (MyDebugInfos.exec() == QDialog::Accepted)
+    {
+        quitApplication();
+    }
 }
 
 
@@ -328,4 +328,12 @@ void MainWindow::sendClosePlayerCorrect()
     QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity", "closePlayerCorrect");
 #endif
     qDebug(MediaPlayer) << "send ClosePlayerCorrect" ;
+}
+
+void MainWindow::quitApplication()
+{
+    MyLibFacade->shutDownParsing();
+    sendClosePlayerCorrect();
+//    delete MyLibFacade;
+    QApplication::quit();
 }

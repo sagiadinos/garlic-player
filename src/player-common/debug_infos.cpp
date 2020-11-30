@@ -106,10 +106,10 @@ void DebugInfos::outputResourcesUsage()
 
 void DebugInfos::on_close_dialog_clicked()
 {
-    QDialog::accept();
+    QDialog::close();
 }
 
 void DebugInfos::on_close_player_clicked()
 {
-    QApplication::quit();
+    QDialog::accept();
 }
