@@ -130,8 +130,7 @@ void SmilHead::TaskScheduler::parseFirmwareUpdate(QDomElement element)
 
 void SmilHead::TaskScheduler::emitInstallSoftware(QString file_path)
 {
-    qInfo(TaskExecution) << Logger::getInstance().createTaskExecutionLogEntry(MyFirmwareUpdate.task_id, "completed");
-    emit installSoftware(file_path);
+   emit installSoftware(file_path);
 }
 
 void SmilHead::TaskScheduler::parseUpdateSetting(QDomElement element)
@@ -179,7 +178,8 @@ void SmilHead::TaskScheduler::parseUpdateSetting(QDomElement element)
 
 void SmilHead::TaskScheduler::emitApplyConfiguration()
 {
-    qInfo(TaskExecution) << Logger::getInstance().createTaskExecutionLogEntry(MyUpdateSetting.task_id, "completed");
+    // maybe TaskExecution is better placed in the launcher
+  //  qInfo(TaskExecution) << Logger::getInstance().createTaskExecutionLogEntry(MyUpdateSetting.task_id, "completed");
     emit applyConfiguration();
 }
 
@@ -190,7 +190,7 @@ void SmilHead::TaskScheduler::parseShutdownPlayer(QDomElement element)
         MyShutdownPlayer.task_id = element.attribute("id");
     }
 
-    if (hasUsedTaskId(MyShutdownPlayer.task_id, "shudown_player_task_id"))
+    if (hasUsedTaskId(MyShutdownPlayer.task_id, "shutdown_player_task_id"))
         return;
 
     emitShutdownPlayer();
@@ -198,7 +198,6 @@ void SmilHead::TaskScheduler::parseShutdownPlayer(QDomElement element)
 
 void SmilHead::TaskScheduler::emitShutdownPlayer()
 {
-    qInfo(TaskExecution) << Logger::getInstance().createTaskExecutionLogEntry(MyShutdownPlayer.task_id, "completed");
     emit reboot();
 }
 
@@ -206,7 +205,7 @@ bool SmilHead::TaskScheduler::hasUsedTaskId(QString task_id, QString task_name)
 {
     if (MyConfiguration->getUserConfigByKey(task_name) == task_id)
     {
-        // do not apply a formely used update
+        // do not apply a formely used task
         return true;
     }
 
