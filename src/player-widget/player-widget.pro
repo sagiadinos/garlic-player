@@ -15,7 +15,7 @@ DESTDIR      = ../bin
 INCLUDEPATH += ../ext/zlib/includes
 INCLUDEPATH += ../garlic-lib/
 
-CONFIG    += support_qtav # alternatives: support_qtav support_qtmm support_libvlc
+CONFIG    += support_qtav #alternatives: support_qtav support_qtmm support_libvlc
 
 #DEFINES += SUPPORT_EMBEDDED
 #DEFINES += SUPPORT_RPI

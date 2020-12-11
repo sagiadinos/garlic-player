@@ -57,6 +57,7 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
 
     public void registerBroadcastReceiver()
     {
+
         IntentFilter filter = new IntentFilter("com.sagiadinos.garlic.player.java.ConfigReceiver");
         ConfigReceiver MyConfigReceiver = new ConfigReceiver();
         registerReceiver(MyConfigReceiver, filter);

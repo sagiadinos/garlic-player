@@ -105,23 +105,27 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 
 bool MainWindow::event(QEvent *event)
 {
-    if(event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchUpdate || event->type() == QEvent::TouchEnd
-            || event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease)
+    if(event->type() == QEvent::TouchBegin || event->type() == QEvent::MouseButtonPress)
     {
-        event->accept();
-        if(event->type() == QEvent::TouchBegin || event->type() == QEvent::MouseButtonPress)
+        qint64 delay = QDateTime::currentMSecsSinceEpoch() - last_touch;
+        if (delay < 500)
         {
-            start_touch_time.start();
+            count_touch++;
         }
-        else if ((event->type() == QEvent::TouchUpdate && static_cast<QTouchEvent*>(event)->touchPoints().count() == 1)
-                 || event->type() == QEvent::MouseButtonRelease)
+        else
         {
-            int ms = start_touch_time.elapsed();
-            if (ms > 10000)
-            {
-                openDebugInfos();
-            }
+            count_touch = 0;
         }
+
+        if (count_touch > 9)
+        {
+            count_touch = 0;
+            openDebugInfos();
+        }
+    }
+    if(event->type() == QEvent::TouchEnd || event->type() == QEvent::MouseButtonRelease)
+    {
+        last_touch = QDateTime::currentMSecsSinceEpoch();
     }
     return QQuickView::event(event);
 

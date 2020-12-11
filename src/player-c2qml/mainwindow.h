@@ -62,7 +62,8 @@ class MainWindow : public QQuickView
         QMap<QString, TRegion *>  regions_list;
         QSize                     mainwindow_size;
         int                       screen_state = 0;
-        QTime                     start_touch_time;
+        qint64                    last_touch = 0;
+        int                       count_touch = 0;
         void                      openDebugInfos();
         QString                   selectRegion(QString region_name);
         void                      resizeEvent(QResizeEvent * event);
