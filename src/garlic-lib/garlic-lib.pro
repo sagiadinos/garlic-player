@@ -1,6 +1,6 @@
 include(../defaults.pri)
 
-QT       += core sql network xml widgets
+QT       += core sql network xml xmlpatterns widgets
 TEMPLATE  = lib
 CONFIG   += warn_on c++11 stl
 DEFINES  += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
@@ -51,6 +51,8 @@ SOURCES += \
     files/wgt.cpp \
     smilparser/base_timings.cpp \
     smilparser/body_parser.cpp \
+    smilparser/conditional/adapi_wrapper.cpp \
+    smilparser/conditional/expr.cpp \
     smilparser/current_playing_media.cpp \
     smilparser/element_factory.cpp \
     smilparser/elements_container.cpp \
@@ -117,6 +119,8 @@ HEADERS += \
     files/webdav.h \
     files/wgt.h \
     smilparser/body_parser.h \
+    smilparser/conditional/adapi_wrapper.h \
+    smilparser/conditional/expr.h \
     smilparser/current_playing_media.h \
     smilparser/element_factory.h \
     smilparser/elements_container.h \

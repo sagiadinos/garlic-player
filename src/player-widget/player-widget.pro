@@ -6,7 +6,7 @@
 include(../defaults.pri)
 include(../player-common/common.pri)
 
-QT          += core gui sql xml widgets webenginewidgets
+QT          += core gui sql xml xmlpatterns widgets webenginewidgets
 CONFIG      += warn_on c++11
 DEFINES     += QT_DEPRECATED_WARNINGS
 TARGET       = garlic-player
