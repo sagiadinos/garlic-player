@@ -44,7 +44,27 @@ void PlayerWeb::init(BaseMedia *media)
     // Deactivate caching for testing
     // browser->page()->profile()->setHttpCacheType(QWebEngineProfile::NoCache);
 
-    browser->page()->settings()->setAttribute(QWebEngineSettings::PlaybackRequiresUserGesture, false); // auto play video and audio
+    browser->settings()->setAttribute(QWebEngineSettings::PlaybackRequiresUserGesture, false); // auto play video and audio
+    browser->settings()->setAttribute(QWebEngineSettings::ShowScrollBars, false);
+
+// activates everything for debug and testing
+/*
+    browser->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
+    browser->settings()->setAttribute(QWebEngineSettings::SpatialNavigationEnabled, true);
+    browser->settings()->setAttribute(QWebEngineSettings::HyperlinkAuditingEnabled, true);
+    browser->settings()->setAttribute(QWebEngineSettings::ScrollAnimatorEnabled, true);
+    browser->settings()->setAttribute(QWebEngineSettings::FullScreenSupportEnabled, true);
+    browser->settings()->setAttribute(QWebEngineSettings::ScreenCaptureEnabled, true);
+    browser->settings()->setAttribute(QWebEngineSettings::TouchIconsEnabled, true);
+    browser->settings()->setAttribute(QWebEngineSettings::FocusOnNavigationEnabled, true);
+    browser->settings()->setAttribute(QWebEngineSettings::PrintElementBackgrounds, true);
+    browser->settings()->setAttribute(QWebEngineSettings::AllowRunningInsecureContent, true);
+    browser->settings()->setAttribute(QWebEngineSettings::AllowGeolocationOnInsecureOrigins, true);
+    browser->settings()->setAttribute(QWebEngineSettings::AllowWindowActivationFromJavaScript, true);
+    browser->settings()->setAttribute(QWebEngineSettings::JavascriptCanPaste, true);
+    browser->settings()->setAttribute(QWebEngineSettings::DnsPrefetchEnabled, true);
+*/
+
 
     browser->load(sanitizeUri(media->getLoadablePath()));
     if (SmilMedia->getLogContentId() != "")

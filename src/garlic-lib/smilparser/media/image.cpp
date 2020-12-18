@@ -18,17 +18,11 @@
 
 #include "image.h"
 
-TImage::TImage(TContainer *pc, QObject *parent) : BaseMedia(parent)
+TImage::TImage(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
 {
     parent_container = pc;
     setObjectName("TImage");
     is_media = true;
-}
-
-void TImage::registerInMediaManager(Files::MediaManager *mm)
-{
-    MyMediaManager = mm;
-    MyMediaManager->registerFile(src);
 }
 
 TImage::~TImage()
@@ -37,7 +31,7 @@ TImage::~TImage()
 
 void TImage::prepareDurationTimerBeforePlay()
 {
-    if (getLoadablePath().isEmpty())
+    if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
         skipElement();
         return;

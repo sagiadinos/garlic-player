@@ -65,6 +65,7 @@ protected:
         bool                                    has_launcher = false;
         QScopedPointer<DB::InventoryTable>      MyInventoryTable;
         QScopedPointer<ElementsContainer>       MyElementsContainer;
+        QScopedPointer<ElementFactory>          MyElementFactory;
         QScopedPointer<CurrentPlayingMedia>     MyCurrentPlayingMedia;
         QScopedPointer<MainConfiguration>       MyConfiguration;
         QScopedPointer<MediaModel>              MyMediaModel;

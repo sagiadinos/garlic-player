@@ -18,7 +18,7 @@
 
 #include "audio.h"
 
-TAudio::TAudio(TContainer *pc, QObject *parent)  : BaseMedia(parent)
+TAudio::TAudio(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent)  : BaseMedia(mm, config, parent)
 {
     parent_container = pc;
     setObjectName("TAudio");
@@ -29,15 +29,10 @@ TAudio::~TAudio()
 {
 }
 
-void TAudio::registerInMediaManager(Files::MediaManager *mm)
-{
-    MyMediaManager = mm;
-    MyMediaManager->registerFile(src);
-}
 
 void TAudio::prepareDurationTimerBeforePlay()
 {
-    if (getLoadablePath().isEmpty())
+    if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
         skipElement();
         return;

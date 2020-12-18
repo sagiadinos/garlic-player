@@ -35,7 +35,7 @@ class TBase : public QObject
 {
     Q_OBJECT
 public:
-    explicit TBase(QObject *parent = 0);
+    explicit TBase(QObject *parent = Q_NULLPTR);
     virtual void          preloadParse(QDomElement element) = 0;
             QString       getID(){return id;}
             QString       getTitle(){return title;}

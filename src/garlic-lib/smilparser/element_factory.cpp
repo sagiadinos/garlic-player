@@ -17,8 +17,10 @@
 *************************************************************************************/
 #include "element_factory.h"
 
-ElementFactory::ElementFactory(QObject *parent) : QObject(parent)
+ElementFactory::ElementFactory(Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : QObject(parent)
 {
+    MyMediaManager      = mm;
+    MyMainConfiguration = config;
 }
 
 BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *parent_container, QObject *parent)
@@ -46,27 +48,27 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *par
 
     if (type == "img")
     {
-        return new TImage(parent_container, parent);
+        return new TImage(parent_container, MyMediaManager, MyMainConfiguration, parent);
     }
     else if (type == "video")
     {
-        return new TVideo(parent_container, parent);
+        return new TVideo(parent_container, MyMediaManager, MyMainConfiguration, parent);
     }
     else if (type == "audio")
     {
-        return new TAudio(parent_container, parent);
+        return new TAudio(parent_container, MyMediaManager, MyMainConfiguration, parent);
     }
     else if (type == "text")
     {
-        return new TWeb(parent_container, parent);
+        return new TWeb(parent_container, MyMediaManager, MyMainConfiguration, parent);
     }
     else if (type == "widget")
     {
-        return new TWidget(parent_container, parent);
+        return new TWidget(parent_container, MyMediaManager, MyMainConfiguration, parent);
     }
     else if (type == "prefetch")
     {
-        return new TPrefetch(parent_container, parent);
+        return new TPrefetch(parent_container, MyMediaManager, MyMainConfiguration, parent);
     }
     else if (type == "seq")
     {
@@ -85,5 +87,5 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *par
         return new TBody(parent);
     }
 
-    return new Unknown(parent_container, parent);
+    return new Unknown(parent_container, MyMediaManager, MyMainConfiguration, parent);
 }

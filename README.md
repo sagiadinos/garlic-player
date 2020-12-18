@@ -104,9 +104,10 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 <!-- -->  HTML-like comments in SMIL-File are supported and content inside will ignored
 
 ## additional features supported not in w3c standard
-- **shuffle play** in seq container via metadata
-- **automatic refresh** via metatags in SMIL header
-- **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav like described in [a-smil.org Reporting](http://www.a-smil.org/index.php/Reporting)
+ - **shuffle play** in seq container via metadata
+ - **automatic refresh** via metatags in SMIL header
+ - **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav like described in [a-smil.org Reporting](http://www.a-smil.org/index.php/Reporting)
+ - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
  - http downloads and caching
  - caching of remote SMIL index file
  - caching of remote media files
@@ -123,7 +124,6 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 
 ## future ToDo's
  - interactivity trigger (touch, keyboard, ean-codes)
- - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
-- REST Api 
+ - REST Api 
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)

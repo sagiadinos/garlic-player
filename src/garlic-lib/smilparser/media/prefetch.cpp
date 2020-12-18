@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "prefetch.h"
 
-TPrefetch::TPrefetch(TContainer *pc, QObject *parent) : BaseMedia(parent)
+TPrefetch::TPrefetch(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
 {
     parent_container = pc;
     setObjectName("TPrefetch");
@@ -26,12 +26,6 @@ TPrefetch::TPrefetch(TContainer *pc, QObject *parent) : BaseMedia(parent)
 
 TPrefetch::~TPrefetch()
 {
-}
-
-void TPrefetch::registerInMediaManager(Files::MediaManager *mm)
-{
-    MyMediaManager = mm;
-    MyMediaManager->registerFile(src);
 }
 
 void TPrefetch::prepareDurationTimerBeforePlay()

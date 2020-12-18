@@ -1,6 +1,6 @@
 #include "unknown.h"
 
-Unknown::Unknown(TContainer *pc, QObject *parent) : BaseMedia(parent)
+Unknown::Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
 {
     parent_container = pc;
     setObjectName("Unknown");
@@ -8,10 +8,10 @@ Unknown::Unknown(TContainer *pc, QObject *parent) : BaseMedia(parent)
 
 }
 
-void Unknown::registerInMediaManager(Files::MediaManager *mm)
+void Unknown::registerInMediaManager()
 {
-    MyMediaManager = mm;
 }
+
 void Unknown::prepareDurationTimerBeforePlay()
 {
     qDebug(Develop) << src << " Unknown tag";

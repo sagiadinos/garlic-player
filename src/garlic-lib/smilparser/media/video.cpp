@@ -18,7 +18,7 @@
 
 #include "video.h"
 
-TVideo::TVideo(TContainer *pc, QObject *parent) : TAudio(pc, parent)
+TVideo::TVideo(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : TAudio(pc, mm, config, parent)
 {
     parent_container = pc;
     setObjectName("TVideo");

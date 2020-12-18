@@ -21,6 +21,8 @@
 
 #include "files/media_manager.h"
 #include "container.h"
+#include "conditional/expr.h"
+#include "tools/main_configuration.h"
 
 class BaseMedia : public BaseTimings
 {
@@ -29,7 +31,7 @@ class BaseMedia : public BaseTimings
     const     int        CACHE_CONTROL_USE_CACHE  = 0;
     const     int        CACHE_CONTROL_ONLY_IF_CACHED  = 1;
 
-        explicit BaseMedia(QObject *parent = Q_NULLPTR);
+        explicit BaseMedia(Files::MediaManager *mm, MainConfiguration *config, QObject *parent = Q_NULLPTR);
 
         void                 preloadParse(QDomElement element);
         QString              getLoadablePath();
@@ -46,7 +48,7 @@ class BaseMedia : public BaseTimings
         int                  getCacheControl() {return cache_control;}
         QString              getBaseType()     {return "media";}
         bool                 isMedia()         {return is_media;}
-        virtual void         registerInMediaManager(Files::MediaManager *mm) = 0;
+        void                 registerInMediaManager();
 
         void                 resume();
         bool                 hasPlayingChilds(){return false;}
@@ -57,10 +59,11 @@ class BaseMedia : public BaseTimings
 
     protected:
         Files::MediaManager *MyMediaManager;
+        MainConfiguration   *MyMainConfiguration;
         TContainer          *parent_container;
+        Expr                 MyExpr;
         QString              region          = "";
         QString              src             = "";
-        QString              exec            = "";
         QString              type            = "";
         QString              fit             = "";
         QString              filename        = "";

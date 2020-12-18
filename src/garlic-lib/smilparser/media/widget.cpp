@@ -1,6 +1,6 @@
 #include "widget.h"
 
-TWidget::TWidget(TContainer *pc, QObject *parent) : BaseMedia(parent)
+TWidget::TWidget(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
 {
     parent_container = pc;
     setObjectName("TWidget");
@@ -13,16 +13,9 @@ TWidget::~TWidget()
 {
 }
 
-void TWidget::registerInMediaManager(Files::MediaManager *mm)
-{
-    MyMediaManager = mm;
-    MyMediaManager->registerFile(src);
-}
-
-
 void TWidget::prepareDurationTimerBeforePlay()
 {
-    if (getLoadablePath().isEmpty())
+    if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
         skipElement();
         return;

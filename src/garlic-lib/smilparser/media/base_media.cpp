@@ -18,8 +18,10 @@
 
 #include "base_media.h"
 
-BaseMedia::BaseMedia(QObject *parent) : BaseTimings(parent)
+BaseMedia::BaseMedia(Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseTimings(parent)
 {
+    MyMainConfiguration = config;
+    MyMediaManager      = mm;
 }
 
 void BaseMedia::preloadParse(QDomElement element)
@@ -69,6 +71,11 @@ void BaseMedia::play()
     status = _playing;
 }
 
+void BaseMedia::registerInMediaManager()
+{
+    MyMediaManager->registerFile(src);
+}
+
 void BaseMedia::resume()
 {
     play();
@@ -93,7 +100,7 @@ void BaseMedia::parseBaseMediaAttributes()
     region = getAttributeFromRootElement("region");
     fit    = getAttributeFromRootElement("fit");
     type   = getAttributeFromRootElement("type");
-    exec   = getAttributeFromRootElement("exec");
+    MyExpr.setExpression(getAttributeFromRootElement("expr"));
     src    = getAttributeFromRootElement("src");
 }
 

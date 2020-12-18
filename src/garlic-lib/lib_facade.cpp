@@ -172,8 +172,9 @@ void LibFacade::processHeadParsing()
 void LibFacade::processBodyParsing()
 {
     MyElementsContainer.reset(new ElementsContainer(MyHeadParser.data(), this)); // must be setted, when Layout is known
+    MyElementFactory.reset(new ElementFactory(MyMediaManager.data(), MyConfiguration.data()));
 
-    MyBodyParser.reset(new BodyParser(MyMediaManager.data(), MyElementsContainer.data(), this));
+    MyBodyParser.reset(new BodyParser(MyElementFactory.data(), MyMediaManager.data(), MyElementsContainer.data(), this));
 
     connect(MyBodyParser.data(), SIGNAL(preloadingBodyCompleted()), this, SLOT(preparedForPlaying()));
     connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));

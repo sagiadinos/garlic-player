@@ -7,9 +7,8 @@ class TWidget : public BaseMedia
 {
     Q_OBJECT
 public:
-    explicit TWidget(TContainer *pc, QObject *parent = Q_NULLPTR);
+    explicit TWidget(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent = Q_NULLPTR);
     ~TWidget();
-    void     registerInMediaManager(Files::MediaManager *mm);
 public slots:
     void     prepareDurationTimerBeforePlay();
 protected:

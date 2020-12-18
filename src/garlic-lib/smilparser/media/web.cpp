@@ -18,7 +18,7 @@
 
 #include "web.h"
 
-TWeb::TWeb(TContainer *pc, QObject *parent) : BaseMedia(parent)
+TWeb::TWeb(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
 {
     parent_container = pc;
     setObjectName("TWeb");
@@ -29,14 +29,18 @@ TWeb::~TWeb()
 {
 }
 
-void TWeb::registerInMediaManager(Files::MediaManager *mm)
+void TWeb::registerInMediaManager()
 {
-    MyMediaManager = mm;
     MyMediaManager->registerAsUncachable(src);
 }
 
 void TWeb::prepareDurationTimerBeforePlay()
 {
+    if (!MyExpr.executeQuery())
+    {
+        skipElement();
+        return;
+    }
 
     // do not mind if cached
     if (startDurTimer() || isEndTimerActive())

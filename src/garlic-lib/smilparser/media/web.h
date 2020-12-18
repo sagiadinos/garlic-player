@@ -25,9 +25,9 @@ class TWeb : public BaseMedia
 {
     Q_OBJECT
 public:
-    explicit TWeb(TContainer *pc, QObject *parent = Q_NULLPTR);
+    explicit TWeb(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent = Q_NULLPTR);
     ~TWeb();
-    void registerInMediaManager(Files::MediaManager *mm);
+    void registerInMediaManager();
 public slots:
     void            prepareDurationTimerBeforePlay();
 protected:

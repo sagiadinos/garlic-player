@@ -18,10 +18,11 @@
 
 #include "body_parser.h"
 
-BodyParser::BodyParser(Files::MediaManager *mm, ElementsContainer *ec, QObject *parent) : QObject(parent)
+BodyParser::BodyParser(ElementFactory *ef, Files::MediaManager *mm, ElementsContainer *ec, QObject *parent) : QObject(parent)
 {
-    MyElementsContainer   = ec;
+    MyElementFactory      = ef;
     MyMediaManager        = mm;
+    MyElementsContainer   = ec;
     MyCurrentPlayingMedia = new CurrentPlayingMedia(MyMediaManager, this);
     stop_all              = false;
 }
@@ -68,7 +69,7 @@ void BodyParser::endPlaying()
 
 void BodyParser::preloadElement(TContainer *parent_container, QDomElement element)
 {
-    BaseTimings *MyBaseTimings = ElementFactory::createBase(element, parent_container, this);
+    BaseTimings *MyBaseTimings = MyElementFactory->createBase(element, parent_container, this);
     connectSlots(MyBaseTimings);
 
     // Important! Slots needs to be connected before parsing!
@@ -95,7 +96,7 @@ void BodyParser::initMedia(BaseMedia *MyMedia)
 {
     // media must be initialised after parse, because register needs src
     // and insertSmilMedia needs the region
-    MyMedia->registerInMediaManager(MyMediaManager);
+    MyMedia->registerInMediaManager();
     MyElementsContainer->insertSmilMedia(MyMedia);
 }
 

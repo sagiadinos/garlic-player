@@ -33,7 +33,7 @@ class BodyParser : public QObject
 {
     Q_OBJECT
 public:
-    explicit BodyParser(Files::MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
+    explicit BodyParser(ElementFactory *ef, Files::MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
     ~BodyParser();
     void                               beginPreloading(QDomElement body);
     void                               beginPlaying();
@@ -44,6 +44,7 @@ protected:
     QString                            index_path;
     QScopedPointer<TBody>              MyBody;
     Files::MediaManager               *MyMediaManager;
+    ElementFactory                    *MyElementFactory;
     bool                               stop_all = false;
     ElementsContainer                 *MyElementsContainer;
     CurrentPlayingMedia               *MyCurrentPlayingMedia;
