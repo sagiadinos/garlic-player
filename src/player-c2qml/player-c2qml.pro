@@ -1,6 +1,6 @@
 include(../defaults.pri)
 
-QT          += core sql widgets gui xml quick qml quickcontrols2
+QT          += core sql widgets gui xml xmlpatterns quick qml quickcontrols2
 CONFIG      += warn_on c++11
 TARGET       = garlic-player
 TEMPLATE     = app
