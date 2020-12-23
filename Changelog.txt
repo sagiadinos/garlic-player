@@ -6,9 +6,8 @@ Changelog
 1. New Features
 	* remote configuration changes from CMS
 	* auto update for for non-root Android devices (via Device Owner-App garlic-launcher)
-	* interactivity, touch and jump to previous, next playlist item
 	* work together with garlic-launcher API
-	* REST-Interface
+	* expr-attributes based on Xpath and functions compatible to Iadea player
 	* code coverage
 
 2. Improvements
@@ -18,10 +17,12 @@ Changelog
 	* SMIL-index will be preloaded by default before play
 	* path to a config.xml via command line
 	* reorganized code structure and name changes
-	* change android builds from deprecated gcc to clang > Qt 5.12.x
+	* Android builds now signed
+	* change Android builds from deprecated gcc to clang > Qt 5.12.x
+	* new icons
 
 3. Remarks
-	* Qt 5.10.x is now minimal requirement, because some deprecated screen-functions where eleminate 
+	* Qt 5.10.x is now minimal requirement, because some deprecated screen-functions were removed 
 	
 	
 0.2.0 -> 0.3.0

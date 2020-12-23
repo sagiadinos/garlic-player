@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=Garlic Player
 Name[­de­]=Garlic Player
-Comment=SMIL based media player for digital signage
-Comment[­de­]=SMIL basierter Mediaplayer für Digital Signage
+Comment=Digital Signage Media Player based on SMIL
+Comment[­de­]=SMIL-kompatibler Digital Signage Medienplayer
 Exec=/opt/garlic-player/garlic.sh
 Icon=garlic-player
 Terminal=true

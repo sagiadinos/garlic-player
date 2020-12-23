@@ -87,3 +87,4 @@ DISTFILES += \
 
 
 
+android: include(/home/niko/Anwendungen/Android/Sdk/android_openssl/openssl.pri)
