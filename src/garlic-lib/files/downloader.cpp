@@ -107,7 +107,9 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 {
     QString content_type = "";
     if (reply->hasRawHeader("Content-Type"))
+    {
         content_type = reply->rawHeader("Content-Type");
+    }
 
     if (content_type.contains("text/html")  || content_type.contains("application/xhtml+xml"))
     {
@@ -117,9 +119,14 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         return;
     }
 
+    QStringList list;
     if (!validContentType(content_type))
     {
-        qWarning(Develop)<< remote_file_url.toString()  << " has contentype " << content_type << " which is not supported.";
+        list << "resourceURI" << remote_file_url.toString()
+             << "errorMessage" << "has an unknown content-type: " + content_type
+             << "lastCachedLength" << QString::number(local_file_info.size())
+             << "lastCachedModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
+        qCritical(ContentManager) << Logger::getInstance().createEventLogMetaData("FETCH_FAILED",list);
         reply->deleteLater();
         emit failed(this);
         return;
@@ -127,13 +134,16 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
     if (!reply->hasRawHeader("Last-Modified"))
     {
-        handleNetworkError(reply);
-        emit failed(this);
-        return;
+        list << "resourceURI" << remote_file_url.toString()
+             << "errorMessage" << "No Last-Modified in http-header after HEAD request"
+             << "lastCachedLength" << QString::number(local_file_info.size())
+             << "lastCachedModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
+        qWarning(ContentManager) << Logger::getInstance().createEventLogMetaData("UPDATE_FAILED",list);
     }
 
-    qint64    remote_size          = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
     QDateTime remote_last_modified = reply->header(QNetworkRequest::LastModifiedHeader).toDateTime();
+    qint64    remote_size          = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
+
     // we need to check for size and last Modified, cause a previous index smil on the server can have a older Date and would not be loaded
     // we need to check also if there is an already downloaded file which is signed and waiting via downloaded suffix
     QFileInfo fi(local_file_info.absoluteFilePath() + FILE_DOWNLOADED_SUFFIX);
@@ -210,6 +220,7 @@ bool Downloader::validContentType(QString content_type)
     if (!content_type.contains("image/") &&
             !content_type.contains("video/") &&
             !content_type.contains("audio/") &&
+            !content_type.contains("text/") &&
             !content_type.contains("application/smil") &&
             !content_type.contains("application/xml") &&
             !content_type.contains("application/zip") &&
