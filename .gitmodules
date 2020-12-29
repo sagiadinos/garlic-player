@@ -1,4 +1,4 @@
- [submodule "android_openssl"]
+[submodule "android_openssl"]
 	path = /src/ext/android_openssl
 	url = https://github.com/KDAB/android_openssl
 [submodule "src/ext/android_openssl"]
