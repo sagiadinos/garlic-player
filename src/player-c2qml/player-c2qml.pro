@@ -83,6 +83,3 @@ RESOURCES += qml.qrc
 DISTFILES += \
     android/src/com/sagiadinos/garlic/player/java/ConfigReceiver.java \
     android/src/com/sagiadinos/garlic/player/java/SmilIndexReceiver.java
-
-
-
