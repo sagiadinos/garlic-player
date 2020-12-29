@@ -39,8 +39,7 @@ android {
 
     # release build crashs when start debugging
     # see https://github.com/KDAB/android_openssl/issues/10
-    Release:include(../ext/android_openssl/master/openssl.pri)
-    Debug:include(../ext/android_openssl/debug_crash_fix/openssl.pri)
+    include(../ext/android_openssl/openssl.pri)
 
     ANDROID_EXTRA_LIBS += \
         $$OUT_PWD/../libandroid/libgarlic.so
@@ -87,4 +86,3 @@ DISTFILES += \
 
 
 
-android: include(/home/niko/Anwendungen/Android/Sdk/android_openssl/openssl.pri)
