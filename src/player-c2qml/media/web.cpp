@@ -43,6 +43,8 @@ void Web::setParentItem(QQuickItem *parent)
 
 QString Web::sanitizeUri(QString uri)
 {
+    if (uri.isEmpty())
+        return "";
     // add file scheme if neccessary
     if (uri.at(0) == "/")
     {

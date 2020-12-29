@@ -43,6 +43,7 @@ void PlayerWeb::init(BaseMedia *media)
 
     // Deactivate caching for testing
     // browser->page()->profile()->setHttpCacheType(QWebEngineProfile::NoCache);
+    browser->page()->setBackgroundColor(Qt::transparent);
 
     browser->settings()->setAttribute(QWebEngineSettings::PlaybackRequiresUserGesture, false); // auto play video and audio
     browser->settings()->setAttribute(QWebEngineSettings::ShowScrollBars, false);
