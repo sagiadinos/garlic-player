@@ -117,8 +117,8 @@ rem copy ffmpeg dlls
 rem =============================================== 
 copy /Y %QT_BASE_PATH_RUNTIME%\bin\av*.dll bin\*
 copy /Y  %QT_BASE_PATH_RUNTIME%\bin\sw*.dll bin\*
-copy /Y  %DEPLOYMENT_HELPER_PATH%\libeay32.dll bin\*
-copy /Y  %DEPLOYMENT_HELPER_PATH%\ssleay32.dll bin\*
+copy /Y  %DEPLOYMENT_HELPER_PATH%\libcrypto-1_1-x64.dll bin\*
+copy /Y  %DEPLOYMENT_HELPER_PATH%\libssl-1_1-x64.dll bin\*
 
 if not exist deployment mkdir deployment
 xcopy %GARLIC_DIR%\deployment\win\* deployment\* /sy
