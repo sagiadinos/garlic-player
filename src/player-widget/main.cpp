@@ -32,7 +32,21 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_X11InitThreads);
-    QApplication app(argc, argv);
+
+    // to prevent SOP with widgets
+/*    char ARG_DISABLE_WEB_SECURITY1[] = "--disable-web-security";
+    char ARG_DISABLE_WEB_SECURITY2[] = "--user-data-dir=/home/niko";
+    int newArgc = argc+1+2;
+    char** newArgv = new char*[newArgc];
+    for(int i=0; i<argc; i++) {
+        newArgv[i] = argv[i];
+    }
+    newArgv[argc] = ARG_DISABLE_WEB_SECURITY1;
+    newArgv[argc+1] = ARG_DISABLE_WEB_SECURITY2;
+    newArgv[argc+2] = nullptr;
+
+    QApplication app(newArgc, newArgv);
+  */  QApplication app(argc, argv);
 
     MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
@@ -51,7 +65,8 @@ int main(int argc, char *argv[])
 
     TCmdParser MyParser(MyMainConfiguration);
     MyParser.addOptions();
-    MyParser.parse(&app, MyLibFacade);
+
+    MyParser.parse(MyLibFacade);
 
     TScreen    MyScreen(Q_NULLPTR);
 
@@ -64,7 +79,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    QString val = MyParser.getWindowMode();
+     QString val = MyParser.getWindowMode();
     if (val == "fullscreen")
         w.resizeAsNormalFullScreen();
     else if (val == "bigscreen")

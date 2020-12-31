@@ -36,6 +36,24 @@ void TWidget::prepareDurationTimerBeforePlay()
 void TWidget::setAttributes()
 {
     parseBaseMediaAttributes();
+    params_as_query.clear();
+    QDomNodeList childs = root_element.childNodes();
+    for (int i = 0; i < childs.length(); i++)
+    {
+        parseWidgetCallParameters(childs.item(i).toElement());
+    }
+}
+
+void TWidget::parseWidgetCallParameters(QDomElement param)
+{
+    if (param.tagName() != "param" || !param.hasAttribute("name") || !param.hasAttribute("value"))
+        return;
+
+    QString attribute_name = param.attribute("name");
+    if (attribute_name == "cacheControl" || attribute_name == "filename" || attribute_name == "logContentId")
+        return;
+
+    params_as_query.append(attribute_name + "=" + param.attribute("value"));
 }
 
 // ====================  private methods =================================

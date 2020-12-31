@@ -25,7 +25,7 @@ public:
     void setIndexUrl(const QString &value);
 
     void addOptions();
-    bool parse(QApplication *app, LibFacade *MyLibFacade);
+    bool parse(LibFacade *MyLibFacade);
 protected:
     QString              window_mode   = "windowed";
     QSize                window_size   = QSize(980,540);

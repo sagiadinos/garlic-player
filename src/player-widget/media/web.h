@@ -6,6 +6,7 @@
 #include <QWebEngineSettings>
 #include <QWebEngineProfile>
 
+#include "smilparser/media/widget.h"
 #include "smilparser/media/web.h"
 #include "player_base_media.h"
 

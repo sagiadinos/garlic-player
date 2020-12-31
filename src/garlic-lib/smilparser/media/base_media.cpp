@@ -81,6 +81,14 @@ void BaseMedia::resume()
     play();
 }
 
+QString BaseMedia::getParamsAsQuery() const
+{
+    QString ret;
+    if (params_as_query.length() > 0)
+        ret = "?" + params_as_query.join("&");
+    return ret;
+}
+
 void BaseMedia::pause()
 {
     qDebug() << getID() << "paused ";

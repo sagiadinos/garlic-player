@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     TCmdParser MyParser(MyMainConfiguration);
     MyParser.addOptions();
 
-    if (!MyParser.parse(&app, MyLibFacade))
+    if (!MyParser.parse(MyLibFacade))
         return 1;
 
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");

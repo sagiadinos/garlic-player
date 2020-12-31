@@ -126,6 +126,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
              << "errorMessage" << "has an unknown content-type: " + content_type
              << "lastCachedLength" << QString::number(local_file_info.size())
              << "lastCachedModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
+
         qCritical(ContentManager) << Logger::getInstance().createEventLogMetaData("FETCH_FAILED",list);
         reply->deleteLater();
         emit failed(this);

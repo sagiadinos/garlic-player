@@ -16,16 +16,18 @@ void TCmdParser::addOptions()
         {{"m", "windows-mode"}, "fullscreen, bigscreen (when multimonitor) or windowed mode", "fullscreen|bigscreen|windowed"},
         {{"z", "windows-size"}, "size of windows (when windows mode) e.g. 980x540 means 980px width and 540px height", "width x height"},
         {{"s", "screen-select"}, "Starts in selected screen", "screen" }
+                    ,
+        {{"d", "disable-web-security"}, "", "" },
+        {{"u", "user-data-dir"}, "path to less secured", "path" }
     });
     parser.addPositionalArgument("SMIL_INDEX", QCoreApplication::translate("main", "Path to SMIL index"));
     parser.setOptionsAfterPositionalArgumentsMode(QCommandLineParser::ParseAsOptions);
 }
 
-bool TCmdParser::parse(QApplication *app, LibFacade *MyLibFacade)
+bool TCmdParser::parse(LibFacade *MyLibFacade)
 {
-    parser.process(*app);
+    parser.process(qApp->arguments());
     const QStringList args = parser.positionalArguments();
-
 
     if (parser.isSet("s"))
         setScreenSelect(parser.value("s").toInt());

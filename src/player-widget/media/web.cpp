@@ -47,6 +47,7 @@ void PlayerWeb::init(BaseMedia *media)
 
     browser->settings()->setAttribute(QWebEngineSettings::PlaybackRequiresUserGesture, false); // auto play video and audio
     browser->settings()->setAttribute(QWebEngineSettings::ShowScrollBars, false);
+    browser->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true); // needed to block SOP Attention can be deprecated look at param functions in main.cpp
 
 // activates everything for debug and testing
 /*
@@ -66,8 +67,8 @@ void PlayerWeb::init(BaseMedia *media)
     browser->settings()->setAttribute(QWebEngineSettings::DnsPrefetchEnabled, true);
 */
 
-
-    browser->load(sanitizeUri(media->getLoadablePath()));
+    QString ss = sanitizeUri(media->getLoadablePath()) + media->getParamsAsQuery();
+    browser->load(ss);
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }

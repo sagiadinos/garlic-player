@@ -54,12 +54,15 @@ class BaseMedia : public BaseTimings
         bool                 hasPlayingChilds(){return false;}
         BaseTimings         *getChildElementFromList(){return this;}
         TContainer          *getParentContainer(){return parent_container;}
-    public slots:
+        QString              getParamsAsQuery() const;
+
+public slots:
         void                 emitfinished();
 
     protected:
         Files::MediaManager *MyMediaManager;
         MainConfiguration   *MyMainConfiguration;
+        QStringList          params_as_query;
         TContainer          *parent_container;
         Expr                 MyExpr;
         QString              region          = "";

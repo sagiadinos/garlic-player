@@ -13,5 +13,6 @@ public slots:
     void     prepareDurationTimerBeforePlay();
 protected:
     void     setAttributes();
+    void     parseWidgetCallParameters(QDomElement param);
 };
 #endif // TWIDGET_H
