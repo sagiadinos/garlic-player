@@ -23,7 +23,8 @@ void Web::init(BaseMedia *media)
 {
     SmilMedia = media;
     web_item.data()->setVisible(true);
-    web_item.data()->setProperty("url", sanitizeUri(SmilMedia->getLoadablePath()));
+    QString uri = sanitizeUri(media->getLoadablePath()) + media->getParamsAsQuery();
+    web_item.data()->setProperty("url", uri);
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }

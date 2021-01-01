@@ -67,8 +67,8 @@ void PlayerWeb::init(BaseMedia *media)
     browser->settings()->setAttribute(QWebEngineSettings::DnsPrefetchEnabled, true);
 */
 
-    QString ss = sanitizeUri(media->getLoadablePath()) + media->getParamsAsQuery();
-    browser->load(ss);
+    QString uri = sanitizeUri(media->getLoadablePath()) + media->getParamsAsQuery();
+    browser->load(uri);
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }

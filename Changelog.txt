@@ -9,6 +9,7 @@ Changelog
 	* work together with garlic-launcher API
 	* expr-attributes based on Xpath and functions compatible to Iadea player
 	* code coverage
+	* wgt (Webwidgets) supports parameter
 
 2. Improvements
 	* integrate version number in build enviroments from github repository
@@ -20,6 +21,7 @@ Changelog
 	* Android builds now signed
 	* change Android builds from deprecated gcc to clang > Qt 5.12.x
 	* new icons
+	* various bugfixes
 
 3. Remarks
 	* Qt 5.10.x is now minimal requirement, because some deprecated screen-functions were removed 
