@@ -15,7 +15,7 @@ DESTDIR      = ../bin
 INCLUDEPATH += ../ext/zlib/includes
 INCLUDEPATH += ../garlic-lib/
 
-CONFIG    += support_qtav #alternatives: support_qtav support_qtmm support_libvlc
+CONFIG   += support_qtav #alternatives: support_qtav support_qtmm support_libvlc
 
 #DEFINES += SUPPORT_EMBEDDED
 #DEFINES += SUPPORT_RPI
@@ -37,6 +37,7 @@ support_qtav {
     }
     unix:mac {
         INCLUDEPATH  += $$QT.core.libs/QtAV.framework/Versions/1/Headers
+        INCLUDEPATH  += $$QT.core.libs/QtAVWidgets.framework/Versions/1/Headers
         QMAKE_LFLAGS += -F$$QT.core.libs
         LIBS         += -framework QtAV
     }
@@ -68,7 +69,7 @@ support_qtmm {
 }
 
 
-unix:!android{
+linux {
     LIBS += -L../lib -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
     # hide some annoying GCC compiler warnings
     # Todo check if neccessary from time to time
