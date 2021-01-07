@@ -190,7 +190,7 @@ QString MainWindow::selectRegion(QString region_name)
 void MainWindow::createRegions()
 {
     QList<Region> *region_list = MyLibFacade->getHead()->getLayout();
-    setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
+    setStyleSheet("background-color: " + MyLibFacade->getHead()->getRootBackgroundColor()+";");
     QMap<QString, TRegion *>::iterator j;
     for (int i = 0; i < region_list->length(); i++)
     {
