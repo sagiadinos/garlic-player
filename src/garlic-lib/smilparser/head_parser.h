@@ -32,19 +32,20 @@
 #include "reports/event_logs_manager.h"
 #include "reports/play_logs_manager.h"
 #include "reports/inventory_report_manager.h"
-
+#include "smilparser/base.h"
 /**
  * @brief The Region struct
  * All values are QString cause there could be a percent sign (%) in SMIL
  */
 struct Region
 {
-    QString regionName;
-    qreal top;
-    qreal left;
-    qreal width;
-    qreal height;
-    int z_index;
+    QString id         = "screen";
+    QString regionName = "";
+    qreal top = 0;
+    qreal left = 0;
+    qreal width = 1;
+    qreal height = 1;
+    int z_index = 0;
     QString backgroundColor  = "black";
     QString backgroundImage  = "none";
     QString backgroundRepeat = "repeat";

@@ -80,7 +80,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 
 #### Attributes for media
 - **region**
-- **fit** fill|scale|meetbest
+- **fit** fill|meet|meetbest
 
 ### Attributes for media and time container:
 - **xml:id** with Fallback for SMIL 2.0 id

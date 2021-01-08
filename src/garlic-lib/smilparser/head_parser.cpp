@@ -41,12 +41,14 @@ void HeadParser::setDefaultValues()
     backgroundImage                = "none";
     backgroundRepeat               = "repeat";
     region_list.clear();
-    default_region.regionName      = "screen";
+    default_region.id              = "screen";
+    default_region.regionName      = "";
     default_region.top             = 0;
     default_region.left            = 0;
     default_region.width           = 1;
     default_region.height          = 1;
     default_region.z_index         = 0;
+    default_region.backgroundColor = "black";
     default_region.backgroundImage = "none";
     default_region.backgroundRepeat= "repeat";
     region_list.append(default_region);            void process();
@@ -196,37 +198,41 @@ void HeadParser::parseRegions(QDomNodeList childs)
         element = childs.item(i).toElement();
         if (element.tagName() != "region")
             continue;
-        if (element.hasAttribute("regionName"))
-        {
-            region.regionName      = element.attribute("regionName");
-            if (element.hasAttribute("top"))
-                region.top             = calculatePercentBasedOnRoot(element.attribute("top"), height);
-            if (element.hasAttribute("left"))
-                region.left            = calculatePercentBasedOnRoot(element.attribute("left"), width);
-            if (element.hasAttribute("width"))
-                region.width           = calculatePercentBasedOnRoot(element.attribute("width"), width);
-            if (element.hasAttribute("height"))
-                region.height          = calculatePercentBasedOnRoot(element.attribute("height"), height);
-            if (element.hasAttribute("z-index"))
-                region.z_index         = element.attribute("z-index").toInt();
-            if (element.hasAttribute("backgroundColor"))
-                region.backgroundColor = element.attribute("backgroundColor");
-            if (element.hasAttribute("backgroundImage"))
-            {
-                region.backgroundImage = element.attribute("backgroundImage");
-                handleBackgroundImage(region.backgroundImage);
-            }
-            if (element.hasAttribute("backgroundRepeat"))
-                region.backgroundRepeat = element.attribute("backgroundRepeat");
-            region_list.append(region);
-            std::sort(region_list.begin(), region_list.end()); // sort z-indexes ascending to place Widgets corect in mainwindow
-        }
-        else // when one region-tag has no regionName break the loop delete QList and put the default_region 100% region as multizone
+
+        // we cannot make so that there is one region correct setted so:
+        // when one region-tag has no regionName and xml:id break the loop delete QList and put the default_region 100% region as multizone
+        if (!element.hasAttribute("regionName") && !element.hasAttribute("xml:id") && !element.hasAttribute("id"))
         {
             region_list.clear();
             region_list.append(default_region);
             break;
         }
+
+        region.id = TBase::parseID(element);
+
+        if (element.hasAttribute("regionName"))
+            region.regionName      = element.attribute("regionName");
+        if (element.hasAttribute("top"))
+            region.top             = calculatePercentBasedOnRoot(element.attribute("top"), height);
+        if (element.hasAttribute("left"))
+            region.left            = calculatePercentBasedOnRoot(element.attribute("left"), width);
+        if (element.hasAttribute("width"))
+            region.width           = calculatePercentBasedOnRoot(element.attribute("width"), width);
+        if (element.hasAttribute("height"))
+            region.height          = calculatePercentBasedOnRoot(element.attribute("height"), height);
+        if (element.hasAttribute("z-index"))
+            region.z_index         = element.attribute("z-index").toInt();
+        if (element.hasAttribute("backgroundColor"))
+            region.backgroundColor = element.attribute("backgroundColor");
+        if (element.hasAttribute("backgroundImage"))
+        {
+            region.backgroundImage = element.attribute("backgroundImage");
+            handleBackgroundImage(region.backgroundImage);
+        }
+        if (element.hasAttribute("backgroundRepeat"))
+            region.backgroundRepeat = element.attribute("backgroundRepeat");
+        region_list.append(region);
+        std::sort(region_list.begin(), region_list.end()); // sort z-indexes ascending to place Widgets corect in mainwindow
 
     }
     qDebug() << childs.length() << "regions found in SMIL layout-tag and " << region_list.length() << " regions were initialized ";
