@@ -60,7 +60,7 @@ support_libvlc{
 support_qtmm {
      DEFINES += SUPPORT_QTMM
      QT += multimedia multimediawidgets
-    HEADERS  += \
+     HEADERS  += \
         mm_libs/qtmm_decoder.h \
         mm_libs/qtmm_widget.h
     SOURCES += \
@@ -87,6 +87,7 @@ win32 {
 
 macx {
     #libgarlic is static compiled in osx
+    ICON = ../../deployment/macx/garlic-player.icns
     LIBS += -L../lib -lgarlic -lquazip -lzlib
 }
 

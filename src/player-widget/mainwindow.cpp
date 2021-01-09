@@ -176,7 +176,6 @@ void MainWindow::resizeEvent(QResizeEvent * event)
 
 // =================== protected slots ====================================
 
-
 void MainWindow::prepareParsing()
 {
     MyRegionsList->remove(); // Must be done first to be clear that no media is loaded or played anymore

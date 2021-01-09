@@ -26,7 +26,7 @@ TRegion::TRegion(LibFacade *lf, QWidget *parent) : QWidget(parent)
     layout.reset(new QStackedLayout(this));
     layout.data()->setMargin(0);
     setLayout(layout.data());
- }
+}
 
 TRegion::~TRegion()
 {
@@ -109,7 +109,7 @@ void TRegion::resizeGeometry()
 
 void TRegion::determineStylesheets()
 {
-    QString style_sheet = "background: "+region.backgroundColor;
+    QString style_sheet = "background: " + region.backgroundColor;
     style_sheet += " " + determineBackgroundImage();
     style_sheet += " " + determineBackgroundImageRepeat() + ";";
     setStyleSheet(style_sheet);
