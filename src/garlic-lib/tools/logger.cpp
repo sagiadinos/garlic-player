@@ -91,7 +91,7 @@ QString Logger::getCurrentIsoDateTime()
 
 QString Logger::collectDebugLog(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    return QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") + " "
+    return QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss,zzz") + " "
         + determineSeverity(type) + " "
         + context.category + " "
         + context.file + "(" + QString::number(context.line) + ")"

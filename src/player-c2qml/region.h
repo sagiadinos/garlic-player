@@ -21,14 +21,14 @@
 
 #include <QQuickItem>
 
-#include "head_parser.h"
+#include "lib_facade.h"
 #include "media/media_factory.h"
 
 class TRegion : public QQuickItem
 {
     Q_OBJECT
 public:
-    explicit TRegion(QObject *parent);
+    explicit TRegion(LibFacade *lf, QObject *parent);
     ~TRegion();
     void                setRootSize(int w, int h);
     void                setRegion(Region r, QQmlEngine *e);
@@ -38,6 +38,7 @@ public:
 protected:
     QQuickItem           *root_item;
     QQmlEngine           *engine;
+    LibFacade            *MyLibFacade;
     Region                region;
     PlayerBaseMedia                    *MyMedia = Q_NULLPTR;
     QScopedPointer<QQmlComponent>       rectangle;
