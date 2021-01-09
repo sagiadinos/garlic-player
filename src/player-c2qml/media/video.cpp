@@ -10,13 +10,13 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia
 #endif
     qml = "import QtQuick 2.7\n"+
                     module +
-                    "Video { \
-                        id: "+getRegionId()+"_video; \
-                        orientation: 0; \
-                        anchors.fill: parent; \
-                        autoPlay: true; \
+                    "Video {                                 \
+                        id: "+getRegionId()+"_video;         \
+                        orientation: 0;                      \
+                        anchors.fill: parent;                \
+                        autoPlay: true;                      \
                         property var video_fill_mode: \"\";  \
-                   }\n";
+                    }\n";
     media_component = mc;
     video_item.reset(createMediaItem(media_component, qml));
 }
@@ -33,7 +33,7 @@ void Video::init(BaseMedia *media)
     {
         // cannot be connected once in constructor due to again Android/QMultimedia problems
         // see @ method finished
-        connect(video_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
+        connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
         // to set Volume we need to cast
         TVideo *MyVideo = qobject_cast<TVideo *> (media);
         float vol = determineVolume(MyVideo->getSoundLevel());
@@ -46,7 +46,7 @@ void Video::init(BaseMedia *media)
 
 void Video::deinit()
 {
-    if (SmilMedia->getLogContentId() != "")
+    if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
 
     video_item.data()->setProperty("source", "");
@@ -79,11 +79,13 @@ qreal Video::determineVolume(QString percent)
     return vol / (float) 100;
 }
 
-void Video::finished()
+
+void Video::doStopped()
 {
     // must be disconected otherwise QMultimedia/Android will stop immediately when new video will be load
     // so only first Video will shown
-    disconnect(video_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
+
+    disconnect(video_item.data(), SIGNAL(qmlSignal(QString)), this, SLOT(doStopped(QString)));
     if (video_item.data()->property("error").toInt() != 0)
     {
         QStringList list;
@@ -92,6 +94,9 @@ void Video::finished()
               << "errorMessage" << video_item.data()->property("errorString").toString();
         qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_PLAYBACK_ERROR", list);
     }
-    SmilMedia->finishedSimpleDuration();
 
+    if (video_item.data()->property("status").toString() == "7") // 7 means EndOfFile Shitty QML has no signal for finish
+    {
+        SmilMedia->finishedSimpleDuration();
+    }
 }

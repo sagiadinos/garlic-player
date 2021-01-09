@@ -22,7 +22,7 @@
 #include <QQuickView>
 #include <QMap>
 
-#include "region.h"
+#include "regions_list.h"
 #include "../player-common/configdialog.h"
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
@@ -59,18 +59,17 @@ class MainWindow : public QQuickView
         PlayerConfiguration      *MyPlayerConfiguration      = Q_NULLPTR;
         TScreen                  *MyScreen;
         static LibFacade         *MyStaticLibFacade;
-        QMap<QString, TRegion *>  regions_list;
+        RegionsList              *MyRegionsList;
         QSize                     mainwindow_size;
         int                       screen_state = 0;
         qint64                    last_touch = 0;
         int                       count_touch = 0;
         void                      openDebugInfos();
-        QString                   selectRegion(QString region_name);
         void                      resizeEvent(QResizeEvent * event);
         void                      keyPressEvent(QKeyEvent *ke);
         bool                      event(QEvent *event);
-        void                      createRegions();
-        void                      deleteRegions();
+
+
         void                      sendClosePlayerCorrect();
         void                      quitApplication();
     protected slots:

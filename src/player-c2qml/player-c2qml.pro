@@ -67,7 +67,8 @@ SOURCES += \
     media/media_factory.cpp \
     main.cpp \
     mainwindow.cpp \
-    region.cpp
+    region.cpp \
+    regions_list.cpp
 
 HEADERS  += \
     media/image.h \
@@ -77,7 +78,8 @@ HEADERS  += \
     media/audio.h \
     media/media_factory.h \
     mainwindow.h \
-    region.h
+    region.h \
+    regions_list.h
 RESOURCES += qml.qrc
 
 DISTFILES += \

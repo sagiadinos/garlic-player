@@ -39,7 +39,7 @@
  */
 struct Region
 {
-    QString id         = "screen";
+    QString id         = "";
     QString regionName = "";
     qreal top = 0;
     qreal left = 0;

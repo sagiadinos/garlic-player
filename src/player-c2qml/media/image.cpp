@@ -38,7 +38,7 @@ void Image::init(BaseMedia *media)
 
 void Image::deinit()
 {
-    if (SmilMedia->getLogContentId() != "")
+    if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
     image_item.data()->setProperty("source","");
 }

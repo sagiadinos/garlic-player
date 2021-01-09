@@ -49,11 +49,6 @@ void TRegion::startShowMedia(BaseMedia *media)
     MyMedia = MyMediaFactory.initMedia(media);
 
     QWidget *widget = MyMedia->getView();
-/*    QGraphicsOpacityEffect * effect = new QGraphicsOpacityEffect(widget);
-    effect->setOpacity(0.1);
-    widget->setGraphicsEffect(effect);
-    widget->setWindowOpacity(0.1);
-  */  if (widget != Q_NULLPTR)
     {
         layout.data()->addWidget(widget);
     }

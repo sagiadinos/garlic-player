@@ -24,11 +24,12 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade, PlayerConfigurati
     MyLibFacade            = lib_facade;
     MyPlayerConfiguration  = pc;
     MyInteractions         = new Interactions(lib_facade, this);
+    MyRegionsList          = new RegionsList(this);
 }
 
 MainWindow::~MainWindow()
 {
-    deleteRegions(); // region must be deleted at last, cause media pointer had to be deleted
+    delete MyRegionsList; // region must be deleted at last, cause media pointer had to be deleted
 }
 
 void MainWindow::init()
@@ -49,16 +50,6 @@ void MainWindow::init()
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
 #endif
     setMainWindowSize(QSize(980, 540)); // set default
-}
-
-QString MainWindow::selectRegion(QString region_name)
-{
-    QMap<QString, TRegion *>::iterator i;
-    if (!regions_list.contains(region_name))
-        i = regions_list.begin();
-    else
-       i = regions_list.find(region_name);
-    return i.key();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
@@ -199,75 +190,29 @@ QSize MainWindow::getMainWindowSize()
 
 void MainWindow::resizeEvent(QResizeEvent * event)
 {
-    if (regions_list.size() > 0)
-    {
-        Q_UNUSED(event);
-        QMap<QString, TRegion *>::iterator i;
-        for (i = regions_list.begin(); i != regions_list.end(); ++i)
-            regions_list[i.key()]->setRootSize(width(), height());
-    }
+    MyRegionsList->resize(event->size());
     QQuickView::resizeEvent(event);
 }
-
-void MainWindow::createRegions()
-{
-    QList<Region> *region_list = MyLibFacade->getHead()->getLayout();
-    setColor(MyLibFacade->getHead()->getRootBackgroundColor());
-
-    QMap<QString, TRegion *>::iterator j;
-    for (int i = 0; i < region_list->length(); i++)
-    {
-        j = regions_list.insert(region_list->at(i).regionName, new TRegion(rootObject()));
-        regions_list[j.key()]->setRegion(region_list->at(i), engine());
-        regions_list[j.key()]->setRootSize(width(), height());
-    }
-    qDebug() << regions_list.size() << " regions are created ";
-}
-
-void MainWindow::deleteRegions()
-{
-    int size = regions_list.size();
-    if (size == 0) // prevent to call functionx of deleted or not existing regions
-    {
-        return;
-    }
-
-    qDeleteAll(regions_list);
-    regions_list.clear();
-    qDebug() << size << " region(s) deleted";
-}
-
 
 // =================== protected slots ====================================
 
 void MainWindow::prepareParsing()
 {
-    deleteRegions(); // Must be done first to be clear that no media is loaded or played anymore
-    createRegions();
+    MyRegionsList->remove(); // Must be done first to be clear that no media is loaded or played anymore
+    setColor(MyLibFacade->getHead()->getRootBackgroundColor());
+    MyRegionsList->create(MyLibFacade, QSize(width(), height()), rootObject(), engine());
 
     MyLibFacade->beginSmilPlaying(); // begin playing not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
 
 void MainWindow::startShowMedia(BaseMedia *media)
 {
-    if (regions_list.size() == 0)
-        return;
-
-    QString region_name = selectRegion(media->getRegion());
-
-    regions_list[region_name]->startShowMedia(media);
-    regions_list[region_name]->setRootSize(width(), height());
-    return;
+    MyRegionsList->startShowMedia(media);
 }
 
 void MainWindow::stopShowMedia(BaseMedia *media)
 {
-    if (regions_list.size() == 0)
-        return;
-
-    QString region_name = selectRegion(media->getRegion());
-    regions_list[region_name]->stopShowMedia(media);
-    return;
+    MyRegionsList->stopShowMedia(media);
 }
 
 void MainWindow::doStatusChanged(QQuickView::Status status)

@@ -20,8 +20,9 @@
 #include <QLayout>
 #include <unistd.h>
 
-TRegion::TRegion(QObject *parent)
+TRegion::TRegion(LibFacade *lf, QObject *parent)
 {
+    MyLibFacade = lf;
     root_item = qobject_cast<QQuickItem*>(parent);
 }
 
@@ -60,27 +61,28 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
 
     rectangle_item.reset(qobject_cast<QQuickItem *>(rectangle.data()->create()));
     rectangle_item.data()->setParentItem(root_item);
+
     MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, this));
 }
 
 void TRegion::startShowMedia(BaseMedia *media)
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     MyMedia = MyMediaFactory.data()->initMedia(media);
-    MyMedia->setParentItem(rectangle_item.data());
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
+    if (MyMedia != Q_NULLPTR)
+    {
+        MyMedia->setParentItem(rectangle_item.data());
+    }
 }
 
 void TRegion::stopShowMedia(BaseMedia *media)
 {
-    if (MyMedia->getSmilMedia() != media)
+    if (MyMedia == Q_NULLPTR || MyMedia->getSmilMedia() != media)
     {
         return;
     }
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
+
     MyMedia->setParentItem(NULL);
     MyMedia->deinit();    
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 void TRegion::resizeGeometry()

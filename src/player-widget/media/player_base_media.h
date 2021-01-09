@@ -17,13 +17,13 @@
             virtual QWidget      *getView()= 0;
             virtual void          changeSize(int w, int h) = 0;
         protected:
-                    Logger&      MyLogger = Logger::getInstance();
-                    BaseMedia   *SmilMedia = Q_NULLPTR;
-                    QString      start_time = "";
-                    bool         exists = false;
-                    void         setStartTime();
-                    bool         isFileExists(QString path);
-                    QString      createPlayLogXml();
+            Logger&      MyLogger = Logger::getInstance();
+            BaseMedia   *SmilMedia = Q_NULLPTR;
+            QString      start_time = "";
+            bool         exists = false;
+            void         setStartTime();
+            bool         isFileExists(QString path);
+            QString      createPlayLogXml();
 
     };
 #endif // BASE_MEDIA_H

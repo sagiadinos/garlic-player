@@ -22,7 +22,7 @@
 #include <QMainWindow>
 #include <QMap>
 
-#include "region.h"
+#include "regions_list.h"
 #include "../player-common/configdialog.h"
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
@@ -52,7 +52,7 @@ class MainWindow : public QMainWindow
         QWidget                  *centralWidget;
         LibFacade                *MyLibFacade      = Q_NULLPTR;
         TScreen                  *MyScreen;
-        QMap<QString, TRegion *>  regions_list;
+        RegionsList              *MyRegionsList;
         QSize                     mainwindow_size;
         int                       screen_state = 0;
         void                      resizeEvent(QResizeEvent * event);
@@ -60,9 +60,6 @@ class MainWindow : public QMainWindow
         void                      openDebugInfos();
         void                      openCommandline();
         bool                      event(QEvent *event);
-        QString                   selectRegion(QString region_name);
-        void                      createRegions();
-        void                      deleteRegions();
     protected slots:
         void                      prepareParsing();
         void                      startShowMedia(BaseMedia *media);

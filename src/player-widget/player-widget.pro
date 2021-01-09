@@ -101,7 +101,8 @@ SOURCES += \
     mainwindow.cpp \
     mediaplayer_wrapper.cpp \
     mediawidget_wrapper.cpp \
-    region.cpp
+    region.cpp \
+    regions_list.cpp
 
 HEADERS  += \
     media/image.h \
@@ -113,4 +114,5 @@ HEADERS  += \
     mainwindow.h \
     mediaplayer_wrapper.h \
     mediawidget_wrapper.h \
-    region.h
+    region.h \
+    regions_list.h

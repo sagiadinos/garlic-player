@@ -149,8 +149,6 @@ void LibFacade::changeConfig()
     }
 }
 
-
-
 void LibFacade::initFileManager()
 {
     MyMediaModel.reset(new MediaModel(this));

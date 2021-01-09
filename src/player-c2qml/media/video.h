@@ -22,8 +22,8 @@ class Video : public PlayerBaseMedia
         qreal                       determineVolume(QString percent);
         QString                     qml;
         QQmlComponent              *media_component;
-    protected slots:
-        void                        finished();
+    public slots:
+        void                        doStopped();
 };
 
 #endif // VIDEO_H

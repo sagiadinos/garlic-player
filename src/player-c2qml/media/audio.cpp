@@ -10,13 +10,13 @@ Audio::Audio(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia
 #endif
     // FIXIT! Audio QML cannot be created
     // Qt Bug is reported https://bugreports.qt.io/browse/QTBUG-64763
-    QString str("import QtQuick 2.7\n"+
+    QString str = "import QtQuick 2.7\n"+
                     module +
-                "Video{\n \
-                        id: "+getRegionId()+"_audio; \n \
-                        autoPlay: true; \n \
-                   }\n"
-    );
+                    "Video {                                 \
+                        id: "+getRegionId()+"_video;         \
+                        autoPlay: true;                      \
+                    }\n";
+
     audio_item.reset(createMediaItem(mc, str));
     if (!audio_item.isNull())
         connect(audio_item.data(), SIGNAL(stopped()), this, SLOT(finished()));
@@ -43,7 +43,7 @@ void Audio::init(BaseMedia *media)
 
 void Audio::deinit()
 {
-    if (SmilMedia->getLogContentId() != "")
+    if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
     audio_item.data()->setProperty("source", "");
 }

@@ -45,7 +45,7 @@ public:
     void                setRegion(Region region);
     void                startShowMedia(BaseMedia *media);
     void                stopShowMedia(BaseMedia *media);
-
+    Region             *getRegion() {return &region;}
 protected:
     qreal                 root_width_px = 0;
     qreal                 root_height_px = 0;

@@ -31,8 +31,9 @@ void Web::init(BaseMedia *media)
 
 void Web::deinit()
 {
-    if (SmilMedia->getLogContentId() != "")
+    if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
+
     web_item.data()->setProperty("url", "");
     web_item.data()->setVisible(false);
 }
