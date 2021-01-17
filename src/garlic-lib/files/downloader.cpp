@@ -20,6 +20,7 @@
 Downloader::Downloader(MainConfiguration *config, QObject *parent) : TNetworkAccess(config, parent)
 {
     manager_head.reset(new QNetworkAccessManager(this));
+    manager_head.data()->thread()->setPriority(QThread::LowestPriority);
     connect(manager_head.data(), SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRequest(QNetworkReply*)));
 }
 
@@ -67,6 +68,7 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
         QNetworkRequest request = prepareNetworkRequest(remote_file_url_301);
 
         manager_head_redirect.reset(new QNetworkAccessManager(this));
+        manager_head_redirect.data()->thread()->setPriority(QThread::LowestPriority);
         connect(manager_head_redirect.data(), SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRedirectRequest(QNetworkReply*)));
         manager_head_redirect.data()->head(request);
     }
@@ -191,6 +193,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 void Downloader::startDownload(QNetworkReply *reply)
 {
     manager_get.reset(new QNetworkAccessManager(this));
+    manager_get.data()->thread()->setPriority(QThread::LowestPriority);
     MyFileDownloader.reset(new FileDownloader(manager_get.data(), MyConfiguration, this));
     connect(MyFileDownloader.data(), SIGNAL(downloadSuccessful()), SLOT(doDownloadSuccessFul()));
     connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply *)), SLOT(doDownloadError(QNetworkReply *)));
@@ -208,6 +211,7 @@ void Downloader::doDownloadSuccessFul()
     qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECT_UPDATED", list);
     if (MyInventoryTable != Q_NULLPTR)
         MyInventoryTable->updateFileStatus(remote_file_url.toString(), DB::COMPLETE);
+
     emit succeed(this);
 }
 

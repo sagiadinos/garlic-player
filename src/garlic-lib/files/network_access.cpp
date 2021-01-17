@@ -20,7 +20,6 @@
 TNetworkAccess::TNetworkAccess(MainConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
-    this->thread()->setPriority(QThread::LowestPriority);
 }
 
 QByteArray TNetworkAccess::getUserAgent()

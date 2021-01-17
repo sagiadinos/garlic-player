@@ -26,6 +26,8 @@ void FileDownloader::startDownload(QUrl url, QString file_name)
     emit goingBusy();
 
     QNetworkRequest request = prepareNetworkRequest(url);
+    request.setPriority(QNetworkRequest::LowPriority);
+
     network_reply = network_manager->get(request);
     connect(network_reply, &QIODevice::readyRead, this, &FileDownloader::readData);
     connect(network_reply, &QNetworkReply::downloadProgress, this, &FileDownloader::downloadProgress);
