@@ -19,6 +19,7 @@ Video::Video(QQmlComponent *mc, QString r_id, QObject *parent) : PlayerBaseMedia
                     }\n";
     media_component = mc;
     video_item.reset(createMediaItem(media_component, qml));
+    connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
 }
 
 Video::~Video()
@@ -33,7 +34,8 @@ void Video::init(BaseMedia *media)
     {
         // cannot be connected once in constructor due to again Android/QMultimedia problems
         // see @ method finished
-        connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
+        // connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
+
         // to set Volume we need to cast
         TVideo *MyVideo = qobject_cast<TVideo *> (media);
         float vol = determineVolume(MyVideo->getSoundLevel());
@@ -82,10 +84,11 @@ qreal Video::determineVolume(QString percent)
 
 void Video::doStopped()
 {
+    // deprecated? 17.01.2021
     // must be disconected otherwise QMultimedia/Android will stop immediately when new video will be load
     // so only first Video will shown
+    // disconnect(video_item.data(), SIGNAL(qmlSignal(QString)), this, SLOT(doStopped(QString)));
 
-    disconnect(video_item.data(), SIGNAL(qmlSignal(QString)), this, SLOT(doStopped(QString)));
     if (video_item.data()->property("error").toInt() != 0)
     {
         QStringList list;

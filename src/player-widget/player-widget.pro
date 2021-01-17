@@ -32,10 +32,10 @@ support_qtav {
         mm_libs/qtav_widget.cpp
 
     # workaround for >Qt5.11 https://github.com/wang-bin/QtAV/issues/1231
-    unix:!mac {
+    linux {
        LIBS += -L$$QT.core.libs -lQtAV
     }
-    unix:mac {
+    macx {
         INCLUDEPATH  += $$QT.core.libs/QtAV.framework/Versions/1/Headers
         INCLUDEPATH  += $$QT.core.libs/QtAVWidgets.framework/Versions/1/Headers
         QMAKE_LFLAGS += -F$$QT.core.libs

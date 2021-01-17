@@ -51,7 +51,6 @@ void Image::setParentItem(QQuickItem *parent)
 // Image.Stretch - the image is scaled to fit
 // Image.PreserveAspectFit - the image is scaled uniformly to fit without cropping
 // Image.PreserveAspectCrop - the image is scaled uniformly to fill, cropping if necessary
-
 int Image::determineFillMode(QString smil_fit)
 {
     if (smil_fit == "fill")

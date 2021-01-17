@@ -2,8 +2,11 @@ TEMPLATE = lib
 CONFIG += qt warn_on c++11 staticlib
 QT -= gui
 
-!android:DESTDIR = ../../lib/
+linux:DESTDIR = ../../lib/
+win32:DESTDIR = ../../lib/
+macx:DESTDIR = ../../lib/
 android:DESTDIR = ../../libandroid/
+ios:DESTDIR = ../../libios/
 
 # The ABI version.
 
@@ -41,14 +44,14 @@ CONFIG(debug, debug|release) {
      win32: TARGET = $$join(TARGET,,,d)
 }
 
-unix:!symbian {
+unix {
     headers.path=$$PREFIX/include/quazip
     headers.files=$$HEADERS
     target.path=$$PREFIX/lib/$${LIB_ARCH}
     INSTALLS += headers target
 
-	OBJECTS_DIR=.obj
-	MOC_DIR=.moc
+    OBJECTS_DIR=.obj
+    MOC_DIR=.moc
 	
 }
 linux {

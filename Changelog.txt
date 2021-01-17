@@ -9,6 +9,7 @@ Changelog
 	* work together with garlic-launcher API
 	* expr-attributes based on Xpath and functions compatible to Iadea player
 	* code coverage
+	* add support for macOS 10.13
 	* wgt (Webwidgets) supports parameter
 
 2. Improvements

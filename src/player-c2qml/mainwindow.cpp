@@ -44,11 +44,7 @@ void MainWindow::init()
     connect(MyLibFacade, SIGNAL(installSoftware(QString)), this, SLOT(installSoftware(QString)));
     connect(engine(), SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit())); // to connect quit signal from QML
 
-#ifdef SUPPORT_QTAV
-    setSource(QUrl(QStringLiteral("qrc:/root_qtav.qml")));
-#else
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
-#endif
     setMainWindowSize(QSize(980, 540)); // set default
 }
 
@@ -147,7 +143,25 @@ int MainWindow::openConfigDialog()
         ret = QDialog::Accepted;
     }
     setCursor(Qt::BlankCursor);
+
     return ret;
+
+  /*  MyLibFacade->shutDownParsing();
+    MyRegionsList->remove(); // Must be done first to be clear that no media is loaded or played anymore
+    setColor("white");
+
+    QQmlComponent *rectangle = new QQmlComponent(engine());
+    QQmlComponent *item      = new QQmlComponent(engine());
+
+    QFile file(":/Configuration.qml");
+    file.open(QIODevice::ReadOnly);
+    QString str = file.readAll();
+    file.close();
+    item->setData(str.toUtf8(), QUrl());
+    QQuickItem *q_item = qobject_cast<QQuickItem *>(item->create());
+    q_item->setParentItem(rootObject());
+*/
+    return 0;
 }
 
 void MainWindow::resizeAsNormalFullScreen()

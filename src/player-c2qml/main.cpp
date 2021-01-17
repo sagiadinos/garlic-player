@@ -26,11 +26,9 @@
 #if defined  Q_OS_ANDROID
     #include "Java2Cpp.h"
     #include "android_manager.h"
-    #include <QtWebView>
-#else
-    #include <qtwebengineglobal.h>
 #endif
 
+#include <QtWebView>
 #include "mainwindow.h"
 
 void handleMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -52,6 +50,8 @@ int main(int argc, char *argv[])
     LibFacade  *MyLibFacade = new LibFacade();
     MyLibFacade->init(MyMainConfiguration);
 
+    QtWebView::initialize();
+
 #if defined Q_OS_ANDROID
     AndroidManager *MyAndroidManager = new AndroidManager();
     if (!MyAndroidManager->checkPermissiones())
@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
         MyPlayerConfiguration->setSmilIndexUriFromLauncher(MyAndroidManager->getSmilIndexFromLauncher());
     }
 
-    QtWebView::initialize();
     setGlobalLibFaceForJava(MyLibFacade);
 #endif
 

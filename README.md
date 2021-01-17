@@ -15,17 +15,18 @@ Garlic is able to play local and remote (via http) SMIL Files with the features 
  - Linux
  - Windows
  - Android
+ - macOS
  
 ## Experimental
- - macOSX 
-  
+
 ### Successful tested with:
  - Linux 64Bit: Kde Neon, Kubuntu, Debian, Arch64
  - Raspberry Pi: 3 and 4 for 32 and 64Bit
- - Tinker Board: (Linaro OS 1.8) 
+ - Tinker Board: (Linaro OS 1.8)
  - Android Armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2, 7.1, 9 and 10)
  - Windows 64Bit: 7, 8 and 10
- - MacOS: High Sierra and Catalina 
+ - MacOS 64Bit (Intel): High Sierra, Mojave, Catalina and Big Sur 
+ - MacOS M1: Big Sur (via Rosetta) 
  
 For Android player-c2qml is needed, cause QtMultimedia-Widgets are not supported.
 
@@ -52,7 +53,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
  - lot's of video formats 
  - media cache
  - SMIL3 subset, HTML5, HTML5-Widgets and (depending on device) WebGL support
- - WebWidgets also support paramters
+ - WebWidgets also support parameters
 
 ## Currently supported SMIL-Features
 

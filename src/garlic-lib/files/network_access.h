@@ -23,6 +23,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
+#include <QThread>
 #include "tools/logger.h"
 #include "main_configuration.h"
 

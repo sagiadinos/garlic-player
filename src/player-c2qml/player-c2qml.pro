@@ -19,8 +19,8 @@ support_qtav {
     QT      += av
 }
 
-unix:!android {
-    QT += webengine
+linux {
+    QT += webview
     LIBS += -L../lib -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
     # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
     # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13

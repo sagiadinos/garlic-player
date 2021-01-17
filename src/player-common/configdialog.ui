@@ -43,7 +43,20 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEditPlayerName"/>
+      <widget class="QLineEdit" name="lineEditPlayerName">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhNoAutoUppercase|Qt::ImhNoEditMenu|Qt::ImhNoPredictiveText|Qt::ImhNoTextHandles</set>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="labelContentUrl">
@@ -59,7 +72,20 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEditContentUrl"/>
+      <widget class="QLineEdit" name="lineEditContentUrl">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhNoAutoUppercase|Qt::ImhNoEditMenu|Qt::ImhNoPredictiveText|Qt::ImhNoTextHandles</set>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">
