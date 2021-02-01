@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += qt warn_on c++11 staticlib
 QT -= gui
 
-linux:DESTDIR = ../../lib/
+linux:!android:DESTDIR = ../../lib/
 win32:DESTDIR = ../../lib/
 macx:DESTDIR = ../../lib/
 android:DESTDIR = ../../libandroid/
@@ -54,7 +54,7 @@ unix {
     MOC_DIR=.moc
 	
 }
-linux {
+linux:!android {
     #temporary ToDO
     # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
     # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
