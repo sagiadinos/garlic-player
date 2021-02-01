@@ -183,7 +183,11 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
             runningTaskSmilIndex = new LongOperation(this, "smil_content_url");
             content_url = runningTaskSmilIndex.execute().get();
         }
-        catch (InterruptedException | ExecutionException e)
+        catch (ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e)
         {
             e.printStackTrace();
         }
@@ -199,7 +203,11 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
             runningTaskUUID = new LongOperation(this, "uuid");
             uuid = runningTaskUUID.execute().get();
         }
-        catch (InterruptedException | ExecutionException e)
+        catch (ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e)
         {
             e.printStackTrace();
         }
@@ -214,7 +222,11 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
             runningTaskLauncherVersion = new LongOperation(this, "launcher_version");
             launcher_version = runningTaskLauncherVersion.execute().get();
         }
-        catch (InterruptedException | ExecutionException e)
+        catch (ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e)
         {
             e.printStackTrace();
         }

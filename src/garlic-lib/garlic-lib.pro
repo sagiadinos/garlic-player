@@ -6,7 +6,7 @@ CONFIG   += warn_on c++11 stl
 DEFINES  += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
 TARGET    = garlic
 
-linux {
+linux:!android {
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
     #temporary ToDO
