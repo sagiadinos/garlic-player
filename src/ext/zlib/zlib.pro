@@ -14,6 +14,8 @@ linux:!android {
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
     DESTDIR = ../../lib/
 }
+win32:DESTDIR = ../../lib/
+macx:DESTDIR = ../../lib/
 android:DESTDIR = ../../libandroid/
 
 # Input
