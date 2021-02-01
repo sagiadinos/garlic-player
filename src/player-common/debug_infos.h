@@ -22,7 +22,6 @@ class DebugInfos : public QDialog
 
         public:
             explicit DebugInfos(LibFacade *lib_facade, QWidget *parent = Q_NULLPTR);
-            void     setCurrentFilePlayed(BaseMedia *media);
             void     setLibFacade(LibFacade *lib_facade);
             ~DebugInfos();
             void outputResourcesUsage();

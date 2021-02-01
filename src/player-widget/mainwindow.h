@@ -27,6 +27,7 @@
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
 #include "../player-common/interactions.h"
+#include "../player-common/launcher.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
 class MainWindow : public QMainWindow
@@ -49,6 +50,7 @@ class MainWindow : public QMainWindow
         const int                 BIGFULLSCREEN = 2;
         int                       num_touched   = 0;
         Interactions             *MyInteractions;
+        QScopedPointer<Launcher>  MyLauncher;
         QWidget                  *centralWidget;
         LibFacade                *MyLibFacade      = Q_NULLPTR;
         TScreen                  *MyScreen;

@@ -76,6 +76,12 @@ void BaseMedia::registerInMediaManager()
     MyMediaManager->registerFile(src);
 }
 
+void BaseMedia::registerInMediaManagerAsUncachable()
+{
+    MyMediaManager->registerAsUncachable(src);
+}
+
+
 void BaseMedia::resume()
 {
     play();

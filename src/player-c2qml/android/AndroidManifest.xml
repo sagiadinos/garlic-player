@@ -38,7 +38,7 @@
                           application still try to draw after
                           "applicationStateChanged(Qt::ApplicationSuspended)"
                           signal is sent! -->
-            <meta-data android:name="android.app.background_running" android:value="false"/>
+            <meta-data android:name="android.app.background_running" android:value="true"/>
             <!-- Background running -->
             <!-- auto screen scale factor -->
             <meta-data android:name="android.app.auto_screen_scale_factor" android:value="false"/>
@@ -56,7 +56,7 @@
         <receiver android:name="com.sagiadinos.garlic.player.java.ConfigReceiver" android:enabled="true"/>
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
     </application>
-  <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="29"/>
+  <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="29"/>
   <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
   <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
          Remove the comment if you do not require these default permissions. -->
@@ -64,4 +64,5 @@
   <!-- The following comment will be replaced upon deployment with default features based on the dependencies of the application.
          Remove the comment if you do not require these default features. -->
   <!-- %%INSERT_FEATURES -->
+<uses-permission android:name="android.permission.WAKE_LOCK"/>
 </manifest>

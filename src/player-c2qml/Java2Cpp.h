@@ -15,6 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
+#include <qglobal.h>
 #if defined Q_OS_ANDROID
 
 #ifndef JAVA2CPP_H
@@ -28,7 +29,7 @@
 extern "C" {
 #endif
 
-// Todo find a bedder solution
+// Todo: find a better solution
 LibFacade *GlobalLibfacede;
 
 void setGlobalLibFaceForJava(LibFacade *glf)

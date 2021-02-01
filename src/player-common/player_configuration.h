@@ -17,12 +17,12 @@ public:
     void setHasLauncher(bool value);
     void setUuidFromLauncher(QString value);
     void setSmilIndexUriFromLauncher(QString value);
-
-
+    void setVersionFromLauncher(QString value);
 private:
 
     bool       has_launcher            = false;;
     QString    launcher_uuid           = "";
+    QString    launcher_version        = "";
     QString    launcher_smil_index_uri = "";
     MainConfiguration *MyMainConfiguration;
     void       determineUuid();

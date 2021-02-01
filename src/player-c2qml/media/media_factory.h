@@ -7,16 +7,17 @@
 #include "media/web.h"
 #include "media/video.h"
 #include "media/audio.h"
+#include "media/ref_command.h"
 
 class MediaFactory : public QObject
 {
         Q_OBJECT
     public:
-        explicit MediaFactory(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
+        explicit MediaFactory(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         PlayerBaseMedia *initMedia(BaseMedia *media);
 
     protected:
-        QScopedPointer<PlayerBaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb;
+        QScopedPointer<PlayerBaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb, MyRefCommand;
 
 };
 

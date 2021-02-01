@@ -8,10 +8,6 @@ Unknown::Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *con
 
 }
 
-void Unknown::registerInMediaManager()
-{
-}
-
 void Unknown::prepareDurationTimerBeforePlay()
 {
     qDebug(Develop) << src << " Unknown tag";

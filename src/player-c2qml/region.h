@@ -31,7 +31,7 @@ public:
     explicit TRegion(LibFacade *lf, QObject *parent);
     ~TRegion();
     void                setRootSize(int w, int h);
-    void                setRegion(Region r, QQmlEngine *e);
+    void                setRegion(Region r, Launcher *lc, QQmlEngine *e);
     void                startShowMedia(BaseMedia *media);
     void                stopShowMedia(BaseMedia *media);
 

@@ -27,13 +27,10 @@
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
 #include "../player-common/interactions.h"
+#include "../player-common/launcher.h"
 #include "../player-common/player_configuration.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
-#if defined  Q_OS_ANDROID
-    #include <QtAndroidExtras>
-#endif
-
 #include "lib_facade.h"
 
 class MainWindow : public QQuickView
@@ -54,9 +51,10 @@ class MainWindow : public QQuickView
         const int                 WINDOWED      = 0;
         const int                 FULLSCREEN    = 1;
         const int                 BIGFULLSCREEN = 2;
+        QScopedPointer<Launcher>  MyLauncher;
         Interactions             *MyInteractions;
-        LibFacade                *MyLibFacade      = Q_NULLPTR;
-        PlayerConfiguration      *MyPlayerConfiguration      = Q_NULLPTR;
+        LibFacade                *MyLibFacade           = Q_NULLPTR;
+        PlayerConfiguration      *MyPlayerConfiguration = Q_NULLPTR;
         TScreen                  *MyScreen;
         static LibFacade         *MyStaticLibFacade;
         RegionsList              *MyRegionsList;
@@ -78,7 +76,7 @@ class MainWindow : public QQuickView
         void                      stopShowMedia(BaseMedia *media);
         void                      doStatusChanged(QQuickView::Status status);
         void                      sendConfig();
-        void                      rebootOS();
+        void                      rebootOS(QString task_id);
         void                      installSoftware(QString file_path);
 };
 

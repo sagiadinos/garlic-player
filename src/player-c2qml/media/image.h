@@ -13,7 +13,7 @@ class Image : public PlayerBaseMedia
         const int PRESERVEASPECTFIT  = 1;
         const int PRESERVEASPECTCROP = 2;
 
-        explicit      Image(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
+        explicit      Image(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Image();
         void          init(BaseMedia *media);
         void          deinit();

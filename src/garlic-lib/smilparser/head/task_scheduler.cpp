@@ -193,13 +193,9 @@ void SmilHead::TaskScheduler::parseShutdownPlayer(QDomElement element)
     if (hasUsedTaskId(MyShutdownPlayer.task_id, "shutdown_player_task_id"))
         return;
 
-    emitShutdownPlayer();
+    emit reboot(MyShutdownPlayer.task_id);
 }
 
-void SmilHead::TaskScheduler::emitShutdownPlayer()
-{
-    emit reboot();
-}
 
 bool SmilHead::TaskScheduler::hasUsedTaskId(QString task_id, QString task_name)
 {

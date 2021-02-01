@@ -11,7 +11,7 @@ class Video : public PlayerBaseMedia
         const int STRETCH            = 0;
         const int PRESERVEASPECTFIT  = 1;
         const int PRESERVEASPECTCROP = 2;
-        Video(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
+        Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Video();
         void                        init(BaseMedia *media);
         void                        deinit();

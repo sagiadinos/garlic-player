@@ -49,7 +49,7 @@ void LibFacade::init(MainConfiguration *config)
     MyTaskScheduler.reset(new SmilHead::TaskScheduler(MyConfiguration.data(), this));
     connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(changeConfig()));
     connect(MyTaskScheduler.data(), SIGNAL(installSoftware(QString)), this, SLOT(emitInstallSoftware(QString)));
-    connect(MyTaskScheduler.data(), SIGNAL(reboot()), this, SLOT(reboot()));
+    connect(MyTaskScheduler.data(), SIGNAL(reboot(QString)), this, SLOT(reboot(QString)));
 
     MyInventoryTable.reset(new DB::InventoryTable(this));
     MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
@@ -204,9 +204,9 @@ void LibFacade::emitInstallSoftware(QString file_path)
     emit installSoftware(file_path);
 }
 
-void LibFacade::reboot()
+void LibFacade::reboot(QString task_id)
 {
-    emit rebootOS();
+    emit rebootOS(task_id);
 }
 
 void LibFacade::emitStartShowMedia(BaseMedia *media)

@@ -85,7 +85,7 @@ protected:
         void               loadIndex();
         void               changeConfig();
         void               emitInstallSoftware(QString file_path);
-        void               reboot();
+        void               reboot(QString task_id);
         void               emitStartShowMedia(BaseMedia *media);
         void               emitStopShowMedia(BaseMedia *media);
         void               processBodyParsing();
@@ -96,7 +96,7 @@ protected:
         void               stopShowMedia(BaseMedia *media);
         void               readyForPlaying();
         void               newConfig();
-        void               rebootOS();
+        void               rebootOS(QString task_id);
         void               installSoftware(QString file_path);
 };
 

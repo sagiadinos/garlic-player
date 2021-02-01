@@ -24,7 +24,7 @@
 #include "smilparser/media/prefetch.h"
 #include "smilparser/media/unknown.h"
 #include "smilparser/media/widget.h"
-
+#include "smilparser/media/ref_command.h"
 #include "smilparser/container/body.h"
 #include "smilparser/container/seq.h"
 #include "smilparser/container/par.h"

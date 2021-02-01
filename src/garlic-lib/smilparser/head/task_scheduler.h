@@ -82,12 +82,11 @@ namespace SmilHead
             void doSucceed(TNetworkAccess *network);
             void emitApplyConfiguration();
             void emitInstallSoftware(QString file_path);
-            void emitShutdownPlayer();
 
     signals:
         void                   applyConfiguration();
         void                   installSoftware(QString file_path);
-        void                   reboot();
+        void                   reboot(QString task_id);
     };
 }
 #endif // TASKSCHEDULER_H

@@ -49,6 +49,7 @@ void TRegion::startShowMedia(BaseMedia *media)
     MyMedia = MyMediaFactory.initMedia(media);
 
     QWidget *widget = MyMedia->getView();
+    if (widget != Q_NULLPTR)
     {
         layout.data()->addWidget(widget);
     }

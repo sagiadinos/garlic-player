@@ -8,7 +8,7 @@ class Web : public PlayerBaseMedia
 {
     Q_OBJECT
 public:
-        Web(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
+        Web(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Web();
         void          init(BaseMedia *media);
         void          deinit();

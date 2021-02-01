@@ -23,6 +23,7 @@ MediaFactory::MediaFactory(QObject *parent) : QObject(parent)
     MyVideo.reset(new PlayerVideo(this));
     MyAudio.reset(new PlayerAudio(this));
     MyWeb.reset(new PlayerWeb(this));
+    MyRefCommand.reset(new PlayerRefCommand(this));
 }
 
 PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
@@ -52,6 +53,11 @@ PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
     {
         MyWeb.data()->init(media);
         return MyWeb.data();
+    }
+    else if (type == "TRefCommand")
+    {
+        MyRefCommand.data()->init(media);
+        return MyRefCommand.data();
     }
     else
         return Q_NULLPTR;

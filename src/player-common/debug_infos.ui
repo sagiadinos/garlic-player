@@ -32,7 +32,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="CurrentFileInUse">
+        <widget class="QLabel" name="UserAgent">
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>

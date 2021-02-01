@@ -30,6 +30,7 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
     MyRegionsList = new RegionsList(this);
+    MyLauncher.reset(new Launcher());
 }
 
 MainWindow::~MainWindow()

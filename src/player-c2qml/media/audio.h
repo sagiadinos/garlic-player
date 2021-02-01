@@ -8,7 +8,7 @@ class Audio : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        Audio(QQmlComponent *mc, QString r_id, QObject *parent = nullptr);
+        Audio(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Audio();
         void                        init(BaseMedia *media);
         void                        deinit();

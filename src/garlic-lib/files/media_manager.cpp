@@ -62,11 +62,15 @@ void Files::MediaManager::registerAsUncachable(QString src)
 
 int Files::MediaManager::checkCacheStatus(QString src)
 {
+    if (src.toLower().mid(0,6) == "adapi:")
+    {
+        return MEDIA_UNCACHABLE;
+    }
+
     if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
     {
         src = MyConfiguration->getIndexPath() + src;
     }
-
     if (!isCurrentlyPlaying(src))
     {
         QString local_path = requestLoadablePath(src);

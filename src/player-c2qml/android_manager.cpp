@@ -69,6 +69,12 @@ void AndroidManager::sendCloseCorrect()
     QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity", "closePlayerCorrect");
 }
 
+QString AndroidManager::getLauncherVersion()
+{
+    QAndroidJniObject s = MyActivity.callObjectMethod<jstring>("getLauncherVersion");
+    return s.toString();
+}
+
 QString AndroidManager::getSmilIndexFromLauncher()
 {
     QAndroidJniObject s = MyActivity.callObjectMethod<jstring>("getContentUrlFromLauncher");

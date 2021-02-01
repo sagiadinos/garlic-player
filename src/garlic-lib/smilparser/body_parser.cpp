@@ -96,7 +96,16 @@ void BodyParser::initMedia(BaseMedia *MyMedia)
 {
     // media must be initialised after parse, because register needs src
     // and insertSmilMedia needs the region
-    MyMedia->registerInMediaManager();
+    QString type   = MyMedia->objectName();
+    if (type == "TImage" || type == "TAudio"  || type == "TVideo"  || type == "TWidget")
+    {
+        MyMedia->registerInMediaManager();
+    }
+    else if (type == "TWeb" || type == "TRefCommand")
+    {
+        MyMedia->registerInMediaManagerAsUncachable();
+    }
+    // do nothing with unknown
     MyElementsContainer->insertSmilMedia(MyMedia);
 }
 

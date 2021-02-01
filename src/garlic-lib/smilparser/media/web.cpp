@@ -29,11 +29,6 @@ TWeb::~TWeb()
 {
 }
 
-void TWeb::registerInMediaManager()
-{
-    MyMediaManager->registerAsUncachable(src);
-}
-
 void TWeb::prepareDurationTimerBeforePlay()
 {
     if (!MyExpr.executeQuery())

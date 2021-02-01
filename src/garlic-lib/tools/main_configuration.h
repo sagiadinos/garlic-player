@@ -48,7 +48,8 @@ class MainConfiguration  : public QObject
         const     QString        OS_UNKNOWN  = "unknown";                ;
 
         explicit        MainConfiguration(QSettings *uc, QObject *parent = Q_NULLPTR);
-        QString         getVersion(){return version_from_git;}
+        QString         getVersion(){return version;}
+        void            setAdditionalVersion(QString value);
         void            setAppName(QString value){app_name = value;}
         QString         getAppName(){return app_name;}
         QString         getDescription() {return "SMIL Media Player for Digital Signage";}
@@ -98,6 +99,7 @@ protected:
         QSettings      *UserConfig;
         QString         uuid = "";
         QString         player_name = "";
+        QString         version = version_from_git;
         QString         user_agent = "";
         QString         os = "";
         QString         base_path = "";

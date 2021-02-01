@@ -19,6 +19,7 @@ class ConfigDialog : public QDialog
         ~ConfigDialog();
 
 
+    void showEvent(QShowEvent *showEvent);
 protected:
         Ui::ConfigDialog *ui;
         MainConfiguration   *MyConfiguration = NULL;

@@ -10,6 +10,7 @@ ConfigDialog::ConfigDialog(QWidget *parent, MainConfiguration *Config) :  QDialo
     // cause in Android it shows fullscreen and not as dialog
     setWindowFlags(Qt::WindowStaysOnTopHint);
 #endif
+
 }
 
 ConfigDialog::~ConfigDialog()
@@ -17,6 +18,12 @@ ConfigDialog::~ConfigDialog()
     delete ui;
 }
 
+// virtual override
+void ConfigDialog::showEvent( QShowEvent* showEvent )
+{
+    QDialog::showEvent( showEvent);
+    activateWindow();
+}
 
 void ConfigDialog::accept()
 {

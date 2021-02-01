@@ -1,15 +1,17 @@
 #include "media_factory.h"
 
-MediaFactory::MediaFactory(QQmlComponent *mc, QString r_id, QObject *parent) : QObject(parent)
+MediaFactory::MediaFactory(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : QObject(parent)
 {
-    MyImage.reset(new Image(mc, r_id, this));
+    MyImage.reset(new Image(mc, r_id, lc, this));
     QQmlEngine::setObjectOwnership(MyImage.data(), QQmlEngine::CppOwnership);
-    MyVideo.reset(new Video(mc, r_id, this));
+    MyVideo.reset(new Video(mc, r_id, lc, this));
     QQmlEngine::setObjectOwnership(MyVideo.data(), QQmlEngine::CppOwnership);
-    MyAudio.reset(new Audio(mc, r_id, this));
+    MyAudio.reset(new Audio(mc, r_id, lc, this));
     QQmlEngine::setObjectOwnership(MyAudio.data(), QQmlEngine::CppOwnership);
-    MyWeb.reset(new Web(mc, r_id, this));
+    MyWeb.reset(new Web(mc, r_id, lc, this));
     QQmlEngine::setObjectOwnership(MyWeb.data(), QQmlEngine::CppOwnership);
+    MyRefCommand.reset(new RefCommand(mc, r_id, lc, this));
+    QQmlEngine::setObjectOwnership(MyRefCommand.data(), QQmlEngine::CppOwnership);
 }
 
 PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
@@ -40,5 +42,11 @@ PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
         MyWeb.data()->init(media);
         return MyWeb.data();
     }
+    else if (type == "TRefCommand")
+    {
+        MyRefCommand.data()->init(media);
+        return MyRefCommand.data();
+    }
     else
-        return Q_NULLPTR;}
+        return Q_NULLPTR;
+}

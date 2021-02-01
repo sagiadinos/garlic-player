@@ -64,6 +64,7 @@ SOURCES += \
     smilparser/media/base_media.cpp \
     smilparser/media/image.cpp \
     smilparser/media/prefetch.cpp \
+    smilparser/media/ref_command.cpp \
     smilparser/media/unknown.cpp \
     smilparser/media/video.cpp \
     smilparser/media/web.cpp \
@@ -132,6 +133,7 @@ HEADERS += \
     smilparser/media/audio.h \
     smilparser/media/image.h \
     smilparser/media/prefetch.h \
+    smilparser/media/ref_command.h \
     smilparser/media/unknown.h \
     smilparser/media/video.h \
     smilparser/media/web.h \

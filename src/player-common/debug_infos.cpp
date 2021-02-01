@@ -13,14 +13,6 @@ DebugInfos::DebugInfos(LibFacade *lib_facade, QWidget *parent) :  QDialog(parent
 #endif
 }
 
-void DebugInfos::setCurrentFilePlayed(BaseMedia *media)
-{
-    if (media == Q_NULLPTR)
-    {
-        return;
-    }
-    ui->CurrentFileInUse->setText(preparePlayedMediaText(media));
-}
 
 void DebugInfos::setLibFacade(LibFacade *lib_facade)
 {
@@ -100,8 +92,9 @@ void DebugInfos::outputResourcesUsage()
     {
         title = MyLibFacade->getHead()->getTitle();
     }
-    ui->PlaylistTitle->setText(MyLibFacade->getConfiguration()->getPlayerName() + " (" + MyLibFacade->getConfiguration()->getVersion() + ") - " + title);
+    ui->PlaylistTitle->setText(title);
 
+    ui->UserAgent->setText(MyLibFacade->getConfiguration()->getUserAgent());
 }
 
 void DebugInfos::on_close_dialog_clicked()

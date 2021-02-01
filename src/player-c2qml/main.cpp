@@ -59,23 +59,23 @@ int main(int argc, char *argv[])
         MyAndroidManager->sendCloseCorrect();
         QApplication::quit();
     }
-
+    MyAndroidManager->disableScreenSaver();
+   // sleep(5);
     if (MyAndroidManager->hasLauncher())
     {
         MyLibFacade->toggleLauncher(MyAndroidManager->hasLauncher());
         MyPlayerConfiguration->setHasLauncher(MyAndroidManager->hasLauncher());
         MyPlayerConfiguration->setUuidFromLauncher(MyAndroidManager->getUUIDFromLauncher());
         MyPlayerConfiguration->setSmilIndexUriFromLauncher(MyAndroidManager->getSmilIndexFromLauncher());
+        MyPlayerConfiguration->setVersionFromLauncher(MyAndroidManager->getLauncherVersion());
     }
 
     setGlobalLibFaceForJava(MyLibFacade);
 #endif
 
     qmlRegisterType<LibFacade>("com.garlic.LibFacade", 1, 0, "LibFacade");
-    qmlRegisterType<ResourceMonitor>("com.garlic.ResourceMonitor", 1, 0, "ResourceMonitor");
 
     MyPlayerConfiguration->determineInitConfigValues();
-
 
     qInstallMessageHandler(handleMessages);
 
@@ -100,8 +100,6 @@ int main(int argc, char *argv[])
     w.init();
 
 #if defined  Q_OS_ANDROID
-
-    MyAndroidManager->disableScreenSaver();
     w.showFullScreen();
 #else
 

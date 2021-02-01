@@ -49,6 +49,7 @@ class BaseMedia : public BaseTimings
         QString              getBaseType()     {return "media";}
         bool                 isMedia()         {return is_media;}
         void                 registerInMediaManager();
+        void                 registerInMediaManagerAsUncachable();
 
         void                 resume();
         bool                 hasPlayingChilds(){return false;}

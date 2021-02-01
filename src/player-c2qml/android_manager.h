@@ -29,6 +29,7 @@ class AndroidManager
         bool checkPermissiones();
         void disableScreenSaver();
         void sendCloseCorrect();
+        QString getLauncherVersion();
         QString getSmilIndexFromLauncher();
         QString getUUIDFromLauncher();
     protected:

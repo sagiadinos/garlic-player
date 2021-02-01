@@ -30,14 +30,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
+import java.util.concurrent.ExecutionException;
 
 public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivity
 {
     private static  GarlicActivity m_instance;
     private AsyncTask<Void, Void, String> runningTaskSmilIndex;
     private AsyncTask<Void, Void, String> runningTaskUUID;
-    private String content_url = null;
-    private String uuid        = null;
+    private AsyncTask<Void, Void, String> runningTaskLauncherVersion;
+    private String content_url      = null;
+    private String uuid             = null;
+    private String launcher_version = null;
 
     public GarlicActivity()
     {
@@ -52,7 +56,11 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         {
             retrieveSmilIndex();
             retrieveUUID();
+            retrieveLauncherVersion();
         }
+  //      PowerManager mgr = (PowerManager) getSystemService(Context.POWER_SERVICE);
+  //      PowerManager.WakeLock wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MA_PLAYER:GARLIC_PLAYER");
+  //      wakeLock.acquire();
     }
 
     public void registerBroadcastReceiver()
@@ -92,6 +100,10 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         return uuid;
     }
 
+    public String getLauncherVersion()
+    {
+        return launcher_version;
+    }
 
     public static boolean isPackageInstalled(Context c, String targetPackage)
     {
@@ -107,12 +119,31 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         return true;
     }
 
-
-    public static void rebootOS()
+    public static void setScreenOff()
     {
-        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.RebootReceiver");
+        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");
+        intent.putExtra("command", "screen_off");
         m_instance.sendBroadcast(intent);
     }
+
+    public static void setScreenOn()
+    {
+        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");
+        intent.putExtra("command", "screen_on");
+        m_instance.sendBroadcast(intent);
+    }
+
+    public static void rebootOS(String task_id)
+    {
+        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.RebootReceiver");
+        intent.putExtra("task_id", task_id);
+        m_instance.sendBroadcast(intent);
+
+/*        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");
+        intent.putExtra("command", "reboot");
+        intent.putExtra("task_id", task_id);
+        m_instance.sendBroadcast(intent);
+*/    }
 
     public static void applyConfig(String config_path)
     {
@@ -144,22 +175,50 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
 
     private void retrieveSmilIndex()
     {
-        if (runningTaskSmilIndex != null)
-            runningTaskSmilIndex.cancel(true);
+        try
+        {
+            if (runningTaskSmilIndex != null)
+                runningTaskSmilIndex.cancel(true);
 
-        runningTaskSmilIndex = new LongOperation(this, "smil_content_url");
-        runningTaskSmilIndex.execute();
+            runningTaskSmilIndex = new LongOperation(this, "smil_content_url");
+            content_url = runningTaskSmilIndex.execute().get();
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private void retrieveUUID()
     {
-        if (runningTaskUUID != null)
-            runningTaskUUID.cancel(true);
+        try
+        {
+            if (runningTaskUUID != null)
+                runningTaskUUID.cancel(true);
 
-        runningTaskUUID = new LongOperation(this, "uuid");
-        runningTaskUUID.execute();
+            runningTaskUUID = new LongOperation(this, "uuid");
+            uuid = runningTaskUUID.execute().get();
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            e.printStackTrace();
+        }
     }
 
+    private void retrieveLauncherVersion()
+    {
+        try
+        {
+            if (runningTaskLauncherVersion != null)
+                runningTaskLauncherVersion.cancel(true);
+            runningTaskLauncherVersion = new LongOperation(this, "launcher_version");
+            launcher_version = runningTaskLauncherVersion.execute().get();
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     private class LongOperation extends AsyncTask<Void, Void, String>
     {
@@ -192,21 +251,26 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
             return value;
         }
 
+  /*
+       Maybe it is better to block the ui thread until the task are completed
+
         @Override
         protected void onPostExecute(String result)
         {
-            if (appendable_path.equals("smil_content_url"))
+            switch (appendable_path)
             {
-                content_url = result;
-                return;
-            }
-            if (appendable_path.equals("uuid"))
-            {
-                uuid = result;
-                return;
-            }
+                case "smil_content_url":
+                    content_url = result;
+                    break;
 
+                case "uuid":
+                    uuid = result;
+                    break;
+                case "launcher_version":
+                    launcher_version = result;
+                    break;
+            }
         }
+*/
     }
- 
 }

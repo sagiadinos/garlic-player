@@ -25,6 +25,7 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade, PlayerConfigurati
     MyPlayerConfiguration  = pc;
     MyInteractions         = new Interactions(lib_facade, this);
     MyRegionsList          = new RegionsList(this);
+    MyLauncher.reset(new Launcher());
 }
 
 MainWindow::~MainWindow()
@@ -40,7 +41,7 @@ void MainWindow::init()
     connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
 
     connect(MyLibFacade, SIGNAL(newConfig()), this, SLOT(sendConfig()));
-    connect(MyLibFacade, SIGNAL(rebootOS()), this, SLOT(rebootOS()));
+    connect(MyLibFacade, SIGNAL(rebootOS(QString)), this, SLOT(rebootOS(QString)));
     connect(MyLibFacade, SIGNAL(installSoftware(QString)), this, SLOT(installSoftware(QString)));
     connect(engine(), SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit())); // to connect quit signal from QML
 
@@ -145,23 +146,6 @@ int MainWindow::openConfigDialog()
     setCursor(Qt::BlankCursor);
 
     return ret;
-
-  /*  MyLibFacade->shutDownParsing();
-    MyRegionsList->remove(); // Must be done first to be clear that no media is loaded or played anymore
-    setColor("white");
-
-    QQmlComponent *rectangle = new QQmlComponent(engine());
-    QQmlComponent *item      = new QQmlComponent(engine());
-
-    QFile file(":/Configuration.qml");
-    file.open(QIODevice::ReadOnly);
-    QString str = file.readAll();
-    file.close();
-    item->setData(str.toUtf8(), QUrl());
-    QQuickItem *q_item = qobject_cast<QQuickItem *>(item->create());
-    q_item->setParentItem(rootObject());
-*/
-    return 0;
 }
 
 void MainWindow::resizeAsNormalFullScreen()
@@ -214,7 +198,7 @@ void MainWindow::prepareParsing()
 {
     MyRegionsList->remove(); // Must be done first to be clear that no media is loaded or played anymore
     setColor(MyLibFacade->getHead()->getRootBackgroundColor());
-    MyRegionsList->create(MyLibFacade, QSize(width(), height()), rootObject(), engine());
+    MyRegionsList->create(MyLibFacade, QSize(width(), height()), rootObject(), MyLauncher.data(), engine());
 
     MyLibFacade->beginSmilPlaying(); // begin playing not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
@@ -257,40 +241,23 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
 
 void MainWindow::sendConfig()
 {
-#if defined  Q_OS_ANDROID
-    QAndroidJniObject java_file_path = QAndroidJniObject::fromString(MyLibFacade->getConfiguration()->getPaths("cache")+"configuration.xml");
-    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
-                                              "applyConfig",
-                                              "(Ljava/lang/String;)V",
-                                              java_file_path.object<jstring>());
-#endif
-
+    MyLauncher.data()->sendConfig(MyLibFacade->getConfiguration()->getPaths("cache"));
 }
 
-void MainWindow::rebootOS()
+void MainWindow::rebootOS(QString task_id)
 {
-#if defined  Q_OS_ANDROID
-    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity", "rebootOS");
-#endif
+    MyLauncher.data()->rebootOS(task_id);
 }
 
 void MainWindow::installSoftware(QString file_path)
 {
-#if defined  Q_OS_ANDROID
-   QAndroidJniObject java_file_path = QAndroidJniObject::fromString(file_path);
-    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
-                                              "installSoftware",
-                                              "(Ljava/lang/String;)V",
-                                              java_file_path.object<jstring>());
-#endif
+    MyLauncher.data()->installSoftware(file_path);
 }
 
 void MainWindow::sendClosePlayerCorrect()
 {
-#if defined  Q_OS_ANDROID
-    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity", "closePlayerCorrect");
-#endif
-    qDebug(MediaPlayer) << "send ClosePlayerCorrect" ;
+    MyLauncher.data()->sendClosePlayerCorrect();
+    qDebug(MediaPlayer) << "send ClosePlayerCorrect";
 }
 
 void MainWindow::quitApplication()

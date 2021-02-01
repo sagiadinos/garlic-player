@@ -45,6 +45,10 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *par
         else if (dom_element.attribute("type").contains("application/widget"))
            type = "widget";
     }
+    else if(tag_name == "ref" && dom_element.hasAttribute("src") && dom_element.attribute("src").contains("adapi:"))
+    {
+        type = "ref_command";
+    }
 
     if (type == "img")
     {
@@ -69,6 +73,10 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *par
     else if (type == "prefetch")
     {
         return new TPrefetch(parent_container, MyMediaManager, MyMainConfiguration, parent);
+    }
+    else if (type == "ref_command")
+    {
+        return new TRefCommand(parent_container, MyMediaManager, MyMainConfiguration, parent);
     }
     else if (type == "seq")
     {

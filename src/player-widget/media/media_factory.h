@@ -5,6 +5,7 @@
 #include "media/web.h"
 #include "media/video.h"
 #include "media/audio.h"
+#include "media/ref_command.h"
 
 class MediaFactory : public QObject
 {
@@ -18,7 +19,7 @@ class MediaFactory : public QObject
     public slots:
 
     protected:
-        QScopedPointer<PlayerBaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb;
+        QScopedPointer<PlayerBaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb, MyRefCommand;
 
 
 };

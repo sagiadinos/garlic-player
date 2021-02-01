@@ -94,6 +94,7 @@ macx {
 SOURCES += \
     media/image.cpp \
     media/player_base_media.cpp \
+    media/ref_command.cpp \
     media/video.cpp \
     media/web.cpp \
     media/audio.cpp \
@@ -108,6 +109,7 @@ SOURCES += \
 HEADERS  += \
     media/image.h \
     media/player_base_media.h \
+    media/ref_command.h \
     media/video.h \
     media/web.h \
     media/audio.h \

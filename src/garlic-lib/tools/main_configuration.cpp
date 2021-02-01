@@ -43,6 +43,11 @@ MainConfiguration::MainConfiguration(QSettings *uc, QObject *parent) : QObject(p
     setStartTime(QDateTime::currentDateTime().toOffsetFromUtc(QDateTime::currentDateTime().offsetFromUtc()).toString(Qt::ISODate));
 }
 
+void MainConfiguration::setAdditionalVersion(QString value)
+{
+    version = QString(version_from_git) + value;
+}
+
 void MainConfiguration::setUuid(const QString &value)
 {
     uuid = value;

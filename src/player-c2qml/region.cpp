@@ -45,7 +45,7 @@ void TRegion::setRootSize(int w, int h)
     resizeGeometry();
 }
 
-void TRegion::setRegion(Region r, QQmlEngine *e)
+void TRegion::setRegion(Region r, Launcher *lc, QQmlEngine *e)
 {
     region = r;
     engine = e;
@@ -62,7 +62,7 @@ void TRegion::setRegion(Region r, QQmlEngine *e)
     rectangle_item.reset(qobject_cast<QQuickItem *>(rectangle.data()->create()));
     rectangle_item.data()->setParentItem(root_item);
 
-    MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, this));
+    MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, lc, this));
 }
 
 void TRegion::startShowMedia(BaseMedia *media)
