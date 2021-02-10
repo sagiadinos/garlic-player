@@ -8,17 +8,10 @@ Image::Image(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : P
                     Image {\n  \
                         id: "+getRegionId()+"_image; \
                         anchors.fill: parent; \n \
-                        signal qmlSignal(string msg); \n \
-                        onStatusChanged: qmlSignal("+getRegionId()+"_image.status); \n \
-                    }\n"
+                }\n"
     );
     image_item.reset(createMediaItem(mc, str));
-
-    connect(image_item.data(), SIGNAL(qmlSignal(QString)), this, SLOT(doStateChanged(QString)));
-    // set anchors.fill via Javascript do not work in Android cause parent and this are NULL
-    // unfortunately anchors.fill cannot be accessed from C++ so it has to initialized static via
-    // property var img_fill_mode: ""; \n
-}
+ }
 
 Image::~Image()
 {
@@ -61,9 +54,4 @@ int Image::determineFillMode(QString smil_fit)
         return PRESERVEASPECTFIT;
     else
         return STRETCH;
-}
-
-void Image::doStateChanged(QString state)
-{
-    qDebug() << state << "doStateChanged";
 }

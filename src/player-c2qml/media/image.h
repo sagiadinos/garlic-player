@@ -21,8 +21,7 @@ class Image : public PlayerBaseMedia
     protected:
         QScopedPointer<QQuickItem>  image_item;
         int                         determineFillMode(QString smil_fit);
-   protected slots:
-        void doStateChanged(QString state);
+
 };
 
 

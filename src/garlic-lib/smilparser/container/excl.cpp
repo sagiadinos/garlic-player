@@ -86,7 +86,6 @@ int TExcl::interruptActualPlaying(QDomElement dom_element, BaseTimings *element)
     qDebug() << element->getID() << " checked if it should interupt actual playing";
     int ret = 0;
     NewActivePriorityClass = findPriorityClass(dom_element);
-    qDebug() << "Active Prio ID: " << ActivePriorityClass->getID() << "New Prio ID: " << NewActivePriorityClass->getID() << "before check Interupt";
 
     if (ar_priorities.key(ActivePriorityClass) == ar_priorities.key(NewActivePriorityClass))      // same priorityClass is currently active => look at peers attribute:
     {
@@ -110,7 +109,6 @@ int TExcl::interruptActualPlaying(QDomElement dom_element, BaseTimings *element)
         else // higher == "pause" is default
             ret = priorityPause(dom_element, element);
 
-        qDebug() << NewActivePriorityClass->getID() << "is the new ActivePriorityClass after paused " << ActivePriorityClass->getID();
     }
     else if (ar_priorities.key(ActivePriorityClass) < ar_priorities.key(NewActivePriorityClass)) // new priority Class is lover then current active
     {
@@ -144,7 +142,6 @@ bool TExcl::isChildPlayable(BaseTimings *element)
             default: str_int = "nothing";
                     break;
     }
-    qDebug() << element->getID() << "is ChildPlayable in excl with interuppt = " << str_int;
     if (interrupt == _stop_active) // stop active
     {
         childEnded(played_element);
@@ -180,7 +177,6 @@ bool TExcl::isChildPlayable(BaseTimings *element)
         emit pauseElement(element);
     }
 
-    qDebug() << NewActivePriorityClass->getID() << "is the new ActivePriorityClass after check interrupt " << ActivePriorityClass->getID();
     ActivePriorityClass = NewActivePriorityClass; // Change Active everytime!
     return playable;
 }
@@ -193,7 +189,6 @@ bool TExcl::isChildPlayable(BaseTimings *element)
  */
 void TExcl::next(BaseTimings *ended_element)
 {
-    qDebug() << ended_element->getID() << "ended Element (TExcl::next)";
     setChildActive(false);
     childEnded(ended_element);
 
@@ -205,7 +200,6 @@ void TExcl::next(BaseTimings *ended_element)
         MyPriorityClass       = *ar_priorities_iterator;
         if (MyPriorityClass->countQueue() > 0)
         {
-            qDebug() << MyPriorityClass->getID() << "is the new ActivePriorityClass after get from Queue";
             ActivePriorityClass = MyPriorityClass; // important to change the now active Playlist
             setChildActive(true);
 
@@ -254,25 +248,21 @@ void TExcl::play()
         }
 
     }
-    qDebug(Develop) << getID() << "played";
     status = _playing;
 }
 
 void TExcl::resume()
 {
-    qDebug(Develop) << getID() << "resumed";
     status = _playing;
 }
 
 void TExcl::stop()
 {
-    qDebug(Develop) << getID() << "stopped";
     status = _stopped;
 }
 
 void TExcl::pause()
 {
-    qDebug(Develop) << getID() << "paused";
     status = _paused;
 }
 
@@ -331,7 +321,6 @@ int TExcl::priorityPause(QDomElement dom_element, BaseTimings *element)
     int ret;
     if (is_child_active)
     {
-        qDebug() << ActivePriorityClass->getID() << "insert in Queue: " << played_element->getID();
         ActivePriorityClass->insertQueue(played_element);
         ret = _pause_active;
     }

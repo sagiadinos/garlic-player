@@ -97,13 +97,11 @@ QString BaseMedia::getParamsAsQuery() const
 
 void BaseMedia::pause()
 {
-    qDebug() << getID() << "paused ";
     status = _paused;
 }
 
 void BaseMedia::stop()
 {
-    qDebug() << getID() << "stopped";
     status = _stopped;
 }
 
@@ -120,7 +118,6 @@ void BaseMedia::parseBaseMediaAttributes()
 
 void BaseMedia::emitfinished()
 {
-  qDebug(Develop) << getID() << "finished media tag";
   emit finishedMedia(parent_container, this);
 }
 

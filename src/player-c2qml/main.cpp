@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
     QtWebView::initialize();
 
 #if defined Q_OS_ANDROID
+    // Register our QML type
     AndroidManager *MyAndroidManager = new AndroidManager();
     if (!MyAndroidManager->checkPermissiones())
     {
@@ -60,7 +61,7 @@ int main(int argc, char *argv[])
         QApplication::quit();
     }
     MyAndroidManager->disableScreenSaver();
-   // sleep(5);
+
     if (MyAndroidManager->hasLauncher())
     {
         MyLibFacade->toggleLauncher(MyAndroidManager->hasLauncher());

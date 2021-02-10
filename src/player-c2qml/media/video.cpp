@@ -3,20 +3,22 @@
 Video::Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : PlayerBaseMedia(mc, r_id, lc, parent)
 {
     setRegionId(r_id);
+
 #ifdef SUPPORT_QTAV
     QString module = "import QtAV 1.7\n";
 #else
     QString module = "import QtMultimedia 5.12\n";
 #endif
-    qml = "import QtQuick 2.7\n"+
+    qml = "import QtQuick 2.12\n " +
                     module +
                     "Video {                                 \
                         id: "+getRegionId()+"_video;         \
                         orientation: 0;                      \
-                        anchors.fill: parent;                \
+                        autoLoad: true;                      \
                         autoPlay: true;                      \
-                        property var video_fill_mode: \"\";  \
+                        anchors.fill: parent;                \
                     }\n";
+
     media_component = mc;
     video_item.reset(createMediaItem(media_component, qml));
     connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));

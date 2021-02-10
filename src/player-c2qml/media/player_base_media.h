@@ -20,7 +20,6 @@ class PlayerBaseMedia : public QObject
         void                  setStartTime();
         QString               createPlayLogXml();
         void                  setRegionId(const QString &value);
-
     protected:
         Logger&               MyLogger = Logger::getInstance();
         Launcher             *MyLauncher;

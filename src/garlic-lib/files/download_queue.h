@@ -32,7 +32,7 @@ class DownloadQueue : public QObject
 {
         Q_OBJECT
     public:
-        const int _max_download_slots   = 5;
+        const int _max_download_slots   = 2;
         explicit DownloadQueue(MainConfiguration *config, QObject *parent=Q_NULLPTR);
         ~DownloadQueue();
         void     insertQueue(QString src, QString local);

@@ -2,11 +2,28 @@ TEMPLATE = lib
 CONFIG += qt warn_on c++11 staticlib
 QT -= gui
 
-linux:!android:DESTDIR = ../../lib/
-win32:DESTDIR = ../../lib/
+linux:!android {
+    #temporary ToDO
+    # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
+    # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
+    QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
+    DESTDIR = ../../lib/
+}
+win32 {
+    headers.path=$$PREFIX/include/quazip
+    headers.files=$$HEADERS
+    target.path=$$PREFIX/lib
+    INSTALLS += headers target
+    # workaround for qdatetime.h macro bug
+    DEFINES += NOMINMAX
+    DESTDIR = ../../lib/
+}
 macx:DESTDIR = ../../lib/
 android:DESTDIR = ../../libandroid/
 ios:DESTDIR = ../../libios/
+
+INCLUDEPATH += ../zlib/includes
+LIBS += -L../../lib/ -lzlib
 
 # The ABI version.
 
@@ -54,20 +71,3 @@ unix {
     MOC_DIR=.moc
 	
 }
-linux:!android {
-    #temporary ToDO
-    # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
-    # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
-    QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
-}
-
-win32 {
-    headers.path=$$PREFIX/include/quazip
-    headers.files=$$HEADERS
-    target.path=$$PREFIX/lib
-    INSTALLS += headers target
-    # workaround for qdatetime.h macro bug
-    DEFINES += NOMINMAX
-}
-INCLUDEPATH += ../zlib/includes
-LIBS += -L../../lib/ -lzlib

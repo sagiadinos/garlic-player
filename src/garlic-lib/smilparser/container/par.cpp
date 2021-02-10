@@ -53,7 +53,6 @@ void TPar::prepareDurationTimerBeforePlay()
 
 bool TPar::isChildPlayable(BaseTimings *element)
 {
-    qDebug() << element->getID() << "is ChildPlayable in par";
     childStarted(element);
     return true;
 }
@@ -101,19 +100,16 @@ void TPar::play()
 
 void TPar::resume()
 {
-    qDebug(Develop) << getID() << "played";
     status = _playing;
 }
 
 void TPar::pause()
 {
-    qDebug(Develop) << getID() << "paused";
     status = _paused;
 }
 
 void TPar::stop()
 {
-    qDebug(Develop) << getID() << "stopped";
     status = _stopped;
 }
 

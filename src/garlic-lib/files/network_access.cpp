@@ -40,6 +40,7 @@ void TNetworkAccess::setRemoteFileUrl(QUrl value)
 QNetworkRequest TNetworkAccess::prepareNetworkRequest(QUrl remote_url)
 {
     QNetworkRequest request(remote_url);
+    request.setPriority(QNetworkRequest::LowPriority);
     QSslConfiguration conf = request.sslConfiguration();
     conf.setPeerVerifyMode(QSslSocket::VerifyNone);
     request.setSslConfiguration(conf);

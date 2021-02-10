@@ -48,7 +48,6 @@ BaseTimings::~BaseTimings()
         InternalTimer->stop();
         delete InternalTimer;
     }
-    qDebug()<< "delete " << objectName();
 }
 
 
@@ -79,7 +78,6 @@ void BaseTimings::prepareTimingsBeforePausing()
     if (DurTimer != Q_NULLPTR)
     {
        DurTimer->pause();
-       qDebug() << getID() << " remaining ms:" << DurTimer->getRemaining();
     }
     if (EndTimer != Q_NULLPTR)
     {

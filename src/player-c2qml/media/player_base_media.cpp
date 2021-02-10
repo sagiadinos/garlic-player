@@ -47,7 +47,7 @@ bool PlayerBaseMedia::load(QQuickItem *item)
     if (isFileExists(source))
     {
         ret = true;
-        item->setProperty("source", "file:"+source);
+        item->setProperty("source", "file://"+source);
     }
     else
     {

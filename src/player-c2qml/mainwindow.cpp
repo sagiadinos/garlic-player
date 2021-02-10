@@ -264,6 +264,5 @@ void MainWindow::quitApplication()
 {
     MyLibFacade->shutDownParsing();
     sendClosePlayerCorrect();
-//    delete MyLibFacade;
     QApplication::quit();
 }

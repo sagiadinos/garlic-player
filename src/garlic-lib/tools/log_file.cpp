@@ -6,6 +6,7 @@ LogFile::LogFile(QString file_path, QObject *parent) : QObject(parent)
     log_file_info.reset(new QFileInfo(file_path));
     log_file.data()->open(QFile::Append | QFile::Text);
     out.setDevice(log_file.data());
+
 }
 
 void LogFile::setMaxSize(qint64 size)

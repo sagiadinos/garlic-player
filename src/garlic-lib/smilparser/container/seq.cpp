@@ -61,7 +61,6 @@ void TSeq::next(BaseTimings *ended_element)
 
 bool TSeq::isChildPlayable(BaseTimings *element)
 {
-    qDebug(Develop) << getID() << "is ChildPlayable in seq";
     childStarted(element);
     return true;
 }
@@ -81,19 +80,16 @@ void TSeq::play()
         }
         emitFoundElement();
     }
-    qDebug(Develop) << getID() << "played";
     status = _playing;
 }
 
 void TSeq::resume()
 {
-    qDebug(Develop) << getID() << "plaused";
     status = _paused;
 }
 
 void TSeq::stop()
 {
-    qDebug(Develop) << getID() << "stopped";
     status = _stopped;
 }
 
@@ -150,7 +146,6 @@ void TSeq::handlePossibleRepeat()
 {
     if (checkRepeatCountStatus())
     {
-        qDebug() << getID() << "Repeats: " << count++;
         play();
     }
     else
