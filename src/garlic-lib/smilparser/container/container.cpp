@@ -90,7 +90,6 @@ void TContainer::emitFoundElement()
 
 void TContainer::emitfinished() // called from finishedActiveDuration() TBase
 {
-    qDebug(Develop) << getID() << "finished container tag";
     emit finishedContainer(parent_container, this);
 }
 

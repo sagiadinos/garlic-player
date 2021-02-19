@@ -6,6 +6,7 @@ TEMPLATE = lib
 TARGET = zlib
 INCLUDEPATH += .
 CONFIG += c++11 staticlib
+Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 linux:!android {
     #temporary ToDO

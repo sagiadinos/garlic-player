@@ -14,6 +14,7 @@ TEMPLATE     = app
 DESTDIR      = ../bin
 INCLUDEPATH += ../ext/zlib/includes
 INCLUDEPATH += ../garlic-lib/
+Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 CONFIG   += support_qtav #alternatives: support_qtav support_qtmm support_libvlc
 

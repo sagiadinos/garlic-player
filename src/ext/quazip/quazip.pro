@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += qt warn_on c++11 staticlib
 QT -= gui
+Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 linux:!android {
     #temporary ToDO

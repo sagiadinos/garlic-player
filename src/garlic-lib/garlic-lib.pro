@@ -5,6 +5,7 @@ TEMPLATE  = lib
 CONFIG   += warn_on c++11 stl
 DEFINES  += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
 TARGET    = garlic
+Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
 linux:!android {
     DESTDIR = ../lib/

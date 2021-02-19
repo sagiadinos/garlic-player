@@ -67,7 +67,6 @@ QString BaseMedia::getLoadablePath()
 
 void BaseMedia::play()
 {
-    qDebug() << getID()  << "played";
     status = _playing;
 }
 
