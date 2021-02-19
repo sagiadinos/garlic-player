@@ -50,7 +50,7 @@ QFileInfo Downloader::getLocalFileInfo()
 
 void Downloader::finishedHeadRequest(QNetworkReply *reply)
 {
-    qDebug(Develop) << "finished HEAD Request for " << remote_file_url.toString();
+    qInfo(Develop) << "finished HEAD Request for " << remote_file_url.toString();
     if (reply->error() != QNetworkReply::NoError)
     {
         handleNetworkError(reply);
@@ -78,7 +78,7 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
 
 void Downloader::finishedHeadRedirectRequest(QNetworkReply *reply)
 {
-    qDebug(Develop) << "finished Redirect Request for " << remote_file_url.toString();
+    qInfo(Develop) << "finished Redirect Request for " << remote_file_url.toString();
     if (reply->error() != QNetworkReply::NoError)
     {
         handleNetworkError(reply);
@@ -98,7 +98,7 @@ void Downloader::checkStatusCode(QNetworkReply *reply, int status_code)
                 break;
         case 304:
         default:
-            qDebug(Develop) << "status code: " << status_code << "not handled for " << remote_file_url.toString();
+            qWarning(Develop) << "status code: " << status_code << "not handled for " << remote_file_url.toString();
             emit notmodified(this);
         break;
     }
@@ -115,7 +115,6 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
     if (content_type.contains("text/html")  || content_type.contains("application/xhtml+xml"))
     {
-        qDebug(Develop) << remote_file_url.toString() << " no need for caching " << remote_file_url.toString();
         emit notcacheable(this);
         reply->deleteLater();
         return;
@@ -156,7 +155,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
             (fi.exists() && fi.size() ==  remote_size && fi.lastModified().toUTC() > remote_last_modified)
         )
     {
-        qDebug(Develop) << remote_file_url.toString() << " no need for update";
+        qInfo(Develop) << remote_file_url.toString() << " no need for update";
         emit notmodified(this);
         reply->deleteLater();
         return;
@@ -257,7 +256,7 @@ void Downloader::handleNetworkError(QNetworkReply *reply)
         qCritical(ContentManager) << Logger::getInstance().createEventLogMetaData("FETCH_FAILED",list);
     }
 
-    qDebug(Develop) << " Download failed " << remote_file_url.toString();
+    qWarning(Develop) << " Download failed " << remote_file_url.toString();
     reply->deleteLater();
     emit failed(this);
 }

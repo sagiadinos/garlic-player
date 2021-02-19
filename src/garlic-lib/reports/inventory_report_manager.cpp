@@ -16,10 +16,10 @@ void Reporting::InventoryReportManager::handleSend()
 
 void Reporting::InventoryReportManager::doSucceed(TNetworkAccess *uploader)
 {
-    qDebug(Develop) << "upload succeed" << uploader->getRemoteFileUrl().toString();
+    qInfo(Develop) << "upload succeed" << uploader->getRemoteFileUrl().toString();
 }
 
 void Reporting::InventoryReportManager::doFailed(TNetworkAccess *uploader)
 {
-    qDebug(Develop) << "upload failed" << uploader->getRemoteFileUrl().toString();
+    qWarning(Develop) << "upload failed" << uploader->getRemoteFileUrl().toString();
 }

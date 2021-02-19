@@ -83,8 +83,6 @@ void BodyParser::preloadElement(TContainer *parent_container, QDomElement elemen
         initMedia(qobject_cast<BaseMedia *> (MyBaseTimings));
     }
     MyElementsContainer->insertSmilElement(MyBaseTimings);
-
-    qDebug(Develop) << MyBaseTimings->getID() << " preloaded";
     return;
 }
 

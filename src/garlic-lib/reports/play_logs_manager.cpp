@@ -9,10 +9,8 @@ Reporting::PlayLogsManager::PlayLogsManager(MainConfiguration *config, QObject *
 
 void Reporting::PlayLogsManager::handleSend()
 {
-    qDebug(Develop) << "begin" << Q_FUNC_INFO;
     send_list = log_dir.entryList(QStringList("play_log*"), QDir::Files, QDir::Time | QDir::Reversed);
     send();
-    qDebug(Develop) << "end" << Q_FUNC_INFO;
 }
 
 
@@ -49,7 +47,7 @@ QUrl Reporting::PlayLogsManager::generateSendUrl()
 
 void Reporting::PlayLogsManager::doSucceed(TNetworkAccess *uploader)
 {
-    qDebug(Develop) << "upload succeed" << uploader->getRemoteFileUrl().toString();
+    qInfo(Develop) << "upload succeed" << uploader->getRemoteFileUrl().toString();
     QString remove = MyConfiguration->getPaths("logs") + current_send_file_path;
     QFile::remove(remove);
     send();
@@ -57,6 +55,6 @@ void Reporting::PlayLogsManager::doSucceed(TNetworkAccess *uploader)
 
 void Reporting::PlayLogsManager::doFailed(TNetworkAccess *uploader)
 {
-    qDebug(Develop) << "upload failed" << uploader->getRemoteFileUrl().toString();
+    qWarning(Develop) << "upload failed" << uploader->getRemoteFileUrl().toString();
 }
 

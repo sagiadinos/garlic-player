@@ -47,7 +47,7 @@ QUrl Reporting::EventLogsManager::generateSendUrl()
 
 void Reporting::EventLogsManager::doSucceed(TNetworkAccess *uploader)
 {
-    qDebug(Develop) << "upload succeed" << uploader->getRemoteFileUrl().toString();
+    qInfo(Develop) << "upload succeed" << uploader->getRemoteFileUrl().toString();
     QString remove = MyConfiguration->getPaths("logs") + current_send_file_path;
     QFile::remove(remove);
     send();
@@ -55,6 +55,6 @@ void Reporting::EventLogsManager::doSucceed(TNetworkAccess *uploader)
 
 void Reporting::EventLogsManager::doFailed(TNetworkAccess *uploader)
 {
-    qDebug(Develop) << "upload failed" << uploader->getRemoteFileUrl().toString();
+    qWarning(Develop) << "upload failed" << uploader->getRemoteFileUrl().toString();
 }
 

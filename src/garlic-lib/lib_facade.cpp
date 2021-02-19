@@ -155,7 +155,7 @@ void LibFacade::initFileManager()
     MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data(), this));
     MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
     MyMediaManager.reset(new Files::MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
-    qDebug(Develop) <<  " end initFileManager" ;
+    qDebug() <<  " end initFileManager" ;
 }
 
 void LibFacade::processHeadParsing()
@@ -164,7 +164,7 @@ void LibFacade::processHeadParsing()
     connect(MyHeadParser.data(), SIGNAL(parsingCompleted()), this, SLOT(processBodyParsing()));
 
     MyHeadParser.data()->parse(MyIndexManager->getHead(), MyTaskScheduler.data());
-    qDebug(Develop) <<  " end processHeadParsing" ;
+    qDebug() <<  " end processHeadParsing" ;
 }
 
 void LibFacade::processBodyParsing()
@@ -178,7 +178,7 @@ void LibFacade::processBodyParsing()
     connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));
     connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(emitStopShowMedia(BaseMedia *)));
     MyBodyParser->beginPreloading(MyIndexManager->getBody());
-    qDebug(Develop) <<  " end processBodyParsing" ;
+    qDebug() <<  " end processBodyParsing" ;
 }
 
 void LibFacade::preparedForPlaying()
@@ -186,7 +186,7 @@ void LibFacade::preparedForPlaying()
     MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
 
     emit readyForPlaying();
-    qDebug(Develop) <<  " emit readyForPlaying" ;
+    qDebug() <<  " emit readyForPlaying" ;
 }
 
 void LibFacade::timerEvent(QTimerEvent *event)
@@ -212,12 +212,12 @@ void LibFacade::reboot(QString task_id)
 void LibFacade::emitStartShowMedia(BaseMedia *media)
 {
     emit startShowMedia(media);
-    qDebug(Develop) << "emitStartShowMedia " << media->getID();
+    qDebug() << "emitStartShowMedia " << media->getID();
 }
 
 void LibFacade::emitStopShowMedia(BaseMedia *media)
 {
     emit stopShowMedia(media);
-    qDebug(Develop) << "emitStopShowMedia " << media->getID();
+    qDebug() << "emitStopShowMedia " << media->getID();
 }
 

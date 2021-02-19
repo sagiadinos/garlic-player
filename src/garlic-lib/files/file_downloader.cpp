@@ -32,7 +32,7 @@ void FileDownloader::startDownload(QUrl url, QString file_name)
     connect(network_reply, &QIODevice::readyRead, this, &FileDownloader::readData);
     connect(network_reply, &QNetworkReply::downloadProgress, this, &FileDownloader::downloadProgress);
     connect(network_reply, &QNetworkReply::finished, this, &FileDownloader::finishDownload);
-    qDebug(Develop) << "started download"  << remote_file_url.toString();
+    qInfo(Develop) << "started download"  << remote_file_url.toString();
 }
 
 void FileDownloader::cancelDownload()
@@ -40,7 +40,7 @@ void FileDownloader::cancelDownload()
     if(!network_reply)
         return;
     cleanupDownload();
-    qDebug(Develop) << "manually cancelled download"  << remote_file_url.toString();
+    qWarning(Develop) << "manually cancelled download"  << remote_file_url.toString();
     emit backReady();
 }
 
@@ -108,7 +108,7 @@ void FileDownloader::finishDownload()
 
         emit downloadSuccessful();
     }
-    qDebug(Develop) << "finished download"  << remote_file_url.toString();
+    qInfo(Develop) << "finished download"  << remote_file_url.toString();
     emit backReady();
 }
 
