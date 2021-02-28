@@ -212,14 +212,7 @@ void TExcl::next(BaseTimings *ended_element)
 
     if (!hasPlayingChilds())
     {
-        if(checkRepeatCountStatus())
-        {
-            play();
-        }
-        else
-        {
-            finishedActiveDuration();
-        }
+        handlePossibleRepeat();
     }
 }
 
@@ -360,5 +353,30 @@ int TExcl::priorityDefer(QDomElement dom_element, BaseTimings *element)
         played_dom_element = dom_element;
     }
     return ret;
+}
+
+void TExcl::handlePossibleRepeat()
+{
+    // when a Dur time is active ignore repeat
+    // https://www.w3.org/TR/SMIL3/smil-timing.html#q75
+    if (isDurTimerActive())
+        return;
+
+    if(checkRepeatCountStatus())
+    {
+        play();
+    }
+    else
+    {
+        finishedActiveDuration();
+    }
+}
+
+void TExcl::finishedDuration()
+{
+    if (!isEndTimerActive())
+    {
+        finishedActiveDuration();
+    }
 }
 

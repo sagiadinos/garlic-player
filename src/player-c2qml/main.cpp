@@ -85,8 +85,11 @@ int main(int argc, char *argv[])
 
     if (!MyParser.parse(MyLibFacade))
         return 1;
-
+#ifdef QT_DEBUG
     QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
+#else
+    QLoggingCategory::setFilterRules("*.debug=false");
+#endif
 
     TScreen    MyScreen(Q_NULLPTR);
     MyScreen.selectCurrentScreen(MyParser.getScreenSelect());

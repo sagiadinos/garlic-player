@@ -57,8 +57,9 @@ class BaseMedia : public BaseTimings
         TContainer          *getParentContainer(){return parent_container;}
         QString              getParamsAsQuery() const;
 
-public slots:
+    public slots:
         void                 emitfinished();
+        void                 finishedDuration();
 
     protected:
         Files::MediaManager *MyMediaManager;

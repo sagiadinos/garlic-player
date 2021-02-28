@@ -35,8 +35,11 @@ class TPar : public TContainer
         void                play();
         void                resume();
         bool                isChildPlayable(BaseTimings *element);
-protected:
+     public slots:
+        void                finishedDuration();
+    protected:
         void                traverseChilds();
+        void                handlePossibleRepeat();
     protected slots:
         void                prepareDurationTimerBeforePlay();
     private:

@@ -48,12 +48,12 @@ void TSeq::next(BaseTimings *ended_element)
 {
     childEnded(ended_element);
 
-    if (canGetNextItem())  // cause .end() pointing to the imaginary item after the last item in the list
+    if (canGetNextItem())
     {
         active_element = getNextItem();
         emitFoundElement();
     }
-    else // end check if repeat value is indefined or Limnit not reached
+    else
     {
         handlePossibleRepeat();
     }
@@ -142,18 +142,6 @@ QDomElement TSeq::getNextItem()
     return ret;
 }
 
-void TSeq::handlePossibleRepeat()
-{
-    if (checkRepeatCountStatus())
-    {
-        play();
-    }
-    else
-    {
-        finishedActiveDuration();
-    }
-}
-
 void TSeq::traverseChilds()
 {
     QDomNodeList childs = root_element.childNodes();
@@ -168,5 +156,30 @@ void TSeq::traverseChilds()
         }
     }
     childs_list_iterator = childs_list.begin();
+}
+
+void TSeq::handlePossibleRepeat()
+{
+    // when a Dur time is active ignore repeat
+    // https://www.w3.org/TR/SMIL3/smil-timing.html#q75
+    if (isDurTimerActive())
+        return;
+
+    if (checkRepeatCountStatus())
+    {
+        play();
+    }
+    else
+    {
+        finishedActiveDuration();
+    }
+}
+
+void TSeq::finishedDuration()
+{
+    if (!isEndTimerActive())
+    {
+        finishedActiveDuration();
+    }
 }
 

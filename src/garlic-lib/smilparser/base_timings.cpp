@@ -134,15 +134,6 @@ void BaseTimings::finishedNotFound()
     }
 }
 
-void BaseTimings::finishedSimpleDuration()
-{
-    if (!checkRepeatCountStatus() && !isEndTimerActive())
-    {
-        finishedActiveDuration();
-    }
-}
-
-
 // ========================= protected methods ======================================================
 
 /**
@@ -211,7 +202,7 @@ void BaseTimings::parseTimingAttributes()
     if (root_element.hasAttribute("dur"))
     {
         DurTimer = new SimpleTimer(this);
-        connect(DurTimer, SIGNAL(timeout()), this, SLOT(finishedSimpleDuration()));
+        connect(DurTimer, SIGNAL(timeout()), this, SLOT(finishedDuration()));
         DurTimer->parse(root_element.attribute("dur"));
     }
     if (root_element.hasAttribute("repeatCount"))

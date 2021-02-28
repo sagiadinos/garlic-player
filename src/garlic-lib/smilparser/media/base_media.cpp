@@ -132,6 +132,14 @@ void BaseMedia::parseBaseParameters()
     }
 }
 
+void BaseMedia::finishedDuration()
+{
+    if (!isEndTimerActive())
+    {
+        finishedActiveDuration();
+    }
+}
+
 void BaseMedia::setAdditionalParameters(QDomElement param)
 {
     if (param.tagName() != "param" || !param.hasAttribute("name") || !param.hasAttribute("value"))

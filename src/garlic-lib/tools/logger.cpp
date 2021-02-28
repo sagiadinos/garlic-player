@@ -26,6 +26,7 @@ Logger& Logger::getInstance()
 
 void Logger::dispatchMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+
     if (QString(context.category) == "EventLog" ||
             QString(context.category) == "SmilParser" ||
             QString(context.category) == "ContentManager" ||

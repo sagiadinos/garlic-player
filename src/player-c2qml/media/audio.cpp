@@ -55,6 +55,6 @@ void Audio::setParentItem(QQuickItem *parent)
 
 void Audio::finished()
 {
-    SmilMedia->finishedSimpleDuration();
+    SmilMedia->finishedDuration();
 }
 

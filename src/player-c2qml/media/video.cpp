@@ -102,6 +102,6 @@ void Video::doStopped()
 
     if (video_item.data()->property("status").toString() == "7") // 7 means EndOfFile Shitty QML has no signal for finish
     {
-        SmilMedia->finishedSimpleDuration();
+        SmilMedia->finishedDuration();
     }
 }

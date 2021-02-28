@@ -40,13 +40,14 @@ class TSeq : public TContainer
         bool         isChildPlayable(BaseTimings *element);
     public slots:
         void         prepareDurationTimerBeforePlay();
+        void         finishedDuration();
     protected:
         TShuffle    *MyShuffle = Q_NULLPTR;
         int          count             = 0;
         bool         canGetNextItem();
         QDomElement  getNextItem();
-        void         handlePossibleRepeat();
         void         traverseChilds();
+        void         handlePossibleRepeat();
 };
 
 #endif // SEQ_H

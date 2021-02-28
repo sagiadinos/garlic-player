@@ -36,11 +36,11 @@ public:
     void      pause(){}
     void      stop(){}
     bool      isChildPlayable(BaseTimings *element);
+public slots:
+    void         finishedDuration();
+    void      prepareDurationTimerBeforePlay();
 protected:
     void      traverseChilds();
-public slots:
-    void      prepareDurationTimerBeforePlay();
-private:
 signals:
     void      finishPreload();
 

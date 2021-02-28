@@ -70,14 +70,7 @@ void TPar::next(BaseTimings *ended_element)
     childEnded(ended_element);
     if (!hasPlayingChilds())
     {
-        if(checkRepeatCountStatus())
-        {
-            play();
-        }
-        else
-        {
-            emitfinished();
-        }
+        handlePossibleRepeat();
     }
     return;
 }
@@ -129,4 +122,28 @@ void TPar::traverseChilds()
     }
 }
 
-// next means here that it should be check only if playliste can be started from begin
+void TPar::handlePossibleRepeat()
+{
+    // when a Dur time is active ignore repeat
+    // https://www.w3.org/TR/SMIL3/smil-timing.html#q75
+    if (isDurTimerActive())
+        return;
+
+    if(checkRepeatCountStatus())
+    {
+        play();
+    }
+    else
+    {
+        finishedActiveDuration();
+    }
+}
+
+void TPar::finishedDuration()
+{
+    if (!isEndTimerActive())
+    {
+        finishedActiveDuration();
+    }
+}
+

@@ -42,32 +42,32 @@ class BaseTimings : public TBase
         const     int        _playing  = 2;
         const     int        _paused   = 3;
 
-        explicit              BaseTimings(QObject * parent = Q_NULLPTR);
+        explicit               BaseTimings(QObject * parent = Q_NULLPTR);
                               ~BaseTimings();
-                void          prepareTimingsBeforePlaying();      // what to do when parent sends an order to begin executions
-                void          prepareTimingsBeforePausing();
-                void          prepareTimingsBeforeStop();      // what to do when parent sends an order to begin executions
-                void          prepareTimingsBeforeResume();      // what to do when parent sends an order to begin executions
-                int           getStatus(){return status;}
-                bool          isRepeatable(){return repeatable;}
-        virtual void          play()        = 0;
-        virtual void          pause()       = 0;
-        virtual void          stop()        = 0;
-        virtual void          resume()      = 0;
-        virtual QString       getBaseType() = 0;
-        virtual BaseTimings  *getChildElementFromList() = 0;
-        virtual bool          hasPlayingChilds() = 0;
-                void          finishedNotFound();
-                void          skipElement();
+                void           prepareTimingsBeforePlaying();      // what to do when parent sends an order to begin executions
+                void           prepareTimingsBeforePausing();
+                void           prepareTimingsBeforeStop();      // what to do when parent sends an order to begin executions
+                void           prepareTimingsBeforeResume();      // what to do when parent sends an order to begin executions
+                int            getStatus(){return status;}
+                bool           isRepeatable(){return repeatable;}
+        virtual void           play()        = 0;
+        virtual void           pause()       = 0;
+        virtual void           stop()        = 0;
+        virtual void           resume()      = 0;
+        virtual QString        getBaseType() = 0;
+        virtual BaseTimings   *getChildElementFromList() = 0;
+        virtual bool           hasPlayingChilds() = 0;
+                void           finishedNotFound();
+                void           skipElement();
     public slots:
-        virtual void          emitfinished() = 0;
-                void          finishedSimpleDuration();
-        virtual void          prepareDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
+        virtual void           emitfinished() = 0;
+        virtual void           finishedDuration() = 0;
+        virtual void           prepareDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
     protected:
                 EnhancedTimer *BeginTimer = Q_NULLPTR;
                 EnhancedTimer *EndTimer = Q_NULLPTR;
                 SimpleTimer   *DurTimer = Q_NULLPTR;
-                QTimer         *InternalTimer = Q_NULLPTR;
+                QTimer        *InternalTimer = Q_NULLPTR;
                 int            status         = 0;
                 int            repeatCount    = 0;
                 bool           indefinite     = false;
@@ -86,6 +86,7 @@ class BaseTimings : public TBase
     private:
                 bool           repeatable;
                 void           setRepeatCount(QString rC);
+
 };
 
 #endif // TBASETIMING_H

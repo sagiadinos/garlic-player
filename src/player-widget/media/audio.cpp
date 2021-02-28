@@ -67,5 +67,5 @@ QWidget *PlayerAudio::getView()
 
 void PlayerAudio::finished()
 {
-   SmilMedia->finishedSimpleDuration();
+   SmilMedia->finishedDuration();
 }

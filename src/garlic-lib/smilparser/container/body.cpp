@@ -96,3 +96,8 @@ void TBody::traverseChilds()
     }
     childs_list_iterator = childs_list.begin();
 }
+
+void TBody::finishedDuration()
+{
+    //dummy cause body cannot have duration etc.
+}

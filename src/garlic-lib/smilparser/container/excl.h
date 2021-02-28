@@ -42,7 +42,8 @@ class TExcl : public TContainer
         void                 play();
         void                 resume();
     public slots:
-        void      prepareDurationTimerBeforePlay();
+        void                 prepareDurationTimerBeforePlay();
+        void                 finishedDuration();
     protected:
         QDomElement                           played_dom_element;
         TPriorityClass                       *ActivePriorityClass, *NewActivePriorityClass;
@@ -55,6 +56,7 @@ class TExcl : public TContainer
         int                                   priorityPause(QDomElement dom_element, BaseTimings *element);
         int                                   priorityNever(QDomElement dom_element, BaseTimings *element);
         int                                   priorityDefer(QDomElement dom_element, BaseTimings *element);
+        void         handlePossibleRepeat();
 
     signals:
         void resumeElement(BaseTimings *element);

@@ -85,5 +85,5 @@ QWidget *PlayerVideo::getView()
 
 void PlayerVideo::finished()
 {
-   SmilMedia->finishedSimpleDuration();
+   SmilMedia->finishedDuration();
 }
