@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QObject>
 #include "tools/main_configuration.h"
+#include "tools/logging_categories.h"
 
 class PlayerConfiguration : public QObject
 {
@@ -18,6 +19,7 @@ public:
     void setUuidFromLauncher(QString value);
     void setSmilIndexUriFromLauncher(QString value);
     void setVersionFromLauncher(QString value);
+    void printVersionInformation();
 private:
 
     bool       has_launcher            = false;;

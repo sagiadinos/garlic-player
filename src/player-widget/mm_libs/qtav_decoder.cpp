@@ -75,22 +75,22 @@ void QtAVDecoder::onMediaStatusChanged(QtAV::MediaStatus status)
             qWarning(Develop) << "No Media " << current_media_path;
             break;
         case QtAV::LoadedMedia:
-            qInfo(Develop) << "Loaded media " << current_media_path;
+            qDebug() << "Loaded media " << current_media_path;
             break;
         case QtAV::BufferedMedia:
-            qInfo(Develop) << "Buffered media " << current_media_path;
+            qDebug() << "Buffered media " << current_media_path;
             break;
         case QtAV::BufferingMedia:
-            qInfo(Develop) << "Buffering media " << current_media_path;
+            qDebug() << "Buffering media " << current_media_path;
             break;
         case QtAV::LoadingMedia:
-            qInfo(Develop) << "Loading media " << current_media_path;
+            qDebug() << "Loading media " << current_media_path;
             break;
         case QtAV::StalledMedia:
             qWarning(Develop) << "Stalled media " << current_media_path;
             break;
         case QtAV::EndOfMedia:
-            qInfo(Develop) << "End of media " << current_media_path;
+            qDebug() << "End of media " << current_media_path;
             emit finished();
             break;
         case QtAV::InvalidMedia:

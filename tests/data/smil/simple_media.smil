@@ -16,11 +16,11 @@
 	-->
 		<img xml:id="img_begin" src="../images/begin.jpg" dur="2s" fit="meetbest" />
 		<img xml:id="img0001" src="../images/0001.jpg" dur="1s" fit="meetbest" />
-		<video xml:id="video_prodigy" src="../videos/0002.mkv" dur="5s" fit="meetbest" />
+		<video xml:id="video_star" src="../videos/0002.mkv" dur="5s" fit="meetbest" />
 		<img xml:id="img002" src="../images/0002.jpg" dur="1s" fit="fill" />
 		<text xml:id="website" src="https://google.com" dur="4s" fit="meetbest" />
 		<img xml:id="img0003" src="../images/0003.jpg" dur="1s" fit="meetbest" />
-		<audio xml:id="audio_donde" src="../audio/not_exists.mp3" dur="4s" />
+		<audio xml:id="nix_audio" src="../audio/not_exists.mp3" dur="4s" />
 		<img xml:id="img0004" src="../images/0004.jpg" dur="1s" fit="meetbest" />
 		<img xml:id="img_end" src="../images/end.jpg" dur="1s" fit="meetbest" />
 	</body>

@@ -301,7 +301,7 @@ void MainConfiguration::determineOS()
 #elif defined Q_OS_OPENBSD
     os = OS_BSD;
 #elif defined Q_OS_OSX
-    os = "osx";
+    os = OS_OSX;
 #elif defined Q_OS_WIN32
     os = OS_WINDOWS;
 #elif defined Q_OS_WINRT

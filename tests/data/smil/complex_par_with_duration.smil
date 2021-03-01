@@ -14,8 +14,8 @@
 	
 	<!--
 		
-	sequence up left should be 1,2,3,4,6,7,8,9 10 => repeat
-	sequence down right should be begin,1,2,3,end => 5s black => repeat
+	sequence up left should be 1,2,3,4,6,7,8,9 10 => repeat indefinite
+	sequence down right should be begin,1,2,3,end => 5s black => repeat indefinite
 	
 	-->
 		<par>

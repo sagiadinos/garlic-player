@@ -33,27 +33,15 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_X11InitThreads);
 
-    // to prevent SOP with widgets
-/*    char ARG_DISABLE_WEB_SECURITY1[] = "--disable-web-security";
-    char ARG_DISABLE_WEB_SECURITY2[] = "--user-data-dir=/home/niko";
-    int newArgc = argc+1+2;
-    char** newArgv = new char*[newArgc];
-    for(int i=0; i<argc; i++) {
-        newArgv[i] = argv[i];
-    }
-    newArgv[argc] = ARG_DISABLE_WEB_SECURITY1;
-    newArgv[argc+1] = ARG_DISABLE_WEB_SECURITY2;
-    newArgv[argc+2] = nullptr;
-
-    QApplication app(newArgc, newArgv);
-  */  QApplication app(argc, argv);
-
+    QApplication app(argc, argv);
     MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
     MyPlayerConfiguration->determineInitConfigValues();
+    qInstallMessageHandler(handleMessages);
 
     LibFacade      *MyLibFacade     = new LibFacade();
     MyLibFacade->init(MyMainConfiguration);
+    MyPlayerConfiguration->printVersionInformation();
 
 #ifdef QT_DEBUG
  //   QLoggingCategory::setFilterRules("*.debug=true\nqt.*=false");
@@ -61,7 +49,6 @@ int main(int argc, char *argv[])
 #else
     QLoggingCategory::setFilterRules("*.debug=false");
 #endif
-    qInstallMessageHandler(handleMessages);
 
     TCmdParser MyParser(MyMainConfiguration);
     MyParser.addOptions();
@@ -71,6 +58,7 @@ int main(int argc, char *argv[])
     TScreen    MyScreen(Q_NULLPTR);
 
     MyScreen.selectCurrentScreen(MyParser.getScreenSelect());
+
     MainWindow w(&MyScreen, MyLibFacade);
 
     // do not start without an index uri

@@ -126,23 +126,23 @@ void VlcDecoder::updatePosition()
     switch (status)
     {
         case libvlc_Opening:
-            qInfo(Develop) << "Loaded media " << current_media_path;
+            qDebug() << "Loaded media " << current_media_path;
             break;
         case libvlc_Buffering:
-            qInfo(Develop) << "Buffered media " << current_media_path;
+            qDebug() << "Buffered media " << current_media_path;
             break;
         case libvlc_Playing:
-         //   qInfo(Develop) << "Playing media " << current_media_path;
+         //   qDebug() << "Playing media " << current_media_path;
             break;
         case libvlc_Paused:
-            qInfo(Develop) << "paused media " << current_media_path;
+            qDebug() << "paused media " << current_media_path;
             break;
         case libvlc_Stopped:
             qWarning(Develop) << "stopped media " << current_media_path;
             PositionTimer.data()->stop();
             break;
         case libvlc_Ended:
-            qInfo(Develop) << "End of media " << current_media_path;
+            qDebug() << "End of media " << current_media_path;
             PositionTimer.data()->stop();
             emit finished();
             break;

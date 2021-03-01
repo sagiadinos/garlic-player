@@ -62,5 +62,5 @@ void TScreen::calculateWholeDisplayGeometrie()
         whole_display_geometry = whole_display_geometry.united(screen->availableGeometry()); //union
     }
 
-    qInfo(Develop) << " DisplayGeometrie x:" << whole_display_geometry.x() << "y:" << whole_display_geometry.y() << "width:" << whole_display_geometry.width() << "height:" << whole_display_geometry.height();
+    qInfo(Screen) << " DisplayGeometrie x:" << whole_display_geometry.x() << "y:" << whole_display_geometry.y() << "width:" << whole_display_geometry.width() << "height:" << whole_display_geometry.height();
 }

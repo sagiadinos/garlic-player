@@ -50,7 +50,7 @@ QFileInfo Downloader::getLocalFileInfo()
 
 void Downloader::finishedHeadRequest(QNetworkReply *reply)
 {
-    qInfo(Develop) << "finished HEAD Request for " << remote_file_url.toString();
+    qDebug(Develop) << "finished HEAD Request for " << remote_file_url.toString();
     if (reply->error() != QNetworkReply::NoError)
     {
         handleNetworkError(reply);
@@ -140,7 +140,8 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
              << "errorMessage" << "No Last-Modified in http-header after HEAD request"
              << "lastCachedLength" << QString::number(local_file_info.size())
              << "lastCachedModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
-        qWarning(ContentManager) << Logger::getInstance().createEventLogMetaData("UPDATE_FAILED",list);
+//        qWarning(ContentManager) << Logger::getInstance().createEventLogMetaData("UPDATE_FAILED",list);
+        qDebug(Develop) << remote_file_url.toString() << " No Last-Modified in http-header after HEAD request";
     }
 
     QDateTime remote_last_modified = reply->header(QNetworkRequest::LastModifiedHeader).toDateTime();
@@ -155,7 +156,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
             (fi.exists() && fi.size() ==  remote_size && fi.lastModified().toUTC() > remote_last_modified)
         )
     {
-        qInfo(Develop) << remote_file_url.toString() << " no need for update";
+        qDebug(Develop) << remote_file_url.toString() << " no need for update";
         emit notmodified(this);
         reply->deleteLater();
         return;

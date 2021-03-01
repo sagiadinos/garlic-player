@@ -22,6 +22,7 @@
 		1
 		end on lower right
 		
+	-->
 
 		<img region="screen1" xml:id="img_begin" src="../images/begin.jpg" dur="2s" fit="meetbest" />
 		<par xml:id="simple par">
@@ -31,6 +32,5 @@
 			<img region="screen4" xml:id="img0004" src="../images/0004.jpg" dur="1s" fit="meetbest" />
 		</par>	
 		<img region="screen4" xml:id="img_end" src="../images/end.jpg" dur="2s" fit="meetbest" />
-	-->
 	</body>
 </smil>

@@ -36,16 +36,15 @@ class MainConfiguration  : public QObject
 {
     Q_OBJECT
     public:
-        const     QString        OS_ANDROID  = "android";
-        const     QString        OS_DARWIN   = "darwin";
-        const     QString        OS_HURD     = "hurd";
-        const     QString        OS_IOS      = "ios";
-        const     QString        OS_LINUX    = "linux";
-        const     QString        OS_NETBSD   = "bsd";
-        const     QString        OS_OSX      = "osx";
-        const     QString        OS_WINDOWS  = "windows";
-        const     QString        OS_WINRT    = "winrt";
-        const     QString        OS_UNKNOWN  = "unknown";                ;
+        const     QString        OS_ANDROID  = "Android";
+        const     QString        OS_DARWIN   = "Darwin";
+        const     QString        OS_HURD     = "Hurd";
+        const     QString        OS_IOS      = "iOS";
+        const     QString        OS_LINUX    = "Linux";
+        const     QString        OS_NETBSD   = "BSD";
+        const     QString        OS_OSX      = "macOS";
+        const     QString        OS_WINDOWS  = "Windows";
+        const     QString        OS_UNKNOWN  = "Unknown";
 
         explicit        MainConfiguration(QSettings *uc, QObject *parent = Q_NULLPTR);
         QString         getVersion(){return version;}

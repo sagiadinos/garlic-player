@@ -10,7 +10,10 @@ void PlayerConfiguration::determineInitConfigValues()
     determineUuid();
     MyMainConfiguration->determinePlayerName();
     if (!launcher_version.isEmpty())
+    {
         MyMainConfiguration->setAdditionalVersion("L" + launcher_version);
+        qInfo(System) << "Launcher version: " << launcher_version;
+    }
     determineSmilIndexUri();
     MyMainConfiguration->determineUserAgent();
 
@@ -37,6 +40,15 @@ void PlayerConfiguration::setUuidFromLauncher(QString value)
 void PlayerConfiguration::setVersionFromLauncher(QString value)
 {
     launcher_version = value;
+}
+
+void PlayerConfiguration::printVersionInformation()
+{
+    if (!launcher_version.isEmpty())
+    {
+        qInfo() << "Launcher version: " << launcher_version;
+    }
+    qInfo() << MyMainConfiguration->getAppName()+ ": " + MyMainConfiguration->getVersion() << " Operating System:" << MyMainConfiguration->getOS();
 }
 
 
@@ -70,8 +82,6 @@ void PlayerConfiguration::determineSmilIndexUri()
     {
         MyMainConfiguration->setIndexUri(launcher_smil_index_uri);
     }
-
-
 }
 
 void PlayerConfiguration::determinePlayerName()
