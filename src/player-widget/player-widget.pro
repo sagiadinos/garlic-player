@@ -16,7 +16,7 @@ INCLUDEPATH += ../ext/zlib/includes
 INCLUDEPATH += ../garlic-lib/
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
-CONFIG   += support_qtav #alternatives: support_qtav support_qtmm support_libvlc
+CONFIG   += support_qtmm #alternatives: support_qtav support_qtmm support_libvlc
 
 #DEFINES += SUPPORT_EMBEDDED
 #DEFINES += SUPPORT_RPI
