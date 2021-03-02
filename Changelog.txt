@@ -1,7 +1,7 @@
 Changelog
 ===========
 
-0.3.0 -> 0.4.0 (unreleased)
+0.3.0 -> 0.4.0
 ---------------------
 1. New Features
 	* remote configuration changes from CMS
@@ -22,12 +22,13 @@ Changelog
 	* path to a config.xml via command line
 	* reorganized code structure and name changes
 	* Android builds now signed
+	* cleanup debug.log
 	* change Android builds from deprecated gcc to clang > Qt 5.12.x
 	* new icons
 	* various bugfixes
 
 3. Remarks
-	* Qt 5.10.x is now minimal requirement, because some deprecated screen-functions were removed 
+	* Qt 5.10.x is minimal requirement for builds  
 	
 	
 0.2.0 -> 0.3.0
