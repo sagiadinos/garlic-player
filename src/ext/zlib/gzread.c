@@ -32,7 +32,7 @@ local int gz_load(state, buf, len, have)
         get = len - *have;
         if (get > max)
             get = max;
-        ret = _read(state->fd, buf + *have, get);
+        ret = read(state->fd, buf + *have, get);
         if (ret <= 0)
             break;
         *have += (unsigned)ret;
@@ -314,9 +314,9 @@ local z_size_t gz_read(state, buf, len)
     got = 0;
     do {
         /* set n to the maximum amount of len that fits in an unsigned int */
-        n = -1;
+        n = (unsigned)-1;
         if (n > len)
-            n = len;
+            n = (unsigned)len;
 
         /* first just try copying data from the output buffer */
         if (state->x.have) {
@@ -397,7 +397,7 @@ int ZEXPORT gzread(file, buf, len)
     }
 
     /* read len or fewer bytes to buf */
-    len = gz_read(state, buf, len);
+    len = (unsigned)gz_read(state, buf, len);
 
     /* check for an error */
     if (len == 0 && state->err != Z_OK && state->err != Z_BUF_ERROR)
@@ -447,7 +447,6 @@ z_size_t ZEXPORT gzfread(buf, size, nitems, file)
 int ZEXPORT gzgetc(file)
     gzFile file;
 {
-    int ret;
     unsigned char buf[1];
     gz_statep state;
 
@@ -469,8 +468,7 @@ int ZEXPORT gzgetc(file)
     }
 
     /* nothing there -- try gz_read() */
-    ret = gz_read(state, buf, 1);
-    return ret < 1 ? -1 : buf[0];
+    return gz_read(state, buf, 1) < 1 ? -1 : buf[0];
 }
 
 int ZEXPORT gzgetc_(file)
@@ -648,7 +646,7 @@ int ZEXPORT gzclose_r(file)
     err = state->err == Z_BUF_ERROR ? Z_BUF_ERROR : Z_OK;
     gz_error(state, Z_OK, NULL);
     free(state->path);
-    ret = _close(state->fd);
+    ret = close(state->fd);
     free(state);
     return ret ? Z_ERRNO : err;
 }

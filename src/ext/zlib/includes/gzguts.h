@@ -39,7 +39,7 @@
 #  include <io.h>
 #endif
 
-#if defined(_WIN32) || defined(__CYGWIN__)
+#if defined(_WIN32)
 #  define WIDECHAR
 #endif
 
@@ -190,6 +190,7 @@ typedef struct {
         /* just for writing */
     int level;              /* compression level */
     int strategy;           /* compression strategy */
+    int reset;              /* true if a reset is pending after a Z_FINISH */
         /* seek request */
     z_off64_t skip;         /* amount to skip (already rewound if backwards) */
     int seek;               /* true if seek request pending */
