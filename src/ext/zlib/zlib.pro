@@ -18,7 +18,7 @@ linux:!android {
 win32:DESTDIR = ../../lib/
 macx:DESTDIR = ../../lib/
 android:DESTDIR = ../../libandroid/
-
+ios:DESTDIR = ../../libios/
 # Input
 HEADERS += crc32.h \
            deflate.h \

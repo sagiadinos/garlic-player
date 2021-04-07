@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     }
     w.init();
 
-#if defined  Q_OS_ANDROID
+#if defined Q_OS_ANDROID || defined Q_OS_IOS
     w.showFullScreen();
 #else
 

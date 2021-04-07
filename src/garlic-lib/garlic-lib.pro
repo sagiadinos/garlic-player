@@ -15,6 +15,10 @@ linux:!android {
     # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
 }
+ios{
+    DESTDIR = ../libios/
+    LIBS += -L../libios -lquazip -lzlib
+}
 
 android{
     DESTDIR = ../libandroid/
