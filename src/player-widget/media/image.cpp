@@ -61,9 +61,16 @@ void PlayerImage::changeSize(int w, int h)
     if (fit == "fill")
        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     else if (fit == "meet")
-        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
-    else if (fit == "meetbest")
         ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    else if (fit == "meetBest")
+    {
+        if (loaded_image.width() >= w || loaded_image.height() > h)
+            ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        else
+            ImageWidget.data()->setPixmap(loaded_image);
+    }
+    else if (fit == "slice")
+        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
     else
         ImageWidget.data()->setPixmap(loaded_image);
 }

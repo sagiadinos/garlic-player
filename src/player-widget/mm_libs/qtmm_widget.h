@@ -14,9 +14,9 @@ public:
     QWidget              *getVideoWidget();
     QVideoWidget         *getVideoRenderer();
 
-    void                  setAspectRatioFill();
-    void                  setAspectRatioMeet();
-    void                  setAspectRatioMeetBest();
+    void                  ignoreAspectRatio();
+    void                  keepAspectRatio();
+    void                  keepAspectRatioByExpanding();
 signals:
 protected:
     QScopedPointer<QVideoWidget>         VideoWidget;

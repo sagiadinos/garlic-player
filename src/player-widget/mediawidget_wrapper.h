@@ -25,9 +25,9 @@ public:
     QVideoWidget         *getVideoRenderer(){return VideoWidget.getVideoRenderer();}
 #endif
     QWidget              *getVideoWidget();
-    void                  setAspectRatioFill();
-    void                  setAspectRatioMeet();
-    void                  setAspectRatioMeetBest();
+    void                  ignoreAspectRatio();
+    void                  keepAspectRatio();
+    void                  keepAspectRatioByExpanding();
 signals:
 protected:
 #if defined SUPPORT_QTAV

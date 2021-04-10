@@ -67,9 +67,11 @@ int Video::determineFillMode(QString smil_fit)
     if (smil_fit == "fill")
         return STRETCH;
     else if (smil_fit == "meet")
-        return PRESERVEASPECTCROP;
-    else if (smil_fit == "meetbest")
         return PRESERVEASPECTFIT;
+    else if (smil_fit == "meetBest")
+        return PRESERVEASPECTFIT;
+    else if (smil_fit == "slice")
+        return PRESERVEASPECTCROP;
     else
         return STRETCH;
 }

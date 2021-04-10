@@ -16,17 +16,17 @@ QWidget *VlcWidget::getVideoRenderer()
     return VideoWidget.data();
 }
 
-void VlcWidget::setAspectRatioFill()
+void VlcWidget::ignoreAspectRatio()
 {
 
 }
 
-void VlcWidget::setAspectRatioMeet()
+void VlcWidget::keepAspectRatio()
 {
 
 }
 
-void VlcWidget::setAspectRatioMeetBest()
+void VlcWidget::keepAspectRatioByExpanding()
 {
 
 }

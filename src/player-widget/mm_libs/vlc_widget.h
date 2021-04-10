@@ -13,9 +13,9 @@ public:
     QWidget              *getVideoWidget();
     QWidget              *getVideoRenderer();
 
-    void                  setAspectRatioFill();
-    void                  setAspectRatioMeet();
-    void                  setAspectRatioMeetBest();
+    void                  ignoreAspectRatio();
+    void                  keepAspectRatio();
+    void                  keepAspectRatioByExpanding();
 
 signals:
 protected:

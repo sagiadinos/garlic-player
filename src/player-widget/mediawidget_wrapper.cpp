@@ -18,18 +18,18 @@ QWidget *MediaWidgetWrapper::getVideoWidget()
    return VideoWidget.getVideoWidget();
 }
 
-void MediaWidgetWrapper::setAspectRatioFill()
+void MediaWidgetWrapper::ignoreAspectRatio()
 {
-    VideoWidget.setAspectRatioFill();
+    VideoWidget.ignoreAspectRatio();
 }
 
-void MediaWidgetWrapper::setAspectRatioMeet()
+void MediaWidgetWrapper::keepAspectRatio()
 {
-    VideoWidget.setAspectRatioMeet();
+    VideoWidget.keepAspectRatio();
 }
 
-void MediaWidgetWrapper::setAspectRatioMeetBest()
+void MediaWidgetWrapper::keepAspectRatioByExpanding()
 {
-    VideoWidget.setAspectRatioMeetBest();
+    VideoWidget.keepAspectRatioByExpanding();
 }
 

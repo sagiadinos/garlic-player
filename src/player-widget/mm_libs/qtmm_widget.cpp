@@ -16,18 +16,19 @@ QVideoWidget *QtMMWidget::getVideoRenderer()
     return VideoWidget.data();
 }
 
-void QtMMWidget::setAspectRatioFill()
+void QtMMWidget::ignoreAspectRatio()
 {
     VideoWidget.data()->setAspectRatioMode(Qt::IgnoreAspectRatio);
 }
 
-void QtMMWidget::setAspectRatioMeet()
+void QtMMWidget::keepAspectRatio()
+{
+    VideoWidget.data()->setAspectRatioMode(Qt::KeepAspectRatio);
+}
+
+void QtMMWidget::keepAspectRatioByExpanding()
 {
     VideoWidget.data()->setAspectRatioMode(Qt::KeepAspectRatioByExpanding);
 }
 
-void QtMMWidget::setAspectRatioMeetBest()
-{
-    VideoWidget.data()->setAspectRatioMode(Qt::KeepAspectRatio);
-}
 #endif

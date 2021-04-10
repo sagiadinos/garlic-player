@@ -16,17 +16,17 @@ QtAV::VideoRenderer *QtAVWidget::getVideoRenderer()
     return VideoWidget.data();
 }
 
-void QtAVWidget::setAspectRatioFill()
+void QtAVWidget::ignoreAspectRatio()
 {
     VideoWidget.data()->setOutAspectRatioMode(QtAV::VideoRenderer::RendererAspectRatio);
 }
 
-void QtAVWidget::setAspectRatioMeet()
+void QtAVWidget::keepAspectRatio()
 {
     VideoWidget.data()->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
 }
 
-void QtAVWidget::setAspectRatioMeetBest()
+void QtAVWidget::keepAspectRatioByExpanding()
 {
     VideoWidget.data()->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
 }

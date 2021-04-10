@@ -69,11 +69,13 @@ void PlayerVideo::changeSize(int w, int h)
 
     QString fit = SmilMedia->getFit();
     if (fit == "fill")
-        VideoWidget.data()->setAspectRatioFill();
+        VideoWidget.data()->ignoreAspectRatio();
     else if (fit == "meet")
-        VideoWidget.data()->setAspectRatioMeet();
-    else if (fit == "meetbest")
-        VideoWidget.data()->setAspectRatioMeetBest();
+        VideoWidget.data()->keepAspectRatio();
+    else if (fit == "meetBest")
+        VideoWidget.data()->keepAspectRatioByExpanding();
+    else if (fit == "slice")
+        VideoWidget.data()->keepAspectRatioByExpanding();
 }
 
 QWidget *PlayerVideo::getView()
