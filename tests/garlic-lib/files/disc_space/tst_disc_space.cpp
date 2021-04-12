@@ -17,7 +17,6 @@ public:
     qint64  getDeletedByteSize(){return getBytesDeleted();}
 };
 
-
 void noMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg){Q_UNUSED(type); Q_UNUSED(context); Q_UNUSED(msg)}
 class TestDiscSpace : public QObject
 {
@@ -39,6 +38,7 @@ private Q_SLOTS:
     void testFreeDiscSpaceAll();
     void testFreeDiscSpaceToMuch();
     void createFilesForDelete();
+    void openCloseForLastRead(QString source, QString copy);
 };
 
 void TestDiscSpace::init()
@@ -235,23 +235,32 @@ void TestDiscSpace::testFreeDiscSpaceToMuch()
 
 void TestDiscSpace::createFilesForDelete()
 {
+    // put two files in the testdir
+    openCloseForLastRead(":/test.png", "./cache/test_dir/1.png"); // => 629 Byte
+    openCloseForLastRead(":/test.wgt", "./cache/test_dir/1.wgt"); // without directory => 1118
+
+    openCloseForLastRead(":/test.wgt", "./cache/2.wgt"); //  => 2236 Byte
+
+    openCloseForLastRead(":/test.png", "./cache/5.png");  // => 3145 Byte
+    openCloseForLastRead(":/test.png", "./cache/4.png");
+    openCloseForLastRead(":/test.png", "./cache/3.png");
+    openCloseForLastRead(":/test.png", "./cache/2.png");
+    openCloseForLastRead(":/test.png", "./cache/1.png");
+
     // create some deleteable png files and wgt
-    QFile file_wgt(":/test.wgt");
-    file_wgt.copy("./cache/1.wgt"); // without directory => 1118
-    QFile file_png(":/test.png");
-    file_png.copy("./cache/1.png"); // => 629 Byte
-    file_png.copy("./cache/2.png");
-    file_png.copy("./cache/3.png");
-    file_png.copy("./cache/4.png");
-    file_png.copy("./cache/5.png"); // => 3145 Byte
-    file_wgt.copy("./cache/2.wgt"); //  => 2236 Byte
-
-    // pout tweo in the testdir
-    file_wgt.copy("./cache/test_dir/1.wgt"); // without directory => 1118
-    file_png.copy("./cache/test_dir/1.png"); // => 629 Byte
-
-
+    openCloseForLastRead(":/test.wgt", "./cache/1.wgt"); // without directory => 1118
 }
+
+void TestDiscSpace::openCloseForLastRead(QString source, QString destination)
+{
+    QFile original(source);
+    original.copy(destination); // without directory => 1118
+    QTest::qWait(10); // to get different values for lastRead
+    QFile copy(destination);
+    copy.open(QIODevice::ReadOnly);
+    copy.close();
+}
+
 QTEST_APPLESS_MAIN(TestDiscSpace)
 
 #include "tst_disc_space.moc"

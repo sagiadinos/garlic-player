@@ -35,7 +35,6 @@ void DiscSpace::init(QString path)
         setBytesAvailable(getStorageBytesAvailable());
 }
 
-
 void DiscSpace::setInventoryTable(DB::InventoryTable *value)
 {
     MyInventoryTable = value;
@@ -59,31 +58,28 @@ qint64 DiscSpace::calculateNeededDiscSpaceToFree(qint64 size_new_file)
 
 bool DiscSpace::freeDiscSpace(qint64 size_to_free)
 {
-    QDir dir(cache_path);
-    dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot); // do not work, when used in entryInfoList overloaded params directly so set hiere first
-    dir.setSorting(QDir::Time | QDir::Reversed);
-    QFileInfoList dirList = dir.entryInfoList();
-    for(int i = 0; i < dirList.size(); i++)
+    QMap<qint64, QFileInfo> dir_list = sortCacheContentsByLastRead();
+    QMapIterator<qint64, QFileInfo> i(dir_list);
+    i.toBack(); // Map ist sorted ASC, but we need DESC so iterate from back
+    while (i.hasPrevious())
     {
-        if (dirList.at(i).isFile())
-        {
-            if (!deleteFile(dirList.at(i).absoluteFilePath()))
-                return false;
-        }
-        if (dirList.at(i).isDir())
-        {
-            if (!deleteDirectory(dirList.at(i).absoluteFilePath()))
-                return false;
+        i.previous();
 
-            // delete corresponding wgt here to prevent inconsistencies e.g. deleted dir, but not wgt - or vice versa
-            if (!deleteFile(dirList.at(i).absoluteFilePath()+".wgt"))
-                return false;
+        if (i.value().isDir())
+        {
+            deleteDirectory(i.value().absoluteFilePath());
+            deleteFile(i.value().absoluteFilePath()+".wgt");
         }
-        qInfo(ContentManager) << "OBJECT_REMOVED resourceUri: " << dirList.at(i).absoluteFilePath() << " removed.";
+        else
+        {
+            deleteFile(i.value().absoluteFilePath());
+        }
+
+        qInfo(ContentManager) << "OBJECT_REMOVED resourceUri: " << i.value().absoluteFilePath() << " removed.";
 
         // delete entry from db
         if (MyInventoryTable != Q_NULLPTR)
-            MyInventoryTable->deleteByCacheName(dirList.at(i).fileName());
+            MyInventoryTable->deleteByCacheName(i.value().fileName());
 
         if (size_to_free < getBytesDeleted())
             break;
@@ -145,4 +141,18 @@ qint64 DiscSpace::calculateDirectorySize(QString dir_path)
     return dir_size;
 }
 
+QMap<qint64, QFileInfo> DiscSpace::sortCacheContentsByLastRead()
+{
+    QDir dir(cache_path);
+    dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot); // do not work, when used in entryInfoList overloaded params directly so set here first
+    QFileInfoList dir_list = dir.entryInfoList();
+
+    QMap<qint64, QFileInfo> map;
+    for(int i = 0; i < dir_list.size(); i++)
+    {
+        map.insert(dir_list.at(i).lastRead().toMSecsSinceEpoch(), dir_list.at(i));
+    }
+
+    return map;
+}
 

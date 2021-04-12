@@ -23,6 +23,7 @@
 #include <QDirIterator>
 #include "tools/logger.h"
 #include "db/inventory_table.h"
+#include "QMap"
 
 /**
  * @brief The DiscSpace is a helper class to handle deletes/cleanups for FileModel
@@ -62,6 +63,7 @@ public:
 public slots:
 
 protected:
+    QMap<qint64, QFileInfo> sortCacheContentsByLastRead();
     DB::InventoryTable *MyInventoryTable = Q_NULLPTR;
     QString        cache_path = "";
     quint64        bytes_deleted = 0;
