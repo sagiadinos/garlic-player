@@ -26,9 +26,10 @@ Garlic is able to play local and remote (via http) SMIL Files with the features 
  - Android Armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2, 7.1, 9 and 10)
  - Windows 64Bit: 7, 8 and 10
  - MacOS 64Bit (Intel): High Sierra, Mojave, Catalina and Big Sur 
- - MacOS M1: Big Sur (via Rosetta) 
- 
-For Android player-c2qml is needed, cause QtMultimedia-Widgets are not supported.
+ - MacOS M1: Big Sur (via Rosetta 2)
+ - iOS 14.4.2 (experimental)
+
+For Android and iOS player-c2qml is needed, cause QtMultimedia-Widgets are not supported.
 
 *garlic.sh [options] SMIL_INDEX*
 
@@ -45,10 +46,11 @@ SMIL_INDEX        Path to SMIL index
 
 Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 
-## Features
+## Features (master trunk)
  - Support for multiple screens (not on Android)
  - multiple and overlapping zones e.g. splitscreens
  - logging
+ - resume downloads
  - 301 redirect support
  - lot's of video formats 
  - media cache

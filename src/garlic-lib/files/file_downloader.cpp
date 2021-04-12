@@ -20,12 +20,23 @@ void FileDownloader::startDownload(QUrl url, QString file_name)
     original_file_name = file_name;
     destination_file.setFileName(file_name+FILE_DOWNLOAD_SUFFIX); // add suffix to prevent overwriting
     setRemoteFileUrl(url);
-    if(!destination_file.open(QIODevice::WriteOnly))
-        return;
-
-    emit goingBusy();
 
     QNetworkRequest request = prepareNetworkRequest(url);
+    if (destination_file.exists())
+    {
+        QByteArray rangeHeaderValue = "bytes=" + QByteArray::number(destination_file.size()) + "-";
+        request.setRawHeader("Range",rangeHeaderValue);
+        qDebug() << "resume download"  << remote_file_url.toString();
+        if(!destination_file.open(QIODevice::Append))
+            return;
+    }
+    else
+    {
+        if(!destination_file.open(QIODevice::WriteOnly))
+            return;
+    }
+    emit goingBusy();
+
     request.setPriority(QNetworkRequest::LowPriority);
 
     network_reply = network_manager->get(request);

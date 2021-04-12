@@ -196,7 +196,7 @@ void Downloader::startDownload(QNetworkReply *reply)
     manager_get.data()->thread()->setPriority(QThread::LowestPriority);
     MyFileDownloader.reset(new FileDownloader(manager_get.data(), MyConfiguration, this));
     connect(MyFileDownloader.data(), SIGNAL(downloadSuccessful()), SLOT(doDownloadSuccessFul()));
-    connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply *)), SLOT(doDownloadError(QNetworkReply *)));
+    connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply*)), SLOT(doDownloadError(QNetworkReply*)));
     //
     MyFileDownloader->startDownload(reply->url(), local_file_info.absoluteFilePath());
 }
