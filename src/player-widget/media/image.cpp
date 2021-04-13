@@ -57,12 +57,12 @@ void PlayerImage::changeSize(int w, int h)
     if (!exists)
         return;
 
-    QString fit = SmilMedia->getFit();
+    QString fit = SmilMedia->getFit().toLower();
     if (fit == "fill")
        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     else if (fit == "meet")
         ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    else if (fit == "meetBest")
+    else if (fit == "meetbest")
     {
         if (loaded_image.width() >= w || loaded_image.height() > h)
             ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));

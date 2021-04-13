@@ -5,7 +5,7 @@ Image::Image(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : P
     setRegionId(r_id);
     QString str(
                 "import QtQuick 2.12\n \
-                    Image {\n  \
+                    Image {  \
                         id: "+getRegionId()+"_image; \
                         anchors.fill: parent; \n \
                 }\n"
@@ -23,7 +23,7 @@ void Image::init(BaseMedia *media)
     SmilMedia = media;
     if (load(image_item.data()))
     {
-        image_item.data()->setProperty("fillMode", determineFillMode(SmilMedia->getFit()));
+        image_item.data()->setProperty("fillMode", determineFillMode(SmilMedia->getFit().toLower()));
         if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
@@ -50,10 +50,10 @@ int Image::determineFillMode(QString smil_fit)
         return STRETCH;
     else if (smil_fit == "meet")
         return PRESERVEASPECTFIT;
-    else if (smil_fit == "meetBest")
+    else if (smil_fit == "meetbest")
         return PRESERVEASPECTFIT;
     else if (smil_fit == "slice")
         return PRESERVEASPECTCROP;
     else
-        return STRETCH;
+        return NONE;
 }

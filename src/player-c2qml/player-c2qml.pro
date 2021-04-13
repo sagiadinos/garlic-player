@@ -18,6 +18,13 @@ support_qtav {
     DEFINES += SUPPORT_QTAV
     QT      += av
 }
+
+macx {
+    QT += webview
+    #libgarlic is static compiled in osx
+    ICON = ../../deployment/macx/garlic-player.icns
+    LIBS += -L../lib -lgarlic -lquazip -lzlib
+}
 ios {
     QT += webview
     LIBS += -L../libios -lgarlic -lquazip -lzlib

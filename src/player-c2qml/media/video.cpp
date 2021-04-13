@@ -42,7 +42,7 @@ void Video::init(BaseMedia *media)
         TVideo *MyVideo = qobject_cast<TVideo *> (media);
         float vol = determineVolume(MyVideo->getSoundLevel());
         video_item.data()->setProperty("volume", vol);
-        video_item.data()->setProperty("fillMode", determineFillMode(SmilMedia->getFit()));
+        video_item.data()->setProperty("fillMode", determineFillMode(SmilMedia->getFit().toLower()));
         if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
@@ -63,17 +63,16 @@ void Video::setParentItem(QQuickItem *parent)
 
 int Video::determineFillMode(QString smil_fit)
 {
-    // FIXME Look if this code can set in Base Class
     if (smil_fit == "fill")
         return STRETCH;
     else if (smil_fit == "meet")
         return PRESERVEASPECTFIT;
-    else if (smil_fit == "meetBest")
+    else if (smil_fit == "meetbest")
         return PRESERVEASPECTFIT;
     else if (smil_fit == "slice")
         return PRESERVEASPECTCROP;
     else
-        return STRETCH;
+        return NONE;
 }
 
 qreal Video::determineVolume(QString percent)
