@@ -40,6 +40,15 @@ protected:
     QDateTime analyseDate(QString date);
     QDateTime addWallClockInterval(QDateTime calculated);
     QDateTime addWallClockIntervalOptimized(QDateTime actual, QDateTime calculated);
+
+private:
+    QDate determineDate(QString the_date);
+    QDate calculateDateWithWeekDayDifference(QString the_date, int w_position);
+    int determineDayDiffByOperator(QChar op, int day_diff);
+    QDate seperateDateFromOperator(QChar op, QString the_date, int w_position);
+    QTime determineTime(QStringList sl);
+    int calculateDiffAfter(int day_diff);
+    int calculateDiffBefore(int day_diff);
 signals:
 
 };

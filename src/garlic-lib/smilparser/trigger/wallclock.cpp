@@ -79,15 +79,13 @@ qint64 WallClock::getNextTrigger(QDateTime current)
     return ret;
 }
 
-
-
 int WallClock::analyseRepeats(QString r_value)
 {
     int  repeats    = 0;
     if(r_value.length() == 1)
         repeats = -1;
     else
-        repeats = r_value.mid(1, r_value.length()-1).toInt();
+        repeats = r_value.midRef(1, r_value.length()-1).toInt();
     return repeats;
 }
 
@@ -130,17 +128,80 @@ IsoPeriod WallClock::analysePeriods(QString p_value)
 }
 
 /**
- * @brief analyseDate actually supporting only ISO 8601 Dates in the format yyyy-MM-ddTHH:mm:ss
- *          ToDo: research for more ISO 8601 compatibility
+ * @brief This format yyyy-MM-dd(+/-)w(1..7)THH:mm:ss is supported
+ *
  * @param date
  * @return
  */
 QDateTime WallClock::analyseDate(QString date)
 {
-    if (date.length() > 12)
-        return QDateTime::fromString(date, "yyyy-MM-ddTHH:mm:ss");
+    // we must do some work arounds cause QDateTime is pretty useless for wallclock
+    // btw. also not recognizing all iso 8601 dates
+
+    QStringList sl = date.split('T');
+
+    return QDateTime(determineDate(sl.at(0)), determineTime(sl));
+}
+
+QDate WallClock::determineDate(QString the_date)
+{
+    int w_position = the_date.indexOf('w');
+    if (w_position > -1)
+        return calculateDateWithWeekDayDifference(the_date, w_position);
     else
-        return QDateTime::fromString(date, "yyyy-MM-dd");
+        return QDate::fromString(the_date, "yyyy-MM-dd");
+}
+
+QTime WallClock::determineTime(QStringList sl)
+{
+    if (sl.size() > 1)
+        return QTime::fromString(sl.at(1), "HH:mm:ss");
+    else
+        return QTime::fromString("00:00:00", "HH:mm:ss");
+}
+
+QDate WallClock::calculateDateWithWeekDayDifference(QString the_date, int w_position)
+{
+    QChar op           = the_date.at(w_position-1);
+    int target_weekday = QString(the_date.at(w_position+1)).toInt();
+    QDate temp         = seperateDateFromOperator(op, the_date, w_position);
+
+    return temp.addDays(determineDayDiffByOperator(op, target_weekday - temp.dayOfWeek()));
+
+}
+
+QDate WallClock::seperateDateFromOperator(QChar op, QString the_date, int w_position)
+{
+    if (op == '+' || op == '-')
+        return QDate::fromString(the_date.mid(0, w_position-1), "yyyy-MM-dd");
+    else
+        return QDate::fromString(the_date.mid(0, w_position), "yyyy-MM-dd");
+}
+
+int WallClock::determineDayDiffByOperator(QChar op, int day_diff)
+{
+    // if the is no +/- we assume a missing operator so we set default to +
+    if (op == '-')
+        return calculateDiffBefore(day_diff);
+    else
+        return calculateDiffAfter(day_diff);
+}
+
+int WallClock::calculateDiffBefore(int day_diff)
+{
+    // because modulo % fails
+    if (day_diff >= 0)
+          day_diff -= 7;
+    return day_diff;
+}
+
+int WallClock::calculateDiffAfter(int day_diff)
+{
+    // because modulo % fails
+    if (day_diff <= 0)
+          day_diff += 7;
+
+    return day_diff;
 }
 
 QDateTime WallClock::addWallClockInterval(QDateTime calculated)

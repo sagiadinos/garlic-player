@@ -32,6 +32,7 @@ private Q_SLOTS:
     void test_parse2();
     void test_parse3();
     void test_parse4();
+    void test_parseDateWithWeekDay();
     void test_getNextTimerTrigger1();
     void test_getNextTimerTrigger2();
     void test_getNextTimerTrigger3();
@@ -97,6 +98,58 @@ void TestWallClock::test_parse4()
     QCOMPARE(period.hours, qint64(0));
     QCOMPARE(period.minutes, qint64(0));
     QCOMPARE(period.seconds, qint64(0));
+}
+
+void TestWallClock::test_parseDateWithWeekDay()
+{
+    WallClock MyWallClock;
+    // day of week after
+    MyWallClock.parse("2021-04-01+w1T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-04-05 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01+w2T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-04-06 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01+w3T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-04-07 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01+w4T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-04-08 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01+w5T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-04-02 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01+w6T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-04-03 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01+w7T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-04-04 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+
+    // day of week after without +
+    MyWallClock.parse("2021-02-01w1T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-02-08 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-02-01w2T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-02-02 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-02-01w3T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-02-03 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-02-01w4T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-02-04 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-02-01w5T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-02-05 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-02-01w6T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-02-06 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-02-01w7T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-02-07 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+
+    // day of week before
+    MyWallClock.parse("2021-04-01-w1T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-03-29 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01-w2T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-03-30 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01-w3T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-03-31 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01-w4T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-03-25 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01-w5T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-03-26 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01-w6T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-03-27 00:00:00", "yyyy-MM-dd HH:mm:ss"));
+    MyWallClock.parse("2021-04-01-w7T00:00");
+    QCOMPARE(MyWallClock.getDateTime(), QDateTime::fromString("2021-03-28 00:00:00", "yyyy-MM-dd HH:mm:ss"));
 }
 
 void TestWallClock::test_getNextTimerTrigger1()
