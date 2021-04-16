@@ -10,6 +10,7 @@ void WallClock::parse(QString iso_date)
     QStringList ar;
     if (iso_date.contains("/"))
         ar = iso_date.split("/");
+
     if (ar.length() > 1)
     {
         QString tmp = ar.at(0);
@@ -29,6 +30,7 @@ void WallClock::parse(QString iso_date)
     }
     else
         datetime = analyseDate(iso_date);
+
     active = true;
     if (repeats > 0)
         analyseRemainingRepeats(QDateTime::currentDateTime());

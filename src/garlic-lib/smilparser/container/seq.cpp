@@ -21,6 +21,7 @@
 TSeq::TSeq(TContainer *pc, QObject *parent) : TContainer(parent)
 {
     parent_container = pc;
+    setParentTag(pc->getRootElement().nodeName());
     setObjectName("TSeq");
 }
 

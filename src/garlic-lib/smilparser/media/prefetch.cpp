@@ -20,6 +20,7 @@
 TPrefetch::TPrefetch(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
 {
     parent_container = pc;
+    setParentTag(pc->getRootElement().nodeName());
     setObjectName("TPrefetch");
     is_media = false;
 }

@@ -22,6 +22,25 @@ TBase::TBase(QObject *parent) : QObject(parent)
 {
 }
 
+void TBase::setParentTag(QString tag)
+{
+    if (tag == "seq")
+        parent_tag = SMIL_TAG::seq;
+    else if (tag == "par")
+        parent_tag = SMIL_TAG::par;
+    else if (tag == "excl")
+        parent_tag = SMIL_TAG::excl;
+    else if (tag == "body")
+        parent_tag = SMIL_TAG::seq;
+    else
+        parent_tag = SMIL_TAG::unknown;
+}
+
+SMIL_TAG TBase::getParentTag()
+{
+   return parent_tag;
+}
+
 QString TBase::parseID(QDomElement element)
 {
     QString ret = "";

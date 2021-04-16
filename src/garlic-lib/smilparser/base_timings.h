@@ -50,6 +50,9 @@ class BaseTimings : public TBase
                 void           prepareTimingsBeforeResume();      // what to do when parent sends an order to begin executions
                 int            getStatus(){return status;}
                 bool           isRepeatable(){return repeatable;}
+                void           finishedNotFound();
+                void           skipElement();
+
         virtual void           play()        = 0;
         virtual void           pause()       = 0;
         virtual void           stop()        = 0;
@@ -57,16 +60,15 @@ class BaseTimings : public TBase
         virtual QString        getBaseType() = 0;
         virtual BaseTimings   *getChildElementFromList() = 0;
         virtual bool           hasPlayingChilds() = 0;
-                void           finishedNotFound();
-                void           skipElement();
+
     public slots:
         virtual void           emitfinished() = 0;
         virtual void           finishedDuration() = 0;
         virtual void           prepareDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
     protected:
-                EnhancedTimer *BeginTimer = Q_NULLPTR;
-                EnhancedTimer *EndTimer = Q_NULLPTR;
-                SimpleTimer   *DurTimer = Q_NULLPTR;
+                Timings::EnhancedTimer *BeginTimer = Q_NULLPTR;
+                Timings::EnhancedTimer *EndTimer = Q_NULLPTR;
+                Timings::SimpleTimer   *DurTimer = Q_NULLPTR;
                 QTimer        *InternalTimer = Q_NULLPTR;
                 int            status         = 0;
                 int            repeatCount    = 0;
@@ -86,6 +88,7 @@ class BaseTimings : public TBase
     private:
                 bool           repeatable;
                 void           setRepeatCount(QString rC);
+                void           handleBeginTimer();
 
 };
 

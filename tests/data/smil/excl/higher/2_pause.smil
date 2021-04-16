@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<smil>
+	<head>
+		<meta name="title" content="Testing images in excl with higher = pause" />
+		<layout>
+			<root-layout id="display:0" width="1920" height="1080" />
+			<region regionName="screen" top="0" left="0" width="1920" height="1080" z-index="1" backgroundColor="#000" />
+		</layout>
+	</head>
+	<body>
+		<!--
+	
+			sequence should be:
+			begin, 10, 5, 10, 9, 8, 7, 6, 5, end
+			
+		-->
+		<img xml:id="img begin" src="../../../images/begin.jpg" fit="meet" dur="1s" />
+		<excl xml:id="excl1_dur">
+			<priorityClass> <!-- higher default is pause, peers default is stop -->
+				<img xml:id="imgA0001" src="../../../images/0001.jpg" begin="0s" dur="1s" fit="meet" />
+				<img xml:id="imgA0002" src="../../../images/0002.jpg" begin="0s" dur="1s" fit="meet" />
+				<img xml:id="imgA0003" src="../../../images/0003.jpg" begin="0s" dur="1s" fit="meet" />
+				<img xml:id="imgA0004" src="../../../images/0004.jpg" begin="0s" dur="1s" fit="meet" />
+				<img xml:id="imgA0005" src="../../../images/0005.jpg" begin="0s" dur="1s" fit="meet" />
+			</priorityClass>	
+			<priorityClass peers="pause">
+				<img xml:id="imgA0006" src="../../../images/0006.jpg" begin="0s" dur="1s" fit="meet" />
+				<img xml:id="imgA0007" src="../../../images/0007.jpg" begin="0s" dur="1s" fit="meet" />
+				<img xml:id="imgA0008" src="../../../images/0008.jpg" begin="0s" dur="1s" fit="meet" />
+			</priorityClass>	
+			<priorityClass>
+				<img xml:id="imgA0009" src="../../../images/0009.jpg" begin="0s" dur="1s" fit="meet" />
+			</priorityClass>
+			<priorityClass>
+				<img xml:id="imgA0010" src="../../../images/0010.jpg" begin="0s" dur="1s" fit="meet" />
+			</priorityClass>
+		</excl>	
+		<img  xml:id="img_end" src="../../../images/end.jpg" fit="meet" dur="1s" />
+	</body>
+</smil>

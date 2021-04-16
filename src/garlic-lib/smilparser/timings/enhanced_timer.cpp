@@ -1,123 +1,164 @@
 #include "enhanced_timer.h"
 
-EnhancedTimer::EnhancedTimer(QObject *parent)
+Timings::EnhancedTimer::EnhancedTimer(QObject *parent)
 {
     Q_UNUSED(parent);
 }
 
-EnhancedTimer::~EnhancedTimer()
+Timings::EnhancedTimer::~EnhancedTimer()
 {
     deleteTimer();
 }
 
-void EnhancedTimer::initTimer()
+void Timings::EnhancedTimer::initTimer(int type)
 {
-    MyTimer = new QTimer(this);
-    connect(MyTimer, SIGNAL(timeout()), this, SLOT(emitTimeout()));
-    MyTimer->setSingleShot(true);
-    MyTimer->setTimerType(Qt::PreciseTimer);
+    TimerStruct *ts = new TimerStruct();
+    ts->MyTimer     = new QTimer(this);
+    ts->type        = type;
+    ts->remaining   = 0;
+
+    connect(ts->MyTimer, SIGNAL(timeout()), this, SLOT(emitTimeout()));
+    ts->MyTimer->setSingleShot(true);
+    ts->MyTimer->setTimerType(Qt::PreciseTimer);
+
+    MyTimerList.append(ts);
 }
 
-void EnhancedTimer::deleteTimer()
+void Timings::EnhancedTimer::deleteTimer()
 {
-    if (MyTimer != Q_NULLPTR)
+    if (MyTimerList.size() == 0)
+        return;
+    for (TimerStruct *ts : qAsConst(MyTimerList))
     {
-        stop();
-        delete MyTimer;
-        MyTimer = Q_NULLPTR;
+        ts->MyTimer->stop();
+        delete ts->MyTimer;
+        delete ts;
     }
+    MyTimerList.clear();
 }
 
-void EnhancedTimer::parse(QString attr_value)
+void Timings::EnhancedTimer::parse(QString attr_value)
 {
-    if (attr_value == "" || attr_value == "indefinite")
+    QStringList value_list = attr_value.split(';');
+    for (QString value : qAsConst(value_list))
     {
-        type = TYPE_INDEFINITE;
-    }
-    else if (attr_value.mid(0, 9) == "wallclock")
-    {
-        type    = TYPE_WALLCLOCK;
-        MyWallClock.parse(attr_value.mid(10, attr_value.length()-11));
-        initTimer();
-    }
-    else
-    {
-        type = TYPE_OFFSET;
-        MyClockValue.parse(attr_value);
-        initTimer();
+        if (attr_value == "" || attr_value == "indefinite")
+        {
+//            type = TYPE_INDEFINITE;
+        }
+        else if (attr_value.mid(0, 9) == "wallclock" )
+        {
+            MyWallClock.parse(attr_value.mid(10, attr_value.length()-11));
+            initTimer(TYPE_WALLCLOCK);
+        }
+        else
+        {
+            MyClockValue.parse(attr_value);
+            initTimer(TYPE_OFFSET);
+        }
     }
     return;
 }
 
-void EnhancedTimer::start()
+void Timings::EnhancedTimer::start()
 {
-    switch (type)
-    {
-        case EnhancedTimer::TYPE_OFFSET:
-              MyTimer->start(MyClockValue.getNextTimerTrigger());
-        break;
-        case TYPE_WALLCLOCK:
-              MyTimer->start(MyWallClock.getNextTimerTrigger());
-        break;
-    }
+    if (MyTimerList.size() == 0)
+        return;
 
+    qint64 next_trigger;
+    for (TimerStruct *ts : qAsConst(MyTimerList))
+    {
+        switch (ts->type)
+        {
+            case EnhancedTimer::TYPE_OFFSET:
+                  next_trigger = MyClockValue.getNextTimerTrigger();
+                  if (next_trigger == 0)
+                     emitTimeout();
+                  else
+                     ts->MyTimer->start(next_trigger);
+            break;
+            case TYPE_WALLCLOCK:
+                  next_trigger = MyWallClock.getNextTimerTrigger();
+                  if (next_trigger == 0)
+                     emitTimeout();
+                  else
+                     ts->MyTimer->start(next_trigger);
+            break;
+        }
+     }
 }
 
-void EnhancedTimer::pause()
+void Timings::EnhancedTimer::pause()
 {
-    if (MyTimer->isActive())
+    if (MyTimerList.size() == 0)
+        return;
+    for (TimerStruct *ts : qAsConst(MyTimerList))
     {
-        remaining = MyTimer->remainingTime();
-        MyTimer->stop();
+        ts->remaining = ts->MyTimer->remainingTime();
+        ts->MyTimer->stop();
     }
     pause_start = QDateTime::currentMSecsSinceEpoch();
 }
 
-void EnhancedTimer::stop()
+void Timings::EnhancedTimer::stop()
 {
-    if (MyTimer->isActive())
+    if (MyTimerList.size() == 0)
+        return;
+    for (TimerStruct *ts : qAsConst(MyTimerList))
     {
-        MyTimer->stop();
+        ts->MyTimer->stop();
+        ts->remaining = 0;
     }
-    remaining = 0;
 }
 
-bool EnhancedTimer::resume()
+bool Timings::EnhancedTimer::resume()
 {
     qint64 elapsed     = QDateTime::currentMSecsSinceEpoch() - pause_start;
     bool   ret         = false;
-    switch (type)
+    if (MyTimerList.size() == 0)
+        return ret;
+    for (TimerStruct *ts : qAsConst(MyTimerList))
     {
-        case TYPE_OFFSET:
-            if ((remaining - elapsed) > 0)
-            {
-                MyTimer->start(remaining - elapsed);
+        switch (ts->type)
+        {
+            case TYPE_OFFSET:
+                if ((ts->remaining - elapsed) > 0)
+                {
+                    ts->MyTimer->start(ts->remaining - elapsed);
+                    ret = true;
+                }
+            break;
+            case TYPE_WALLCLOCK:
+                ts->MyTimer->start(MyWallClock.getNextTimerTrigger());
                 ret = true;
-            }
-        break;
-        case TYPE_WALLCLOCK:
-            MyTimer->start(MyWallClock.getNextTimerTrigger());
-            ret = true;
-        break;
-        case TYPE_INDEFINITE:
-            ret = true;
-        break;
+            break;
+            case TYPE_INDEFINITE:
+                ret = true;
+            break;
+        }
     }
-
     return ret;
 }
 
-bool EnhancedTimer::isActive()
+bool Timings::EnhancedTimer::isActive()
 {
-    return (MyTimer != Q_NULLPTR && MyTimer->isActive());
+    if (MyTimerList.size() == 0)
+        return false;
+
+    for (TimerStruct *ts : qAsConst(MyTimerList))
+    {
+        if (ts->MyTimer->isActive())
+            return true;
+    }
+    return false;
 }
 
-bool EnhancedTimer::remainingRepeats()
+bool Timings::EnhancedTimer::remainingRepeats()
 {
     return MyWallClock.remainingRepeats();
 }
 
-void EnhancedTimer::emitTimeout()
+void Timings::EnhancedTimer::emitTimeout()
 {
     emit timeout();
 }

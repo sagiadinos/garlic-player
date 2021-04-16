@@ -21,6 +21,7 @@
 TExcl::TExcl(TContainer *pc, QObject *parent) : TContainer(parent)
 {
     parent_container       = pc;
+    setParentTag(pc->getRootElement().nodeName());
     ActivePriorityClass    = NULL;
     NewActivePriorityClass = NULL;
     setObjectName("TExcl");
@@ -243,6 +244,8 @@ void TExcl::play()
     }
     status = _playing;
 }
+
+// children of excl => begin has default value indefinite
 
 void TExcl::resume()
 {

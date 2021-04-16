@@ -37,9 +37,9 @@ public:
     bool          hasPlayingChilds(){return true;}          // virtual
 
     // for Test
-    void          setBeginTimer(){ BeginTimer = new EnhancedTimer(this);}
-    void          setEndTimer(){ EndTimer = new EnhancedTimer(this);}
-    void          setDurTimer(){ DurTimer = new SimpleTimer(this);}
+    void          setBeginTimer(){ BeginTimer = new Timings::EnhancedTimer(this);}
+    void          setEndTimer(){ EndTimer = new Timings::EnhancedTimer(this);}
+    void          setDurTimer(){ DurTimer = new Timings::SimpleTimer(this);}
     // set indefinite for gettin true when ask for resume
     void          setBeginTimerResume(){ BeginTimer->parse("");}
     void          startEndTimer(){ EndTimer->parse("10s"); EndTimer->start();}

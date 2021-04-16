@@ -21,6 +21,7 @@
 TVideo::TVideo(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : TAudio(pc, mm, config, parent)
 {
     parent_container = pc;
+    setParentTag(pc->getRootElement().nodeName());
     setObjectName("TVideo");
     is_media = true;
 }

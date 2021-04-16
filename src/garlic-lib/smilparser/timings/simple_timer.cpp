@@ -1,17 +1,17 @@
 #include "simple_timer.h"
 
-SimpleTimer::SimpleTimer(QObject *parent)
+Timings::SimpleTimer::SimpleTimer(QObject *parent)
 {
     Q_UNUSED(parent);
  }
 
-SimpleTimer::~SimpleTimer()
+Timings::SimpleTimer::~SimpleTimer()
 {
     deleteTimer();
 }
 
 
-void SimpleTimer::parse(QString attr_value)
+void Timings::SimpleTimer::parse(QString attr_value)
 {
     if (attr_value == "" || attr_value == "indefinite")
     {
@@ -30,7 +30,7 @@ void SimpleTimer::parse(QString attr_value)
     return;
 }
 
-void SimpleTimer::start()
+void Timings::SimpleTimer::start()
 {
     if (MyTimer == Q_NULLPTR && type != TYPE_CLOCKVALUE)
         return;
@@ -38,7 +38,7 @@ void SimpleTimer::start()
     MyTimer->start(MyClockValue.getNextTimerTrigger());
 }
 
-void SimpleTimer::resume()
+void Timings::SimpleTimer::resume()
 {
     if (MyTimer == Q_NULLPTR && type != TYPE_CLOCKVALUE)
         return;
@@ -47,7 +47,7 @@ void SimpleTimer::resume()
 }
 
 
-void SimpleTimer::pause()
+void Timings::SimpleTimer::pause()
 {
     if (MyTimer != Q_NULLPTR && MyTimer->isActive())
     {
@@ -57,7 +57,7 @@ void SimpleTimer::pause()
     pause_start = QDateTime::currentMSecsSinceEpoch();
 }
 
-void SimpleTimer::stop()
+void Timings::SimpleTimer::stop()
 {
     if (MyTimer != Q_NULLPTR && MyTimer->isActive())
     {
@@ -66,12 +66,12 @@ void SimpleTimer::stop()
     remaining = 0;
 }
 
-int SimpleTimer::getRemaining() const
+int Timings::SimpleTimer::getRemaining() const
 {
     return remaining;
 }
 
-void SimpleTimer::initTimer()
+void Timings::SimpleTimer::initTimer()
 {
     MyTimer = new QTimer(this);
     connect(MyTimer, SIGNAL(timeout()), this, SLOT(emitTimeout()));
@@ -79,7 +79,7 @@ void SimpleTimer::initTimer()
     MyTimer->setTimerType(Qt::PreciseTimer);
 }
 
-void SimpleTimer::deleteTimer()
+void Timings::SimpleTimer::deleteTimer()
 {
     if (MyTimer != Q_NULLPTR)
     {
@@ -88,7 +88,7 @@ void SimpleTimer::deleteTimer()
         MyTimer = Q_NULLPTR;
     }
 }
-void SimpleTimer::emitTimeout()
+void Timings::SimpleTimer::emitTimeout()
 {
     emit timeout();
 }

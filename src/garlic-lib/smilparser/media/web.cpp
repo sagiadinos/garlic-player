@@ -21,6 +21,7 @@
 TWeb::TWeb(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
 {
     parent_container = pc;
+    setParentTag(pc->getRootElement().nodeName());
     setObjectName("TWeb");
     is_media = true;
 }

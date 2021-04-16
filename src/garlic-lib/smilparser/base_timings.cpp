@@ -50,7 +50,6 @@ BaseTimings::~BaseTimings()
     }
 }
 
-
 void BaseTimings::prepareTimingsBeforePlaying()
 {
     if (EndTimer != Q_NULLPTR)
@@ -58,15 +57,8 @@ void BaseTimings::prepareTimingsBeforePlaying()
         EndTimer->start();
     }
 
-    if (BeginTimer != Q_NULLPTR)
-    {
-        BeginTimer->start();
-        status = _waiting;
-    }
-    else
-    {
-        prepareDurationTimerBeforePlay();
-    }
+    BeginTimer->start();
+    status = _waiting;
 }
 
 void BaseTimings::prepareTimingsBeforePausing()
@@ -134,8 +126,6 @@ void BaseTimings::finishedNotFound()
     }
 }
 
-// ========================= protected methods ======================================================
-
 /**
  * @brief TBaseTiming::skipElement
  * this is needed to prevent a recursion stack overflow when download is not complete
@@ -152,14 +142,33 @@ void BaseTimings::skipElement()
     InternalTimer->start(100);
 }
 
+// ========================= protected methods ======================================================
 
-void BaseTimings::finishedActiveDuration()
+void BaseTimings::parseTimingAttributes()
 {
-    if (BeginTimer != Q_NULLPTR && BeginTimer->remainingRepeats())
+    setBaseAttributes();
+    handleBeginTimer();
+    if (root_element.hasAttribute("end"))
     {
-        BeginTimer->start();
+        EndTimer = new Timings::EnhancedTimer(this);
+        connect(EndTimer, SIGNAL(timeout()), this, SLOT(finishedActiveDuration()));
+        EndTimer->parse(root_element.attribute("end"));
     }
-    emitfinished();
+    if (root_element.hasAttribute("dur"))
+    {
+        DurTimer = new Timings::SimpleTimer(this);
+        connect(DurTimer, SIGNAL(timeout()), this, SLOT(finishedDuration()));
+        DurTimer->parse(root_element.attribute("dur"));
+    }
+    if (root_element.hasAttribute("repeatCount"))
+    {
+        setRepeatCount(root_element.attribute("repeatCount"));
+    }
+}
+
+void BaseTimings::resetInternalRepeatCount()
+{
+    internal_count = 1;
 }
 
 bool BaseTimings::startDurTimer()
@@ -175,40 +184,13 @@ bool BaseTimings::startDurTimer()
         return true;
     }
 
-    if (DurTimer->getType() == DurTimer->TYPE_INDEFINITE ||
-             (EndTimer != Q_NULLPTR && EndTimer->getType() == EndTimer->TYPE_INDEFINITE))
+    // todo what happens if end !="indefinite"
+    if (DurTimer->getType() == DurTimer->TYPE_INDEFINITE)
     {
         return true; // no timer needed on indefinite
     }
 
     return false;
-}
-
-void BaseTimings::parseTimingAttributes()
-{
-    setBaseAttributes();
-    if (root_element.hasAttribute("begin"))
-    {
-        BeginTimer = new EnhancedTimer(this);
-        connect(BeginTimer, SIGNAL(timeout()), this, SLOT(releasePlay()));
-        BeginTimer->parse(root_element.attribute("begin"));
-    }
-    if (root_element.hasAttribute("end"))
-    {
-        EndTimer = new EnhancedTimer(this);
-        connect(EndTimer, SIGNAL(timeout()), this, SLOT(finishedActiveDuration()));
-        EndTimer->parse(root_element.attribute("end"));
-    }
-    if (root_element.hasAttribute("dur"))
-    {
-        DurTimer = new SimpleTimer(this);
-        connect(DurTimer, SIGNAL(timeout()), this, SLOT(finishedDuration()));
-        DurTimer->parse(root_element.attribute("dur"));
-    }
-    if (root_element.hasAttribute("repeatCount"))
-    {
-        setRepeatCount(root_element.attribute("repeatCount"));
-    }
 }
 
 /**
@@ -230,23 +212,10 @@ bool BaseTimings::checkRepeatCountStatus()
     return ret;
 }
 
-void BaseTimings::resetInternalRepeatCount()
-{
-    internal_count = 1;
-}
-
 bool BaseTimings::isBeginTimerActive()
 {
-    if (BeginTimer == Q_NULLPTR)
-    {
-        return false;
-    }
-    else
-    {
-        return BeginTimer->isActive();
-    }
+    return BeginTimer->isActive();
 }
-
 
 bool BaseTimings::isEndTimerActive()
 {
@@ -272,6 +241,20 @@ bool BaseTimings::isDurTimerActive()
     }
 }
 
+void BaseTimings::releasePlay()
+{
+    prepareDurationTimerBeforePlay();
+}
+
+void BaseTimings::finishedActiveDuration()
+{
+    if (BeginTimer != Q_NULLPTR && BeginTimer->remainingRepeats())
+    {
+        BeginTimer->start();
+    }
+    emitfinished();
+}
+
 // ========================= private methods ======================================================
 
 void BaseTimings::setRepeatCount(QString rC)
@@ -281,11 +264,25 @@ void BaseTimings::setRepeatCount(QString rC)
     else
        indefinite = false;
     repeatCount = rC.toInt();
-    return;
 }
 
-void BaseTimings::releasePlay()
+void BaseTimings::handleBeginTimer()
 {
-    prepareDurationTimerBeforePlay();
-}
+    BeginTimer = new Timings::EnhancedTimer(this);
+    connect(BeginTimer, SIGNAL(timeout()), this, SLOT(releasePlay()));
+    QString begin_value = "";
+    if (root_element.hasAttribute("begin"))
+    {
+        begin_value = root_element.attribute("begin");
+    }
 
+    if (begin_value.isEmpty())
+    {
+        if (getParentTag() == SMIL_TAG::excl)
+            begin_value = "indefinite";
+        else
+            begin_value = "0s";
+    }
+
+    BeginTimer->parse(begin_value);
+}

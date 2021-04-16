@@ -21,6 +21,7 @@
 TBody::TBody(QObject *parent) : TContainer(parent)
 {
     parent_container       = Q_NULLPTR;
+    setParentTag("seq");
     setObjectName("TBody");
 }
 

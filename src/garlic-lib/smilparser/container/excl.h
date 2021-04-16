@@ -57,6 +57,8 @@ class TExcl : public TContainer
         int                                   priorityNever(QDomElement dom_element, BaseTimings *element);
         int                                   priorityDefer(QDomElement dom_element, BaseTimings *element);
         void         handlePossibleRepeat();
+private:
+        QString             endsync            = "last";
 
     signals:
         void resumeElement(BaseTimings *element);

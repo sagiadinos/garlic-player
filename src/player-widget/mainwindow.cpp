@@ -24,8 +24,8 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     MyInteractions         = new Interactions(lib_facade, this);
     MyScreen               = screen;
     MyLibFacade            = lib_facade;
-    connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(startShowMedia(BaseMedia *)));
-    connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(stopShowMedia(BaseMedia *)));
+    connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia*)), this, SLOT(startShowMedia(BaseMedia*)));
+    connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia*)), this, SLOT(stopShowMedia(BaseMedia*)));
     connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
