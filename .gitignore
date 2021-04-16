@@ -4,6 +4,7 @@ build*
 bin
 lib
 libandroid
+.DS_Store
 *.pro.user
 ./*.sh
 ./*.bat
