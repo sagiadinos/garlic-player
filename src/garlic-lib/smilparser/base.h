@@ -50,13 +50,17 @@ public:
     static  QString       parseID(QDomElement element);
 protected:
             SMIL_TAG      parent_tag;
+            // core attributes for every Tag
+            QObject      *parent;
             QString       id             = "";
             QString       title          = "";
+            QString       alt            = "";
+            QString       longdesc       = "";
             QString       lang           = "";
             QString       a_class        = ""; // cause class is reserved word. a_class means attribut_class
             QDomElement   root_element;
             void          setBaseAttributes();
-            QString       getAttributeFromRootElement(const QString attribute_name);
+            QString       getAttributeFromRootElement(const QString attribute_name, const QString default_value);
 };
 
 #endif // TBASE_H

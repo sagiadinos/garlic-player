@@ -15,25 +15,22 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#ifndef UNKNOWN_H
-#define UNKNOWN_H
+#ifndef TBRUSH_H
+#define TBRUSH_H
 
 #include "base_media.h"
-/**
- * @brief The Unknown class
- * This class will used, when a unknown tag found
- * It will be treated as media and will be ignored
- */
-class Unknown : public BaseMedia
+
+class TBrush : public BaseMedia
 {
         Q_OBJECT
     public:
-        explicit Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent = Q_NULLPTR);
+        TBrush(TContainer *pc, Files::MediaManager *mm, MainConfiguration *mc, QObject *parent = Q_NULLPTR);
+        QString getColor();
     public slots:
         void     prepareDurationTimerBeforePlay();
     protected:
+        QString  color = "inherit";
         void     setAttributes();
-
 };
 
-#endif // UNKNOWN_H
+#endif // TBRUSH_H

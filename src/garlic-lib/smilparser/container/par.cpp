@@ -33,6 +33,10 @@ void TPar::preloadParse(QDomElement element)
 {
     root_element   = element;
     parseTimingAttributes();
+
+    if (element.hasAttribute("endsync"))
+        endsync = element.attribute("endsync");
+
     if (element.hasChildNodes())
     {
         traverseChilds();
@@ -44,21 +48,13 @@ void TPar::prepareDurationTimerBeforePlay()
     if (startDurTimer() || isEndTimerActive() || childs_list.size() > 0)
     {
         resetInternalRepeatCount();
-        emit startedContainer(parent_container, this);
+        emitStartElementSignal(this);
     }
     else
     {
         skipElement();
     }
 }
-
-bool TPar::isChildPlayable(BaseTimings *element)
-{
-    childStarted(element);
-    return true;
-}
-
-
 
 /**
  * @brief TPar::next means that it looks if there are no active elements
@@ -68,28 +64,40 @@ bool TPar::isChildPlayable(BaseTimings *element)
  */
 void TPar::next(BaseTimings *ended_element)
 {
-    childEnded(ended_element);
-    if (!hasPlayingChilds())
-    {
-        handlePossibleRepeat();
-    }
-    return;
-}
+    removeActivatedChild(ended_element);
 
-BaseTimings *TPar::getChildElementFromList()
-{
-    QSet<BaseTimings *>::iterator i = activatable_childs.begin();
-    return *i;
+    // Active DurTimer or EndTimer results in ignore endsync
+    if (endsync == "first" && !isDurTimerActive() && !isEndTimerActive())
+    {
+        stopAllActivatedChilds();
+        finishedSimpleDuration();
+        return;
+    }
+
+    if (hasActivatedChild())
+        return;
+
+    finishIntrinsicDuration();
 }
 
 void TPar::play()
 {
-    for (childs_list_iterator =  childs_list.begin(); childs_list_iterator < childs_list.end(); childs_list_iterator++)
+//    if (is_repeatable && hasActivatedChild())
+//         stopAllActivatedChilds();
+
+    if (isRestartable())
     {
-        active_element = *childs_list_iterator;
-        emitFoundElement();
+        if (hasActivatedChild())
+            stopAllActivatedChilds();
     }
-    status = _playing;
+    else
+    {
+        return;
+    }
+
+    collectActivatedChilds();
+    status       = _playing;
+    startAllActivatedChilds();
 }
 
 void TPar::resume()
@@ -97,54 +105,33 @@ void TPar::resume()
     status = _playing;
 }
 
+void TPar::collectActivatedChilds()
+{
+    for (childs_list_iterator = childs_list.begin(); childs_list_iterator < childs_list.end(); childs_list_iterator++)
+    {
+        active_element = *childs_list_iterator;
+        activateFoundElement();
+    }
+}
+
 void TPar::pause()
 {
     status = _paused;
 }
 
-void TPar::stop()
-{
-    status = _stopped;
-}
-
-
 void TPar::traverseChilds()
 {
     // put all playlist elements into a QList
     QDomNodeList childs = root_element.childNodes();
-    count_childs        = childs.length();
-    for (int i = 0; i < count_childs; i++)
+    QString tag_name = "";
+    for (int i = 0; i < childs.length(); i++)
     {
-        if (childs.item(i).toElement().tagName() != "") // e.g. comments
+        tag_name = childs.item(i).toElement().tagName();
+        if (tag_name != "") // e.g. comments
         {
             childs_list.append(childs.item(i).toElement());
-            emit preloadElement(this, childs.item(i).toElement());
+            emit preloadElementSignal(this, childs.item(i).toElement());
         }
-    }
-}
-
-void TPar::handlePossibleRepeat()
-{
-    // when a Dur time is active ignore repeat
-    // https://www.w3.org/TR/SMIL3/smil-timing.html#q75
-    if (isDurTimerActive())
-        return;
-
-    if(checkRepeatCountStatus())
-    {
-        play();
-    }
-    else
-    {
-        finishedActiveDuration();
-    }
-}
-
-void TPar::finishedDuration()
-{
-    if (!isEndTimerActive())
-    {
-        finishedActiveDuration();
     }
 }
 

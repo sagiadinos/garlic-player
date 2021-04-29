@@ -51,22 +51,22 @@ namespace Timings
         void        stop();
         bool        resume();
         bool        isActive();
-        bool        remainingRepeats();
     protected:
         qint64      pause_start;
-        ClockValue  MyClockValue;
-        WallClock   MyWallClock;
     protected slots:
       void   emitTimeout();
     private:
       struct TimerStruct
       {
-          QTimer *MyTimer    = Q_NULLPTR;
-          int     type       = TYPE_NOT_SET;
-          int     remaining  = 0;
+          QTimer     *MyTimer      = Q_NULLPTR;
+          ClockValue *MyClockValue = Q_NULLPTR;
+          WallClock  *MyWallClock  = Q_NULLPTR;
+          int         type         = TYPE_NOT_SET;
+          int         remaining    = 0;
       };
+      bool        is_indefinite = false;
       QList<TimerStruct *> MyTimerList;
-      void        initTimer(int type);
+      void        initTimer(int type, QString value);
 
     signals:
         void timeout();

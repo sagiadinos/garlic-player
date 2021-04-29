@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "audio.h"
 
-PlayerAudio::PlayerAudio( QObject *parent) : PlayerBaseMedia(parent)
+PlayerAudio::PlayerAudio(QObject *parent) : PlayerBaseMedia(parent)
 {
     MediaDecoder.reset(new MediaPlayerWrapper(this));
     connect(MediaDecoder.data(), SIGNAL(finished()), this, SLOT(finished()));
@@ -67,5 +67,5 @@ QWidget *PlayerAudio::getView()
 
 void PlayerAudio::finished()
 {
-   SmilMedia->finishedDuration();
+   SmilMedia->finishIntrinsicDuration();
 }

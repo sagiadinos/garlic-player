@@ -36,9 +36,8 @@ class TShuffle : public QObject
 public:
     explicit TShuffle(QList<QDomElement> list, QObject *parent = Q_NULLPTR);
     void         parse(QDomElement metadata);
-    bool         canGetNextItem();
-    int          getInternalPick(){return internal_pick;}
-    QDomElement  getNextItem();
+    QList<QDomElement> getShuffeledList();
+    int                getInternalPick(){return internal_pick;}
 protected:
         QList<QDomElement>            dom_list, shuffle_list;
         QList<QDomElement>::iterator  shuffle_iterator;

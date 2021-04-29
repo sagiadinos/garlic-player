@@ -19,6 +19,7 @@
 #define ElementFactory_H
 #include "smilparser/media/image.h"
 #include "smilparser/media/audio.h"
+#include "smilparser/media/brush.h"
 #include "smilparser/media/video.h"
 #include "smilparser/media/web.h"
 #include "smilparser/media/prefetch.h"

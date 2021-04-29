@@ -19,8 +19,8 @@
 #ifndef TCONTAINER_H
 #define TCONTAINER_H
 
-#include "base_timings.h"
 #include <QList>
+#include "base_timings.h"
 
 /**
  * @brief The TBasePlaylist is an abstract class for Smil Playlists which is inherited by seq, par and excl.
@@ -33,37 +33,49 @@ class TContainer : public BaseTimings
     Q_OBJECT
     public:
         explicit TContainer(QObject *parent = Q_NULLPTR);
-        virtual void                          next(BaseTimings *ended_element) = 0;
-                QHash<QString, BaseTimings *> getContainerObjects();
-                QString                       getIdOfActiveElement();
-        virtual bool                          isChildPlayable(BaseTimings *element) = 0;
-                bool                          hasPlayingChilds();
-                void                          childStarted(BaseTimings *element);
-                void                          childEnded(BaseTimings *element);
-                QString                       getBaseType() {return "container";}
-                BaseTimings                  *getChildElementFromList();
-                void                          setPlayedElement(BaseTimings *element);
-                BaseTimings                  *getPlayedElement();
-                void                          setChildActive(bool active);
+        virtual void         next(BaseTimings *ended_element) = 0;
+
+                QString      getBaseType() {return "container";}
+                // next two used only in excl => move later
+                void         setCurrentActivatedElement(BaseTimings *element);
+                BaseTimings *getCurrentActivatedElement();
+
+                BaseTimings *findDomChild(QDomElement dom_element);
+                void         insertDomChild(BaseTimings *element);
+
+                void         removeActivatedChild(BaseTimings *element);
+
+        virtual void         collectActivatedChilds() = 0;
+                void         startAllActivatedChilds();
+                void         startFirstActivatedChild();
+                void         stopAllActivatedChilds();
+                void         pauseAllActivatedChilds();
+                void         resumeAllActivatedChilds();
+                bool         hasActivatedChild();
+
+                void         emitPreloadElementSignal(TContainer* p, QDomElement e){emit preloadElementSignal(p, e);}
+                void         emitPause();
+                void         emitResume();
     public slots:
-                void                          emitfinished();
+                void         emitfinishedActiveDuration();
+
     protected:
-                TContainer                   *parent_container;
-                QSet<BaseTimings *>           activatable_childs;
-                QSet<BaseTimings *>::iterator childs_iterator;
+                QList<BaseTimings *>          activated_childs;
                 bool                          is_child_active    = false;
-                BaseTimings                  *played_element;
+
+                // used only in excl => move later
+                BaseTimings                  *current_activated_element = Q_NULLPTR;
+
                 QList<QDomElement>            childs_list;
                 QList<QDomElement>::iterator  childs_list_iterator;
-
+                QHash<QString, BaseTimings *> elements_list;
                 QDomElement                   active_element;
-                virtual void                  traverseChilds() = 0;
-                void                          emitFoundElement();
+
+        virtual void  traverseChilds() = 0;
+                void  activateFoundElement();
+                void  insertActivatedChild(BaseTimings *MyBaseTimings);
     signals:
-                void                          foundElement(TContainer *, QDomElement);
-                void                          startedContainer(TContainer * , BaseTimings *);
-                void                          finishedContainer(TContainer * , BaseTimings *);
-                void                          preloadElement(TContainer *parent, QDomElement);
+                void  preloadElementSignal(TContainer*, QDomElement);
 
 };
 

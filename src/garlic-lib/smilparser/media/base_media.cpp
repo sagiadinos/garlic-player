@@ -31,7 +31,6 @@ void BaseMedia::preloadParse(QDomElement element)
     parseBaseParameters(); // in this class
 }
 
-
 QString BaseMedia::getLoadablePath()
 {
     // local media should be played always regardless of the cache mode
@@ -70,6 +69,16 @@ void BaseMedia::play()
     status = _playing;
 }
 
+void BaseMedia::pause()
+{
+    status = _paused;
+}
+
+void BaseMedia::resume()
+{
+    play();
+}
+
 void BaseMedia::registerInMediaManager()
 {
     MyMediaManager->registerFile(src);
@@ -81,11 +90,6 @@ void BaseMedia::registerInMediaManagerAsUncachable()
 }
 
 
-void BaseMedia::resume()
-{
-    play();
-}
-
 QString BaseMedia::getParamsAsQuery() const
 {
     QString ret;
@@ -94,30 +98,21 @@ QString BaseMedia::getParamsAsQuery() const
     return ret;
 }
 
-void BaseMedia::pause()
-{
-    status = _paused;
-}
-
-void BaseMedia::stop()
-{
-    status = _stopped;
-}
 
 void BaseMedia::parseBaseMediaAttributes()
 {
     parseTimingAttributes();
 
-    region = getAttributeFromRootElement("region");
-    fit    = getAttributeFromRootElement("fit");
-    type   = getAttributeFromRootElement("type");
-    MyExpr.setExpression(getAttributeFromRootElement("expr"));
-    src    = getAttributeFromRootElement("src");
+    region = getAttributeFromRootElement("region", "");
+    fit    = getAttributeFromRootElement("fit", "");
+    // maybe obsolete 2021-04-21
+   //  type   = getAttributeFromRootElement("type");
+    MyExpr.setExpression(getAttributeFromRootElement("expr", ""));
 }
 
-void BaseMedia::emitfinished()
+void BaseMedia::emitfinishedActiveDuration() // called from finishedActiveDuration() BaseTimings
 {
-  emit finishedMedia(parent_container, this);
+    emitStopElementSignal(this);
 }
 
 void BaseMedia::parseBaseParameters()
@@ -132,12 +127,14 @@ void BaseMedia::parseBaseParameters()
     }
 }
 
-void BaseMedia::finishedDuration()
+void BaseMedia::emitPause()
 {
-    if (!isEndTimerActive())
-    {
-        finishedActiveDuration();
-    }
+    emitPauseElementSignal(this);
+}
+
+void BaseMedia::emitResume()
+{
+    emitResumeElementSignal(this);
 }
 
 void BaseMedia::setAdditionalParameters(QDomElement param)

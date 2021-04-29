@@ -33,10 +33,12 @@ win32 {
 }
 
 macx {
-    CONFIG += staticlib
+    # release version build as static lib
+    Release:CONFIG += staticlib
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
 }
+
 
 INCLUDEPATH+=../ext/zlib/includes
 INCLUDEPATH+=../ext/quazip/includes
@@ -67,6 +69,7 @@ SOURCES += \
     smilparser/head_parser.cpp \
     smilparser/media/audio.cpp \
     smilparser/media/base_media.cpp \
+    smilparser/media/brush.cpp \
     smilparser/media/image.cpp \
     smilparser/media/prefetch.cpp \
     smilparser/media/ref_command.cpp \
@@ -136,6 +139,7 @@ HEADERS += \
     smilparser/head_parser.h \
     smilparser/media/base_media.h \
     smilparser/media/audio.h \
+    smilparser/media/brush.h \
     smilparser/media/image.h \
     smilparser/media/prefetch.h \
     smilparser/media/ref_command.h \

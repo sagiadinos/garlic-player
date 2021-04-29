@@ -4,7 +4,7 @@
 		<meta name="title" content="Testing different media in body" />
 		<layout>
 			<root-layout id="display:0" width="1920" height="1080" />
-			<region regionName="screen" top="0" left="0" width="1920" height="1080" z-index="1" backgroundColor="#ff0" />
+			<region regionName="screen" top="0" left="0" width="1920" height="1080" z-index="1" backgroundColor="#222" />
 		</layout>
 	</head>
 	<body>

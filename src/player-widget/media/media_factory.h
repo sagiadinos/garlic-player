@@ -2,6 +2,7 @@
 #define MEDIA_FACTORY_H
 
 #include "media/image.h"
+#include "media/brush.h"
 #include "media/web.h"
 #include "media/video.h"
 #include "media/audio.h"
@@ -19,7 +20,7 @@ class MediaFactory : public QObject
     public slots:
 
     protected:
-        QScopedPointer<PlayerBaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyAudio, MyWeb, MyRefCommand;
+        QScopedPointer<PlayerBaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyBrush, MyAudio, MyWeb, MyRefCommand;
 
 
 };

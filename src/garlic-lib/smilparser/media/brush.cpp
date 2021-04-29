@@ -15,25 +15,48 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#ifndef UNKNOWN_H
-#define UNKNOWN_H
+#include "brush.h"
 
-#include "base_media.h"
-/**
- * @brief The Unknown class
- * This class will used, when a unknown tag found
- * It will be treated as media and will be ignored
- */
-class Unknown : public BaseMedia
+TBrush::TBrush(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
 {
-        Q_OBJECT
-    public:
-        explicit Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent = Q_NULLPTR);
-    public slots:
-        void     prepareDurationTimerBeforePlay();
-    protected:
-        void     setAttributes();
+    parent_container = pc;
+    setParentTag(pc->getRootElement().nodeName());
+    setObjectName("TBrush");
+    is_media = true;
+}
 
-};
+QString TBrush::getColor()
+{
+    return color;
+}
 
-#endif // UNKNOWN_H
+void TBrush::prepareDurationTimerBeforePlay()
+{
+    if (!MyExpr.executeQuery())
+    {
+        skipElement();
+        return;
+    }
+
+    if (status == _playing && !isRestartable())
+        return;
+
+    if (startDurTimer() || isEndTimerActive())
+    {
+        emitStartElementSignal(this);
+    }
+    else
+    {
+        skipElement();
+    }
+}
+
+// ====================  protected methods =================================
+
+void TBrush::setAttributes()
+{
+    parseBaseMediaAttributes();
+    color = getAttributeFromRootElement("color", "");
+}
+
+// ====================  private methods =================================

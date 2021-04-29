@@ -38,10 +38,13 @@ void TWeb::prepareDurationTimerBeforePlay()
         return;
     }
 
+    if (status == _playing && !isRestartable())
+        return;
+
     // do not mind if cached
     if (startDurTimer() || isEndTimerActive())
     {
-        emit startedMedia(parent_container, this);
+        emitStartElementSignal(this);
     }
     else
     {
@@ -52,4 +55,5 @@ void TWeb::prepareDurationTimerBeforePlay()
 void TWeb::setAttributes()
 {
     parseBaseMediaAttributes();
+    src        = getAttributeFromRootElement("src", "");
 }

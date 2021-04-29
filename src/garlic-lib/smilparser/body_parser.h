@@ -21,6 +21,10 @@
 
 #include "elements_container.h"
 #include "current_playing_media.h"
+#include "smilparser/element_factory.h"
+#include "container.h"
+#include "base_media.h"
+
 
 /**
  * @brief   The TSmil class is the interface between container, media and
@@ -36,8 +40,8 @@ public:
     explicit BodyParser(ElementFactory *ef, Files::MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
     ~BodyParser();
     void                               beginPreloading(QDomElement body);
-    void                               beginPlaying();
-    void                               endPlaying();
+    void                               startPlayingBody();
+    void                               endPlayingBody();
 
 protected:
     QDomElement                        parser;
@@ -49,24 +53,19 @@ protected:
     ElementsContainer                 *MyElementsContainer;
     CurrentPlayingMedia               *MyCurrentPlayingMedia;
     void                               emitStartShowMedia(BaseMedia *media);
-    void                               stopElement(BaseTimings *element);
     void                               emitStopShowMedia(BaseMedia *media);
 
     void                               connectSlots(BaseTimings *element);
-    void                               connectMediaSlots(BaseMedia *SmilMedia);
-    void                               connectContainerSlots(TContainer *MyContainer);
-    BaseTimings                       *determineElements(TContainer *parent_container, QDomElement dom_element);
 protected slots:
-    void                               foundElement(TContainer *parent_container, QDomElement dom_element);
-    void                               preloadElement(TContainer *parent_container, QDomElement dom_element);
-    void                               startElement(TContainer *parent_container, BaseTimings *element);
-    void                               finishElement(TContainer *parent_container, BaseTimings *element);
+    void                               preloadElement(TContainer *ParentContainer, QDomElement dom_element);
 
     void                               initMedia(BaseMedia *MyMedia);
-    void                               resumeQueuedElement(BaseTimings *element);
-    void                               pausePlayingElement(BaseTimings *element);
-    void                               stopPlayingElement(BaseTimings *element);
     void                               emitPreloadingBodyCompleted();
+
+    void                               startElement(BaseTimings *element);
+    void                               stopElement(BaseTimings *element);
+    void                               resumeQueuedElement(BaseTimings *element);
+    void                               pauseElement(BaseTimings*element);
 
 signals:
     void                               startShowMedia(BaseMedia *media);

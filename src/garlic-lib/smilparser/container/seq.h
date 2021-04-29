@@ -34,20 +34,15 @@ class TSeq : public TContainer
         void         preloadParse(QDomElement element);
         void         next(BaseTimings *ended_element);
         void         pause();
-        void         stop();
         void         play();
         void         resume();
-        bool         isChildPlayable(BaseTimings *element);
+        void         collectActivatedChilds();
     public slots:
         void         prepareDurationTimerBeforePlay();
-        void         finishedDuration();
     protected:
         TShuffle    *MyShuffle = Q_NULLPTR;
         int          count             = 0;
-        bool         canGetNextItem();
-        QDomElement  getNextItem();
         void         traverseChilds();
-        void         handlePossibleRepeat();
 };
 
 #endif // SEQ_H

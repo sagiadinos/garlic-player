@@ -39,9 +39,12 @@ void TAudio::prepareDurationTimerBeforePlay()
         return;
     }
 
+    if (status == _playing && !isRestartable())
+        return;
+
     startDurTimer(); // audio/video not need a dur timer, but if there is one it mist be started
 
-    emit startedMedia(parent_container, this);
+    emitStartElementSignal(this);
 }
 
 // ====================  protected methods =================================
@@ -49,8 +52,8 @@ void TAudio::prepareDurationTimerBeforePlay()
 void TAudio::setAttributes()
 {
     parseBaseMediaAttributes();
-    if (root_element.hasAttribute("soundLevel"))
-        soundLevel = root_element.attribute("soundLevel");
+    src        = getAttributeFromRootElement("src", "");
+    soundLevel = getAttributeFromRootElement("soundLevel", "");
 }
 
 // ====================  private methods =================================

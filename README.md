@@ -74,6 +74,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 - **video**
 - **audio**
 - **images**
+- **brush**
 - **html/text**
 - **HTML Widgets**
 
@@ -81,19 +82,26 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 - **prefetch**
 - **meta** for refresh index via http-equiv="Refresh"
 
+#### Attributes for par
+- **endsync** first|last
+
 #### Attributes for media
 - **region**
 - **fit** fill|meet|meetbest
 
+#### Attributes for mbrush
+- **color** color in CSS Stsyle
+
 ### Attributes for media and time container:
 - **xml:id** with Fallback for SMIL 2.0 id
 - **title** stub
+- **restart** (always|never|whenNotActive)
 - **class** stub
 - **xml:lang** stub
 - **dur** with values indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
-- **begin** with Clock values (like dur) and wallcock with periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W.
+- **begin** with Clock values (like dur) and wallcock with periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W. value lists seperated by ";"
 - **end** has same features as begin
-- **repeatCount** only integer values (float support maybe implemented later)
+- **repeatCount** (positive integer values only)
 
 ### Layered multizone layouts elements:
 - **root-layout**
@@ -106,7 +114,9 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 - **width** values in px or %
 - **height** values in px or %
 - **z-index** integer values
-- **backgroundColor** values are compatible with CSS
+- **backgroundColor** values are compatible with CSS style
+- **backgroundImage** png and jpg images (not in android player)
+- **backgroundRepeat**  values: repeat | repeatX | repeatY | noRepeat (not in android player)
 
 <!-- -->  HTML-like comments in SMIL-File are supported and content inside will ignored
 

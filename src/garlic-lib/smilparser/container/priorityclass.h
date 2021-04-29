@@ -34,7 +34,8 @@ public:
     QString                       getHigher(){return higher;}
     QString                       getLower(){return lower;}
     bool                          findElement(QDomElement dom_element);
-    void                          insertQueue(BaseTimings *element);
+    void                          insertDeferQueue(BaseTimings *element);
+    void                          insertPauseQueue(BaseTimings *element);
     int                           countQueue();
     BaseTimings                  *getFromQueue();
     QList<QDomElement>            getChildList();
@@ -42,11 +43,11 @@ protected:
     QList<QDomElement>            childs_list;
     QList<QDomElement>::iterator  iterator;
     QStack<BaseTimings *>         ar_defer;
-    QQueue<BaseTimings *>         ar_pause;
+    QStack<BaseTimings *>         ar_pause;
 private:
-    QString                       peers  = "stop";   // how elements insite a group intrerruots each other
-    QString                       higher = "pause";  // how an group with hier priority interrupts this group
-    QString                       lower  = "defer";  // how an group with lower priority interrupts this group
+    QString                       peers  = "stop";   // how elements inside a group interrupts each other
+    QString                       higher = "pause";  // how a group with hier priority interrupts this group
+    QString                       lower  = "defer";  // how a group with lower priority interrupts this group
     int                           count_childs       = 0;
     void                          setAttributes();
     void                          traverseChilds();

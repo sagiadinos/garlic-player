@@ -38,9 +38,12 @@ void TImage::prepareDurationTimerBeforePlay()
         return;
     }
 
+    if (status == _playing && !isRestartable())
+        return;
+
     if (startDurTimer() || isEndTimerActive())
     {
-        emit startedMedia(parent_container, this);
+        emitStartElementSignal(this);
     }
     else
     {
@@ -53,6 +56,7 @@ void TImage::prepareDurationTimerBeforePlay()
 void TImage::setAttributes()
 {
     parseBaseMediaAttributes();
+    src        = getAttributeFromRootElement("src", "");
 }
 
 // ====================  private methods =================================

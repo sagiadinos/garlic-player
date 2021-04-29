@@ -1,3 +1,20 @@
+/*************************************************************************************
+    garlic-player: SMIL Player for Digital Signage
+    Copyright (C) 2021 Nikolaos Sagiadinos <ns@smil-control.com>
+    This file is part of the garlic-player source code
+
+    This program is free software: you can redistribute it and/or  modify
+    it under the terms of the GNU Affero General Public License, version 3,
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************************/
 #include "priorityclass.h"
 
 TPriorityClass::TPriorityClass(QObject *parent) : TBase(parent)
@@ -27,19 +44,22 @@ bool TPriorityClass::findElement(QDomElement dom_element)
     return false;
 }
 
-void TPriorityClass::insertQueue(BaseTimings *element)
+void TPriorityClass::insertDeferQueue(BaseTimings *element)
 {
-    if (peers == "defer" || lower == "defer")
-        return ar_defer.push(element);
-    if (peers == "pause" || lower == "pause")
-        ar_pause.enqueue(element);
+    ar_defer.push(element);
+}
+
+void TPriorityClass::insertPauseQueue(BaseTimings *element)
+{
+    ar_pause.push(element);
 }
 
 int TPriorityClass::countQueue()
 {
-    if (peers == "defer" || lower == "defer")
+    if (ar_defer.size() > 0 && (peers == "defer" || lower == "defer"))
         return ar_defer.size();
-    if (peers == "pause" || lower == "pause")
+
+    if (ar_pause.size() > 0 && (peers == "pause" || lower == "pause"))
         return ar_pause.size();
     return 0;
 }
@@ -54,9 +74,9 @@ BaseTimings *TPriorityClass::getFromQueue()
     if (peers == "pause" || lower == "pause")
     {
         if (ar_pause.size() > 0)
-            return ar_pause.dequeue();
+            return ar_pause.pop();
     }
-    return NULL;
+    return Q_NULLPTR;
 }
 
 
@@ -68,12 +88,9 @@ QList<QDomElement> TPriorityClass::getChildList()
 void TPriorityClass::setAttributes()
 {
     setBaseAttributes();
-    if (root_element.hasAttribute("peers"))
-        peers = root_element.attribute("peers");
-    if (root_element.hasAttribute("higher"))
-        higher = root_element.attribute("higher");
-    if (root_element.hasAttribute("lower"))
-        lower = root_element.attribute("lower");
+    peers  = getAttributeFromRootElement("peers", "stop");
+    higher = getAttributeFromRootElement("higher", "pause");
+    lower  = getAttributeFromRootElement("lower", "defer");
 }
 
 void TPriorityClass::traverseChilds()

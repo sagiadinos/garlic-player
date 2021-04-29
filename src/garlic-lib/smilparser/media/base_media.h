@@ -15,7 +15,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-
 #ifndef MEDIA_H
 #define MEDIA_H
 
@@ -36,8 +35,8 @@ class BaseMedia : public BaseTimings
         void                 preloadParse(QDomElement element);
         QString              getLoadablePath();
         void                 pause();
-        void                 stop();
         void                 play();
+        void                 resume();
 
 
         QString              getRegion()       {return region;}
@@ -51,21 +50,19 @@ class BaseMedia : public BaseTimings
         void                 registerInMediaManager();
         void                 registerInMediaManagerAsUncachable();
 
-        void                 resume();
         bool                 hasPlayingChilds(){return false;}
-        BaseTimings         *getChildElementFromList(){return this;}
-        TContainer          *getParentContainer(){return parent_container;}
         QString              getParamsAsQuery() const;
 
+        void                 emitPause();
+        void                 emitResume();
+
     public slots:
-        void                 emitfinished();
-        void                 finishedDuration();
+        void                 emitfinishedActiveDuration();
 
     protected:
         Files::MediaManager *MyMediaManager;
         MainConfiguration   *MyMainConfiguration;
         QStringList          params_as_query;
-        TContainer          *parent_container;
         Expr                 MyExpr;
         QString              region          = "";
         QString              src             = "";
@@ -83,9 +80,6 @@ class BaseMedia : public BaseTimings
         void setAdditionalParameters(QDomElement param);
         int                  determineCacheControl(QString value);
 
-    signals:
-        void                 startedMedia(TContainer *parent , BaseTimings *element);
-        void                 finishedMedia(TContainer *parent , BaseTimings *element);
 };
 
 #endif // MEDIA_H

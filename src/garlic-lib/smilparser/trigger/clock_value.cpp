@@ -55,13 +55,13 @@ qint64 ClockValue::calculateMilliseconds(QString dur)
     else // Timecount values
     {
         if (dur[length-1] == QChar('s'))
-            duration = dur.mid(0, length-1).toFloat()*1000;
+            duration = dur.midRef(0, length-1).toFloat()*1000;
         else if (dur[length-1] == QChar('h'))
-            duration = dur.mid(0, length-1).toFloat()*3600000;
+            duration = dur.midRef(0, length-1).toFloat()*3600000;
         else if (dur.contains("min"))
-            duration = dur.mid(0, length-3).toFloat()*60000;
+            duration = dur.midRef(0, length-3).toFloat()*60000;
         else if (dur.contains("ms"))
-             duration = dur.mid(0, length-2).toInt();
+             duration = dur.midRef(0, length-2).toInt();
         else if (dur=="indefinite")
             duration = -1;
         else if (dur=="media")

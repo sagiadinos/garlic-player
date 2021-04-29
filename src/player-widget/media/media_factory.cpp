@@ -20,6 +20,7 @@
 MediaFactory::MediaFactory(QObject *parent) : QObject(parent)
 {
     MyImage.reset(new PlayerImage(this));
+    MyBrush.reset(new PlayerBrush(this));
     MyVideo.reset(new PlayerVideo(this));
     MyAudio.reset(new PlayerAudio(this));
     MyWeb.reset(new PlayerWeb(this));
@@ -33,6 +34,11 @@ PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
     {
         MyImage.data()->init(media);
         return MyImage.data();
+    }
+    else if (type == "TBrush")
+    {
+        MyBrush.data()->init(media);
+        return MyBrush.data();
     }
     else if (type == "TVideo")
     {

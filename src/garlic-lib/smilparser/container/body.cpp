@@ -45,41 +45,70 @@ void TBody::preloadParse(QDomElement element)
         active_element = root_element;
         finishedActiveDuration();
     }
-    emit finishPreload();
+    emit finishPreloadSignal   ();
 }
 
-void TBody::prepareTimingsBeforePlaying()
+void TBody::preparePlaying()
 {
-   prepareDurationTimerBeforePlay();
-}
-
-bool TBody::isChildPlayable(BaseTimings *element)
-{
-    childStarted(element);
-    return true;
+   prepareDurationTimerBeforePlay(); // currently there is no timing in body tag
 }
 
 void TBody::prepareDurationTimerBeforePlay()
 {
-    emitFoundElement();
-  //  emit startedContainer(parent_container, this);
+    if (childs_list.size() > 0)
+    {
+        resetInternalRepeatCount();
+        emitStartElementSignal(this);
+    }
+    else
+    {
+        skipElement();
+    }
     return;
 }
 
-
 void TBody::next(BaseTimings *ended_element)
 {
-    Q_UNUSED(ended_element);
-    childs_list_iterator++; // inc iterator first only when inc result smaller than  .end()
-    if (childs_list_iterator < childs_list.end())  // cause .end() pointing to the imaginary item after the last item in the vector
+    removeActivatedChild(ended_element);
+
+    if (hasActivatedChild())
+    {
+        startFirstActivatedChild();
+        return;
+    }
+
+    finishedActiveDuration();
+}
+
+
+void TBody::play()
+{
+    collectActivatedChilds();
+    status = _playing;
+    startFirstActivatedChild();
+}
+
+
+void TBody::resume()
+{
+    status = _playing;
+}
+
+
+void TBody::pause()
+{
+    status = _paused;
+}
+
+void TBody::collectActivatedChilds()
+{
+    for (childs_list_iterator = childs_list.begin(); childs_list_iterator < childs_list.end(); childs_list_iterator++)
     {
         active_element = *childs_list_iterator;
-        QString s = active_element.tagName();
-        emitFoundElement();
+        activateFoundElement();
     }
-    else
-        finishedActiveDuration();
 }
+
 
 void TBody::traverseChilds()
 {
@@ -92,13 +121,13 @@ void TBody::traverseChilds()
         if (element.tagName() != "")
         {
             childs_list.append(element);
-            emit preloadElement(this, element);
+            emit preloadElementSignal(this, element);
         }
     }
     childs_list_iterator = childs_list.begin();
 }
 
-void TBody::finishedDuration()
+void TBody::finishedSimpleDuration()
 {
     //dummy cause body cannot have duration etc.
 }

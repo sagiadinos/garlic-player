@@ -22,74 +22,134 @@ TContainer::TContainer(QObject *parent) : BaseTimings(parent)
 {
 }
 
-
-QString TContainer::getIdOfActiveElement()
+BaseTimings *TContainer::findDomChild(QDomElement dom_element)
 {
-    return parseID(active_element);
-}
-
-BaseTimings *TContainer::getChildElementFromList()
-{
-    BaseTimings *ret = NULL;
-    if (childs_iterator != activatable_childs.end())
+    BaseTimings                             *MyBaseTimings     = Q_NULLPTR;
+    QHash<QString, BaseTimings *>::iterator  elements_iterator = elements_list.find(TBase::parseID(dom_element));
+    if (elements_iterator != elements_list.end())
     {
-        ret = *childs_iterator;
-        childs_iterator++;
+        MyBaseTimings = *elements_iterator;
     }
-    else
+    return MyBaseTimings;
+}
+
+void TContainer::insertDomChild(BaseTimings *MyBaseTimings)
+{
+    elements_list.insert(MyBaseTimings->getID(), MyBaseTimings);
+}
+
+void TContainer::setCurrentActivatedElement(BaseTimings *element)
+{
+    current_activated_element = element;
+}
+
+BaseTimings *TContainer::getCurrentActivatedElement()
+{
+    return current_activated_element;
+}
+
+void TContainer::removeActivatedChild(BaseTimings *element)
+{
+    qDebug() << "remove: " + element->getID() + " parent: " + element->getParentContainer()->getID();
+    if (activated_childs.indexOf(element) >= 0)
+        activated_childs.removeOne(element);
+}
+
+void TContainer::startAllActivatedChilds()
+{
+    if (activated_childs.size() == 0)
+        return;
+
+    for ( BaseTimings *bt : qAsConst(activated_childs))
     {
-        childs_iterator = activatable_childs.begin();
-        ret             = *childs_iterator;
-    }
-    return ret;
-}
-
-void TContainer::setPlayedElement(BaseTimings *element)
-{
-    played_element = element;
-    return;
-}
-
-BaseTimings *TContainer::getPlayedElement()
-{
-    return played_element;
-}
-
-
-void TContainer::childStarted(BaseTimings *element)
-{
-    activatable_childs.insert(element);
-    childs_iterator = activatable_childs.begin();
-}
-
-void TContainer::childEnded(BaseTimings *element)
-{
-    if (activatable_childs.find(element) != activatable_childs.end())
-    {
-        activatable_childs.remove(element);
+        bt->preparePlaying();
     }
 }
 
-void TContainer::setChildActive(bool active)
+void TContainer::startFirstActivatedChild()
 {
-    is_child_active = active;
+    if (activated_childs.size() == 0)
+        return;
+
+    QList<BaseTimings *>::iterator i = activated_childs.begin();
+    BaseTimings *bt = *i;
+    bt->preparePlaying();
 }
 
-bool TContainer::hasPlayingChilds()
+void TContainer::stopAllActivatedChilds()
 {
-    if (activatable_childs.size() > 0)
-        return true;
-    return false;
+    if (activated_childs.size() == 0)
+        return;
+
+    for ( BaseTimings *bt : qAsConst(activated_childs))
+    {
+        if (bt->getStatus() == _playing || bt->getStatus() == _waiting)
+        {
+            bt->emitfinishedActiveDuration();
+        }
+    }
 }
 
-void TContainer::emitFoundElement()
+void TContainer::pauseAllActivatedChilds()
 {
-    emit foundElement(this, active_element);
-    return;
+    if (activated_childs.size() == 0)
+        return;
+
+    for ( BaseTimings *bt : qAsConst(activated_childs))
+    {
+        if (bt->getStatus() == _playing || bt->getStatus() == _waiting)
+        {
+            bt->emitPause();
+        }
+    }
 }
 
-void TContainer::emitfinished() // called from finishedActiveDuration() TBase
+void TContainer::resumeAllActivatedChilds()
 {
-    emit finishedContainer(parent_container, this);
+    if (activated_childs.size() == 0)
+        return;
+
+    for ( BaseTimings *bt : qAsConst(activated_childs))
+    {
+        if (bt->getStatus() == _paused)
+        {
+            bt->emitResume();
+        }
+    }
 }
 
+bool TContainer::hasActivatedChild()
+{
+    return (activated_childs.size() > 0);
+}
+
+void TContainer::emitfinishedActiveDuration() // slot called from EndTimer
+{
+    emitStopElementSignal(this);
+}
+
+void TContainer::emitPause()
+{
+    emitPauseElementSignal(this);
+}
+
+void TContainer::emitResume()
+{
+    emitResumeElementSignal(this);
+}
+
+void TContainer::activateFoundElement()
+{
+    insertActivatedChild(findDomChild(active_element));
+}
+
+void TContainer::insertActivatedChild(BaseTimings *MyBaseTimings)
+{
+    if (MyBaseTimings == Q_NULLPTR)
+        return;
+
+    qDebug() << "Parent: " + getID() << "activated: " +  MyBaseTimings->getID();
+
+    if (activated_childs.indexOf(MyBaseTimings) < 0) // do not have double items
+        activated_childs.append(MyBaseTimings);
+}

@@ -37,58 +37,87 @@ class BaseTimings : public TBase
 {
         Q_OBJECT
     public:
+        enum RESTART
+        {
+            ALWAYS             = 0,
+            NEVER              = 1,
+            WHEN_NOT_ACTIVE    = 2
+        };
         const     int        _stopped  = 0;
-        const     int        _waiting  = 1;
+        const     int        _waiting  = 1; // wait for first start
         const     int        _playing  = 2;
         const     int        _paused   = 3;
+        // means: simple duration ended, but begin or end timer are active or . Can be restarted by begin-valuelist
+        const     int        _pending  = 4;
 
         explicit               BaseTimings(QObject * parent = Q_NULLPTR);
                               ~BaseTimings();
-                void           prepareTimingsBeforePlaying();      // what to do when parent sends an order to begin executions
-                void           prepareTimingsBeforePausing();
-                void           prepareTimingsBeforeStop();      // what to do when parent sends an order to begin executions
-                void           prepareTimingsBeforeResume();      // what to do when parent sends an order to begin executions
+                void           preparePlaying();      // what to do when parent sends an order to begin executions
+                void           preparePausing();
+                void           prepareStop();      // what to do when parent sends an order to begin executions
+                void           prepareResume();      // what to do when parent sends an order to begin executions
                 int            getStatus(){return status;}
-                bool           isRepeatable(){return repeatable;}
                 void           finishedNotFound();
                 void           skipElement();
+                BaseTimings   *getParentContainer(){return parent_container;}
 
+                void           stop();
         virtual void           play()        = 0;
         virtual void           pause()       = 0;
-        virtual void           stop()        = 0;
         virtual void           resume()      = 0;
         virtual QString        getBaseType() = 0;
-        virtual BaseTimings   *getChildElementFromList() = 0;
-        virtual bool           hasPlayingChilds() = 0;
 
+        virtual void           emitPause() = 0;
+        virtual void           emitResume() = 0;
+
+                void  emitStartElementSignal(BaseTimings* bt){emit startElementSignal(bt);}
+                void  emitStopElementSignal(BaseTimings* bt){emit stopElementSignal(bt);}
+                void  emitResumeElementSignal(BaseTimings* bt){emit resumeElementSignal(bt);}
+                void  emitPauseElementSignal(BaseTimings* bt){emit pauseElementSignal(bt);}
+
+
+                void           finishIntrinsicDuration();
     public slots:
-        virtual void           emitfinished() = 0;
-        virtual void           finishedDuration() = 0;
+        virtual void           emitfinishedActiveDuration() = 0;
         virtual void           prepareDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
+                void           finishedSimpleDuration();
     protected:
-                Timings::EnhancedTimer *BeginTimer = Q_NULLPTR;
-                Timings::EnhancedTimer *EndTimer = Q_NULLPTR;
-                Timings::SimpleTimer   *DurTimer = Q_NULLPTR;
-                QTimer        *InternalTimer = Q_NULLPTR;
+                BaseTimings   *parent_container;
+                QTimer                 *InternalTimer = Q_NULLPTR;
+                int            restart = ALWAYS;// WHEN_NOT_ACTIVE;
+                QString        fill    = "remove";
                 int            status         = 0;
+                bool           is_repeatable  = false;
                 int            repeatCount    = 0;
                 bool           indefinite     = false;
-//                bool           is_resumed     = false;
                 int            internal_count = 1;
                 void           parseTimingAttributes();
                 void           resetInternalRepeatCount();
                 bool           startDurTimer();
                 bool           checkRepeatCountStatus();
-                bool           isBeginTimerActive();
                 bool           isEndTimerActive();
                 bool           isDurTimerActive();
+                bool           isRestartable();
     protected slots:
-                void           releasePlay();
                 void           finishedActiveDuration();
     private:
-                bool           repeatable;
+                Timings::EnhancedTimer *BeginTimer = Q_NULLPTR;
+                Timings::EnhancedTimer *EndTimer   = Q_NULLPTR;
+                Timings::SimpleTimer   *DurTimer   = Q_NULLPTR;
+           //     Timings::SimpleTimer   *MinTimer   = Q_NULLPTR;
+           //     Timings::SimpleTimer   *MaxTimer   = Q_NULLPTR;
+           //     Timings::SimpleTimer   *repeatDur  = Q_NULLPTR;
                 void           setRepeatCount(QString rC);
                 void           handleBeginTimer();
+                void           setRestart(QString attr_value);
+    signals:
+                void           finishActiveDurationSignal(BaseTimings*);
+                void           finishSimpleDurationSignal(BaseTimings*);
+
+                void  startElementSignal(BaseTimings*);
+                void  stopElementSignal(BaseTimings*);
+                void  resumeElementSignal(BaseTimings*);
+                void  pauseElementSignal(BaseTimings*);
 
 };
 

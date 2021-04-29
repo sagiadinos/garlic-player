@@ -23,26 +23,27 @@
 
 class TBody : public TContainer
 {
-    Q_OBJECT
-public:
-    explicit TBody(QObject *parent = Q_NULLPTR);
-    ~TBody();
-    void      preloadParse(QDomElement element);
-    void      prepareTimingsBeforePlaying();
-    void      endPlay(){}
-    void      next(BaseTimings *ended_element);
-    void      resume(){}
-    void      play(){}
-    void      pause(){}
-    void      stop(){}
-    bool      isChildPlayable(BaseTimings *element);
-public slots:
-    void         finishedDuration();
-    void      prepareDurationTimerBeforePlay();
-protected:
-    void      traverseChilds();
-signals:
-    void      finishPreload();
+        Q_OBJECT
+    public:
+        explicit TBody(QObject *parent = Q_NULLPTR);
+        ~TBody();
+        void      preloadParse(QDomElement element);
+        void      preparePlaying();
+        void      endPlay(){}
+        void      next(BaseTimings *ended_element);
+        void      resume();
+        void      play();
+        void      pause();
+        void      collectActivatedChilds();
+
+       // bool      isChildPlayable(BaseTimings *element);
+    public slots:
+        void         finishedSimpleDuration();
+        void      prepareDurationTimerBeforePlay();
+    protected:
+        void      traverseChilds();
+    signals:
+        void      finishPreloadSignal();
 
 };
 

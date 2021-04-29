@@ -87,12 +87,16 @@ win32 {
 }
 
 macx {
-    #libgarlic is static compiled in osx
+    #libgarlic release is static compiled in osx
+    debug:CONFIG+=sdk_no_version_check # remove annoying SDK messages on Apple Silicon
+
     ICON = ../../deployment/macx/garlic-player.icns
-    LIBS += -L../lib -lgarlic -lquazip -lzlib
+    release:LIBS += -L../lib -lgarlic -lquazip -lzlib
+    debug:LIBS += -L../lib -lgarlic
 }
 
 SOURCES += \
+    media/brush.cpp \
     media/image.cpp \
     media/player_base_media.cpp \
     media/ref_command.cpp \
@@ -108,6 +112,7 @@ SOURCES += \
     regions_list.cpp
 
 HEADERS  += \
+    media/brush.h \
     media/image.h \
     media/player_base_media.h \
     media/ref_command.h \

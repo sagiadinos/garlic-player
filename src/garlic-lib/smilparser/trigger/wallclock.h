@@ -1,3 +1,20 @@
+/*************************************************************************************
+    garlic-player: SMIL Player for Digital Signage
+    Copyright (C) 2021 Nikolaos Sagiadinos <ns@smil-control.com>
+    This file is part of the garlic-player source code
+
+    This program is free software: you can redistribute it and/or  modify
+    it under the terms of the GNU Affero General Public License, version 3,
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************************/
 #ifndef WALLCLOCK_H
 #define WALLCLOCK_H
 
@@ -35,11 +52,11 @@ protected:
     int       remaining_repeats = 0;
     qint64    getNextTrigger(QDateTime current);
     int       analyseRepeats(QString r_value);
-    qint64    analyseRemainingRepeats(QDateTime actual);
+    qint64    analyseRemainingRepeats(QDateTime current);
     IsoPeriod analysePeriods(QString p_value);
     QDateTime analyseDate(QString date);
     QDateTime addWallClockInterval(QDateTime calculated);
-    QDateTime addWallClockIntervalOptimized(QDateTime actual, QDateTime calculated);
+    QDateTime addWallClockIntervalOptimized(QDateTime current, QDateTime calculated);
 
 private:
     QDate determineDate(QString the_date);

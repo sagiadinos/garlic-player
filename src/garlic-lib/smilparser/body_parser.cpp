@@ -39,51 +39,38 @@ BodyParser::~BodyParser()
  */
 void BodyParser::beginPreloading(QDomElement body)
 {
-    MyBody.reset(new TBody(this));
-    connect(MyBody.data(), SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
-    connect(MyBody.data(), SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
-
-    connect(MyBody.data(), SIGNAL(preloadElement(TContainer *, QDomElement)), this, SLOT(preloadElement(TContainer *, QDomElement)));
-    connect(MyBody.data(), SIGNAL(finishPreload()), this, SLOT(emitPreloadingBodyCompleted()));
+    MyBody.reset(new TBody(Q_NULLPTR));
+    connect(MyBody.data(), SIGNAL(preloadElementSignal(TContainer*,QDomElement)), this, SLOT(preloadElement(TContainer*,QDomElement)));
+    connect(MyBody.data(), SIGNAL(finishPreloadSignal()), this, SLOT(emitPreloadingBodyCompleted()));
+    // pause and presume not neccessary
+    connect(MyBody.data(), SIGNAL(startElementSignal(BaseTimings*)), this, SLOT(startElement(BaseTimings*)));
+    connect(MyBody.data(), SIGNAL(stopElementSignal(BaseTimings*)), this, SLOT(stopElement(BaseTimings*)));
 
     MyBody.data()->preloadParse(body);
     return;
 }
 
-void BodyParser::beginPlaying()
+void BodyParser::preloadElement(TContainer *ParentContainer, QDomElement dom_element)
 {
-    MyBody.data()->prepareTimingsBeforePlaying();
-}
-
-void BodyParser::endPlaying()
-{
-    stop_all = true;
-
-    while (MyCurrentPlayingMedia->count() > 0) // stop all currently played media
-    {
-        stopPlayingElement(MyCurrentPlayingMedia->getFirstPlayingObject());
-    }
-    return;
-}
-
-
-void BodyParser::preloadElement(TContainer *parent_container, QDomElement element)
-{
-    BaseTimings *MyBaseTimings = MyElementFactory->createBase(element, parent_container, this);
+    BaseTimings *MyBaseTimings = MyElementFactory->createBase(dom_element, ParentContainer, this);
     connectSlots(MyBaseTimings);
 
     // Important! Slots needs to be connected before parsing!
-    // parsing emits a foundElement signal so without connected Slot no one
-    // can receive the signal and parsing will be interrupted
-    MyBaseTimings->preloadParse(element);
+    MyBaseTimings->preloadParse(dom_element);
 
     // media must be initialised after parse
     if (MyBaseTimings->getBaseType() == "media")
     {
         initMedia(qobject_cast<BaseMedia *> (MyBaseTimings));
     }
+    ParentContainer->insertDomChild(MyBaseTimings);
     MyElementsContainer->insertSmilElement(MyBaseTimings);
     return;
+}
+
+void BodyParser::emitPreloadingBodyCompleted()
+{   
+    emit preloadingBodyCompleted();
 }
 
 /**
@@ -107,29 +94,31 @@ void BodyParser::initMedia(BaseMedia *MyMedia)
     MyElementsContainer->insertSmilMedia(MyMedia);
 }
 
+/**
+ * start initial playing smil after preoload
+ */
+void BodyParser::startPlayingBody()
+{
+    MyBody.data()->preparePlaying();
+}
 
 /**
- * @brief TSmil::foundElement slot catches the signals from the containers and
- * @param parent
- * @param found_tag
+ * end playing
  */
-void BodyParser::foundElement(TContainer *parent_container, QDomElement dom_element)
+void BodyParser::endPlayingBody()
 {
-    BaseTimings *MyBaseTimings = MyElementsContainer->findSmilElement(dom_element);
-    if (MyBaseTimings != Q_NULLPTR)
-    {
-        MyBaseTimings->prepareTimingsBeforePlaying(); // here we start
-    }
+    stop_all = true;
 
-    // must be here and cannot be moved into TExcl::isChildPlayable
-    // try fix this!
-    if (parent_container->objectName() == "TExcl")  // increment active child to determine end of a excl
+    BaseMedia *MyMedia;
+    while (MyCurrentPlayingMedia->count() > 0) // stop all currently playing media
     {
-        TExcl   *MyExclParent   = qobject_cast<TExcl *> (parent_container);
-        MyExclParent->childStarted(MyBaseTimings);
+        MyMedia = MyCurrentPlayingMedia->getFirstPlayingObject();
+        MyMedia->prepareStop();
+        emitStopShowMedia(MyMedia);
     }
     return;
 }
+
 
 /**
  * @brief TSmil::startedElement slot catch the start signal from a element and check if it is allowed to play.
@@ -138,152 +127,101 @@ void BodyParser::foundElement(TContainer *parent_container, QDomElement dom_elem
  * @param parent
  * @param element
  */
-void BodyParser::startElement(TContainer *parent_container, BaseTimings *element)
+void BodyParser::startElement(BaseTimings *element)
 {
-    bool         playable      = true;
-    if (parent_container->getBaseType() == "container")
-    {
-        TContainer *MyContainer = qobject_cast<TContainer *> (parent_container);
-        playable                = MyContainer->isChildPlayable(element);
-        if (playable)
-            MyContainer->setPlayedElement(element);
-    }
+    TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
+    qDebug() << "Start: " + element->getID();
 
-    if (playable)
+    if (ParentContainer != Q_NULLPTR)
     {
-        element->play();
-        if (element->getBaseType() == "media")
-            emitStartShowMedia(qobject_cast<BaseMedia *> (element));
+        if (ParentContainer->objectName() == "TExcl")
+        {
+            TExcl   *MyExclParent   = qobject_cast<TExcl *> (ParentContainer);
+            // determine if stop or pause previous or next child
+            if (!MyExclParent->determineContinue(element))
+                return;
+        }
     }
-    return;
+    element->play();
+    if (element->getBaseType() == "media")
+        emitStartShowMedia(qobject_cast<BaseMedia *> (element));
+
+
+   return;
 }
 
 /**
- * @brief TSmil::finishedElement slot get called when emit finishedMedia finishedContainer active duration (finish playing)
- *        finishElement should kill the timer (TSmil::stopElement(TBase *element)) of his child elements not his own
- *        except in the case is in an excl container and stopped by a peer
+ * @brief TSmil::finishedElement slot get called when emit finishedMedia | finishedContainer
+ *        => Activice Duration
  * @param parent
  * @param element
  */
-void BodyParser::finishElement(TContainer *parent_container, BaseTimings *element)
+void BodyParser::stopElement(BaseTimings *element)
 {
-    qDebug() << element->getID() <<  " finishElement";
-    if (element->objectName() != "TBody") // when TBody ends there is no parent and nothing todo anymore
-    {
-        // Not kill a Timer here
-        stopElement(element);
+    TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
 
-        parent_container->next(element);
+    qDebug() << "Stop: " + element->getID();
+
+    if (ParentContainer == Q_NULLPTR) // that means TBody as parent
+        return;
+
+    element->prepareStop();
+    element->stop();
+    if (element->getBaseType() == "media")
+    {
+        emitStopShowMedia(qobject_cast<BaseMedia *> (element));
     }
-    return;
+    else
+        (qobject_cast<TContainer *> (element))->stopAllActivatedChilds();
+
+    ParentContainer->next(element);
 }
 
-/**
- * @brief TSmil::handlePause prepares elements for pause, pause them and recurses their childs
- * @param parent
- * @param element
- */
-void BodyParser::pausePlayingElement(BaseTimings *element)
+void BodyParser::pauseElement(BaseTimings *element)
 {
-    qDebug() << element->getID() << "pause Element";
-    element->prepareTimingsBeforePausing();
-    if (element->hasPlayingChilds())
-    {
-        TContainer  *MyContainer      = qobject_cast<TContainer *> (element);
-        pausePlayingElement(MyContainer->getChildElementFromList());
-    }
+    qDebug() <<  "Pause " + element->getID();;
+
+    element->preparePausing();
     element->pause();
     if (element->getBaseType() == "media")
         emitStopShowMedia(qobject_cast<BaseMedia *> (element));
+    else
+        (qobject_cast<TContainer *> (element))->pauseAllActivatedChilds();
     return;
 }
 
 void BodyParser::resumeQueuedElement(BaseTimings *element)
 {
-    qDebug() << element->getID() << "resume Element";
-    element->prepareTimingsBeforeResume();
-    if (element->getStatus() == element->_paused)
-    {
-        if (element->hasPlayingChilds())
-            resumeQueuedElement(element->getChildElementFromList());
-        element->resume();
-        if (element->getBaseType() == "media")
-            emitStartShowMedia(qobject_cast<BaseMedia *> (element));
-    }
-    return;
-}
-
-/**
- * @brief TSmil::handleStop checks when an element stopped or finished and recurses to stop all active child elements e.g. timers, too.
- *        If the element is a media a signal will emitted to an output interface which can stop the show the media e.g. player-widget
- * @param parent
- * @param element
- */
-void BodyParser::stopPlayingElement(BaseTimings *element)
-{
     if (element == Q_NULLPTR)
         return;
 
-    element->prepareTimingsBeforeStop();
-    stopElement(element);
-    return;
-}
-
-void BodyParser::emitPreloadingBodyCompleted()
-{
-    emit preloadingBodyCompleted();
-}
-
-// ============================== private methods =======================================
-
-void BodyParser::stopElement(BaseTimings *element)
-{
-    if (element->getStatus() != element->_stopped)
+    qDebug() << "Resume: " + element->getID();
+    element->prepareResume();
+    element->resume();
+    if (element->getBaseType() == "media")
+        emitStartShowMedia(qobject_cast<BaseMedia *> (element));
+    else
     {
-        if (element->hasPlayingChilds())
-        {
-            stopPlayingElement(element->getChildElementFromList()); // recurse with stopPlaylingElement to kill timer of childs
-        }
-        element->stop();
-        if (element->getBaseType() == "media")
-            emitStopShowMedia(qobject_cast<BaseMedia *> (element));
+        TContainer *ParentContainer = qobject_cast<TContainer *> (element);
+        if (ParentContainer->objectName() != "TSeq")
+            ParentContainer->resumeAllActivatedChilds();
+        else
+            ParentContainer->startFirstActivatedChild();
     }
     return;
 }
 
 void BodyParser::connectSlots(BaseTimings *element)
 {
-    QString      base_type  = element->getBaseType();
-    if (base_type == "media")
-    {
-        connectMediaSlots(qobject_cast<BaseMedia *> (element));
-    }
-    else if (base_type == "container")
-    {
-        connectContainerSlots(qobject_cast<TContainer *> (element));
-    }
-}
+    connect(element, SIGNAL(startElementSignal(BaseTimings*)), this, SLOT(startElement(BaseTimings*)));
+    connect(element, SIGNAL(stopElementSignal(BaseTimings*)), this, SLOT(stopElement(BaseTimings*)));
+    connect(element, SIGNAL(resumeElementSignal(BaseTimings*)), this, SLOT(resumeQueuedElement(BaseTimings*)));
+    connect(element, SIGNAL(pauseElementSignal(BaseTimings*)), this, SLOT(pauseElement(BaseTimings*)));
 
-void BodyParser::connectContainerSlots(TContainer *MyContainer)
-{
-    connect(MyContainer, SIGNAL(preloadElement(TContainer *, QDomElement )), this, SLOT(preloadElement(TContainer *, QDomElement )));
-    connect(MyContainer, SIGNAL(foundElement(TContainer *, QDomElement )), this, SLOT(foundElement(TContainer *, QDomElement )));
-    connect(MyContainer, SIGNAL(startedContainer(TContainer *, BaseTimings *)), this, SLOT(startElement(TContainer *, BaseTimings *)));
-    connect(MyContainer, SIGNAL(finishedContainer(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
-    if (MyContainer->objectName() == "TExcl")
+    if (element->getBaseType() == "container")
     {
-        connect(MyContainer, SIGNAL(resumeElement(BaseTimings *)), this, SLOT(resumeQueuedElement(BaseTimings *)));
-        connect(MyContainer, SIGNAL(pauseElement(BaseTimings *)), this, SLOT(pausePlayingElement(BaseTimings *)));
-        connect(MyContainer, SIGNAL(stopElement(BaseTimings *)), this, SLOT(stopPlayingElement(BaseTimings *)));
+        connect(element, SIGNAL(preloadElementSignal(TContainer*,QDomElement)), this, SLOT(preloadElement(TContainer*,QDomElement)));
     }
-    return;
-}
-
-void BodyParser::connectMediaSlots(BaseMedia *media)
-{
-    connect(media, SIGNAL(startedMedia(TContainer *, BaseTimings *)), this, SLOT(startElement(TContainer *, BaseTimings *)));
-    connect(media, SIGNAL(finishedMedia(TContainer *, BaseTimings *)), this, SLOT(finishElement(TContainer *, BaseTimings *)));
-    return;
 }
 
 void BodyParser::emitStartShowMedia(BaseMedia *media)

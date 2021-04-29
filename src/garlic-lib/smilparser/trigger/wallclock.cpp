@@ -1,3 +1,20 @@
+/*************************************************************************************
+    garlic-player: SMIL Player for Digital Signage
+    Copyright (C) 2021 Nikolaos Sagiadinos <ns@smil-control.com>
+    This file is part of the garlic-player source code
+
+    This program is free software: you can redistribute it and/or  modify
+    it under the terms of the GNU Affero General Public License, version 3,
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*************************************************************************************/
 #include "wallclock.h"
 
 WallClock::WallClock(QObject *parent) : QObject(parent)
@@ -91,7 +108,7 @@ int WallClock::analyseRepeats(QString r_value)
     return repeats;
 }
 
-qint64 WallClock::analyseRemainingRepeats(QDateTime actual)
+qint64 WallClock::analyseRemainingRepeats(QDateTime current)
 {
     QDateTime calculate = datetime;
     qint64    ret       = 0;
@@ -102,10 +119,10 @@ qint64 WallClock::analyseRemainingRepeats(QDateTime actual)
         calculate = addWallClockInterval(calculate);
         i++;
     }
-    while (actual > calculate && i < repeats+1);
-    if (actual < calculate)
+    while (current > calculate && i < repeats+1);
+    if (current < calculate)
     {
-        ret = actual.msecsTo(calculate);
+        ret = current.msecsTo(calculate);
         remaining_repeats = repeats - i;
     }
     return ret;
@@ -148,18 +165,34 @@ QDateTime WallClock::analyseDate(QString date)
 QDate WallClock::determineDate(QString the_date)
 {
     int w_position = the_date.indexOf('w');
+    QDate ret;
     if (w_position > -1)
-        return calculateDateWithWeekDayDifference(the_date, w_position);
+        ret =  calculateDateWithWeekDayDifference(the_date, w_position);
     else
-        return QDate::fromString(the_date, "yyyy-MM-dd");
+        ret =  QDate::fromString(the_date, "yyyy-MM-dd");
+
+    // a valid date is mandatory otherwise the app react unpredictable
+    if (ret.isValid())
+        return ret;
+    else
+        return QDate::fromString("2000-01-01", "yyyy-MM-dd");
+
 }
 
 QTime WallClock::determineTime(QStringList sl)
 {
+    QTime ret;
     if (sl.size() > 1)
-        return QTime::fromString(sl.at(1), "HH:mm:ss");
+        ret = QTime::fromString(sl.at(1), "HH:mm:ss");
     else
-        return QTime::fromString("00:00:00", "HH:mm:ss");
+        ret = QTime::fromString("00:00:00", "HH:mm:ss");
+
+    // valid time mandatory otherwise the app react unpredictable
+    if (ret.isValid())
+        return ret;
+    else
+       return QTime::fromString("00:00:00", "HH:mm:ss");
+
 }
 
 QDate WallClock::calculateDateWithWeekDayDifference(QString the_date, int w_position)
@@ -216,33 +249,36 @@ QDateTime WallClock::addWallClockInterval(QDateTime calculated)
 
 /**
  * @brief WallClock::addWallClockIntervalOptimized skips to long distances
- * @param actual
+ * @param current
  * @param calculated
  * @return
  */
-QDateTime WallClock::addWallClockIntervalOptimized(QDateTime actual, QDateTime calculated)
+QDateTime WallClock::addWallClockIntervalOptimized(QDateTime current, QDateTime calculated)
 {
     if (period.years == 0)
-        calculated = calculated.addYears(actual.date().year()-calculated.date().year()); // should give 0 on iterations
+        calculated = calculated.addYears(current.date().year()-calculated.date().year()); // should give 0 on iterations
     else
         calculated = calculated.addYears(period.years);
+
     if (period.months == 0)
-        calculated = calculated.addMonths(actual.date().month()-calculated.date().month());
+        calculated = calculated.addMonths(current.date().month()-calculated.date().month());
     else
         calculated = calculated.addMonths(period.months);
 
     if (period.days == 0)
-        calculated = calculated.addDays(actual.date().day()-calculated.date().day());
+        calculated = calculated.addDays(current.date().day()-calculated.date().day());
     else
         calculated = calculated.addDays(period.days);
+
     if (period.hours == 0)
-        calculated = calculated.addSecs((actual.time().hour()-calculated.time().hour())*3600);
+        calculated = calculated.addSecs((current.time().hour()-calculated.time().hour())*3600);
     else
         calculated = calculated.addSecs(period.hours*3600);
     if (period.minutes == 0)
-        calculated = calculated.addSecs((actual.time().minute()-calculated.time().minute())*60);
+        calculated = calculated.addSecs((current.time().minute()-calculated.time().minute())*60);
     else
         calculated = calculated.addSecs(period.minutes*60);
+
     return calculated.addSecs(period.seconds);
 }
 

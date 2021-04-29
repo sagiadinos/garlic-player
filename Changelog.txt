@@ -1,12 +1,16 @@
 Changelog
 ===========
 
-0.4.0 -> 0.5.0
+0.4.0 -> 0.5.0 (in development see ci-buildsq)
 ---------------------
 1. New Features
 	* resumable downloads
+	* support for endsync in par (first|last)
+	* support for restart (always|never|whenNotActive)	
+	* support for media-element brush and attribute color
 
 2. Improvements
+	* additional SMIL-Indexes for testing
 	* bugfixes
 
 0.3.0 -> 0.4.0

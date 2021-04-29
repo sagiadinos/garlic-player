@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
+    Copyright (C) 2021 Nikolaos Sagiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -47,51 +47,60 @@ void TSeq::preloadParse(QDomElement element)
 
 void TSeq::next(BaseTimings *ended_element)
 {
-    childEnded(ended_element);
+    removeActivatedChild(ended_element);
 
-    if (canGetNextItem())
+    if (hasActivatedChild())
     {
-        active_element = getNextItem();
-        emitFoundElement();
+        startFirstActivatedChild();
+        return;
     }
-    else
-    {
-        handlePossibleRepeat();
-    }
-}
 
-bool TSeq::isChildPlayable(BaseTimings *element)
-{
-    childStarted(element);
-    return true;
+    finishIntrinsicDuration();
 }
 
 void TSeq::play()
 {
-    if (childs_list.size() > 0)
+    // check if restartable when there are unplayed childs
+    if (status == _playing || status == _waiting)
     {
-        if (MyShuffle == Q_NULLPTR)
+        if (isRestartable())
         {
-            childs_list_iterator  = childs_list.begin();
-            active_element        = getNextItem();
+            stopAllActivatedChilds();
         }
         else
         {
-            active_element = MyShuffle->getNextItem();
+            return;
         }
-        emitFoundElement();
     }
+
+    if (childs_list.size() == 0)
+        return;
+
+    collectActivatedChilds();
     status = _playing;
+    startFirstActivatedChild();
 }
 
 void TSeq::resume()
 {
-    status = _paused;
+    status = _playing;
 }
 
-void TSeq::stop()
+void TSeq::collectActivatedChilds()
 {
-    status = _stopped;
+    QList<QDomElement>            list;
+    QList<QDomElement>::iterator  iterator;
+
+    if (MyShuffle == Q_NULLPTR)
+        list = childs_list;
+    else
+        list = MyShuffle->getShuffeledList();
+
+    for (iterator = list.begin(); iterator < list.end(); iterator++)
+    {
+        active_element = *iterator;
+        activateFoundElement();
+    }
 }
 
 void TSeq::pause()
@@ -104,43 +113,12 @@ void TSeq::prepareDurationTimerBeforePlay()
     if (startDurTimer() || isEndTimerActive() || childs_list.size() > 0)
     {
         resetInternalRepeatCount();
-        emit startedContainer(parent_container, this);
+        emitStartElementSignal(this);
     }
     else
     {
         skipElement();
     }
-}
-
-bool TSeq::canGetNextItem()
-{
-    if (MyShuffle == Q_NULLPTR)
-    {
-        return (childs_list_iterator != childs_list.end());
-    }
-    else
-    {
-        return MyShuffle->canGetNextItem();
-    }
-}
-
-QDomElement TSeq::getNextItem()
-{
-    QDomElement ret;
-    if (MyShuffle == Q_NULLPTR)
-    {
-        if (childs_list_iterator == childs_list.end())
-        {
-            childs_list_iterator = childs_list.begin();
-        }
-        ret = *childs_list_iterator;
-        childs_list_iterator++;
-    }
-    else
-    {
-        ret = MyShuffle->getNextItem();
-    }
-    return ret;
 }
 
 void TSeq::traverseChilds()
@@ -153,34 +131,10 @@ void TSeq::traverseChilds()
         if (element.tagName() != "metadata" && element.tagName() != "") // e.g. comments
         {
             childs_list.append(element);
-            emit preloadElement(this, element);
+            emit preloadElementSignal(this, element);
         }
     }
     childs_list_iterator = childs_list.begin();
 }
 
-void TSeq::handlePossibleRepeat()
-{
-    // when a Dur time is active ignore repeat
-    // https://www.w3.org/TR/SMIL3/smil-timing.html#q75
-    if (isDurTimerActive())
-        return;
-
-    if (checkRepeatCountStatus())
-    {
-        play();
-    }
-    else
-    {
-        finishedActiveDuration();
-    }
-}
-
-void TSeq::finishedDuration()
-{
-    if (!isEndTimerActive())
-    {
-        finishedActiveDuration();
-    }
-}
 

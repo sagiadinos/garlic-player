@@ -57,15 +57,17 @@ QString TBase::parseID(QDomElement element)
 
 void TBase::setBaseAttributes()
 {
-    id      = parseID(root_element);
-    title   = getAttributeFromRootElement("title");
-    a_class = getAttributeFromRootElement("class");
-    lang    = getAttributeFromRootElement("xml:lang");
+    id       = parseID(root_element);
+    title    = getAttributeFromRootElement("title", "");
+    a_class  = getAttributeFromRootElement("class", "");
+    lang     = getAttributeFromRootElement("xml:lang", "");
+    longdesc = getAttributeFromRootElement("longdesc", "");
+    alt      = getAttributeFromRootElement("alt", "");
 }
 
-QString TBase::getAttributeFromRootElement(const QString attribute_name)
+QString TBase::getAttributeFromRootElement(const QString attribute_name, const QString default_value)
 {
-    QString ret = "";
+    QString ret = default_value;
     if (root_element.hasAttribute(attribute_name))
     {
         ret = root_element.attribute(attribute_name);

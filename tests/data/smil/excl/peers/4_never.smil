@@ -11,12 +11,12 @@
 		<!--
 	
 			sequence should be:
-			begin, 1, 6, 7, 8, 9, 10, 1, 6, 7, 8, 9, 10, end
+			begin, 1, | 6, 7, 8, 9, 10, | 1, | 6, 7, 8, 9, 10, | 1, 2, 3, 4, 5, end
 		
 		-->
 
 		<img xml:id="img begin" src="../../../images/begin.jpg" fit="meet" dur="1s" />
-		<excl xml:id="excl1_dur">
+		<excl xml:id="excl1">
 			<priorityClass xml:id="prio1_dur" peers="never">
 				<img xml:id="imgA0001" src="../../../images/0001.jpg" begin="0s" dur="1s" fit="meet" />
 				<img xml:id="imgA0002" src="../../../images/0002.jpg" begin="0s" dur="1s" fit="meet" />
@@ -51,7 +51,25 @@
 				<img xml:id="imgB0009" src="../../../images/0009.jpg" begin="3s" end="4s" fit="meet" />
 				<img xml:id="imgB0010" src="../../../images/0010.jpg" begin="4s" end="5s" fit="meet" />
 			</priorityClass>	
-		</excl>	
-		<img  xml:id="img_end" src="../../../images/end.jpg" fit="meet" dur="2s" />
+		</excl>
+		<excl xml:id="excl5_with_seq">
+			<priorityClass peers="never">
+				<seq xml:id="seq1" begin="0">
+					<img xml:id="imgC0001" src="../../../images/0001.jpg" dur="1s" fit="meet" />
+					<img xml:id="imgC0002" src="../../../images/0002.jpg" dur="1s" fit="meet" />
+					<img xml:id="imgC0003" src="../../../images/0003.jpg" dur="1s" fit="meet" />
+					<img xml:id="imgC0004" src="../../../images/0004.jpg" dur="1s" fit="meet" />
+					<img xml:id="imgC0005" src="../../../images/0005.jpg" dur="1s" fit="meet" />
+				</seq>
+				<seq xml:id="seq2" begin="0">
+					<img xml:id="imgC0006" src="../../../images/0006.jpg" dur="1s" fit="meet" />
+					<img xml:id="imgC0007" src="../../../images/0007.jpg" dur="1s" fit="meet" />
+					<img xml:id="imgC0008" src="../../../images/0008.jpg" dur="1s" fit="meet" />
+					<img xml:id="imgC0009" src="../../../images/0009.jpg" dur="1s" fit="meet" />
+					<img xml:id="imgC0010" src="../../../images/0010.jpg" dur="1s" fit="meet" />
+				</seq>
+			</priorityClass>
+		</excl>
+		<img  xml:id="img_end" src="../../../images/end.jpg" fit="meet" dur="1s" />
 	</body>
 </smil>

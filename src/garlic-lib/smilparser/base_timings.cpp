@@ -23,7 +23,6 @@
 
 BaseTimings::BaseTimings(QObject * parent) : TBase(parent)
 {
-    Q_UNUSED(parent);
 }
 
 BaseTimings::~BaseTimings()
@@ -50,8 +49,9 @@ BaseTimings::~BaseTimings()
     }
 }
 
-void BaseTimings::prepareTimingsBeforePlaying()
+void BaseTimings::preparePlaying()
 {
+    qDebug() << "prepare Play: " + getID() + " parent: " + getParentContainer()->getID();
     if (EndTimer != Q_NULLPTR)
     {
         EndTimer->start();
@@ -61,8 +61,9 @@ void BaseTimings::prepareTimingsBeforePlaying()
     status = _waiting;
 }
 
-void BaseTimings::prepareTimingsBeforePausing()
+void BaseTimings::preparePausing()
 {
+    qDebug() << "prepare Plause: " + getID() + " parent: " + getParentContainer()->getID();
     if (BeginTimer != Q_NULLPTR)
     {
         BeginTimer->pause();
@@ -78,8 +79,9 @@ void BaseTimings::prepareTimingsBeforePausing()
     return;
 }
 
-void BaseTimings::prepareTimingsBeforeStop()
+void BaseTimings::prepareStop()
 {
+    qDebug() << "prepare Stop: " + getID() + " parent: " + getParentContainer()->getID();
     if (BeginTimer != Q_NULLPTR)
     {
         BeginTimer->stop();
@@ -94,8 +96,9 @@ void BaseTimings::prepareTimingsBeforeStop()
     }
 }
 
-void BaseTimings::prepareTimingsBeforeResume()
+void BaseTimings::prepareResume()
 {
+    qDebug() << "prepare Resume: " + getID() + " parent: " + getParentContainer()->getID();
     if (EndTimer != Q_NULLPTR && !EndTimer->resume())
     {
         finishedActiveDuration();
@@ -117,10 +120,10 @@ void BaseTimings::prepareTimingsBeforeResume()
 void BaseTimings::finishedNotFound()
 {
     // to fix https://github.com/sagiadinos/garlic-player/issues/12
-    // when a lonely element (e.g video without dur) in a repeatcount=indefinite playlist not found,
+    // when a lonely element (e.g video without dur) in a repeatCount=indefinite playlist not found,
     // a finishedActiveDuration will cause segmentation fault (heap crash) after some some hundreds runs
     // so we need to wait some milliseconds when timer is set.
-    if (!isBeginTimerActive() && isEndTimerActive() && isDurTimerActive())
+    if (!BeginTimer->isActive() && isEndTimerActive() && isDurTimerActive())
     {
         skipElement();
     }
@@ -135,11 +138,16 @@ void BaseTimings::skipElement()
     if (InternalTimer == Q_NULLPTR)
     {
         InternalTimer = new QTimer(this);
-        connect(InternalTimer, SIGNAL(timeout()), this, SLOT(emitfinished()));
+        connect(InternalTimer, SIGNAL(timeout()), this, SLOT(emitfinishedActiveDuration()));
         InternalTimer->setSingleShot(true);
         InternalTimer->setTimerType(Qt::PreciseTimer);
     }
     InternalTimer->start(100);
+}
+
+void BaseTimings::stop()
+{
+    status = _stopped;
 }
 
 // ========================= protected methods ======================================================
@@ -153,16 +161,23 @@ void BaseTimings::parseTimingAttributes()
         EndTimer = new Timings::EnhancedTimer(this);
         connect(EndTimer, SIGNAL(timeout()), this, SLOT(finishedActiveDuration()));
         EndTimer->parse(root_element.attribute("end"));
+
+        // todo: Check for sync und event trigger
+
     }
     if (root_element.hasAttribute("dur"))
     {
         DurTimer = new Timings::SimpleTimer(this);
-        connect(DurTimer, SIGNAL(timeout()), this, SLOT(finishedDuration()));
+        connect(DurTimer, SIGNAL(timeout()), this, SLOT(finishedSimpleDuration()));
         DurTimer->parse(root_element.attribute("dur"));
     }
     if (root_element.hasAttribute("repeatCount"))
     {
         setRepeatCount(root_element.attribute("repeatCount"));
+    }
+    if (root_element.hasAttribute("restart"))
+    {
+        setRestart(root_element.attribute("restart"));
     }
 }
 
@@ -212,11 +227,6 @@ bool BaseTimings::checkRepeatCountStatus()
     return ret;
 }
 
-bool BaseTimings::isBeginTimerActive()
-{
-    return BeginTimer->isActive();
-}
-
 bool BaseTimings::isEndTimerActive()
 {
     if (EndTimer == Q_NULLPTR)
@@ -241,18 +251,64 @@ bool BaseTimings::isDurTimerActive()
     }
 }
 
-void BaseTimings::releasePlay()
+bool BaseTimings::isRestartable()
 {
-    prepareDurationTimerBeforePlay();
+    switch (restart)
+    {
+        case ALWAYS:
+            return true;
+        case WHEN_NOT_ACTIVE:
+            if (status == _pending)
+                return true;
+            else
+                return false;
+        case NEVER:
+        default:
+            return false;
+    }
+
 }
 
 void BaseTimings::finishedActiveDuration()
 {
-    if (BeginTimer != Q_NULLPTR && BeginTimer->remainingRepeats())
+    qDebug() << getID() <<  " end active duration";
+    emitfinishedActiveDuration();
+}
+
+/**
+ * The intrinsic Duration can be also the implicit duration
+ * of a seq, par, or excl time container
+ * https://www.w3.org/TR/SMIL3/smil-timing.html#q69
+ *
+ * If we need more differentation one day we should add an
+ * finishImplicitDuration method. At the moment only dur is supported
+ *
+ */
+void BaseTimings::finishIntrinsicDuration()
+{
+    if (isDurTimerActive()) // video/audio can can have a dur-value > media duration
+        return;
+
+    finishedSimpleDuration();
+}
+
+void BaseTimings::finishedSimpleDuration()
+{
+    qDebug() << getID() <<  " end simple duration";
+    is_repeatable = checkRepeatCountStatus();
+    if (is_repeatable)
     {
-        BeginTimer->start();
+        play();
+        return;
     }
-    emitfinished();
+
+    if (BeginTimer->isActive() || isEndTimerActive())
+    {
+        status = _pending;
+        return;
+    }
+
+    finishedActiveDuration();
 }
 
 // ========================= private methods ======================================================
@@ -269,20 +325,25 @@ void BaseTimings::setRepeatCount(QString rC)
 void BaseTimings::handleBeginTimer()
 {
     BeginTimer = new Timings::EnhancedTimer(this);
-    connect(BeginTimer, SIGNAL(timeout()), this, SLOT(releasePlay()));
+    connect(BeginTimer, SIGNAL(timeout()), this, SLOT(prepareDurationTimerBeforePlay()));
     QString begin_value = "";
-    if (root_element.hasAttribute("begin"))
-    {
-        begin_value = root_element.attribute("begin");
-    }
 
-    if (begin_value.isEmpty())
-    {
-        if (getParentTag() == SMIL_TAG::excl)
-            begin_value = "indefinite";
-        else
-            begin_value = "0s";
-    }
+    if (getParentTag() == SMIL_TAG::excl)
+        begin_value = getAttributeFromRootElement("begin", "indefinite");
+    else
+        begin_value = getAttributeFromRootElement("begin", "0s");
+
+   // Todo: Check for event oder sync trigger
 
     BeginTimer->parse(begin_value);
+}
+
+void BaseTimings::setRestart(QString attr_value)
+{
+    if (attr_value == "never")
+        restart = NEVER;
+    else if (attr_value == "always")
+        restart = ALWAYS;
+    else
+        restart = WHEN_NOT_ACTIVE;
 }

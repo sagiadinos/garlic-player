@@ -29,24 +29,17 @@ class TPar : public TContainer
         ~TPar();
         void                preloadParse(QDomElement element);
         void                next(BaseTimings *ended_element);
-        BaseTimings        *getChildElementFromList();
         void                pause();
-        void                stop();
         void                play();
         void                resume();
-        bool                isChildPlayable(BaseTimings *element);
-     public slots:
-        void                finishedDuration();
+        void                collectActivatedChilds();
     protected:
         void                traverseChilds();
-        void                handlePossibleRepeat();
     protected slots:
         void                prepareDurationTimerBeforePlay();
     private:
-        QSet<BaseTimings *> activatable_childs;
         QString             endsync            = "last";
         QDomNodeList        childs;
-        int                 count_childs       = 0;
 
 };
 

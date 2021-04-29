@@ -45,26 +45,11 @@ void TShuffle::parse(QDomElement metadata)
     return;
 }
 
-bool TShuffle::canGetNextItem()
+QList<QDomElement> TShuffle::getShuffeledList()
 {
-    if (internal_pick > 0)
-        return true;
-    else
-    {
-        internal_pick = pickNumber;
-        return false;
-    }
+    return shuffle_list;
 }
 
-QDomElement TShuffle::getNextItem()
-{
-    if (shuffle_iterator == shuffle_list.end())
-        shuffle_iterator = shuffle_list.begin();
-    QDomElement ret = *shuffle_iterator;
-    shuffle_iterator++;
-    internal_pick--;
-    return ret;
-}
 
 void TShuffle::randomizePlaylist()
 {

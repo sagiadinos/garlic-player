@@ -27,7 +27,7 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *par
 {
     QString tag_name = dom_element.tagName();
     QString type     = "";
-    if(tag_name == "img" || tag_name == "video" || tag_name == "audio" || tag_name == "text" || tag_name == "prefetch" ||
+    if(tag_name == "img" || tag_name == "video" || tag_name == "audio" || tag_name == "brush" || tag_name == "text" || tag_name == "prefetch" ||
             tag_name == "seq" || tag_name == "par" || tag_name == "body" || tag_name == "excl" )
     {
         type = tag_name;
@@ -53,6 +53,10 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *par
     if (type == "img")
     {
         return new TImage(parent_container, MyMediaManager, MyMainConfiguration, parent);
+    }
+    else if (type == "brush")
+    {
+        return new TBrush(parent_container, MyMediaManager, MyMainConfiguration, parent);
     }
     else if (type == "video")
     {

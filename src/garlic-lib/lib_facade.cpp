@@ -57,7 +57,7 @@ void LibFacade::init(MainConfiguration *config)
 
 void LibFacade::shutDownParsing()
 {
-    MyBodyParser.data()->endPlaying();
+    MyBodyParser.data()->endPlayingBody();
     MyIndexManager.data()->deactivateRefresh();
 }
 
@@ -93,7 +93,7 @@ void LibFacade::reloadWithNewIndex(QString index_path)
 
 void LibFacade::beginSmilPlaying()
 {
-    MyBodyParser.data()->beginPlaying();
+    MyBodyParser.data()->startPlayingBody();
 }
 
 QString LibFacade::requestLoaddableMediaPath(QString path)
@@ -123,7 +123,7 @@ void LibFacade::loadIndex()
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
     if (!MyBodyParser.isNull())
     {
-        MyBodyParser.data()->endPlaying();
+        MyBodyParser.data()->endPlayingBody();
         MyIndexManager.data()->deactivateRefresh();
     }
 
@@ -163,8 +163,9 @@ void LibFacade::processHeadParsing()
     MyHeadParser.reset(new HeadParser(MyConfiguration.data(), MyMediaManager.data(), MyInventoryTable.data(), this));
     connect(MyHeadParser.data(), SIGNAL(parsingCompleted()), this, SLOT(processBodyParsing()));
 
+    qDebug() <<  " begin head parsing" ;
     MyHeadParser.data()->parse(MyIndexManager->getHead(), MyTaskScheduler.data());
-    qDebug() <<  " end processHeadParsing" ;
+    qDebug() <<  " end head parsing" ;
 }
 
 void LibFacade::processBodyParsing()
@@ -175,10 +176,11 @@ void LibFacade::processBodyParsing()
     MyBodyParser.reset(new BodyParser(MyElementFactory.data(), MyMediaManager.data(), MyElementsContainer.data(), this));
 
     connect(MyBodyParser.data(), SIGNAL(preloadingBodyCompleted()), this, SLOT(preparedForPlaying()));
-    connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(emitStartShowMedia(BaseMedia *)));
-    connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(emitStopShowMedia(BaseMedia *)));
+    connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia*)), this, SLOT(emitStartShowMedia(BaseMedia*)));
+    connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia*)), this, SLOT(emitStopShowMedia(BaseMedia*)));
+    qDebug() <<  " begin preloading" ;
     MyBodyParser->beginPreloading(MyIndexManager->getBody());
-    qDebug() <<  " end processBodyParsing" ;
+    qDebug() <<  " end preloading" ;
 }
 
 void LibFacade::preparedForPlaying()
@@ -186,7 +188,6 @@ void LibFacade::preparedForPlaying()
     MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
 
     emit readyForPlaying();
-    qDebug() <<  " emit readyForPlaying" ;
 }
 
 void LibFacade::timerEvent(QTimerEvent *event)

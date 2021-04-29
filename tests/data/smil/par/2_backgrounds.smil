@@ -26,7 +26,7 @@
 			one images tile in lower right
 	-->
 
-		<img region="screen1" xml:id="img_begin" src="../../images/begin.jpg" dur="2s" fit="meetbest" />
-		<img region="screen4" xml:id="img_end" src="../../images/end.jpg" dur="2s" fit="meetbest" />
+		<img region="screen1" xml:id="img_begin" src="../../images/begin.jpg" dur="2s" fit="meet" />
+		<img region="screen4" xml:id="img_end" src="../../images/end.jpg" dur="2s" fit="meet" />
 	</body>
 </smil>
