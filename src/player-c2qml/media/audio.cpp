@@ -26,7 +26,6 @@ Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : 
 
 Audio::~Audio()
 {
-    audio_item.reset();
 }
 
 void Audio::init(BaseMedia *media)
@@ -55,6 +54,6 @@ void Audio::setParentItem(QQuickItem *parent)
 
 void Audio::finished()
 {
-    SmilMedia->finishIntrinsicMediaDuration();
+    SmilMedia->finishIntrinsicDuration();
 }
 

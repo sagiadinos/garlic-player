@@ -4,6 +4,8 @@ MediaFactory::MediaFactory(QQmlComponent *mc, QString r_id, Launcher *lc, QObjec
 {
     MyImage.reset(new Image(mc, r_id, lc, this));
     QQmlEngine::setObjectOwnership(MyImage.data(), QQmlEngine::CppOwnership);
+    MyBrush.reset(new Brush(mc, r_id, lc, this));
+    QQmlEngine::setObjectOwnership(MyBrush.data(), QQmlEngine::CppOwnership);
     MyVideo.reset(new Video(mc, r_id, lc, this));
     QQmlEngine::setObjectOwnership(MyVideo.data(), QQmlEngine::CppOwnership);
     MyAudio.reset(new Audio(mc, r_id, lc, this));
@@ -21,6 +23,11 @@ PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
     {
         MyImage.data()->init(media);
         return MyImage.data();
+    }
+    else if (type == "TBrush")
+    {
+        MyBrush.data()->init(media);
+        return MyBrush.data();
     }
     else if (type == "TVideo")
     {

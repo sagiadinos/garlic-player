@@ -77,6 +77,7 @@ win32 {
 include(../player-common/common.pri)
 
 SOURCES += \
+    media/brush.cpp \
     media/image.cpp \
     media/player_base_media.cpp \
     media/ref_command.cpp \
@@ -90,6 +91,7 @@ SOURCES += \
     regions_list.cpp
 
 HEADERS  += \
+    media/brush.h \
     media/image.h \
     media/player_base_media.h \
     media/ref_command.h \
