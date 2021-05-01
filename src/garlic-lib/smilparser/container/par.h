@@ -30,7 +30,10 @@ class TPar : public TContainer
         void                preloadParse(QDomElement element);
         void                next(BaseTimings *ended_element);
         void                pause();
-        void                play();
+        void                start();
+        void                stop();
+        void                interruptByEndSync();
+
         void                resume();
         void                collectActivatedChilds();
     protected:
@@ -39,6 +42,7 @@ class TPar : public TContainer
         void                prepareDurationTimerBeforePlay();
     private:
         QString             endsync            = "last";
+        bool                is_endsync   = false;
         QDomNodeList        childs;
 
 };

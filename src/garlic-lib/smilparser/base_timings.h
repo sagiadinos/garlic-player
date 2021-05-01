@@ -41,28 +41,34 @@ class BaseTimings : public TBase
         {
             ALWAYS             = 0,
             NEVER              = 1,
-            WHEN_NOT_ACTIVE    = 2
+            WHEN_NOT_ACTIVE    = 2,
+            DEFAULT            = 3
         };
         const     int        _stopped  = 0;
         const     int        _waiting  = 1; // wait for first start
         const     int        _playing  = 2;
         const     int        _paused   = 3;
-        // means: simple duration ended, but begin or end timer are active or . Can be restarted by begin-valuelist
+        // means: simple duration ended, but begin or end timer are active. Can be restarted by begin-valuelist
         const     int        _pending  = 4;
+        const     int        _ended    = 5;
 
         explicit               BaseTimings(QObject * parent = Q_NULLPTR);
                               ~BaseTimings();
-                void           preparePlaying();      // what to do when parent sends an order to begin executions
-                void           preparePausing();
-                void           prepareStop();      // what to do when parent sends an order to begin executions
-                void           prepareResume();      // what to do when parent sends an order to begin executions
+
+                void           startTimers();
+                void           pauseTimers();
+                void           stopTimers();
+                void           resumeTimers();
+                bool hasActiveTimers();
+
                 int            getStatus(){return status;}
                 void           finishedNotFound();
                 void           skipElement();
                 BaseTimings   *getParentContainer(){return parent_container;}
 
-                void           stop();
-        virtual void           play()        = 0;
+        virtual void           start()       = 0;
+        virtual void           stop()        = 0;
+        virtual void           interruptByRestart()   = 0;
         virtual void           pause()       = 0;
         virtual void           resume()      = 0;
         virtual QString        getBaseType() = 0;
@@ -83,18 +89,18 @@ class BaseTimings : public TBase
                 void           finishedSimpleDuration();
     protected:
                 BaseTimings   *parent_container;
-                QTimer                 *InternalTimer = Q_NULLPTR;
-                int            restart = ALWAYS;// WHEN_NOT_ACTIVE;
-                QString        fill    = "remove";
+                QTimer        *InternalTimer = Q_NULLPTR;
+                int            restart = ALWAYS;
+                QString        fill    = "remove"; // dummy! functionality not implemented
                 int            status         = 0;
-                bool           is_repeatable  = false;
                 int            repeatCount    = 0;
                 bool           indefinite     = false;
                 int            internal_count = 1;
                 void           parseTimingAttributes();
                 void           resetInternalRepeatCount();
                 bool           startDurTimer();
-                bool           checkRepeatCountStatus();
+                bool           handleRepeatCountStatus();
+                bool           isBeginTimerActive();
                 bool           isEndTimerActive();
                 bool           isDurTimerActive();
                 bool           isRestartable();

@@ -18,6 +18,13 @@
 
 #include "excl.h"
 
+/**
+ * Todo: Check how it is possible to inherit this Class from TPar
+ * as there are some dublicate code
+ *
+ * @param pc
+ * @param parent
+ */
 TExcl::TExcl(TContainer *pc, QObject *parent) : TContainer(parent)
 {
     parent_container       = pc;
@@ -78,7 +85,17 @@ void TExcl::prepareDurationTimerBeforePlay()
  */
 void TExcl::next(BaseTimings *ended_element)
 {
+    if (status == _stopped)
+        return;
+
     removeActivatedChild(ended_element);
+
+    // Active DurTimer or EndTimer results in ignore endsync
+    if ((endsync == "first" || endsync == ended_element->getID()) && !isDurTimerActive() && !isEndTimerActive())
+    {
+        interruptByEndSync();
+        return;
+    }
 
     // if elements are in queues starts resume or starts them
     QHash<int, TPriorityClass *>::iterator      ar_priorities_iterator;
@@ -90,7 +107,7 @@ void TExcl::next(BaseTimings *ended_element)
         {
             CurrentPriority = MyPriorityClass; // important to change the now active Playlist
             current_activated_element = MyPriorityClass->getFromQueue();
-            current_activated_element->prepareResume();
+            current_activated_element->resumeTimers();
             // to make sure that this child is not removed previous
 
             // Sometimes a Null Pointer will got from queue. Currently do not know exactly why
@@ -104,38 +121,76 @@ void TExcl::next(BaseTimings *ended_element)
     // remove when it is sure, that there nothing to resume
     removeActivatedChild(ended_element);
 
-    // Active DurTimer or EndTimer results in ignore endsync
-    if (endsync == "first" && !isDurTimerActive() && !isEndTimerActive())
-    {
-        stopAllActivatedChilds();
-        finishedSimpleDuration();
-        return;
-    }
-
     if (ended_element == getCurrentActivatedElement())
         setCurrentActivatedElement(Q_NULLPTR);
 
 
+    // do nothing when childs are active
     if (hasActivatedChild())
         return;
 
-    finishIntrinsicDuration();
+    // not stopped by parent
+    if (status == _playing)
+    {
+        finishIntrinsicDuration(); // check for dur and then for repeat play
+        return;
+    }
 }
 
-void TExcl::play()
+void TExcl::start()
 {
-    // iterate all childs and activate them
-    CurrentPriority = NULL;
-    NewPriority     = NULL;
+    if (childs_list.size() == 0)
+        return;
+
+    // check if this is a restart attempt and check restart attribute
+    if (hasActivatedChild())
+    {
+        if (isRestartable())
+        {
+            interruptByRestart();
+        }
+        else
+        {
+            return;
+        }
+    }
 
     collectActivatedChilds();
-
     status          = _playing;
-    startAllActivatedChilds();
+    startTimersOfAllActivatedChilds();
+}
+
+void TExcl::stop()
+{
+    status = _stopped;
+    stopTimers();               // because there can be a dur or begin timer active
+    emitStopToAllActivatedChilds();
+    removeAllActivatedChilds();
+    // check for repeat
+}
+
+void TExcl::interruptByEndSync()
+{
+    stop();
+    if (handleRepeatCountStatus())
+        start();
+}
+
+void TExcl::resume()
+{
+    status = _playing;
+}
+
+void TExcl::pause()
+{
+    status = _paused;
 }
 
 void TExcl::collectActivatedChilds()
 {
+    CurrentPriority = NULL;
+    NewPriority     = NULL;
+
     if (priorities_list.size() > 0)
     {
         QList<QDomElement> childs;
@@ -213,18 +268,6 @@ bool TExcl::determineContinue(BaseTimings *new_element)
     return ret;
 }
 
-void TExcl::resume()
-{
-    status = _playing;
-}
-
-
-
-void TExcl::pause()
-{
-    status = _paused;
-}
-
 /**
  *   Check for priorityClass childs and create the priority objects
  *
@@ -295,7 +338,7 @@ void TExcl::priorityNever(BaseTimings *new_element)
 {
     // stop new element and remove it
     // emit stop is not necessary cause no start was emitted
-    new_element->prepareStop();
+    new_element->stopTimers();
     removeActivatedChild(new_element);
 }
 

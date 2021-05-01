@@ -34,7 +34,9 @@ class TSeq : public TContainer
         void         preloadParse(QDomElement element);
         void         next(BaseTimings *ended_element);
         void         pause();
-        void         play();
+        void         start();
+        void         stop();
+        void         interruptByEndSync();
         void         resume();
         void         collectActivatedChilds();
     public slots:

@@ -48,6 +48,14 @@ BaseTimings *TContainer::getCurrentActivatedElement()
     return current_activated_element;
 }
 
+void TContainer::interruptByRestart()
+{
+    stopTimersOfAllActivatedChilds();
+    emitStopToAllActivatedChilds();
+    removeAllActivatedChilds();
+}
+
+
 void TContainer::removeActivatedChild(BaseTimings *element)
 {
     qDebug() << "remove: " + element->getID() + " parent: " + element->getParentContainer()->getID();
@@ -55,33 +63,50 @@ void TContainer::removeActivatedChild(BaseTimings *element)
         activated_childs.removeOne(element);
 }
 
-void TContainer::startAllActivatedChilds()
+void TContainer::removeAllActivatedChilds()
+{
+    activated_childs.clear();
+}
+
+void TContainer::startTimersOfAllActivatedChilds()
 {
     if (activated_childs.size() == 0)
         return;
 
     for ( BaseTimings *bt : qAsConst(activated_childs))
     {
-        bt->preparePlaying();
+        bt->startTimers();
     }
 }
 
-void TContainer::startFirstActivatedChild()
+void TContainer::startTimersOfFirstActivatedChild()
 {
     if (activated_childs.size() == 0)
         return;
 
     QList<BaseTimings *>::iterator i = activated_childs.begin();
     BaseTimings *bt = *i;
-    bt->preparePlaying();
+    bt->startTimers();
 }
 
-void TContainer::stopAllActivatedChilds()
+void TContainer::stopTimersOfAllActivatedChilds()
 {
     if (activated_childs.size() == 0)
         return;
 
-    for ( BaseTimings *bt : qAsConst(activated_childs))
+    for (BaseTimings *bt : qAsConst(activated_childs))
+    {
+        bt->stopTimers();
+    }
+}
+
+
+void TContainer::emitStopToAllActivatedChilds()
+{
+    if (activated_childs.size() == 0)
+        return;
+
+    for (BaseTimings *bt : qAsConst(activated_childs))
     {
         if (bt->getStatus() == _playing || bt->getStatus() == _waiting)
         {
@@ -90,12 +115,12 @@ void TContainer::stopAllActivatedChilds()
     }
 }
 
-void TContainer::pauseAllActivatedChilds()
+void TContainer::emitPauseToAllActivatedChilds()
 {
     if (activated_childs.size() == 0)
         return;
 
-    for ( BaseTimings *bt : qAsConst(activated_childs))
+    for (BaseTimings *bt : qAsConst(activated_childs))
     {
         if (bt->getStatus() == _playing || bt->getStatus() == _waiting)
         {
@@ -104,12 +129,12 @@ void TContainer::pauseAllActivatedChilds()
     }
 }
 
-void TContainer::resumeAllActivatedChilds()
+void TContainer::emitResumeToAllActivatedChilds()
 {
     if (activated_childs.size() == 0)
         return;
 
-    for ( BaseTimings *bt : qAsConst(activated_childs))
+    for (BaseTimings *bt : qAsConst(activated_childs))
     {
         if (bt->getStatus() == _paused)
         {

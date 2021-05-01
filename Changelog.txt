@@ -5,8 +5,8 @@ Changelog
 ---------------------
 1. New Features
 	* resumable downloads
-	* support for endsync in par (first|last)
-	* support for restart (always|never|whenNotActive)	
+	* support endsync for excl and par (first|last|id-value)
+	* support restart in seq, par and excl (always|never|whenNotActive|defaukt)	
 	* support for media-element brush and attribute color
 
 2. Improvements

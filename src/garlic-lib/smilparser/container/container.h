@@ -23,9 +23,11 @@
 #include "base_timings.h"
 
 /**
- * @brief The TBasePlaylist is an abstract class for Smil Playlists which is inherited by seq, par and excl.
- *        This class has functions for handling and media content. In case of media or container it returns the type and
- *        the actual DomElement, so that the caller can handle it
+ * @brief The TComntainer is an abstract class for Playlists Container which is inherited by seq, par and excl.
+ *
+ * It holds two lists. Alle children as DomElements and one ActivatedChilds with TBaseTimings
+ *
+ * ActivatedChilds are the Childs which can be played/displayed
  *
  */
 class TContainer : public BaseTimings
@@ -36,21 +38,27 @@ class TContainer : public BaseTimings
         virtual void         next(BaseTimings *ended_element) = 0;
 
                 QString      getBaseType() {return "container";}
-                // next two used only in excl => move later
+                // next two used only in excl => move later when sure
                 void         setCurrentActivatedElement(BaseTimings *element);
                 BaseTimings *getCurrentActivatedElement();
 
                 BaseTimings *findDomChild(QDomElement dom_element);
                 void         insertDomChild(BaseTimings *element);
+        virtual void         interruptByEndSync()   = 0;
+                void         interruptByRestart();
 
-                void         removeActivatedChild(BaseTimings *element);
 
         virtual void         collectActivatedChilds() = 0;
-                void         startAllActivatedChilds();
-                void         startFirstActivatedChild();
-                void         stopAllActivatedChilds();
-                void         pauseAllActivatedChilds();
-                void         resumeAllActivatedChilds();
+                void         removeActivatedChild(BaseTimings *element);
+                void         removeAllActivatedChilds();
+
+                void         startTimersOfAllActivatedChilds();
+                void         startTimersOfFirstActivatedChild();
+                void         stopTimersOfAllActivatedChilds();
+
+                void         emitStopToAllActivatedChilds();
+                void         emitPauseToAllActivatedChilds();
+                void         emitResumeToAllActivatedChilds();
                 bool         hasActivatedChild();
 
                 void         emitPreloadElementSignal(TContainer* p, QDomElement e){emit preloadElementSignal(p, e);}
@@ -62,7 +70,6 @@ class TContainer : public BaseTimings
     protected:
                 QList<BaseTimings *>          activated_childs;
                 bool                          is_child_active    = false;
-
                 // used only in excl => move later
                 BaseTimings                  *current_activated_element = Q_NULLPTR;
 

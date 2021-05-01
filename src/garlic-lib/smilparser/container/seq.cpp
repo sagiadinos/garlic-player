@@ -47,25 +47,33 @@ void TSeq::preloadParse(QDomElement element)
 
 void TSeq::next(BaseTimings *ended_element)
 {
+    if (status == _stopped)
+        return;
+
     removeActivatedChild(ended_element);
 
     if (hasActivatedChild())
     {
-        startFirstActivatedChild();
+        startTimersOfFirstActivatedChild();
         return;
     }
 
-    finishIntrinsicDuration();
+    // not stopped by parent
+    if (status == _playing)
+        finishIntrinsicDuration(); // check for dur and the for repeat play
 }
 
-void TSeq::play()
+void TSeq::start()
 {
-    // check if restartable when there are unplayed childs
-    if (status == _playing || status == _waiting)
+    if (childs_list.size() == 0)
+        return;
+
+    // check if this is a restart attempt and check restart attribute
+    if (hasActivatedChild())
     {
         if (isRestartable())
         {
-            stopAllActivatedChilds();
+            interruptByRestart();
         }
         else
         {
@@ -73,12 +81,28 @@ void TSeq::play()
         }
     }
 
-    if (childs_list.size() == 0)
-        return;
-
     collectActivatedChilds();
     status = _playing;
-    startFirstActivatedChild();
+    startTimersOfFirstActivatedChild();
+}
+
+void TSeq::stop()
+{
+    status = _stopped;
+    stopTimers();               // because there can be a dur or begin timer active
+    stopTimersOfAllActivatedChilds();
+    emitStopToAllActivatedChilds();
+    removeAllActivatedChilds();
+}
+
+void TSeq::interruptByEndSync()
+{
+    stop();
+}
+
+void TSeq::pause()
+{
+    status = _paused;
 }
 
 void TSeq::resume()
@@ -101,11 +125,6 @@ void TSeq::collectActivatedChilds()
         active_element = *iterator;
         activateFoundElement();
     }
-}
-
-void TSeq::pause()
-{
-    status = _paused;
 }
 
 void TSeq::prepareDurationTimerBeforePlay()

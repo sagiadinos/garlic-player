@@ -28,12 +28,14 @@ class TBody : public TContainer
         explicit TBody(QObject *parent = Q_NULLPTR);
         ~TBody();
         void      preloadParse(QDomElement element);
-        void      preparePlaying();
+        void      startTimers();
         void      endPlay(){}
         void      next(BaseTimings *ended_element);
         void      resume();
-        void      play();
+        void      start();
         void      pause();
+        void      stop();
+        void      interruptByEndSync();
         void      collectActivatedChilds();
 
        // bool      isChildPlayable(BaseTimings *element);

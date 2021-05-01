@@ -64,45 +64,78 @@ void TPar::prepareDurationTimerBeforePlay()
  */
 void TPar::next(BaseTimings *ended_element)
 {
+    if (status == _stopped)
+        return;
+
     removeActivatedChild(ended_element);
 
     // Active DurTimer or EndTimer results in ignore endsync
-    if (endsync == "first" && !isDurTimerActive() && !isEndTimerActive())
+    if ((endsync == "first" || endsync == ended_element->getID()) && !isDurTimerActive() && !isEndTimerActive())
     {
-        stopAllActivatedChilds();
-        finishedSimpleDuration();
+        interruptByEndSync();
         return;
     }
 
+    // do nothing when childs are active endsyc
     if (hasActivatedChild())
         return;
 
-    finishIntrinsicDuration();
+    // not stopped by parent
+    if (status == _playing)
+    {
+        finishIntrinsicDuration(); // check for dur and then for repeat play
+        return;
+    }
+
 }
 
-void TPar::play()
+void TPar::start()
 {
-//    if (is_repeatable && hasActivatedChild())
-//         stopAllActivatedChilds();
-
-    if (isRestartable())
-    {
-        if (hasActivatedChild())
-            stopAllActivatedChilds();
-    }
-    else
-    {
+    if (childs_list.size() == 0)
         return;
+
+    // check if this is a restart attempt and check restart attribute
+    if (hasActivatedChild())
+    {
+        if (isRestartable())
+        {
+            interruptByRestart();
+        }
+        else
+        {
+            return;
+        }
     }
 
     collectActivatedChilds();
     status       = _playing;
-    startAllActivatedChilds();
+    startTimersOfAllActivatedChilds();
+}
+
+void TPar::stop()
+{
+    status = _stopped;
+    stopTimers();               // because there can be a dur or begin timer active
+    stopTimersOfAllActivatedChilds();
+    emitStopToAllActivatedChilds();
+    removeAllActivatedChilds();
+}
+
+void TPar::interruptByEndSync()
+{
+    stop();
+    if (handleRepeatCountStatus())
+        start();
 }
 
 void TPar::resume()
 {
     status = _playing;
+}
+
+void TPar::pause()
+{
+    status = _paused;
 }
 
 void TPar::collectActivatedChilds()
@@ -112,11 +145,6 @@ void TPar::collectActivatedChilds()
         active_element = *childs_list_iterator;
         activateFoundElement();
     }
-}
-
-void TPar::pause()
-{
-    status = _paused;
 }
 
 void TPar::traverseChilds()

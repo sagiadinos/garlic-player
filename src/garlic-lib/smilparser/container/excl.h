@@ -32,7 +32,9 @@ class TExcl : public TContainer
         void    next(BaseTimings *ended_element);
         bool    determineContinue(BaseTimings *new_element);
         void    pause();
-        void    play();
+        void    start();
+        void    stop(); // called from regulary ended active duration
+        void    interruptByEndSync(); // called only when interrupted from endsync
         void    resume();
         void    collectActivatedChilds();
 

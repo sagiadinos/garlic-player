@@ -99,7 +99,7 @@ void BodyParser::initMedia(BaseMedia *MyMedia)
  */
 void BodyParser::startPlayingBody()
 {
-    MyBody.data()->preparePlaying();
+    MyBody.data()->startTimers();
 }
 
 /**
@@ -113,7 +113,7 @@ void BodyParser::endPlayingBody()
     while (MyCurrentPlayingMedia->count() > 0) // stop all currently playing media
     {
         MyMedia = MyCurrentPlayingMedia->getFirstPlayingObject();
-        MyMedia->prepareStop();
+        MyMedia->stopTimers();
         emitStopShowMedia(MyMedia);
     }
     return;
@@ -130,24 +130,18 @@ void BodyParser::endPlayingBody()
 void BodyParser::startElement(BaseTimings *element)
 {
     TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
-    qDebug() << "Start: " + element->getID();
-
-    if (ParentContainer != Q_NULLPTR)
+    if (ParentContainer != Q_NULLPTR && ParentContainer->objectName() == "TExcl")
     {
-        if (ParentContainer->objectName() == "TExcl")
-        {
-            TExcl   *MyExclParent   = qobject_cast<TExcl *> (ParentContainer);
-            // determine if stop or pause previous or next child
-            if (!MyExclParent->determineContinue(element))
-                return;
-        }
+        TExcl   *MyExclParent   = qobject_cast<TExcl *> (ParentContainer);
+        // determine if stop or pause previous or next child
+        if (!MyExclParent->determineContinue(element))
+            return;
     }
-    element->play();
+
+    qDebug() << "Start: " + element->getID();
+    element->start();
     if (element->getBaseType() == "media")
         emitStartShowMedia(qobject_cast<BaseMedia *> (element));
-
-
-   return;
 }
 
 /**
@@ -159,20 +153,13 @@ void BodyParser::startElement(BaseTimings *element)
 void BodyParser::stopElement(BaseTimings *element)
 {
     TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
-
     qDebug() << "Stop: " + element->getID();
+    element->stop();
+    if (element->getBaseType() == "media")
+        emitStopShowMedia(qobject_cast<BaseMedia *> (element));
 
     if (ParentContainer == Q_NULLPTR) // that means TBody as parent
         return;
-
-    element->prepareStop();
-    element->stop();
-    if (element->getBaseType() == "media")
-    {
-        emitStopShowMedia(qobject_cast<BaseMedia *> (element));
-    }
-    else
-        (qobject_cast<TContainer *> (element))->stopAllActivatedChilds();
 
     ParentContainer->next(element);
 }
@@ -181,13 +168,12 @@ void BodyParser::pauseElement(BaseTimings *element)
 {
     qDebug() <<  "Pause " + element->getID();;
 
-    element->preparePausing();
+    element->pauseTimers();
     element->pause();
     if (element->getBaseType() == "media")
         emitStopShowMedia(qobject_cast<BaseMedia *> (element));
     else
-        (qobject_cast<TContainer *> (element))->pauseAllActivatedChilds();
-    return;
+        (qobject_cast<TContainer *> (element))->emitPauseToAllActivatedChilds();
 }
 
 void BodyParser::resumeQueuedElement(BaseTimings *element)
@@ -196,7 +182,7 @@ void BodyParser::resumeQueuedElement(BaseTimings *element)
         return;
 
     qDebug() << "Resume: " + element->getID();
-    element->prepareResume();
+    element->resumeTimers();
     element->resume();
     if (element->getBaseType() == "media")
         emitStartShowMedia(qobject_cast<BaseMedia *> (element));
@@ -204,11 +190,10 @@ void BodyParser::resumeQueuedElement(BaseTimings *element)
     {
         TContainer *ParentContainer = qobject_cast<TContainer *> (element);
         if (ParentContainer->objectName() != "TSeq")
-            ParentContainer->resumeAllActivatedChilds();
+            ParentContainer->emitResumeToAllActivatedChilds();
         else
-            ParentContainer->startFirstActivatedChild();
+            ParentContainer->startTimersOfFirstActivatedChild();
     }
-    return;
 }
 
 void BodyParser::connectSlots(BaseTimings *element)
@@ -219,9 +204,7 @@ void BodyParser::connectSlots(BaseTimings *element)
     connect(element, SIGNAL(pauseElementSignal(BaseTimings*)), this, SLOT(pauseElement(BaseTimings*)));
 
     if (element->getBaseType() == "container")
-    {
         connect(element, SIGNAL(preloadElementSignal(TContainer*,QDomElement)), this, SLOT(preloadElement(TContainer*,QDomElement)));
-    }
 }
 
 void BodyParser::emitStartShowMedia(BaseMedia *media)
@@ -230,12 +213,10 @@ void BodyParser::emitStartShowMedia(BaseMedia *media)
         return;
     MyCurrentPlayingMedia->insert(media);
     emit startShowMedia(media);
-    return;
 }
 
 void BodyParser::emitStopShowMedia(BaseMedia *media)
 {
     MyCurrentPlayingMedia->remove(media);
     emit stopShowMedia(media);
-    return;
 }

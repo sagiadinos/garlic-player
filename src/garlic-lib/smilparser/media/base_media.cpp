@@ -64,9 +64,16 @@ QString BaseMedia::getLoadablePath()
     }
 }
 
-void BaseMedia::play()
+void BaseMedia::start()
 {
     status = _playing;
+}
+
+void BaseMedia::stop()
+{
+    stopTimers();        // because there can be a dur or begin timer active
+    status = _stopped;
+    // check for repeat
 }
 
 void BaseMedia::pause()
@@ -76,7 +83,13 @@ void BaseMedia::pause()
 
 void BaseMedia::resume()
 {
-    play();
+    start();
+}
+
+void BaseMedia::interruptByRestart()
+{
+    status = _stopped;
+    // check for repeat
 }
 
 void BaseMedia::registerInMediaManager()

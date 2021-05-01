@@ -49,19 +49,20 @@ BaseTimings::~BaseTimings()
     }
 }
 
-void BaseTimings::preparePlaying()
+void BaseTimings::startTimers()
 {
     qDebug() << "prepare Play: " + getID() + " parent: " + getParentContainer()->getID();
     if (EndTimer != Q_NULLPTR)
     {
         EndTimer->start();
     }
-
-    BeginTimer->start();
+    // must before start otherwise when begin = 0s
+    // elements starts play method immediately get the played status and will be overwriten here
     status = _waiting;
+    BeginTimer->start();
 }
 
-void BaseTimings::preparePausing()
+void BaseTimings::pauseTimers()
 {
     qDebug() << "prepare Plause: " + getID() + " parent: " + getParentContainer()->getID();
     if (BeginTimer != Q_NULLPTR)
@@ -79,7 +80,7 @@ void BaseTimings::preparePausing()
     return;
 }
 
-void BaseTimings::prepareStop()
+void BaseTimings::stopTimers()
 {
     qDebug() << "prepare Stop: " + getID() + " parent: " + getParentContainer()->getID();
     if (BeginTimer != Q_NULLPTR)
@@ -96,7 +97,7 @@ void BaseTimings::prepareStop()
     }
 }
 
-void BaseTimings::prepareResume()
+void BaseTimings::resumeTimers()
 {
     qDebug() << "prepare Resume: " + getID() + " parent: " + getParentContainer()->getID();
     if (EndTimer != Q_NULLPTR && !EndTimer->resume())
@@ -115,6 +116,18 @@ void BaseTimings::prepareResume()
     {
         DurTimer->resume();
     }
+}
+
+bool BaseTimings::hasActiveTimers()
+{
+    if (isEndTimerActive())
+        return true;
+    if (isDurTimerActive())
+        return true;
+    if (isBeginTimerActive())
+        return true;
+
+    return false;
 }
 
 void BaseTimings::finishedNotFound()
@@ -143,11 +156,6 @@ void BaseTimings::skipElement()
         InternalTimer->setTimerType(Qt::PreciseTimer);
     }
     InternalTimer->start(100);
-}
-
-void BaseTimings::stop()
-{
-    status = _stopped;
 }
 
 // ========================= protected methods ======================================================
@@ -212,7 +220,7 @@ bool BaseTimings::startDurTimer()
  * @brief  TBaseTiming::checkRepeatCountStatus returns true, when playlist can be repeated
  * @return bool
  */
-bool BaseTimings::checkRepeatCountStatus()
+bool BaseTimings::handleRepeatCountStatus()
 {
     bool ret = false;
     if (indefinite)
@@ -225,6 +233,18 @@ bool BaseTimings::checkRepeatCountStatus()
         ret = true;
     }
     return ret;
+}
+
+bool BaseTimings::isBeginTimerActive()
+{
+    if (BeginTimer == Q_NULLPTR)
+    {
+        return false;
+    }
+    else
+    {
+        return BeginTimer->isActive();
+    }
 }
 
 bool BaseTimings::isEndTimerActive()
@@ -255,16 +275,17 @@ bool BaseTimings::isRestartable()
 {
     switch (restart)
     {
-        case ALWAYS:
-            return true;
         case WHEN_NOT_ACTIVE:
             if (status == _pending)
                 return true;
             else
                 return false;
         case NEVER:
+             stopTimers(); // important to prevent any kind of restart in this activity cycle
+             return false;
+        case ALWAYS:
         default:
-            return false;
+            return true;
     }
 
 }
@@ -295,10 +316,9 @@ void BaseTimings::finishIntrinsicDuration()
 void BaseTimings::finishedSimpleDuration()
 {
     qDebug() << getID() <<  " end simple duration";
-    is_repeatable = checkRepeatCountStatus();
-    if (is_repeatable)
+    if (handleRepeatCountStatus())
     {
-        play();
+        start();
         return;
     }
 

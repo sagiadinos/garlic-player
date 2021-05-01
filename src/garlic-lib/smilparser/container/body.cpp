@@ -48,7 +48,7 @@ void TBody::preloadParse(QDomElement element)
     emit finishPreloadSignal   ();
 }
 
-void TBody::preparePlaying()
+void TBody::startTimers()
 {
    prepareDurationTimerBeforePlay(); // currently there is no timing in body tag
 }
@@ -73,7 +73,7 @@ void TBody::next(BaseTimings *ended_element)
 
     if (hasActivatedChild())
     {
-        startFirstActivatedChild();
+        startTimersOfFirstActivatedChild();
         return;
     }
 
@@ -81,23 +81,31 @@ void TBody::next(BaseTimings *ended_element)
 }
 
 
-void TBody::play()
+void TBody::start()
 {
     collectActivatedChilds();
     status = _playing;
-    startFirstActivatedChild();
+    startTimersOfFirstActivatedChild();
 }
-
 
 void TBody::resume()
 {
     status = _playing;
 }
 
-
 void TBody::pause()
 {
     status = _paused;
+}
+
+void TBody::stop()
+{
+    status = _stopped;
+}
+
+void TBody::interruptByEndSync()
+{
+    status = _stopped;
 }
 
 void TBody::collectActivatedChilds()
@@ -108,7 +116,6 @@ void TBody::collectActivatedChilds()
         activateFoundElement();
     }
 }
-
 
 void TBody::traverseChilds()
 {

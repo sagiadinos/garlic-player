@@ -35,8 +35,10 @@ class BaseMedia : public BaseTimings
         void                 preloadParse(QDomElement element);
         QString              getLoadablePath();
         void                 pause();
-        void                 play();
+        void                 start();
+        void                 stop();
         void                 resume();
+        void                 interruptByRestart();
 
 
         QString              getRegion()       {return region;}

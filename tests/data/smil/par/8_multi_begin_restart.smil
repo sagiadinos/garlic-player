@@ -5,10 +5,10 @@
         <meta http-equiv="Refresh" content="30" />
 		<layout>
 			<root-layout id="display:0" width="1920" height="1080" />
-			<region regionName="screen1" top="0" left="0" width="960" height="540" z-index="1" backgroundColor="#f00" />
-			<region regionName="screen2" top="0" left="960" width="960" height="540" z-index="1" backgroundColor="#0f0" />
-			<region regionName="screen3" top="540" left="0" width="960" height="540" z-index="1" backgroundColor="#00f" />
-			<region regionName="screen4" top="540" left="960" width="960" height="540" z-index="1" backgroundColor="#0ff" />
+			<region regionName="screen1" top="0" left="0" width="960" height="540" z-index="1" backgroundColor="#222" />
+			<region regionName="screen2" top="0" left="960" width="960" height="540" z-index="1" backgroundColor="#444" />
+			<region regionName="screen3" top="540" left="0" width="960" height="540" z-index="1" backgroundColor="#666" />
+			<region regionName="screen4" top="540" left="960" width="960" height="540" z-index="1" backgroundColor="#000" />
 		</layout>
 	</head>
 	<body>
@@ -17,16 +17,17 @@
 
 	sequences
 	up left begin 1, 2 3 end => wait until parent will repeated
-		up right begin, 1, 2, begin, 1,2,3, end wait, begin, 1, begin 1, 2, 3, end
+		up right begin, 1, begin, 1,2,3, end wait, begin, begin 1, 2, 3, end
 		down left begin, 1, 2, 3, end, 1s blank screen, begin, 1, 2, 3, end, begin, 1, 2, 3, end
 
+		down left helps counting 15s
 	repeated indefinite
 
 	-->
 
 		<par xml:id="par_global" repeatCount="indefinite" begin="0s" endsync="last">
 			<par xml:id="par1" begin="0s" endsync="last">
-				<seq xml:id="seq1" begin="0s;2s;3s;10s" restart="never">
+				<seq xml:id="seq1" begin="0s;2s;5s;11s" restart="never">
 					<img region="screen1" xml:id="imgAbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
 					<img region="screen1" xml:id="imgA0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
 					<img region="screen1" xml:id="imgA0002" src="../../images/0002.jpg" dur="1s" fit="meet" />
@@ -35,7 +36,7 @@
 				</seq>
 			</par>
 			<par xml:id="par2" begin="0s" endsync="last">
-				<seq xml:id="seq2" begin="0s;2s;10s;12s" restart="always">
+				<seq xml:id="seq2" begin="0s;2s;10s;11s" restart="always">
 					<img region="screen2" xml:id="imgBbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
 					<img region="screen2" xml:id="imgB0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
 					<img region="screen2" xml:id="imgB0002" src="../../images/0002.jpg" dur="1s" fit="meet" />
@@ -52,6 +53,28 @@
 					<img region="screen3" xml:id="imgCend" src="../../images/end.jpg" dur="1s"  fit="meet" />
 				</seq>
 			</par>
-		</par>
+
+			<par xml:id="par4" begin="0s" endsync="last">
+				<seq xml:id="seq4" begin="0s;">
+					<img region="screen4" xml:id="imgDbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
+					<img region="screen4" xml:id="imgD0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
+					<img region="screen4" xml:id="imgD0002" src="../../images/0002.jpg" dur="1s" fit="meet" />
+					<img region="screen4" xml:id="imgD0003" src="../../images/0003.jpg" dur="1s" fit="meet" />
+					<img region="screen4" xml:id="imgD0004" src="../../images/0004.jpg" dur="1s" fit="meet" />
+					<img region="screen4" xml:id="imgD0005" src="../../images/0005.jpg" dur="1s" fit="meet" />
+					<img region="screen4" xml:id="imgD0006" src="../../images/0006.jpg" dur="1s" fit="meet" />
+					<img region="screen4" xml:id="imgD0007" src="../../images/0007.jpg" dur="1s" fit="meet" />
+					<img region="screen4" xml:id="imgD0008" src="../../images/0008.jpg" dur="1s" fit="meet" />
+					<img region="screen4" xml:id="imgD0009" src="../../images/0009.jpg" dur="1s" fit="meet" />
+					<img region="screen4" xml:id="imgD0010" src="../../images/0010.jpg" dur="1s" fit="meet" />
+					<brush region="screen4" color="red" dur="1s"/>
+					<brush region="screen4" color="green" dur="1s"/>
+					<brush region="screen4" color="blue" dur="1s"/>
+					<img region="screen4" xml:id="imgDend" src="../../images/end.jpg" dur="1s"  fit="meet" />
+				</seq>
+			</par>
+
+
+	</par>
 	</body>
 </smil>

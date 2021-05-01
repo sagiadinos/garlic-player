@@ -82,8 +82,8 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 - **prefetch**
 - **meta** for refresh index via http-equiv="Refresh"
 
-#### Attributes for par
-- **endsync** first|last
+#### Attributes for par and excl
+- **endsync** first|last|id-value
 
 #### Attributes for media
 - **region**
@@ -95,7 +95,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 ### Attributes for media and time container:
 - **xml:id** with Fallback for SMIL 2.0 id
 - **title** stub
-- **restart** (always|never|whenNotActive)
+- **restart** (always|never|whenNotActive|default)
 - **class** stub
 - **xml:lang** stub
 - **dur** with values indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
