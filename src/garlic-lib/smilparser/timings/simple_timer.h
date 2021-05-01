@@ -39,7 +39,7 @@ namespace Timings
         ~SimpleTimer();
 
         void         parse(QString s_value);
-        bool         isActive(){return MyTimer->isActive();}
+        bool         isActive();
         void         start();
         void         pause();
         void         resume();

@@ -139,7 +139,7 @@ void TExcl::next(BaseTimings *ended_element)
 
 void TExcl::start()
 {
-    if (childs_list.size() == 0)
+    if (priorities_list.size() == 0) // childs_list will always be 0
         return;
 
     // check if this is a restart attempt and check restart attribute

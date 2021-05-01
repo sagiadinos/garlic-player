@@ -47,6 +47,20 @@ void Timings::SimpleTimer::parse(QString attr_value)
     return;
 }
 
+bool Timings::SimpleTimer::isActive()
+{
+    if (MyTimer == Q_NULLPTR)
+        return false;
+
+    if (type != TYPE_INDEFINITE) // when infinite timer will never end
+         return true;
+
+    if (type != TYPE_MEDIA)
+         return false;
+
+    return MyTimer->isActive();
+}
+
 void Timings::SimpleTimer::start()
 {
     if (MyTimer == Q_NULLPTR || type != TYPE_CLOCKVALUE)

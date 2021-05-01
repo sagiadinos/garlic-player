@@ -141,9 +141,8 @@ void Timings::EnhancedTimer::start()
             break;
             case TYPE_WALLCLOCK:
                   next_trigger = ts->MyWallClock->getNextTimerTrigger();
-                  if (next_trigger == 0)
-                     emitTimeout();
-                  else
+                  // do not trigger events in the past
+                  if (next_trigger > 0)
                      ts->MyTimer->start(next_trigger);
             break;
         }
