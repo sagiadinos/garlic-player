@@ -163,7 +163,6 @@ void BaseTimings::skipElement()
 void BaseTimings::parseTimingAttributes()
 {
     setBaseAttributes();
-    handleBeginTimer();
     if (root_element.hasAttribute("end"))
     {
         EndTimer = new Timings::EnhancedTimer(this);
@@ -179,6 +178,9 @@ void BaseTimings::parseTimingAttributes()
         connect(DurTimer, SIGNAL(timeout()), this, SLOT(finishedSimpleDuration()));
         DurTimer->parse(root_element.attribute("dur"));
     }
+
+    handleBeginTimer();
+
     if (root_element.hasAttribute("repeatCount"))
     {
         setRepeatCount(root_element.attribute("repeatCount"));
@@ -344,7 +346,11 @@ void BaseTimings::setRepeatCount(QString rC)
 
 void BaseTimings::handleBeginTimer()
 {
-    BeginTimer = new Timings::EnhancedTimer(this);
+    if (DurTimer != Q_NULLPTR)
+        BeginTimer = new Timings::BeginTimer(DurTimer, this);
+    else
+        BeginTimer = new Timings::BeginTimer(Q_NULLPTR, this);
+
     connect(BeginTimer, SIGNAL(timeout()), this, SLOT(prepareDurationTimerBeforePlay()));
     QString begin_value = "";
 

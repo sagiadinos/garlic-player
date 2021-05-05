@@ -19,6 +19,7 @@
 #ifndef TEXCL_H
 #define TEXCL_H
 
+#include <QMap>
 #include "priorityclass.h"
 
 class TExcl : public TContainer
@@ -43,10 +44,11 @@ class TExcl : public TContainer
 
     private:
         TPriorityClass               *CurrentPriority, *NewPriority;
-        QHash<int, TPriorityClass *>  priorities_list;
+        QMap<int, TPriorityClass *>   PriorityClassList;
         TPriorityClass               *findPriorityClass(QDomElement dom_element);
 
         QString endsync = "last";
+        void    removeQueuedElements();
         void    traverseChilds();
         void    traversePriorityClasses(QDomNodeList priority_class_childs);
         void    parsePriorityClass(QDomElement element);

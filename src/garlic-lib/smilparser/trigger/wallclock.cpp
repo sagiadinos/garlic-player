@@ -32,91 +32,112 @@ void WallClock::parse(QString iso_date)
     {
         QString tmp = ar.at(0);
         if (tmp.length() > 0 && tmp.at(0) == 'R')
-           repeats = analyseRepeats(tmp);
+           repeats = MyIsoDate.analyseRepeats(tmp);
         else
-            datetime = analyseDate(tmp);
+            trigger_datetime = MyIsoDate.analyseDate(tmp);
 
         tmp = ar.at(1);
-        if (tmp.at(0) != 0 && !datetime.isValid())
-            datetime = analyseDate(tmp);
+        if (tmp.at(0) != 0 && !trigger_datetime.isValid())
+            trigger_datetime = MyIsoDate.analyseDate(tmp);
         else
-            period = analysePeriods(ar.at(2));
+            period = MyIsoDate.analysePeriods(ar.at(2));
 
         if (ar.size() == 3)
-            period = analysePeriods(ar.at(2));
+            period = MyIsoDate.analysePeriods(ar.at(2));
     }
     else
-        datetime = analyseDate(iso_date);
+        trigger_datetime = MyIsoDate.analyseDate(iso_date);
 
-    active = true;
-    if (repeats > 0)
-        analyseRemainingRepeats(QDateTime::currentDateTime());
+//    neccesary? 2021.05-05
+//    if (repeats > 0)
+//        calculateWithRemainingRepeats(QDateTime::currentDateTime());
     return;
 }
 
-
-bool WallClock::remainingRepeats()
+qint64 WallClock::getPreviousTimerTrigger()
 {
-    if (repeats == -1)
-        return true;
-    if (remaining_repeats > 0)
-        return true;
-    return false;
+    return previous_trigger;
+
 }
 
-qint64 WallClock::getNextTimerTrigger(QDateTime current)
+qint64 WallClock::getNextTimerTrigger()
 {
-    return getNextTrigger(current);
+    return next_trigger;
+}
+
+void WallClock::calculateCurrentTrigger(QDateTime current)
+{
+    next_trigger     = calculateNextTrigger(current);
+    previous_trigger = calculatePreviousTrigger(current);
+}
+
+qint64 WallClock::calculateNextTrigger(QDateTime current)
+{
+    qint64    ret       = 0;
+
+    if (current > trigger_datetime)  // datetime of wallclock is in past
+    {
+        if (repeats == -1) // infinite repeats
+            ret = calculateWithInfiniteRepeats(current);
+        else if (repeats > 0)
+            ret = calculateWithRemainingRepeats(current);
+        // repeat 0 return 0 ms
+    }
+    else
+        ret = current.msecsTo(trigger_datetime);
+    return ret;
 }
 
 // ================================ protected methods ===============================================
 
-qint64 WallClock::getNextTrigger(QDateTime current)
+qint64 WallClock::calculatePreviousTrigger(QDateTime current)
 {
-    qint64    ret       = 0;
-    QDateTime calculate = datetime;
-    if (current > datetime)
+    // the trigger date is in the future there is no previus trigger
+    if (trigger_datetime > current)
+         return 0;
+
+    qint64 ret = 0;
+
+    if (repeats != 0)
     {
-        // if wallclock date is in past and repeats -1 (indefinite) get time for the next event/trigger/shot from period
-        if (repeats == -1)
-        {
-            // find out the next possible trigger based on the datetime of the wallclock
-            do
-            {
-                calculate = addWallClockIntervalOptimized(current, calculate); // do some shortcuts cause addWallClockInterval is extremly slow on long times
-            }
-            while (current > calculate);
-            ret = current.msecsTo(calculate);
-        }
-        // if wallclock date is in past and repeats > 0 calculate elapsed time since init and look if there is be another event possible
-        else if (repeats > 0)
-            ret = analyseRemainingRepeats(current);
-        // repeat 0 return 0 ms
+        // substract one period from next trigger
+
+        QDateTime prev = substractInterval(current.addMSecs(next_trigger));
+        if (prev == current)
+            prev = substractInterval(prev);
+        ret = -(prev.msecsTo(current));
     }
-    else // datetime of wallclock is in future
-        ret = current.msecsTo(datetime);
+    else  // we can only be here when trigger was the past so get the difference to current
+    {
+        ret = -(trigger_datetime.msecsTo(current));
+    }
     return ret;
 }
 
-int WallClock::analyseRepeats(QString r_value)
+qint64 WallClock::calculateWithInfiniteRepeats(QDateTime current)
 {
-    int  repeats    = 0;
-    if(r_value.length() == 1)
-        repeats = -1;
-    else
-        repeats = r_value.midRef(1, r_value.length()-1).toInt();
-    return repeats;
+    QDateTime calculate = trigger_datetime;
+
+    calculate = addOptimizations(current); // do some shortcuts cause addInterval slow down on long times
+    do
+    {
+        calculate = addInterval(calculate);
+    }
+    while (current >= calculate);
+
+    return current.msecsTo(calculate);
 }
 
-qint64 WallClock::analyseRemainingRepeats(QDateTime current)
+
+qint64 WallClock::calculateWithRemainingRepeats(QDateTime current)
 {
-    QDateTime calculate = datetime;
+    QDateTime calculate = trigger_datetime;
     qint64    ret       = 0;
     int       i         = 0;
     remaining_repeats   = 0;
     do
     {
-        calculate = addWallClockInterval(calculate);
+        calculate = addInterval(calculate);
         i++;
     }
     while (current > calculate && i < repeats+1);
@@ -128,118 +149,7 @@ qint64 WallClock::analyseRemainingRepeats(QDateTime current)
     return ret;
 }
 
-IsoPeriod WallClock::analysePeriods(QString p_value)
-{
-    IsoPeriod               iso_period;
-    QRegularExpression      re("^P(?:(\\d+)Y)?(?:(\\d+)M)?(?:(\\d+)W)?(?:(\\d+)D)?(?:T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?)?");
-    QRegularExpressionMatch match  = re.match(p_value);
-    if (match.hasMatch())
-    {
-        iso_period.years    = match.captured(1).toInt();
-        iso_period.months   = match.captured(2).toInt();
-        iso_period.days     = match.captured(3).toInt()*7; // weeks
-        iso_period.days    += match.captured(4).toInt();
-        iso_period.hours    = match.captured(5).toInt();
-        iso_period.minutes  = match.captured(6).toInt();
-        iso_period.seconds  = match.captured(7).toInt();
-    }
-    return iso_period;
-}
-
-/**
- * @brief This format yyyy-MM-dd(+/-)w(1..7)THH:mm:ss is supported
- *
- * @param date
- * @return
- */
-QDateTime WallClock::analyseDate(QString date)
-{
-    // we must do some work arounds cause QDateTime is pretty useless for wallclock
-    // btw. also not recognizing all iso 8601 dates
-
-    QStringList sl = date.split('T');
-
-    return QDateTime(determineDate(sl.at(0)), determineTime(sl));
-}
-
-QDate WallClock::determineDate(QString the_date)
-{
-    int w_position = the_date.indexOf('w');
-    QDate ret;
-    if (w_position > -1)
-        ret =  calculateDateWithWeekDayDifference(the_date, w_position);
-    else
-        ret =  QDate::fromString(the_date, "yyyy-MM-dd");
-
-    // a valid date is mandatory otherwise the app react unpredictable
-    if (ret.isValid())
-        return ret;
-    else
-        return QDate::fromString("2000-01-01", "yyyy-MM-dd");
-
-}
-
-QTime WallClock::determineTime(QStringList sl)
-{
-    QTime ret;
-    if (sl.size() > 1)
-        ret = QTime::fromString(sl.at(1), "HH:mm:ss");
-    else
-        ret = QTime::fromString("00:00:00", "HH:mm:ss");
-
-    // valid time mandatory otherwise the app react unpredictable
-    if (ret.isValid())
-        return ret;
-    else
-       return QTime::fromString("00:00:00", "HH:mm:ss");
-
-}
-
-QDate WallClock::calculateDateWithWeekDayDifference(QString the_date, int w_position)
-{
-    QChar op           = the_date.at(w_position-1);
-    int target_weekday = QString(the_date.at(w_position+1)).toInt();
-    QDate temp         = seperateDateFromOperator(op, the_date, w_position);
-
-    return temp.addDays(determineDayDiffByOperator(op, target_weekday - temp.dayOfWeek()));
-
-}
-
-QDate WallClock::seperateDateFromOperator(QChar op, QString the_date, int w_position)
-{
-    if (op == '+' || op == '-')
-        return QDate::fromString(the_date.mid(0, w_position-1), "yyyy-MM-dd");
-    else
-        return QDate::fromString(the_date.mid(0, w_position), "yyyy-MM-dd");
-}
-
-int WallClock::determineDayDiffByOperator(QChar op, int day_diff)
-{
-    // if the is no +/- we assume a missing operator so we set default to +
-    if (op == '-')
-        return calculateDiffBefore(day_diff);
-    else
-        return calculateDiffAfter(day_diff);
-}
-
-int WallClock::calculateDiffBefore(int day_diff)
-{
-    // because modulo % fails
-    if (day_diff >= 0)
-          day_diff -= 7;
-    return day_diff;
-}
-
-int WallClock::calculateDiffAfter(int day_diff)
-{
-    // because modulo % fails
-    if (day_diff <= 0)
-          day_diff += 7;
-
-    return day_diff;
-}
-
-QDateTime WallClock::addWallClockInterval(QDateTime calculated)
+QDateTime WallClock::addInterval(QDateTime calculated)
 {
     calculated = calculated.addYears(period.years);
     calculated = calculated.addMonths(period.months);
@@ -247,39 +157,40 @@ QDateTime WallClock::addWallClockInterval(QDateTime calculated)
     return calculated.addSecs((period.hours*3600) + (period.minutes*60) + (period.seconds));
 }
 
-/**
- * @brief WallClock::addWallClockIntervalOptimized skips to long distances
- * @param current
- * @param calculated
- * @return
- */
-QDateTime WallClock::addWallClockIntervalOptimized(QDateTime current, QDateTime calculated)
+QDateTime WallClock::substractInterval(QDateTime calculated)
 {
-    if (period.years == 0)
-        calculated = calculated.addYears(current.date().year()-calculated.date().year()); // should give 0 on iterations
-    else
-        calculated = calculated.addYears(period.years);
+    calculated = calculated.addYears(-period.years);
+    calculated = calculated.addMonths(-period.months);
+    calculated = calculated.addDays(-period.days);
+    return calculated.addSecs(-(period.hours*3600) - (period.minutes*60) - (period.seconds));
+}
 
-    if (period.months == 0)
-        calculated = calculated.addMonths(current.date().month()-calculated.date().month());
-    else
-        calculated = calculated.addMonths(period.months);
+QDateTime WallClock::addOptimizations(QDateTime current)
+{
+    QDateTime calculate = trigger_datetime;
+    calculate = calculate.addYears(current.date().year() - trigger_datetime.date().year() - period.years);
+    calculate = calculate.addMonths(current.date().month() - trigger_datetime.date().month() - period.months);
+    calculate = calculate.addDays(current.date().day() - trigger_datetime.date().day() - period.days);
 
-    if (period.days == 0)
-        calculated = calculated.addDays(current.date().day()-calculated.date().day());
-    else
-        calculated = calculated.addDays(period.days);
-
-    if (period.hours == 0)
-        calculated = calculated.addSecs((current.time().hour()-calculated.time().hour())*3600);
-    else
-        calculated = calculated.addSecs(period.hours*3600);
-    if (period.minutes == 0)
-        calculated = calculated.addSecs((current.time().minute()-calculated.time().minute())*60);
-    else
-        calculated = calculated.addSecs(period.minutes*60);
-
-    return calculated.addSecs(period.seconds);
+   /* calculate = calculate.addSecs((current.time().hour() - trigger_datetime.time().hour() - period.hours)*3600);
+    calculate = calculate.addSecs((current.time().minute() - trigger_datetime.time().minute() - period.minutes)*60);
+    calculate = calculate.addSecs(current.time().second() - trigger_datetime.time().second() - period.seconds);
+  */
+    if (MyIsoDate.hasWeekDay())
+    {
+        calculate = findNextWeekDay(calculate);
+    }
+    return calculate;
 }
 
 
+QDateTime WallClock::findNextWeekDay(QDateTime calculated)
+{
+    if (calculated.date().dayOfWeek() == MyIsoDate.getWeekDay())
+        return calculated;
+
+    QDate temp = calculated.date();
+    temp       = temp.addDays(MyIsoDate.determineDayDiffByOperator('+', MyIsoDate.getWeekDay() - temp.dayOfWeek()));
+    return QDateTime(temp, calculated.time());
+
+}

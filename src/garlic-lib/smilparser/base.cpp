@@ -75,4 +75,3 @@ QString TBase::getAttributeFromRootElement(const QString attribute_name, const Q
     return ret;
 }
 
-

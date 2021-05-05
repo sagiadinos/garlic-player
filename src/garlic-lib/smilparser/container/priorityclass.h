@@ -17,11 +17,17 @@
 *************************************************************************************/
 #ifndef TPRIORITYCLASS_H
 #define TPRIORITYCLASS_H
-#include <QQueue>
 #include <QList>
 #include <QStack>
 #include "container.h"
 
+/**
+ * @brief TPriorityClass class
+ * Priorities to high to lower is up to down
+ *
+ * elements in peers have no internal priority and interrupt each other
+ *
+ */
 class TPriorityClass : public TBase
 {
     Q_OBJECT
@@ -30,27 +36,29 @@ public:
     ~TPriorityClass();
     void                          preloadParse(QDomElement element);
 
-    QString                       getPeers(){return peers;}
-    QString                       getHigher(){return higher;}
-    QString                       getLower(){return lower;}
+    QString                       getPeers();
+    QString                       getHigher();
+    QString                       getLower();
     bool                          findElement(QDomElement dom_element);
-    void                          insertDeferQueue(BaseTimings *element);
-    void                          insertPauseQueue(BaseTimings *element);
+    void                          insertQueue(BaseTimings *element);
+    void                          removeQueuedElements();
     int                           countQueue();
     BaseTimings                  *getFromQueue();
     QList<QDomElement>            getChildList();
 protected:
     QList<QDomElement>            childs_list;
     QList<QDomElement>::iterator  iterator;
-    QStack<BaseTimings *>         ar_defer;
-    QStack<BaseTimings *>         ar_pause;
+    QStack<BaseTimings *>         queue_stack;
 private:
-    QString                       peers  = "stop";   // how elements inside a group interrupts each other
-    QString                       higher = "pause";  // how a group with hier priority interrupts this group
-    QString                       lower  = "defer";  // how a group with lower priority interrupts this group
+    QString                       peers  = "stop";   // how elements inside a group interrupts each other stop|pause|defer|never
+    QString                       higher = "pause";  // how a group with higher priority interrupts this group pause|stop
+    QString                       lower  = "defer";  // how a group with lower priority interrupts this group defer|never
     int                           count_childs       = 0;
     void                          setAttributes();
     void                          traverseChilds();
+    QString                       validatePeers();
+    QString                       validateHigher();
+    QString                       validateLower();
 };
 
 #endif // TPRIORITYCLASS_H

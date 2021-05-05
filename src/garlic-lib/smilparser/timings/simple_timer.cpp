@@ -43,6 +43,7 @@ void Timings::SimpleTimer::parse(QString attr_value)
         type = TYPE_CLOCKVALUE;
         MyClockValue.parse(attr_value);
         initTimer();
+        clock_in_ms = MyClockValue.getTriggerInMSec();
     }
     return;
 }
@@ -65,8 +66,8 @@ void Timings::SimpleTimer::start()
 {
     if (MyTimer == Q_NULLPTR || type != TYPE_CLOCKVALUE)
         return;
-    int ms = MyClockValue.getNextTimerTrigger();
-    MyTimer->start(ms);
+
+    MyTimer->start(clock_in_ms-tolerance);
 }
 
 void Timings::SimpleTimer::resume()
@@ -95,6 +96,20 @@ void Timings::SimpleTimer::stop()
         MyTimer->stop();
     }
     remaining = 0;
+}
+
+void Timings::SimpleTimer::setExternCalculatedTimeClock(qint64 new_clock)
+{
+    clock_in_ms = new_clock;
+}
+
+
+qint64 Timings::SimpleTimer::getOriginalTimeClock()
+{
+    if (type != TYPE_CLOCKVALUE)
+        return type;
+
+    return clock_in_ms;
 }
 
 int Timings::SimpleTimer::getRemaining() const

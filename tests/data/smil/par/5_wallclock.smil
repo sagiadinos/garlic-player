@@ -22,7 +22,7 @@
 	repeated indefinite
 
 	remark: the begin and end of par2 depends on the player clock so scond sequence is not one after one
-			so there can be 5s gaps betwen the second sequence
+			so there can be gaps betwen the sequences
 	-->
 		<par xml:id="par1" >
 			<seq xml:id="seq1" repeatCount="indefinite">

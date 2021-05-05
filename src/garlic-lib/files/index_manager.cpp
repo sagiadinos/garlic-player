@@ -21,7 +21,7 @@ Files::IndexManager::IndexManager(MainConfiguration *config, QObject *parent) : 
 {
     MyDownloader    = new Downloader(MyConfiguration, this);
     MyIndexModel    = new IndexModel(this);
-    connect(MyDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
+    connect(MyDownloader, SIGNAL(succeed(TNetworkAccess*)), SLOT(doSucceed(TNetworkAccess*)));
 }
 
 void Files::IndexManager::init(QString src)

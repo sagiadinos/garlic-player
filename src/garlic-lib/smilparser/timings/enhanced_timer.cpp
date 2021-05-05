@@ -29,7 +29,7 @@ Timings::EnhancedTimer::~EnhancedTimer()
 
 void Timings::EnhancedTimer::initTimer(int type, QString value)
 {
-    TimerStruct *ts = new TimerStruct();
+    TriggerStruct *ts = new TriggerStruct();
     ts->type        = type;
     ts->remaining   = 0;
 
@@ -50,14 +50,14 @@ void Timings::EnhancedTimer::initTimer(int type, QString value)
         break;
     }
 
-    MyTimerList.append(ts);
+    MyTriggerList.append(ts);
 }
 
 void Timings::EnhancedTimer::deleteTimer()
 {
-    if (MyTimerList.size() == 0)
+    if (MyTriggerList.size() == 0)
         return;
-    for (TimerStruct *ts : qAsConst(MyTimerList))
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
     {
         ts->MyTimer->stop();
         switch (ts->type)
@@ -72,7 +72,7 @@ void Timings::EnhancedTimer::deleteTimer()
         delete ts->MyTimer;
         delete ts;
     }
-    MyTimerList.clear();
+    MyTriggerList.clear();
 }
 
 void Timings::EnhancedTimer::parse(QString attr_value)
@@ -124,36 +124,37 @@ void Timings::EnhancedTimer::parse(QString attr_value)
 
 void Timings::EnhancedTimer::start()
 {
-    if (MyTimerList.size() == 0)
+    if (MyTriggerList.size() == 0)
         return;
-
     qint64 next_trigger;
-    for (TimerStruct *ts : qAsConst(MyTimerList))
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
     {
         switch (ts->type)
         {
             case TYPE_OFFSET:
-                  next_trigger = ts->MyClockValue->getNextTimerTrigger();
+                  next_trigger = ts->MyClockValue->getTriggerInMSec();
                   if (next_trigger == 0)
                      emitTimeout();
                   else
                      ts->MyTimer->start(next_trigger);
             break;
             case TYPE_WALLCLOCK:
-                  next_trigger = ts->MyWallClock->getNextTimerTrigger();
-                  // do not trigger events in the past
+                  // we need to calculate a previous trigger, cause it can be possible that an
+                  // element triggrered active in the past and last on due to a high duration
+                  next_trigger     = ts->MyWallClock->calculateNextTrigger();
                   if (next_trigger > 0)
                      ts->MyTimer->start(next_trigger);
+
             break;
         }
-     }
+    }
 }
 
 void Timings::EnhancedTimer::pause()
 {
-    if (MyTimerList.size() == 0)
+    if (MyTriggerList.size() == 0)
         return;
-    for (TimerStruct *ts : qAsConst(MyTimerList))
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
     {        
         ts->remaining = ts->MyTimer->remainingTime();
         ts->MyTimer->stop();
@@ -163,9 +164,9 @@ void Timings::EnhancedTimer::pause()
 
 void Timings::EnhancedTimer::stop()
 {
-    if (MyTimerList.size() == 0)
+    if (MyTriggerList.size() == 0)
         return;
-    for (TimerStruct *ts : qAsConst(MyTimerList))
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
     {
         ts->MyTimer->stop();
         ts->remaining = 0;
@@ -176,9 +177,9 @@ bool Timings::EnhancedTimer::resume()
 {
     qint64 elapsed     = QDateTime::currentMSecsSinceEpoch() - pause_start;
     bool   ret         = false;
-    if (MyTimerList.size() == 0)
+    if (MyTriggerList.size() == 0)
         return ret;
-    for (TimerStruct *ts : qAsConst(MyTimerList))
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
     {
         switch (ts->type)
         {
@@ -200,10 +201,10 @@ bool Timings::EnhancedTimer::resume()
 
 bool Timings::EnhancedTimer::isActive()
 {
-    if (MyTimerList.size() == 0)
+    if (MyTriggerList.size() == 0)
         return false;
 
-    for (TimerStruct *ts : qAsConst(MyTimerList))
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
     {
         switch (ts->type)
         {

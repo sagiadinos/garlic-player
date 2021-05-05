@@ -34,6 +34,21 @@ void TPriorityClass::preloadParse(QDomElement element)
     traverseChilds();
 }
 
+QString TPriorityClass::getPeers()
+{
+    return peers;
+}
+
+QString TPriorityClass::getHigher()
+{
+    return higher;
+}
+
+QString TPriorityClass::getLower()
+{
+    return lower;
+}
+
 bool TPriorityClass::findElement(QDomElement dom_element)
 {
     for (iterator =  childs_list.begin(); iterator < childs_list.end(); iterator++)
@@ -44,38 +59,31 @@ bool TPriorityClass::findElement(QDomElement dom_element)
     return false;
 }
 
-void TPriorityClass::insertDeferQueue(BaseTimings *element)
+void TPriorityClass::insertQueue(BaseTimings *element)
 {
-    ar_defer.push(element);
+    queue_stack.push(element);
 }
 
-void TPriorityClass::insertPauseQueue(BaseTimings *element)
+void TPriorityClass::removeQueuedElements()
 {
-    ar_pause.push(element);
+    for (BaseTimings *bt : qAsConst(queue_stack))
+    {
+       bt->stopTimers();
+    }
 }
 
 int TPriorityClass::countQueue()
 {
-    if (ar_defer.size() > 0 && (peers == "defer" || lower == "defer"))
-        return ar_defer.size();
-
-    if (ar_pause.size() > 0 && (peers == "pause" || lower == "pause"))
-        return ar_pause.size();
+    if (queue_stack.size() > 0)
+        return queue_stack.size();
     return 0;
 }
 
 BaseTimings *TPriorityClass::getFromQueue()
 {
-    if (peers == "defer" || lower == "defer")
-    {
-        if (ar_defer.size() > 0)
-            return ar_defer.pop();
-    }
-    if (peers == "pause" || lower == "pause")
-    {
-        if (ar_pause.size() > 0)
-            return ar_pause.pop();
-    }
+    if (queue_stack.size() > 0)
+        return queue_stack.pop();
+
     return Q_NULLPTR;
 }
 
@@ -88,9 +96,10 @@ QList<QDomElement> TPriorityClass::getChildList()
 void TPriorityClass::setAttributes()
 {
     setBaseAttributes();
-    peers  = getAttributeFromRootElement("peers", "stop");
-    higher = getAttributeFromRootElement("higher", "pause");
-    lower  = getAttributeFromRootElement("lower", "defer");
+
+    peers  = validatePeers();
+    higher = validateHigher();
+    lower  = validateLower();
 }
 
 void TPriorityClass::traverseChilds()
@@ -106,4 +115,31 @@ void TPriorityClass::traverseChilds()
             childs_list.append(element);
         }
     }
+}
+
+QString TPriorityClass::validatePeers()
+{
+    QString attr  = getAttributeFromRootElement("peers", "stop");
+    if (attr != "stop" && attr != "pause" && attr != "defer" && attr != "never")
+        attr = "stop";
+
+    return attr;
+}
+
+QString TPriorityClass::validateHigher()
+{
+    QString attr = getAttributeFromRootElement("higher", "pause");
+    if (attr != "stop" && attr != "pause")
+        attr = "pause";
+
+    return attr;
+}
+
+QString TPriorityClass::validateLower()
+{
+    QString attr  = getAttributeFromRootElement("lower", "defer");
+    if (attr != "defer" && attr != "never")
+        attr = "defer";
+
+    return attr;
 }

@@ -138,8 +138,8 @@ void BodyParser::startElement(BaseTimings *element)
             return;
     }
 
-    qDebug() << "Start: " + element->getID();
     element->start();
+    qDebug() << "Start: " + element->getID();
     if (element->getBaseType() == "media")
         emitStartShowMedia(qobject_cast<BaseMedia *> (element));
 }
@@ -152,9 +152,10 @@ void BodyParser::startElement(BaseTimings *element)
  */
 void BodyParser::stopElement(BaseTimings *element)
 {
-    TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
-    qDebug() << "Stop: " + element->getID();
     element->stop();
+    qDebug() << "Stop: " + element->getID();
+
+    TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
     if (element->getBaseType() == "media")
         emitStopShowMedia(qobject_cast<BaseMedia *> (element));
 

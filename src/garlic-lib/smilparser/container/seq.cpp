@@ -155,5 +155,3 @@ void TSeq::traverseChilds()
     }
     childs_list_iterator = childs_list.begin();
 }
-
-

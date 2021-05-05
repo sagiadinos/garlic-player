@@ -28,6 +28,7 @@ Unknown::Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *con
 
 void Unknown::prepareDurationTimerBeforePlay()
 {
+    Q_UNUSED(dur);
     qWarning(Develop) << src << " Unknown tag";
     skipElement();
 }

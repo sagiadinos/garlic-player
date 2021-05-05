@@ -77,9 +77,11 @@ SOURCES += \
     smilparser/media/video.cpp \
     smilparser/media/web.cpp \
     smilparser/media/widget.cpp \
+    smilparser/timings/begin_timer.cpp \
     smilparser/timings/enhanced_timer.cpp \
     smilparser/trigger/clock_value.cpp \
     smilparser/timings/simple_timer.cpp \
+    smilparser/trigger/iso_date.cpp \
     smilparser/trigger/wallclock.cpp \
     smilparser/base.cpp \
     smilparser/container/tools/shuffle.cpp \
@@ -147,9 +149,11 @@ HEADERS += \
     smilparser/media/video.h \
     smilparser/media/web.h \
     smilparser/media/widget.h \
+    smilparser/timings/begin_timer.h \
     smilparser/timings/enhanced_timer.h \
     smilparser/trigger/clock_value.h \
     smilparser/timings/simple_timer.h \
+    smilparser/trigger/iso_date.h \
     smilparser/trigger/wallclock.h \
     smilparser/container/tools/shuffle.h \
     smilparser/container/body.h \

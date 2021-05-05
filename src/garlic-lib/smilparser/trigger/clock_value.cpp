@@ -28,7 +28,7 @@ void ClockValue::parse(QString attr_value)
     ms     = calculateMilliseconds(attr_value);
 }
 
-qint64 ClockValue::getNextTimerTrigger()
+qint64 ClockValue::getTriggerInMSec()
 {
     return ms;
 }
@@ -62,10 +62,6 @@ qint64 ClockValue::calculateMilliseconds(QString dur)
             duration = dur.midRef(0, length-3).toFloat()*60000;
         else if (dur.contains("ms"))
              duration = dur.midRef(0, length-2).toInt();
-        else if (dur=="indefinite")
-            duration = -1;
-        else if (dur=="media")
-            duration = -1;
         else // no marker means seconds
             duration = dur.toFloat()*1000;
     }

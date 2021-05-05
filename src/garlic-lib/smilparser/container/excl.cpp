@@ -53,7 +53,7 @@ void TExcl::preloadParse(QDomElement element)
     traverseChilds();
 
     // collect elements from prioritclasses
-    for (QHash<int, TPriorityClass *>::iterator i_priorities = priorities_list.begin(); i_priorities != priorities_list.end(); i_priorities++)
+    for (QMap<int, TPriorityClass *>::iterator i_priorities = PriorityClassList.begin(); i_priorities != PriorityClassList.end(); i_priorities++)
     {
         QList<QDomElement> element_list = i_priorities.value()->getChildList();
         for (QList<QDomElement>::iterator i = element_list.begin(); i != element_list.end(); i++)
@@ -65,7 +65,7 @@ void TExcl::preloadParse(QDomElement element)
 
 void TExcl::prepareDurationTimerBeforePlay()
 {
-    if (startDurTimer() || isEndTimerActive() || priorities_list.size() > 0)
+    if (startDurTimer() || isEndTimerActive() || PriorityClassList.size() > 0)
     {
         emitStartElementSignal(this);
     }
@@ -98,19 +98,17 @@ void TExcl::next(BaseTimings *ended_element)
     }
 
     // if elements are in queues starts resume or starts them
-    QHash<int, TPriorityClass *>::iterator      ar_priorities_iterator;
+    QMap<int, TPriorityClass *>::iterator      it;
     TPriorityClass                             *MyPriorityClass;
-    for (ar_priorities_iterator =  priorities_list.begin(); ar_priorities_iterator != priorities_list.end(); ar_priorities_iterator++ )
+    for (it =  PriorityClassList.begin(); it != PriorityClassList.end(); it++ )
     {
-        MyPriorityClass       = *ar_priorities_iterator;
+        MyPriorityClass       = *it;
         if (MyPriorityClass->countQueue() > 0)
         {
             CurrentPriority = MyPriorityClass; // important to change the now active Playlist
             current_activated_element = MyPriorityClass->getFromQueue();
             current_activated_element->resumeTimers();
             // to make sure that this child is not removed previous
-
-            // Sometimes a Null Pointer will got from queue. Currently do not know exactly why
             insertActivatedChild(current_activated_element);
             emitResumeElementSignal(current_activated_element);
 
@@ -123,7 +121,6 @@ void TExcl::next(BaseTimings *ended_element)
 
     if (ended_element == getCurrentActivatedElement())
         setCurrentActivatedElement(Q_NULLPTR);
-
 
     // do nothing when childs are active
     if (hasActivatedChild())
@@ -139,7 +136,7 @@ void TExcl::next(BaseTimings *ended_element)
 
 void TExcl::start()
 {
-    if (priorities_list.size() == 0) // childs_list will always be 0
+    if (PriorityClassList.size() == 0) // childs_list will always be 0
         return;
 
     // check if this is a restart attempt and check restart attribute
@@ -166,7 +163,7 @@ void TExcl::stop()
     stopTimers();               // because there can be a dur or begin timer active
     emitStopToAllActivatedChilds();
     removeAllActivatedChilds();
-    // check for repeat
+    removeQueuedElements();
 }
 
 void TExcl::interruptByEndSync()
@@ -191,12 +188,12 @@ void TExcl::collectActivatedChilds()
     CurrentPriority = NULL;
     NewPriority     = NULL;
 
-    if (priorities_list.size() > 0)
+    if (PriorityClassList.size() > 0)
     {
         QList<QDomElement> childs;
         QList<QDomElement>::iterator i;
-        QHash<int, TPriorityClass *>::iterator it;
-        for (it =  priorities_list.begin(); it != priorities_list.end(); it++ )
+        QMap<int, TPriorityClass *>::iterator it;
+        for (it =  PriorityClassList.begin(); it != PriorityClassList.end(); it++ )
         {
             CurrentPriority       = *it;
             childs                = CurrentPriority->getChildList();
@@ -212,12 +209,11 @@ void TExcl::collectActivatedChilds()
     }
 }
 
-// children of excl => begin has default value indefinite
-
 bool TExcl::determineContinue(BaseTimings *new_element)
 {
     if (current_activated_element == Q_NULLPTR) // if first element we can continue to show
     {
+        CurrentPriority = findPriorityClass(new_element->getRootElement());
         setCurrentActivatedElement(new_element);
         return true;
     }
@@ -226,15 +222,21 @@ bool TExcl::determineContinue(BaseTimings *new_element)
     // this determine which priority attribute should be used
     NewPriority = findPriorityClass(new_element->getRootElement());
     QString attribute_value = "";
-    if (priorities_list.key(CurrentPriority) == priorities_list.key(NewPriority))      // same priorityClass is currently active => look at peers attribute:
+
+    // find if element is in higher, lower or same priorityClass
+    // lower key number has higher priority as priority descend from top to down
+
+    int cur_prio = PriorityClassList.key(CurrentPriority);
+    int new_prio = PriorityClassList.key(NewPriority);
+    if (cur_prio == new_prio)      // same priorityClass is currently active => look at peers attribute:
     {
         attribute_value = CurrentPriority->getPeers();
     }
-    else if (priorities_list.key(CurrentPriority) > priorities_list.key(NewPriority)) // new priority Class is higher then current active
+    else if (cur_prio > new_prio) // new priority Class is higher then current
     {
         attribute_value= CurrentPriority->getHigher();
     }
-    else if (priorities_list.key(CurrentPriority) < priorities_list.key(NewPriority)) // new priority Class is lover then current active
+    else if (cur_prio < new_prio) // new priority Class is lower then current active
     {
         attribute_value = CurrentPriority->getLower();
     }
@@ -263,7 +265,8 @@ bool TExcl::determineContinue(BaseTimings *new_element)
         ret = false;
     }
 
-    CurrentPriority = NewPriority; // even when priority is the same
+    if (ret)
+        CurrentPriority = NewPriority; // even when priority is the same
 
     return ret;
 }
@@ -302,8 +305,8 @@ TPriorityClass *TExcl::findPriorityClass(QDomElement dom_element)
 {
     // found priorityClass of new checking element
     TPriorityClass *MyPriorityClass = NULL;
-    QHash<int, TPriorityClass *>::iterator      ar_priorities_iterator;
-    for (ar_priorities_iterator =  priorities_list.begin(); ar_priorities_iterator != priorities_list.end(); ar_priorities_iterator++)
+    QMap<int, TPriorityClass *>::iterator      ar_priorities_iterator;
+    for (ar_priorities_iterator =  PriorityClassList.begin(); ar_priorities_iterator != PriorityClassList.end(); ar_priorities_iterator++)
     {
         MyPriorityClass = *ar_priorities_iterator;
         if (MyPriorityClass->findElement(dom_element))
@@ -312,11 +315,20 @@ TPriorityClass *TExcl::findPriorityClass(QDomElement dom_element)
     return MyPriorityClass;
 }
 
+void TExcl::removeQueuedElements()
+{
+    for (TPriorityClass *prio : qAsConst(PriorityClassList))
+    {
+       prio->removeQueuedElements();
+    }
+
+}
+
 void TExcl::parsePriorityClass(QDomElement element)
 {
     TPriorityClass * MyPriorityClass = new TPriorityClass(this);
-    priorities_list.insert(priorities_list.size(), MyPriorityClass); // create a priority class object
     MyPriorityClass->preloadParse(element);
+    PriorityClassList.insert(PriorityClassList.size(), MyPriorityClass); // create a priority class object
     return;
 }
 
@@ -331,7 +343,8 @@ void TExcl::priorityPause()
 {
     // pause old element and queue it
     emitPauseElementSignal(current_activated_element);
-    CurrentPriority->insertPauseQueue(current_activated_element);
+    // when peers NewPriority is Current Priority
+    NewPriority->insertQueue(current_activated_element);
 }
 
 void TExcl::priorityNever(BaseTimings *new_element)
@@ -350,7 +363,7 @@ void TExcl::priorityDefer(BaseTimings *new_element)
     if (new_element->getBaseType() == "container")
         (qobject_cast<TContainer *> (new_element))->collectActivatedChilds();
 
-    NewPriority->insertDeferQueue(new_element);
+    NewPriority->insertQueue(new_element);
 }
 
 

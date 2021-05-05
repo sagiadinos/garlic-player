@@ -21,7 +21,7 @@
 
 #include <QTimer>
 #include "smilparser/base.h"
-#include "smilparser/timings/enhanced_timer.h"
+#include "smilparser/timings/begin_timer.h"
 
 /**
  * @brief The abstract BaseTimings class should inherited for begin end duration capable smil elements in body section
@@ -92,6 +92,11 @@ class BaseTimings : public TBase
                 QTimer        *InternalTimer = Q_NULLPTR;
                 int            restart = ALWAYS;
                 QString        fill    = "remove"; // dummy! functionality not implemented
+                QString        begin    = "remove";
+                QString        dur    = "m"; //
+                QString        end    = "indefinite";
+                QString        max    = "indefinite";
+
                 int            status         = 0;
                 int            repeatCount    = 0;
                 bool           indefinite     = false;
@@ -107,11 +112,9 @@ class BaseTimings : public TBase
     protected slots:
                 void           finishedActiveDuration();
     private:
-                Timings::EnhancedTimer *BeginTimer = Q_NULLPTR;
+                Timings::BeginTimer    *BeginTimer = Q_NULLPTR;
                 Timings::EnhancedTimer *EndTimer   = Q_NULLPTR;
                 Timings::SimpleTimer   *DurTimer   = Q_NULLPTR;
-           //     Timings::SimpleTimer   *MinTimer   = Q_NULLPTR;
-           //     Timings::SimpleTimer   *MaxTimer   = Q_NULLPTR;
            //     Timings::SimpleTimer   *repeatDur  = Q_NULLPTR;
                 void           setRepeatCount(QString rC);
                 void           handleBeginTimer();

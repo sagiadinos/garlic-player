@@ -40,7 +40,7 @@ class TBody : public TContainer
 
        // bool      isChildPlayable(BaseTimings *element);
     public slots:
-        void         finishedSimpleDuration();
+        void      finishedSimpleDuration();
         void      prepareDurationTimerBeforePlay();
     protected:
         void      traverseChilds();

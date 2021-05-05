@@ -31,9 +31,13 @@ namespace Timings
     {
         Q_OBJECT
     public:
-        const     int        TYPE_CLOCKVALUE     = 1;
-        const     int        TYPE_INDEFINITE     = 2;
-        const     int        TYPE_MEDIA          = 3;
+        const     int        TYPE_CLOCKVALUE     = -1;
+        const     int        TYPE_INDEFINITE     = -2;
+        const     int        TYPE_MEDIA          = -3;
+        const     int        TYPE_NONE           = -4;
+
+        // need 10ms tolerances to handle timer latencies
+        const     int        tolerance           = 10; // in milli seconds
 
         explicit SimpleTimer(QObject *parent = nullptr);
         ~SimpleTimer();
@@ -45,12 +49,15 @@ namespace Timings
         void         resume();
         void         stop();
         int          getType(){return type;}
+        void         setExternCalculatedTimeClock(qint64 new_clock);
+        qint64       getOriginalTimeClock();
         int          getRemaining() const;
 
     protected:
         QTimer      *MyTimer = Q_NULLPTR;
         ClockValue   MyClockValue;
         qint64       pause_start;
+        qint64       clock_in_ms;
         int          remaining = 0;
         int          type = 3;
         void         initTimer();

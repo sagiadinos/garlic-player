@@ -20,53 +20,41 @@
 
 #include <QObject>
 #include <QDateTime>
-#include <QRegularExpression>
+#include "iso_date.h"
 
-struct IsoPeriod
-{
-    int    years   = 0;
-    int    months  = 0;
-    qint64 days    = 0;
-    qint64 hours   = 0;
-    qint64 minutes = 0;
-    qint64 seconds = 0;
-};
 
 class WallClock : public QObject
 {
-    Q_OBJECT
-public:
-    explicit  WallClock(QObject *parent = nullptr);
-    void      parse(QString iso_date);
-    IsoPeriod getPeriod(){return period;}
-    bool      isActive(){return active;}
-    int       getRepeats(){return repeats;}
-    QDateTime getDateTime(){return datetime;}
-    bool      remainingRepeats();
-    qint64    getNextTimerTrigger(QDateTime current = QDateTime::currentDateTime());
-protected:
-    bool      active  = false;
-    int       repeats = 0;
-    QDateTime datetime;
-    IsoPeriod period;
-    int       remaining_repeats = 0;
-    qint64    getNextTrigger(QDateTime current);
-    int       analyseRepeats(QString r_value);
-    qint64    analyseRemainingRepeats(QDateTime current);
-    IsoPeriod analysePeriods(QString p_value);
-    QDateTime analyseDate(QString date);
-    QDateTime addWallClockInterval(QDateTime calculated);
-    QDateTime addWallClockIntervalOptimized(QDateTime current, QDateTime calculated);
+        Q_OBJECT
+    public:
+        explicit  WallClock(QObject *parent = nullptr);
+        void      parse(QString iso_date);
+        IsoPeriod getPeriod(){return period;}
+        int       getRepeats(){return repeats;}
+        QDateTime getDateTime(){return trigger_datetime;}
+        void      calculateCurrentTrigger(QDateTime current = QDateTime::currentDateTime());
+        qint64    calculateNextTrigger(QDateTime current = QDateTime::currentDateTime());
+        qint64    getPreviousTimerTrigger();
+        qint64    getNextTimerTrigger();
+    protected:
+        int       repeats = 0;
+        QDateTime trigger_datetime;
+        qint64    next_trigger;
+        qint64    previous_trigger;
 
-private:
-    QDate determineDate(QString the_date);
-    QDate calculateDateWithWeekDayDifference(QString the_date, int w_position);
-    int determineDayDiffByOperator(QChar op, int day_diff);
-    QDate seperateDateFromOperator(QChar op, QString the_date, int w_position);
-    QTime determineTime(QStringList sl);
-    int calculateDiffAfter(int day_diff);
-    int calculateDiffBefore(int day_diff);
-signals:
+        IsoPeriod period;
+        int       remaining_repeats = 0;
+        qint64    calculatePreviousTrigger(QDateTime current);
+        qint64    calculateWithInfiniteRepeats(QDateTime current);
+        qint64    calculateWithRemainingRepeats(QDateTime current);
+
+    private:
+        IsoDate MyIsoDate;
+        QDateTime addInterval(QDateTime calculated);
+        QDateTime substractInterval(QDateTime calculated);
+        QDateTime addOptimizations(QDateTime current);
+
+        QDateTime findNextWeekDay(QDateTime calculated);
 
 };
 

@@ -32,7 +32,7 @@ public:
     explicit ClockValue(QObject *parent = Q_NULLPTR);
     void     parse(QString attr_value);
     QString  getStatus();
-    qint64   getNextTimerTrigger();
+    qint64   getTriggerInMSec();
 protected:
     qint64    ms          = 100;
     qint64    calculateMilliseconds(QString duration);

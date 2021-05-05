@@ -53,20 +53,22 @@ namespace Timings
         bool        isActive();
     protected:
         qint64      pause_start;
+        struct TriggerStruct
+        {
+            QTimer     *MyTimer      = Q_NULLPTR;
+            ClockValue *MyClockValue = Q_NULLPTR;
+            WallClock  *MyWallClock  = Q_NULLPTR;
+            QString     id           = "";
+            QString     event        = "";
+            QString     sync_value   = "";
+            int         type         = TYPE_NOT_SET;
+            int         remaining    = 0;
+        };
+        bool        is_indefinite = false;
+        QList<TriggerStruct *> MyTriggerList;
+        void        initTimer(int type, QString value);
     protected slots:
       void   emitTimeout();
-    private:
-      struct TimerStruct
-      {
-          QTimer     *MyTimer      = Q_NULLPTR;
-          ClockValue *MyClockValue = Q_NULLPTR;
-          WallClock  *MyWallClock  = Q_NULLPTR;
-          int         type         = TYPE_NOT_SET;
-          int         remaining    = 0;
-      };
-      bool        is_indefinite = false;
-      QList<TimerStruct *> MyTimerList;
-      void        initTimer(int type, QString value);
 
     signals:
         void timeout();
