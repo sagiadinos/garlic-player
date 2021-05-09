@@ -74,7 +74,7 @@ void TWidget::parseWidgetCallParameters(QDomElement param)
     if (attribute_name == "cacheControl" || attribute_name == "filename" || attribute_name == "logContentId")
         return;
 
-    params_as_query.append(attribute_name + "=" + param.attribute("value"));
+    params_as_query.append(attribute_name + "=" + QUrl::toPercentEncoding(param.attribute("value")));
 }
 
 // ====================  private methods =================================

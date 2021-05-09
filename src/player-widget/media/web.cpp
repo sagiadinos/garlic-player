@@ -69,6 +69,7 @@ void PlayerWeb::init(BaseMedia *media)
 
     QString uri = sanitizeUri(media->getLoadablePath()) + media->getParamsAsQuery();
     browser->load(uri);
+    qDebug() << "The Uri: " + uri;
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
