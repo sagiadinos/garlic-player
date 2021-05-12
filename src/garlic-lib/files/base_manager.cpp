@@ -24,7 +24,6 @@ Files::BaseManager::BaseManager(MainConfiguration *config, QObject *parent) : QO
     setParent(parent);
 }
 
-
 // ==================  protected methods =======================================
 
 

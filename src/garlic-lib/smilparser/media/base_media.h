@@ -22,6 +22,8 @@
 #include "container.h"
 #include "conditional/expr.h"
 #include "tools/main_configuration.h"
+#include "head/placeholder.h"
+#include "head_parser.h"
 
 class BaseMedia : public BaseTimings
 {
@@ -30,7 +32,7 @@ class BaseMedia : public BaseTimings
     const     int        CACHE_CONTROL_USE_CACHE  = 0;
     const     int        CACHE_CONTROL_ONLY_IF_CACHED  = 1;
 
-        explicit BaseMedia(Files::MediaManager *mm, MainConfiguration *config, QObject *parent = Q_NULLPTR);
+        explicit BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
 
         void                 preloadParse(QDomElement element);
         QString              getLoadablePath();
@@ -40,8 +42,8 @@ class BaseMedia : public BaseTimings
         void                 resume();
         void                 interruptByRestart();
 
-
-        QString              getRegion()       {return region;}
+        void                 setRegion(Region r);
+        QString              getRegionName();
         QString              getFit()          {return fit;}
         QString              getSrc()          {return src;}
         QString              getLogContentId() {return log_content_id;}
@@ -63,10 +65,12 @@ class BaseMedia : public BaseTimings
 
     protected:
         Files::MediaManager *MyMediaManager;
+        SmilHead::PlaceHolder *MyPlaceHolder;
+        Region               MyRegion;
         MainConfiguration   *MyMainConfiguration;
         QStringList          params_as_query;
         Expr                 MyExpr;
-        QString              region          = "";
+        QString              region_name     = "";
         QString              src             = "";
         QString              type            = "";
         QString              fit             = "";

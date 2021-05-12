@@ -45,7 +45,6 @@ bool Wgt::isOpen()
 
 QString Wgt::handleRealPath()
 {
-    QString real_file_path = "";
     if (!extract())
         return "";
     return local_file_path.mid(0, local_file_path.length()-4)+"/index.html";

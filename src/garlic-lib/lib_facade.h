@@ -24,6 +24,7 @@
 #include "smilparser/head_parser.h"
 #include "body_parser.h"
 #include "tools/resource_monitor.h"
+#include "head/placeholder.h"
 
 /**
  * @brief The LibFacade class is the interface for a player component to the garlic parser
@@ -74,6 +75,7 @@ protected:
         QScopedPointer<Files::MediaManager>     MyMediaManager;
         QScopedPointer<HeadParser>              MyHeadParser;
         QScopedPointer<SmilHead::TaskScheduler> MyTaskScheduler;
+        QScopedPointer<SmilHead::PlaceHolder>   MyPlaceHolder;
         QScopedPointer<SmilHead::XMLConfiguration> MyXMLConfiguration;
         QScopedPointer<BodyParser>              MyBodyParser;
         ResourceMonitor                         MyResourceMonitor;

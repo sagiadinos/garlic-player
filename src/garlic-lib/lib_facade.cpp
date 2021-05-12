@@ -125,14 +125,16 @@ void LibFacade::loadIndex()
     {
         MyBodyParser.data()->endPlayingBody();
         MyIndexManager.data()->deactivateRefresh();
+
     }
 
     // Start with this only when it is absolutly sure that in the player component is no activity anymore.
     if (!MyIndexManager.data()->load())
         return;
 
-    initFileManager();
+    MyPlaceHolder.reset(new SmilHead::PlaceHolder(this)); // must init before Filemanager
 
+    initFileManager();
     processHeadParsing();
 
 }
@@ -160,7 +162,7 @@ void LibFacade::initFileManager()
 
 void LibFacade::processHeadParsing()
 {
-    MyHeadParser.reset(new HeadParser(MyConfiguration.data(), MyMediaManager.data(), MyInventoryTable.data(), this));
+    MyHeadParser.reset(new HeadParser(MyConfiguration.data(), MyMediaManager.data(), MyInventoryTable.data(), MyPlaceHolder.data(), this));
     connect(MyHeadParser.data(), SIGNAL(parsingCompleted()), this, SLOT(processBodyParsing()));
 
     qDebug() <<  " begin head parsing" ;
@@ -171,7 +173,7 @@ void LibFacade::processHeadParsing()
 void LibFacade::processBodyParsing()
 {
     MyElementsContainer.reset(new ElementsContainer(MyHeadParser.data(), this)); // must be setted, when Layout is known
-    MyElementFactory.reset(new ElementFactory(MyMediaManager.data(), MyConfiguration.data()));
+    MyElementFactory.reset(new ElementFactory(MyMediaManager.data(), MyConfiguration.data(), MyPlaceHolder.data()));
 
     MyBodyParser.reset(new BodyParser(MyElementFactory.data(), MyMediaManager.data(), MyElementsContainer.data(), this));
 

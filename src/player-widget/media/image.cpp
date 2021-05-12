@@ -32,7 +32,21 @@ void PlayerImage::init(BaseMedia *media)
     QString path = SmilMedia->getLoadablePath();
     if (isFileExists(path))
     {
-        loaded_image.load(path);
+        // because sometimes people name a png with jpg extension or vice versa
+        // in this case loaded_image.load(path)
+        QFile CurrentFile(path);
+        if(!CurrentFile.open(QIODevice::ReadOnly))
+        {
+            SmilMedia->finishedNotFound();
+            return;
+        }
+
+        if (loaded_image.loadFromData(CurrentFile.readAll()))
+        {
+            SmilMedia->finishedNotFound();
+            return;
+        }
+
         ImageWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         ImageWidget.data()->setPixmap(loaded_image);
         if (SmilMedia->getLogContentId() != "")
@@ -57,7 +71,8 @@ void PlayerImage::changeSize(int w, int h)
     if (!exists)
         return;
 
-    QString fit = SmilMedia->getFit().toLower();
+    QString fit = SmilMedia->getFit().toLower();    
+
     if (fit == "fill")
        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     else if (fit == "meet")

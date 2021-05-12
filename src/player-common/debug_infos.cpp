@@ -39,7 +39,7 @@ QString DebugInfos::preparePlayedMediaText(BaseMedia *media)
         return "";
     }
 
-    QString key = media->getRegion();
+    QString key = media->getRegionName();
     QString value = media->getTitle();
 
     if (value == "")

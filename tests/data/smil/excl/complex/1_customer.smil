@@ -133,11 +133,9 @@
 						<seq xml:id="daily_7_seq" dur="53999" begin="wallclock(R/2020-09-24T07:00/P1D)" restart="whenNotActive">
 							<seq repeatCount="indefinite" begin="0">
 								<seq>
-								<!--	<img expr="adapi-compare('2020-09-17T00:00:00', adapi-date()) &lt;= 0 and adapi-compare('2020-09-23T23:59:59', adapi-date()) &gt; 0 and adapi-compare('00:00', substring-after(adapi-date(), 'T')) &lt;= 0 and adapi-compare('23:59', substring-after(adapi-date(), 'T')) &gt; 0 " dur="20" src="../../../images/begin.jpg" region="47597" soundLevel="0%" fit="fill">
-										<param name="logContentId" value="3 begin" />
-									</img> -->
 									<img dur="20" src="../../../images/begin.jpg" region="47597" soundLevel="0%" fit="fill">
 										<param name="logContentId" value="3 begin" />
+									</img>
 								</seq>
 								<seq begin="0" dur="0.1" />
 							</seq>

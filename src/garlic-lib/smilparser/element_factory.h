@@ -35,11 +35,12 @@ class ElementFactory : public QObject
 {
     Q_OBJECT
 public:
-    explicit ElementFactory(Files::MediaManager *mm, MainConfiguration *config, QObject *parent = Q_NULLPTR);
+    explicit ElementFactory(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
     BaseTimings    *createBase(QDomElement dom_element, TContainer *parent_container, QObject *parent);
 protected:
-    Files::MediaManager *MyMediaManager;
-    MainConfiguration *MyMainConfiguration;
+    Files::MediaManager   *MyMediaManager;
+    SmilHead::PlaceHolder *MyPlaceHolder;
+    MainConfiguration     *MyMainConfiguration;
 
 
 };

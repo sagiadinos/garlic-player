@@ -59,7 +59,7 @@ void ElementsContainer::insertSmilMedia(BaseMedia *MyBaseMedia)
         return;
     }
 
-    QString s = MyBaseMedia->getRegion();
+    QString s = MyBaseMedia->getRegionName();
 
     QMap<QString, QVector<BaseMedia *>*>::iterator i = media_list.find(s);
     if (i != media_list.end())

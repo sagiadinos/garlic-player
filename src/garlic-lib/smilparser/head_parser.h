@@ -27,6 +27,7 @@
 
 #include "head/subscription.h"
 #include "head/task_scheduler.h"
+#include "head/placeholder.h"
 #include "files/media_manager.h"
 #include "reports/system_report_manager.h"
 #include "reports/event_logs_manager.h"
@@ -46,6 +47,8 @@ struct Region
     qreal width = 1;
     qreal height = 1;
     int z_index = 0;
+    QString fit              = "hidden";
+    QString soundLevel      = "100%";
     QString backgroundColor  = "black";
     QString backgroundImage  = "none";
     QString backgroundRepeat = "repeat";
@@ -57,7 +60,7 @@ class HeadParser: public QObject
 {
         Q_OBJECT
     public:
-        explicit HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, QObject *parent = Q_NULLPTR);
+        explicit HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
          ~HeadParser();
         void                   setDefaultValues();
         void                   parse(QDomElement head, SmilHead::TaskScheduler *MyTasks);
@@ -81,15 +84,17 @@ class HeadParser: public QObject
         bool                   has_backgroundimage = false;
         int                    refresh, width, height;
         QString                backgroundColor = "black";
-        QString                backgroundImage = "none";;
-        QString                backgroundRepeat= "repeat";;
+        QString                backgroundImage = "none";
+        QString                backgroundRepeat= "repeat";
         QDomElement            head;
         QList<Region>          region_list;
         MainConfiguration     *MyConfiguration;
+        SmilHead::PlaceHolder *MyPlaceHolder;
         Files::MediaManager   *MyMediaManager;
         void                   parseMeta(QDomElement element);
         void                   parseMetaData(QDomElement element, SmilHead::TaskScheduler *MyTasks);
         void                   parseLayout(QDomElement layout);
+        void                   parseState(QDomElement state);
         void                   parseRootLayout(QDomElement root_layout);
         void                   parseRegions(QDomNodeList childs);
         void                   handleBackgroundImage(QString value);

@@ -64,6 +64,7 @@ SOURCES += \
     smilparser/element_factory.cpp \
     smilparser/elements_container.cpp \
     smilparser/head/firmware_downloader.cpp \
+    smilparser/head/placeholder.cpp \
     smilparser/head/task_scheduler.cpp \
     smilparser/head/xml_configuration.cpp \
     smilparser/head_parser.cpp \
@@ -136,6 +137,7 @@ HEADERS += \
     smilparser/element_factory.h \
     smilparser/elements_container.h \
     smilparser/head/firmware_downloader.h \
+    smilparser/head/placeholder.h \
     smilparser/head/task_scheduler.h \
     smilparser/head/xml_configuration.h \
     smilparser/head_parser.h \

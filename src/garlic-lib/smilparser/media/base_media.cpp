@@ -18,10 +18,17 @@
 
 #include "base_media.h"
 
-BaseMedia::BaseMedia(Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseTimings(parent)
+BaseMedia::BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseTimings(parent)
 {
     MyMainConfiguration = config;
     MyMediaManager      = mm;
+    MyPlaceHolder       = ph;
+
+}
+
+void BaseMedia::setRegion(Region r)
+{
+    MyRegion = r;
 }
 
 void BaseMedia::preloadParse(QDomElement element)
@@ -30,6 +37,7 @@ void BaseMedia::preloadParse(QDomElement element)
     setAttributes();     // special for every media type
     parseBaseParameters(); // in this class
 }
+
 
 QString BaseMedia::getLoadablePath()
 {
@@ -92,13 +100,24 @@ void BaseMedia::interruptByRestart()
     // check for repeat
 }
 
+QString BaseMedia::getRegionName()
+{
+    return region_name;
+}
+
 void BaseMedia::registerInMediaManager()
 {
+    if (MyPlaceHolder->isPlaceHolder(src))
+        src = MyPlaceHolder->findPathByPlaceHolder(src);
+
     MyMediaManager->registerFile(src);
 }
 
 void BaseMedia::registerInMediaManagerAsUncachable()
 {
+    if (MyPlaceHolder->isPlaceHolder(src))
+        src = MyPlaceHolder->findPathByPlaceHolder(src);
+
     MyMediaManager->registerAsUncachable(src);
 }
 
@@ -116,7 +135,7 @@ void BaseMedia::parseBaseMediaAttributes()
 {
     parseTimingAttributes();
 
-    region = getAttributeFromRootElement("region", "");
+    region_name = getAttributeFromRootElement("region", "");
     fit    = getAttributeFromRootElement("fit", "");
     // maybe obsolete 2021-04-21
    //  type   = getAttributeFromRootElement("type");

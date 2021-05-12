@@ -38,7 +38,7 @@ PlayerWeb::~PlayerWeb()
 void PlayerWeb::init(BaseMedia *media)
 {
     SmilMedia = media;
-    browser = new QWebEngineView;
+    browser   = new QWebEngineView;
     connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
 
     // Deactivate caching for testing

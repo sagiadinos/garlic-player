@@ -18,7 +18,7 @@
 
 #include "video.h"
 
-TVideo::TVideo(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : TAudio(pc, mm, config, parent)
+TVideo::TVideo(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : TAudio(pc, mm, config, ph, parent)
 {
     parent_container = pc;
     setParentTag(pc->getRootElement().nodeName());

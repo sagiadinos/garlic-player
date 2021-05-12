@@ -101,7 +101,7 @@ bool Files::MediaManager::isCurrentlyPlaying(QString path)
 
 QString Files::MediaManager::requestLoadablePath(QString src)
 {
-    // check if it is in cache first
+    // check if it is in cache
     if (!isRemote(src) && isRelative(src)) // when media is relative we need the Indexpath set in front
     {
         src = MyConfiguration->getIndexPath() + src;

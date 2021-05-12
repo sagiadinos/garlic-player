@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "unknown.h"
 
-Unknown::Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
+Unknown::Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     parent_container = pc;
     setParentTag(pc->getRootElement().nodeName());

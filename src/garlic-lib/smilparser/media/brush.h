@@ -24,7 +24,7 @@ class TBrush : public BaseMedia
 {
         Q_OBJECT
     public:
-        TBrush(TContainer *pc, Files::MediaManager *mm, MainConfiguration *mc, QObject *parent = Q_NULLPTR);
+        TBrush(TContainer *pc, Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
         QString getColor();
     public slots:
         void     prepareDurationTimerBeforePlay();

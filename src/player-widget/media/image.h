@@ -2,6 +2,7 @@
 #define MPIMAGE_H
 
 #include <QLabel>
+#include <QImageReader>
 #include <QPixmap>
 #include "player_base_media.h"
 #include "smilparser/media/image.h"

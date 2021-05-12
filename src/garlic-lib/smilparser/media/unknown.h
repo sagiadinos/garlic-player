@@ -28,7 +28,7 @@ class Unknown : public BaseMedia
 {
         Q_OBJECT
     public:
-        explicit Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent = Q_NULLPTR);
+        explicit Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
     public slots:
         void     prepareDurationTimerBeforePlay();
     protected:

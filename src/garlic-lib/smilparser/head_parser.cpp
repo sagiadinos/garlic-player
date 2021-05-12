@@ -18,11 +18,12 @@
 
 #include "head_parser.h"
 
-HeadParser::HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, QObject *parent) : QObject(parent)
+HeadParser::HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, SmilHead::PlaceHolder *ph, QObject *parent) : QObject(parent)
 {
     MyConfiguration  = config;
     MyMediaManager   = mm;
     MyInventoryTable = it;
+    MyPlaceHolder    = ph;
     setDefaultValues();
 }
 
@@ -86,6 +87,8 @@ void HeadParser::parse(QDomElement head, SmilHead::TaskScheduler *MyTasks)
                 parseMetaData(element, MyTasks);
             else if (element.tagName() == "layout")
                 parseLayout(element);
+            else if (element.tagName() == "state")
+                parseState(element);
         }
     }
 }
@@ -174,6 +177,21 @@ void HeadParser::parseLayout(QDomElement layout)
     }
 }
 
+void HeadParser::parseState(QDomElement state)
+{
+    if (!state.hasChildNodes())
+        return;
+
+    QDomNodeList childs = state.childNodes();
+    for (int i = 0; i < childs.length(); i++)
+    {
+        if (childs.item(i).toElement().tagName() == "data")
+        {
+            MyPlaceHolder->parsePlaceholder(childs.item(i).toElement());
+        }
+    }
+}
+
 void HeadParser::parseRootLayout(QDomElement root_layout)
 {
     if (root_layout.hasAttribute("width"))
@@ -199,15 +217,6 @@ void HeadParser::parseRegions(QDomNodeList childs)
         if (element.tagName() != "region")
             continue;
 
-        // we cannot make so that there is one region correct setted so:
-        // when one region-tag has no regionName and xml:id break the loop delete QList and put the default_region 100% region as multizone
-        if (!element.hasAttribute("regionName") && !element.hasAttribute("xml:id") && !element.hasAttribute("id"))
-        {
-            region_list.clear();
-            region_list.append(default_region);
-            break;
-        }
-
         region.id = TBase::parseID(element);
 
         if (element.hasAttribute("regionName"))
@@ -222,6 +231,10 @@ void HeadParser::parseRegions(QDomNodeList childs)
             region.height          = calculatePercentBasedOnRoot(element.attribute("height"), height);
         if (element.hasAttribute("z-index"))
             region.z_index         = element.attribute("z-index").toInt();
+        if (element.hasAttribute("fit"))
+            region.fit         = element.attribute("fit");
+        if (element.hasAttribute("soundLevel"))
+            region.soundLevel         = element.attribute("soundLevel");
         if (element.hasAttribute("backgroundColor"))
             region.backgroundColor = element.attribute("backgroundColor");
         if (element.hasAttribute("backgroundImage"))

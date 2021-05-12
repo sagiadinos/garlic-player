@@ -56,6 +56,8 @@ void BodyParser::preloadElement(TContainer *ParentContainer, QDomElement dom_ele
     connectSlots(MyBaseTimings);
 
     // Important! Slots needs to be connected before parsing!
+    // Todo: integrate the necessary region for the deafult values
+    // for fit, soundlevel, and mediaAlign
     MyBaseTimings->preloadParse(dom_element);
 
     // media must be initialised after parse

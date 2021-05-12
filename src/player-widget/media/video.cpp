@@ -34,7 +34,7 @@ PlayerVideo::~PlayerVideo()
 
 void PlayerVideo::init(BaseMedia *media)
 {
-   SmilMedia  = media;
+    SmilMedia = media;
 
    QString path = SmilMedia->getLoadablePath();
    if (isFileExists(path))

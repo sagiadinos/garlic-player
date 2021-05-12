@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "prefetch.h"
 
-TPrefetch::TPrefetch(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, QObject *parent) : BaseMedia(mm, config, parent)
+TPrefetch::TPrefetch(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     parent_container = pc;
     setParentTag(pc->getRootElement().nodeName());
