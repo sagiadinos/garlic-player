@@ -100,5 +100,5 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *par
         return new TBody(parent);
     }
 
-    return new Unknown(parent_container, MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+    return new TUnknown(parent_container, MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
 }

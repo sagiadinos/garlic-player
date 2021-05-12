@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "unknown.h"
 
-Unknown::Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+TUnknown::TUnknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     parent_container = pc;
     setParentTag(pc->getRootElement().nodeName());
@@ -26,14 +26,14 @@ Unknown::Unknown(TContainer *pc, Files::MediaManager *mm, MainConfiguration *con
 
 }
 
-void Unknown::prepareDurationTimerBeforePlay()
+void TUnknown::prepareDurationTimerBeforePlay()
 {
     Q_UNUSED(dur);
     qWarning(Develop) << src << " Unknown tag";
     skipElement();
 }
 
-void Unknown::setAttributes()
+void TUnknown::setAttributes()
 {
     parseBaseMediaAttributes();
 }
