@@ -80,7 +80,7 @@ void RegionsList::startShowMedia(BaseMedia *media)
     if (regions_list.size() == 0) // prevent to call functionx of deleted or not existing regions
         return;
 
-    QStringList region_ids = select(media->getRegion());
+    QStringList region_ids = select(media->getRegionName());
     QStringList::iterator i;
     for (i = region_ids.begin(); i != region_ids.end(); ++i)
     {
@@ -94,7 +94,7 @@ void RegionsList::stopShowMedia(BaseMedia *media)
     if (regions_list.size() == 0) // prevent to call functionx of deleted or not existing regions
         return;
 
-    QStringList region_ids = select(media->getRegion());
+    QStringList region_ids = select(media->getRegionName());
     QStringList::iterator i;
     for (i = region_ids.begin(); i != region_ids.end(); ++i)
     {
