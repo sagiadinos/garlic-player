@@ -1,16 +1,18 @@
 Changelog
 ===========
 
-0.4.0 -> 0.5.0 (in development see ci-buildsq)
+0.4.0 -> 0.5.0 (in development see ci-build)
 ---------------------
 1. New Features
 	* resumable downloads
 	* support endsync for excl and par (first|last|id-value)
 	* support restart in seq, par and excl (always|never|whenNotActive|defaukt)	
 	* support for media-element brush and attribute color
+	* support for syncbase values in combination with positive clock values for begin/end
 
 2. Improvements
 	* additional SMIL-Indexes for testing
+	* higher compatibility to some SMIL hardware player
 	* bugfixes
 
 0.3.0 -> 0.4.0

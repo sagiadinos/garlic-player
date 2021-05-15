@@ -62,12 +62,17 @@ bool Timings::SimpleTimer::isActive()
     return MyTimer->isActive();
 }
 
-void Timings::SimpleTimer::start()
+bool Timings::SimpleTimer::start()
 {
     if (MyTimer == Q_NULLPTR || type != TYPE_CLOCKVALUE)
-        return;
+        return false;
+
+    // todo what happens if end !="indefinite"
+    if (getType() == TYPE_INDEFINITE)
+        return true; // no timer needed on indefinite
 
     MyTimer->start(clock_in_ms-tolerance);
+    return true;
 }
 
 void Timings::SimpleTimer::resume()

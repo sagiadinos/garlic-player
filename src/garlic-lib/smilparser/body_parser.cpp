@@ -59,7 +59,6 @@ void BodyParser::preloadElement(TContainer *ParentContainer, QDomElement dom_ele
     // Todo: integrate the necessary region for the deafult values
     // for fit, soundlevel, and mediaAlign
     MyBaseTimings->preloadParse(dom_element);
-
     // media must be initialised after parse
     if (MyBaseTimings->getBaseType() == "media")
     {
@@ -72,8 +71,13 @@ void BodyParser::preloadElement(TContainer *ParentContainer, QDomElement dom_ele
 
 void BodyParser::emitPreloadingBodyCompleted()
 {   
+    // check if there are elements which needs to start or end by a syncbase or event trigger
+    // the distribute the to the trigger elements
+    MyElementsContainer->distributeTriggers();
+
     emit preloadingBodyCompleted();
 }
+
 
 /**
  * @brief BodyParser::initMedia media must be init e.g. to start download
@@ -93,7 +97,6 @@ void BodyParser::initMedia(BaseMedia *MyMedia)
         MyMedia->registerInMediaManagerAsUncachable();
     }
     // do nothing with unknown
-    MyElementsContainer->insertSmilMedia(MyMedia);
 }
 
 /**
@@ -199,12 +202,31 @@ void BodyParser::resumeQueuedElement(BaseTimings *element)
     }
 }
 
+void BodyParser::fireBegin(QString target_id, QString source_id)
+{
+    BaseTimings  *bt = MyElementsContainer->findSmilElementById(target_id);
+
+    // todo check if parent container is actived
+    // cause only active elements can be triggered
+    bt->startTrigger(source_id);
+}
+
+void BodyParser::fireEnd(QString target_id, QString source_id)
+{
+    BaseTimings  *bt = MyElementsContainer->findSmilElementById(target_id);
+    bt->stopTrigger(source_id);
+}
+
+
 void BodyParser::connectSlots(BaseTimings *element)
 {
     connect(element, SIGNAL(startElementSignal(BaseTimings*)), this, SLOT(startElement(BaseTimings*)));
     connect(element, SIGNAL(stopElementSignal(BaseTimings*)), this, SLOT(stopElement(BaseTimings*)));
     connect(element, SIGNAL(resumeElementSignal(BaseTimings*)), this, SLOT(resumeQueuedElement(BaseTimings*)));
     connect(element, SIGNAL(pauseElementSignal(BaseTimings*)), this, SLOT(pauseElement(BaseTimings*)));
+
+    connect(element, SIGNAL(triggerBeginSignal(QString,QString)), this, SLOT(fireBegin(QString,QString)));
+    connect(element, SIGNAL(triggerEndSignal(QString,QString)), this, SLOT(fireEnd(QString,QString)));
 
     if (element->getBaseType() == "container")
         connect(element, SIGNAL(preloadElementSignal(TContainer*,QDomElement)), this, SLOT(preloadElement(TContainer*,QDomElement)));

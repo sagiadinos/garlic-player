@@ -44,7 +44,7 @@ namespace Timings
 
         void         parse(QString s_value);
         bool         isActive();
-        void         start();
+        bool         start();
         void         pause();
         void         resume();
         void         stop();

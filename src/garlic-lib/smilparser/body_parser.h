@@ -19,12 +19,11 @@
 #ifndef SMILPARSER_H
 #define SMILPARSER_H
 
-#include "elements_container.h"
 #include "current_playing_media.h"
 #include "smilparser/element_factory.h"
 #include "container.h"
 #include "base_media.h"
-
+#include "elements_container.h"
 
 /**
  * @brief   The TSmil class is the interface between container, media and
@@ -66,6 +65,8 @@ protected slots:
     void                               stopElement(BaseTimings *element);
     void                               resumeQueuedElement(BaseTimings *element);
     void                               pauseElement(BaseTimings*element);
+    void                               fireBegin(QString target_id, QString source_id);
+    void                               fireEnd(QString target_id, QString source_id);
 
 signals:
     void                               startShowMedia(BaseMedia *media);

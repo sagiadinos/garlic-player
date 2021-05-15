@@ -53,9 +53,8 @@ void BaseTimings::startTimers()
 {
     qDebug() << "prepare Play: " + getID() + " parent: " + getParentContainer()->getID();
     if (EndTimer != Q_NULLPTR)
-    {
         EndTimer->start();
-    }
+
     // must before start otherwise when begin = 0s
     // elements starts play method immediately get the played status and will be overwriten here
     status = _waiting;
@@ -66,35 +65,40 @@ void BaseTimings::pauseTimers()
 {
     qDebug() << "prepare Plause: " + getID() + " parent: " + getParentContainer()->getID();
     if (BeginTimer != Q_NULLPTR)
-    {
         BeginTimer->pause();
-    }
+
     if (DurTimer != Q_NULLPTR)
-    {
-       DurTimer->pause();
-    }
+        DurTimer->pause();
+
     if (EndTimer != Q_NULLPTR)
-    {
         EndTimer->pause();
-    }
-    return;
 }
 
 void BaseTimings::stopTimers()
 {
     qDebug() << "prepare Stop: " + getID() + " parent: " + getParentContainer()->getID();
     if (BeginTimer != Q_NULLPTR)
-    {
         BeginTimer->stop();
-    }
+
     if (EndTimer != Q_NULLPTR)
-    {
         EndTimer->stop();
-    }
+
     if (DurTimer != Q_NULLPTR)
-    {
         DurTimer->stop();
-    }
+}
+
+void BaseTimings::startTrigger(QString source_id)
+{
+    startTimers();
+    BeginTimer->startFromExternalTrigger(source_id);
+}
+
+void BaseTimings::stopTrigger(QString source_id)
+{
+    if (EndTimer != Q_NULLPTR)
+       EndTimer->startFromExternalTrigger(source_id);
+    else
+       finishedActiveDuration();
 }
 
 void BaseTimings::resumeTimers()
@@ -113,22 +117,55 @@ void BaseTimings::resumeTimers()
     }
 
     if (DurTimer != Q_NULLPTR)
-    {
         DurTimer->resume();
-    }
 }
 
 bool BaseTimings::hasActiveTimers()
 {
     if (isEndTimerActive())
         return true;
+
     if (isDurTimerActive())
         return true;
+
     if (isBeginTimerActive())
         return true;
 
     return false;
 }
+
+void BaseTimings::addToExternalBegins(QString symbol, QString target_id)
+{
+    if (BeginTargets == Q_NULLPTR)
+        BeginTargets = new TargetTrigger(this);
+
+    BeginTargets->insert(symbol, target_id);
+}
+
+void BaseTimings::addToExternalEnds(QString symbol, QString target_id)
+{
+    if (EndTargets == Q_NULLPTR)
+        EndTargets = new TargetTrigger(this);
+
+    EndTargets->insert(symbol, target_id);
+}
+
+QHash<QString, QString> BaseTimings::fetchExternalBegins()
+{
+    if (!BeginTimer->hasExternalTrigger())
+        return {};
+
+   return BeginTimer->fetchTriggerList();
+}
+
+QHash<QString, QString> BaseTimings::fetchExternalEnds()
+{
+    if (!isEndTimerActive() || !EndTimer->hasExternalTrigger())
+        return {};
+
+   return EndTimer->fetchTriggerList();
+}
+
 
 void BaseTimings::finishedNotFound()
 {
@@ -151,7 +188,7 @@ void BaseTimings::skipElement()
     if (InternalTimer == Q_NULLPTR)
     {
         InternalTimer = new QTimer(this);
-        connect(InternalTimer, SIGNAL(timeout()), this, SLOT(emitfinishedActiveDuration()));
+        connect(InternalTimer, SIGNAL(timeout()), this, SLOT(finishedActiveDuration()));
         InternalTimer->setSingleShot(true);
         InternalTimer->setTimerType(Qt::PreciseTimer);
     }
@@ -198,24 +235,28 @@ void BaseTimings::resetInternalRepeatCount()
 
 bool BaseTimings::startDurTimer()
 {
+    QStringList sl = {};
+    if (BeginTargets != Q_NULLPTR)
+    {
+        sl = BeginTargets->findTargetIDsByTrigger("begin");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerBeginSignal(target_id, getID());
+        }
+    }
+    if (EndTargets != Q_NULLPTR)
+    {
+        sl = EndTargets->findTargetIDsByTrigger("begin");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerEndSignal(target_id, getID());
+        }
+    }
+
     if (DurTimer == Q_NULLPTR)
-    {
         return false;
-    }
 
-    if (DurTimer->getType() == DurTimer->TYPE_CLOCKVALUE)
-    {
-        DurTimer->start();
-        return true;
-    }
-
-    // todo what happens if end !="indefinite"
-    if (DurTimer->getType() == DurTimer->TYPE_INDEFINITE)
-    {
-        return true; // no timer needed on indefinite
-    }
-
-    return false;
+    return DurTimer->start();
 }
 
 /**
@@ -240,37 +281,25 @@ bool BaseTimings::handleRepeatCountStatus()
 bool BaseTimings::isBeginTimerActive()
 {
     if (BeginTimer == Q_NULLPTR)
-    {
         return false;
-    }
     else
-    {
         return BeginTimer->isActive();
-    }
 }
 
 bool BaseTimings::isEndTimerActive()
 {
     if (EndTimer == Q_NULLPTR)
-    {
         return false;
-    }
     else
-    {
         return EndTimer->isActive();
-    }
 }
 
 bool BaseTimings::isDurTimerActive()
 {
     if (DurTimer == Q_NULLPTR)
-    {
         return false;
-    }
     else
-    {
         return DurTimer->isActive();
-    }
 }
 
 bool BaseTimings::isRestartable()
@@ -289,11 +318,27 @@ bool BaseTimings::isRestartable()
         default:
             return true;
     }
-
 }
 
 void BaseTimings::finishedActiveDuration()
 {
+    QStringList sl = {};
+    if (BeginTargets != Q_NULLPTR)
+    {
+        sl = BeginTargets->findTargetIDsByTrigger("end");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerBeginSignal(target_id, getID());
+        }
+    }
+    if (EndTargets != Q_NULLPTR)
+    {
+        sl = EndTargets->findTargetIDsByTrigger("end");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerEndSignal(target_id, getID());
+        }
+    }
     qDebug() << getID() <<  " end active duration";
     emitfinishedActiveDuration();
 }
@@ -358,8 +403,6 @@ void BaseTimings::handleBeginTimer()
         begin_value = getAttributeFromRootElement("begin", "indefinite");
     else
         begin_value = getAttributeFromRootElement("begin", "0s");
-
-   // Todo: Check for event oder sync trigger
 
     BeginTimer->parse(begin_value);
 }

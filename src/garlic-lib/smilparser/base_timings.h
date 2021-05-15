@@ -22,6 +22,7 @@
 #include <QTimer>
 #include "smilparser/base.h"
 #include "smilparser/timings/begin_timer.h"
+#include "smilparser/trigger/target_trigger.h"
 
 /**
  * @brief The abstract BaseTimings class should inherited for begin end duration capable smil elements in body section
@@ -58,9 +59,14 @@ class BaseTimings : public TBase
                 void           startTimers();
                 void           pauseTimers();
                 void           stopTimers();
+                void           startTrigger(QString source_id);
+                void           stopTrigger(QString source_id);
                 void           resumeTimers();
-                bool hasActiveTimers();
-
+                bool           hasActiveTimers();
+                void           addToExternalBegins(QString symbol, QString target_id);
+                void           addToExternalEnds(QString symbol, QString target_id);
+                QHash<QString, QString> fetchExternalBegins();
+                QHash<QString, QString> fetchExternalEnds();
                 int            getStatus(){return status;}
                 void           finishedNotFound();
                 void           skipElement();
@@ -76,13 +82,14 @@ class BaseTimings : public TBase
         virtual void           emitPause() = 0;
         virtual void           emitResume() = 0;
 
-                void  emitStartElementSignal(BaseTimings* bt){emit startElementSignal(bt);}
-                void  emitStopElementSignal(BaseTimings* bt){emit stopElementSignal(bt);}
-                void  emitResumeElementSignal(BaseTimings* bt){emit resumeElementSignal(bt);}
-                void  emitPauseElementSignal(BaseTimings* bt){emit pauseElementSignal(bt);}
+                void           emitStartElementSignal(BaseTimings* bt){emit startElementSignal(bt);}
+                void           emitStopElementSignal(BaseTimings* bt){emit stopElementSignal(bt);}
+                void           emitResumeElementSignal(BaseTimings* bt){emit resumeElementSignal(bt);}
+                void           emitPauseElementSignal(BaseTimings* bt){emit pauseElementSignal(bt);}
 
 
                 void           finishIntrinsicDuration();
+
     public slots:
         virtual void           emitfinishedActiveDuration() = 0;
         virtual void           prepareDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
@@ -112,9 +119,11 @@ class BaseTimings : public TBase
     protected slots:
                 void           finishedActiveDuration();
     private:
-                Timings::BeginTimer    *BeginTimer = Q_NULLPTR;
-                Timings::EnhancedTimer *EndTimer   = Q_NULLPTR;
-                Timings::SimpleTimer   *DurTimer   = Q_NULLPTR;
+                Timings::BeginTimer    *BeginTimer   = Q_NULLPTR;
+                Timings::EnhancedTimer *EndTimer     = Q_NULLPTR;
+                Timings::SimpleTimer   *DurTimer     = Q_NULLPTR;
+                TargetTrigger          *BeginTargets = Q_NULLPTR;
+                TargetTrigger          *EndTargets   = Q_NULLPTR;
            //     Timings::SimpleTimer   *repeatDur  = Q_NULLPTR;
                 void           setRepeatCount(QString rC);
                 void           handleBeginTimer();
@@ -123,6 +132,8 @@ class BaseTimings : public TBase
                 void           finishActiveDurationSignal(BaseTimings*);
                 void           finishSimpleDurationSignal(BaseTimings*);
 
+                void  triggerBeginSignal(QString,QString);
+                void  triggerEndSignal(QString,QString);
                 void  startElementSignal(BaseTimings*);
                 void  stopElementSignal(BaseTimings*);
                 void  resumeElementSignal(BaseTimings*);

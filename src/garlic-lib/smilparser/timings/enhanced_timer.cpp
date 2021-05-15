@@ -48,6 +48,12 @@ void Timings::EnhancedTimer::initTimer(int type, QString value)
             ts->MyWallClock = new WallClock();
             ts->MyWallClock->parse(value);
         break;
+        case TYPE_SYNCBASE:
+            ts->MySyncBase = new SyncBase();
+            ts->MySyncBase->parse(value);
+            if (ts->MySyncBase->hasExternTrigger())
+                has_external_trigger = true;
+        break;
     }
 
     MyTriggerList.append(ts);
@@ -68,6 +74,9 @@ void Timings::EnhancedTimer::deleteTimer()
             case TYPE_WALLCLOCK:
                 delete ts->MyWallClock;
             break;
+            case TYPE_SYNCBASE:
+                delete ts->MySyncBase;
+            break;
         }
         delete ts->MyTimer;
         delete ts;
@@ -79,7 +88,7 @@ void Timings::EnhancedTimer::parse(QString attr_value)
 {
     // do not toLower here, we need origial values e.g. for ISO 8601
     QStringList value_list = attr_value.simplified().split(';');
-    for (QString value : qAsConst(value_list))
+    for (const auto& value : qAsConst(value_list))
     {
         if (value.isEmpty()) // some might end with semikolon
             continue;
@@ -103,16 +112,19 @@ void Timings::EnhancedTimer::parse(QString attr_value)
         }
         else if (value.endsWith("begin") || value.endsWith("end"))
         {
-            // we do not support syncbase with clock value currently
-            // todo set syncbase support
+            initTimer(TYPE_SYNCBASE, value);
         }
         else if (value.mid(0, 9) == "accesskey" )
         {
             // todo: add support for accesskeys
         }
-        else
+        else if (value.at(0).isLetter() && value.contains("."))
         {
             // todo support for event ( click, load, focus )
+        }
+        else
+        {
+            // todo maybe something default?
         }
     }
 
@@ -144,8 +156,36 @@ void Timings::EnhancedTimer::start()
                   next_trigger     = ts->MyWallClock->calculateNextTrigger();
                   if (next_trigger > 0)
                      ts->MyTimer->start(next_trigger);
-
+            case TYPE_SYNCBASE:
+                ts->MySyncBase->setActive(true); // rest is done by Timings::EnhancedTimer::startFromExternalTrigger
             break;
+        }
+    }
+}
+
+void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
+{
+    if (MyTriggerList.size() == 0)
+        return;
+    qint64 next_trigger;
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
+    {
+        switch (ts->type)
+        {
+            case TYPE_SYNCBASE:
+                if (ts->MySyncBase->getSourceId() == source_id)
+                {
+                    next_trigger = ts->MySyncBase->getTimeTrigger();
+                    if (next_trigger == 0)
+                        emitTimeout();
+                    else
+                       ts->MyTimer->start(next_trigger);
+                }
+            break;
+            case TYPE_EVENT:
+                // ToDo
+                break;
+
         }
     }
 }
@@ -166,10 +206,20 @@ void Timings::EnhancedTimer::stop()
 {
     if (MyTriggerList.size() == 0)
         return;
+
     for (TriggerStruct *ts : qAsConst(MyTriggerList))
     {
-        ts->MyTimer->stop();
-        ts->remaining = 0;
+        switch (ts->type)
+        {
+            case TYPE_OFFSET:
+            case TYPE_WALLCLOCK:
+                ts->MyTimer->stop();
+                ts->remaining = 0;
+            break;
+            case TYPE_SYNCBASE:
+                ts->MySyncBase->setActive(false);
+            break;
+        }
     }
 }
 
@@ -218,10 +268,39 @@ bool Timings::EnhancedTimer::isActive()
             break;
             case TYPE_INDEFINITE:
                 return true;
+            case TYPE_SYNCBASE:
+                if (ts->MySyncBase->isActive())
+                    return true;
             break;
         }
     }
     return false;
+
+}
+
+bool Timings::EnhancedTimer::hasExternalTrigger()
+{
+    return has_external_trigger;
+}
+
+QHash<QString, QString> Timings::EnhancedTimer::fetchTriggerList()
+{
+    QHash<QString, QString> ret;
+    if (MyTriggerList.size() == 0)
+        return ret;
+
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
+    {
+        switch (ts->type)
+        {
+            case TYPE_SYNCBASE:
+                if (ts->MySyncBase->hasExternTrigger())
+                    ret.insert(ts->MySyncBase->getSourceId(), ts->MySyncBase->getSymbol());
+            break;
+        }
+    }
+    return ret;
+
 
 }
 

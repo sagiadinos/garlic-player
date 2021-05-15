@@ -3,29 +3,23 @@
 
 #include <QObject>
 #include <QHash>
-#include <QVector>
-#include "head_parser.h"
-#include "smilparser/element_factory.h"
+#include "base_timings.h"
 
 class ElementsContainer : public QObject
 {
     Q_OBJECT
 public:
-    explicit ElementsContainer(HeadParser *hp, QObject *parent = nullptr);
+    explicit ElementsContainer(QObject *parent = nullptr);
     ~ElementsContainer();
-    BaseTimings  *findSmilElement(QDomElement dom_element);
+    BaseTimings  *findSmilElementByDom(QDomElement dom_element);
+    BaseTimings  *findSmilElementById(QString id);
     void          insertSmilElement(BaseTimings *MyBaseTimings);
-    void          insertSmilMedia(BaseMedia *MyBaseMedia);
-    BaseMedia    *getMediaOnZoneAndPosition(int position, int zone);
+    void          distributeTriggers();
 
 private:
-    HeadParser                            *MyHeadParser;
     QHash<QString, BaseTimings *>          elements_list;
-    QVector<QString>                       regions;
-    QMap<QString, QVector<BaseMedia *> *>  media_list;
-    BaseMedia                             *getMediaOnPosition(int position, QVector<BaseMedia *> list);
-    QString                                determineZoneName(int zone);
-
+    void  distributeBeginTrigger(BaseTimings *bt_target );
+    void  distributeEndTrigger(BaseTimings *bt_target );
 
 signals:
 

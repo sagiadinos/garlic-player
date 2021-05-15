@@ -17,29 +17,26 @@
 *************************************************************************************/
 #include "elements_container.h"
 
-ElementsContainer::ElementsContainer(HeadParser *hp, QObject *parent) : QObject(parent)
+ElementsContainer::ElementsContainer(QObject *parent) : QObject(parent)
 {
-    MyHeadParser = hp;
-    QList<Region> *layout = MyHeadParser->getLayout();
-    for (int i = 0; i < layout->length(); i++)
-    {
-        regions.append(layout->at(i).regionName);
-    }
+
 }
 
 ElementsContainer::~ElementsContainer()
 {
     qDeleteAll(elements_list);
     elements_list.clear();
-
-    // not neccesary do delete here cause same objects are in all_elements_list
-    media_list.clear();
 }
 
-BaseTimings *ElementsContainer::findSmilElement(QDomElement dom_element)
+BaseTimings *ElementsContainer::findSmilElementByDom(QDomElement dom_element)
+{
+    return findSmilElementById(TBase::parseID(dom_element));
+}
+
+BaseTimings *ElementsContainer::findSmilElementById(QString id)
 {
     BaseTimings                             *MyBaseTimings     = Q_NULLPTR;
-    QHash<QString, BaseTimings *>::iterator  elements_iterator = elements_list.find(TBase::parseID(dom_element));
+    QHash<QString, BaseTimings *>::iterator  elements_iterator = elements_list.find(id);
     if (elements_iterator != elements_list.end())
     {
         MyBaseTimings = *elements_iterator;
@@ -47,74 +44,65 @@ BaseTimings *ElementsContainer::findSmilElement(QDomElement dom_element)
     return MyBaseTimings;
 }
 
+
 void ElementsContainer::insertSmilElement(BaseTimings *MyBaseTimings)
 {
     elements_list.insert(MyBaseTimings->getID(), MyBaseTimings);
 }
 
-void ElementsContainer::insertSmilMedia(BaseMedia *MyBaseMedia)
+void ElementsContainer::distributeTriggers()
 {
-    if (!MyBaseMedia->isMedia())
+    QHash<QString, BaseTimings *>::Iterator i = elements_list.begin();
+    BaseTimings *bt_target = Q_NULLPTR;
+    // traverse elements_container to find possible trigger set in begin or end values
+    // then find the trigger source ids and set them which element they must informed when a trigger point fired
+    //for example
+    // target begin = source.end or source.begin
+    // target end   = source.end or source.begin
+    while (i != elements_list.end())
     {
-        return;
-    }
+        bt_target = i.value();
+        // fetch all target id for their begin triggers
+        distributeBeginTrigger(bt_target);
 
-    QString s = MyBaseMedia->getRegionName();
-
-    QMap<QString, QVector<BaseMedia *>*>::iterator i = media_list.find(s);
-    if (i != media_list.end())
-    {
-        i.value()->append(MyBaseMedia);
-    }
-    else
-    {
-        QVector<BaseMedia *> *vec = new QVector<BaseMedia *>;
-        vec->append(MyBaseMedia);
-        media_list.insert(s, vec);
+        // fetch all target id for their end triggers
+        distributeEndTrigger(bt_target);
+        i++;
     }
 }
 
-BaseMedia *ElementsContainer::getMediaOnZoneAndPosition(int position, int zone)
+void ElementsContainer::distributeBeginTrigger(BaseTimings *bt_target)
 {
-    QMap<QString, QVector<BaseMedia *> *>::iterator i =  media_list.find(determineZoneName(zone));
-
-    if (i != media_list.end())
+    QHash<QString, QString> target_trigger_list = bt_target->fetchExternalBegins();
+    QString                           target_id = bt_target->getID();
+    if (!target_trigger_list.isEmpty())
     {
-        return getMediaOnPosition(position, *i.value());
-    }
-    return Q_NULLPTR;
-}
+        BaseTimings *bt_source = Q_NULLPTR;
+        QHash<QString, QString>::Iterator j = target_trigger_list.begin();
+        while (j != target_trigger_list.end())
+        {
+            bt_source = elements_list.find(j.key()).value();
 
-BaseMedia *ElementsContainer::getMediaOnPosition(int position, QVector<BaseMedia *> list)
-{
-    int array_position = position - 1;
-
-    if (array_position < 0)
-    {
-        return list.first();
+             bt_source->addToExternalBegins(j.value(),target_id);
+            j++;
+        }
     }
-    if (array_position > list.size())
-    {
-        return list.last();
-    }
-    return list.at(array_position);
-
-}
-
-QString ElementsContainer::determineZoneName(int zone)
-{
-    int array_position = zone - 1;
-    if (array_position < 1)
-    {
-        return regions.first();
-    }
-
-    if (array_position > regions.size())
-    {
-        return regions.last();
-    }
-    // zone-1 cause arrays start as 0
-    return regions.at(zone-1);
 }
 
 
+void ElementsContainer::distributeEndTrigger(BaseTimings *bt_target)
+{
+    QHash<QString, QString> target_trigger_list = bt_target->fetchExternalEnds();
+    QString                           target_id = bt_target->getID();
+    if (!target_trigger_list.isEmpty())
+    {
+        BaseTimings *bt_source = Q_NULLPTR;
+        QHash<QString, QString>::Iterator j = target_trigger_list.begin();
+        while (j != target_trigger_list.end())
+        {
+            bt_source = elements_list.find(j.key()).value();
+            bt_source->addToExternalEnds(j.value(),target_id);
+            j++;
+        }
+    }
+}

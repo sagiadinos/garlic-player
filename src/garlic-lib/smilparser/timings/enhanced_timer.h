@@ -22,6 +22,7 @@
 
 #include "timings/simple_timer.h"
 #include "trigger/wallclock.h"
+#include "trigger/syncbase.h"
 #include <QList>
 namespace Timings
 {
@@ -42,31 +43,37 @@ namespace Timings
             TYPE_INDEFINITE     = 8
         };
 
+
         explicit EnhancedTimer(QObject *parent = nullptr);
         ~EnhancedTimer();
         void        parse(QString svalue);
         void        deleteTimer();
         void        start();
+        void        startFromExternalTrigger(QString source_id);
         void        pause();
         void        stop();
         bool        resume();
         bool        isActive();
+        bool        hasExternalTrigger();
+        QHash<QString, QString> fetchTriggerList();
     protected:
         qint64      pause_start;
+        bool        has_external_trigger = false;
         struct TriggerStruct
         {
             QTimer     *MyTimer      = Q_NULLPTR;
             ClockValue *MyClockValue = Q_NULLPTR;
             WallClock  *MyWallClock  = Q_NULLPTR;
+            SyncBase   *MySyncBase     = Q_NULLPTR;
             QString     id           = "";
             QString     event        = "";
-            QString     sync_value   = "";
             int         type         = TYPE_NOT_SET;
             int         remaining    = 0;
         };
         bool        is_indefinite = false;
         QList<TriggerStruct *> MyTriggerList;
         void        initTimer(int type, QString value);
+
     protected slots:
       void   emitTimeout();
 

@@ -17,9 +17,7 @@ Garlic is able to play local and remote (via http) SMIL Files with the features 
  - Android
  - macOS
  
-## Experimental
-
-### Successful tested with:
+## Successful tested with:
  - Linux 64Bit: Kde Neon, Kubuntu, Debian, Arch64
  - Raspberry Pi: 3 and 4 for 32 and 64Bit
  - Tinker Board: (Linaro OS 1.8)
@@ -99,9 +97,9 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 - **class** stub
 - **xml:lang** stub
 - **dur** with values indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
-- **begin** with Clock values (like dur) and wallcock with periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W. value lists seperated by ";"
-- **end** has same features as begin
-- **repeatCount** (positive integer values only)
+- **begin** with Clock values, snycbase values and wallclock with weekday (-/+) periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W. value lists seperated by ";"
+- **end** has the same features as begin
+- **repeatCount** (currently only positive integer values)
 
 ### Layered multizone layouts elements:
 - **root-layout**
@@ -125,6 +123,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
  - **automatic refresh** via metatags in SMIL header
  - **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav like described in [a-smil.org Reporting](http://www.a-smil.org/index.php/Reporting)
  - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
+ - placeholer in head with status and data tags
  - http downloads and caching
  - caching of remote SMIL index file
  - caching of remote media files

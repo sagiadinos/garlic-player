@@ -172,7 +172,7 @@ void LibFacade::processHeadParsing()
 
 void LibFacade::processBodyParsing()
 {
-    MyElementsContainer.reset(new ElementsContainer(MyHeadParser.data(), this)); // must be setted, when Layout is known
+    MyElementsContainer.reset(new ElementsContainer(this)); // must be setted, when Layout is known
     MyElementFactory.reset(new ElementFactory(MyMediaManager.data(), MyConfiguration.data(), MyPlaceHolder.data()));
 
     MyBodyParser.reset(new BodyParser(MyElementFactory.data(), MyMediaManager.data(), MyElementsContainer.data(), this));

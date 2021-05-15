@@ -34,57 +34,58 @@ class BaseMedia : public BaseTimings
 
         explicit BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
 
-        void                 preloadParse(QDomElement element);
-        QString              getLoadablePath();
-        void                 pause();
-        void                 start();
-        void                 stop();
-        void                 resume();
-        void                 interruptByRestart();
+        void                   preloadParse(QDomElement element);
+        QString                getLoadablePath();
+        void                   pause();
+        void                   start();
+        void                   stop();
+        void                   resume();
+        void                   interruptByRestart();
 
-        void                 setRegion(Region r);
-        QString              getRegionName();
-        QString              getFit()          {return fit;}
-        QString              getSrc()          {return src;}
-        QString              getLogContentId() {return log_content_id;}
-        QString              getFileName()     {return filename;}
-        int                  getCacheControl() {return cache_control;}
-        QString              getBaseType()     {return "media";}
-        bool                 isMedia()         {return is_media;}
-        void                 registerInMediaManager();
-        void                 registerInMediaManagerAsUncachable();
+        void                   setRegion(Region r);
+        QString                getRegionName();
+        QString                getFit()          {return fit;}
+        QString                getSrc()          {return src;}
+        QString                getLogContentId() {return log_content_id;}
+        QString                getFileName()     {return filename;}
+        int                    getCacheControl() {return cache_control;}
+        QString                getBaseType()     {return "media";}
+        bool                   isMedia()         {return is_media;}
+        void                   registerInMediaManager();
+        void                   registerInMediaManagerAsUncachable();
 
-        bool                 hasPlayingChilds(){return false;}
-        QString              getParamsAsQuery() const;
+        bool                   hasPlayingChilds(){return false;}
+        QString                getParamsAsQuery() const;
 
-        void                 emitPause();
-        void                 emitResume();
+        void                   emitPause();
+        void                   emitResume();
 
     public slots:
-        void                 emitfinishedActiveDuration();
+        void                   emitfinishedActiveDuration();
 
     protected:
-        Files::MediaManager *MyMediaManager;
+        Files::MediaManager   *MyMediaManager;
         SmilHead::PlaceHolder *MyPlaceHolder;
-        Region               MyRegion;
-        MainConfiguration   *MyMainConfiguration;
-        QStringList          params_as_query;
-        Expr                 MyExpr;
-        QString              region_name     = "";
-        QString              src             = "";
-        QString              type            = "";
-        QString              fit             = "";
-        QString              filename        = "";
-        int                  cache_control   = 0;
-        QString              log_content_id  = "";
-        bool                 is_media        = false;
-        void                 parseBaseMediaAttributes();
-        void                 parseBaseParameters();
-        virtual void         setAttributes() = 0;
+        Region                 MyRegion;
+        MainConfiguration     *MyMainConfiguration;
+        TContainer            *MyParentContainer;
+        QStringList            params_as_query;
+        Expr                   MyExpr;
+        QString                region_name     = "";
+        QString                src             = "";
+        QString                type            = "";
+        QString                fit             = "";
+        QString                filename        = "";
+        int                    cache_control   = 0;
+        QString                log_content_id  = "";
+        bool                   is_media        = false;
+        void                   parseBaseMediaAttributes();
+        void                   parseBaseParameters();
+        virtual void           setAttributes() = 0;
 
     private:
-        void setAdditionalParameters(QDomElement param);
-        int                  determineCacheControl(QString value);
+        void                   setAdditionalParameters(QDomElement param);
+        int                    determineCacheControl(QString value);
 
 };
 
