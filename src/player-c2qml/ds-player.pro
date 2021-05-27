@@ -49,9 +49,9 @@ android {
     QT        += androidextras webview
     LIBS      += -L../libandroid -lgarlic
     DISTFILES += \
-       android_brandings/GarlicPlayer/android/AndroidManifest.xml
+       android_brandings/DS_DE/android/AndroidManifest.xml
 
-    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android_brandings/GarlicPlayer/android/
+    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android_brandings/DS_DE/android/
 
     # release build crashs when start debugging
     # see https://github.com/KDAB/android_openssl/issues/10
