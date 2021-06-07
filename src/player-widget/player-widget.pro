@@ -16,7 +16,7 @@ INCLUDEPATH += ../ext/zlib/includes
 INCLUDEPATH += ../garlic-lib/
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
-CONFIG   += support_qtav #alternatives: support_qtav support_qtmm support_libvlc
+CONFIG   += support_qtmm #alternatives: support_qtav support_qtmm support_libvlc
 
 #DEFINES += SUPPORT_EMBEDDED
 #DEFINES += SUPPORT_RPI
@@ -88,11 +88,11 @@ win32 {
 
 macx {
     #libgarlic release is static compiled in osx
-    debug:CONFIG+=sdk_no_version_check # remove annoying SDK messages on Apple Silicon
+    Debug:CONFIG+=sdk_no_version_check # remove annoying SDK messages on Apple Silicon
 
     ICON = ../../deployment/macx/garlic-player.icns
-    release:LIBS += -L../lib -lgarlic -lquazip -lzlib
-    debug:LIBS += -L../lib -lgarlic
+    Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
+    Debug:LIBS += -L../lib -lgarlic
 }
 
 SOURCES += \
