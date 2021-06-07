@@ -34,7 +34,7 @@ win32 {
 
 macx {
     # release version build as static lib
-    Release:CONFIG += staticlib
+    release:CONFIG += staticlib
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
 }

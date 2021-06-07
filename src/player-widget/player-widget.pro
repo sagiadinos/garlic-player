@@ -88,11 +88,11 @@ win32 {
 
 macx {
     #libgarlic release is static compiled in osx
-    Debug:CONFIG+=sdk_no_version_check # remove annoying SDK messages on Apple Silicon
+    debug:CONFIG+=sdk_no_version_check # remove annoying SDK messages on Apple Silicon
 
     ICON = ../../deployment/macx/garlic-player.icns
-    Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
-    Debug:LIBS += -L../lib -lgarlic
+    release:LIBS += -L../lib -lgarlic -lquazip -lzlib
+    debug:LIBS += -L../lib -lgarlic
 }
 
 SOURCES += \
