@@ -109,11 +109,11 @@ void Reporting::CreateSystemReport::createHardwareInfo()
 
 void Reporting::CreateSystemReport::appendNetworkChilds()
 {
-    interface = document.createElement("interface");
-    interface.setAttribute("id", MyNetwork->getInterfaceId());
-    network.appendChild(interface);
-    interface.appendChild(createTagWithTextValue("mac", MyNetwork->getMac()));
-    interface.appendChild(createTagWithTextValue("type", MyNetwork->getType()));
+    net_interface = document.createElement("interface");
+    net_interface.setAttribute("id", MyNetwork->getInterfaceId());
+    network.appendChild(net_interface);
+    net_interface.appendChild(createTagWithTextValue("mac", MyNetwork->getMac()));
+    net_interface.appendChild(createTagWithTextValue("type", MyNetwork->getType()));
     for(int i = 0; i < MyNetwork->countAddresses(); i++)
     {
         appendNetworkAddressChilds();
@@ -126,18 +126,18 @@ void Reporting::CreateSystemReport::appendNetworkAddressChilds()
     switch (MyNetwork->getProtocol())
     {
         case QAbstractSocket::IPv4Protocol:
-            interface.appendChild(createTagWithTextValue("ip_v4", MyNetwork->getIP()));
-            interface.appendChild(createTagWithTextValue("netmask_v4", MyNetwork->getNetMask()));
-            interface.appendChild(createTagWithTextValue("broadcast_v4", MyNetwork->getBroadcast()));
+            net_interface.appendChild(createTagWithTextValue("ip_v4", MyNetwork->getIP()));
+            net_interface.appendChild(createTagWithTextValue("netmask_v4", MyNetwork->getNetMask()));
+            net_interface.appendChild(createTagWithTextValue("broadcast_v4", MyNetwork->getBroadcast()));
             break;
         case QAbstractSocket::IPv6Protocol:
-            interface.appendChild(createTagWithTextValue("ip_v6", MyNetwork->getIP()));
-            interface.appendChild(createTagWithTextValue("netmask_v6", MyNetwork->getNetMask()));
+            net_interface.appendChild(createTagWithTextValue("ip_v6", MyNetwork->getIP()));
+            net_interface.appendChild(createTagWithTextValue("netmask_v6", MyNetwork->getNetMask()));
             break;
         case QAbstractSocket::AnyIPProtocol:
-            interface.appendChild(createTagWithTextValue("ip_both", MyNetwork->getIP()));
-            interface.appendChild(createTagWithTextValue("netmask_both", MyNetwork->getNetMask()));
-            interface.appendChild(createTagWithTextValue("broadcast_both", MyNetwork->getBroadcast()));
+            net_interface.appendChild(createTagWithTextValue("ip_both", MyNetwork->getIP()));
+            net_interface.appendChild(createTagWithTextValue("netmask_both", MyNetwork->getNetMask()));
+            net_interface.appendChild(createTagWithTextValue("broadcast_both", MyNetwork->getBroadcast()));
             break;
          default:
             break;

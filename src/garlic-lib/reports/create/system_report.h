@@ -36,7 +36,8 @@ namespace Reporting
             void process();
         protected:
              QScopedPointer<SystemInfos::Network> MyNetwork;
-             QDomElement           network, interface, hardware_info, configuration;
+             // must name net_interface cause windows makes trouble
+             QDomElement           network, net_interface, hardware_info, configuration;
              void                  createConfiguration();
              void                  createModelInfo();
              void                  createFactoryDefault();
