@@ -19,10 +19,7 @@
 #define SYSTEMINFOSNETWORK_H
 
 #include <QObject>
-#include <QNetworkConfigurationManager>
-#include <QNetworkSession>
 #include <QNetworkInterface>
-
 
 namespace SystemInfos
 {
@@ -34,23 +31,23 @@ namespace SystemInfos
             bool    resetInterface();
             bool    nextInterface();
             bool    resetAddress();
+            bool    isRealInterface();
             bool    nextAddress();
             int     countInterfaces();
             int     countAddresses();
             bool    isWifi();
             QString getInterfaceId();
-            QString getNetType();
             QString getMac();
+            int     getProtocol();
 
+            QString getType();
             QString getIP();
             QString getNetMask();
             QString getBroadcast();
         protected:
-            QNetworkConfigurationManager           configuration_manager;
-            QList<QNetworkConfiguration>           configurations_list;
-            QNetworkConfiguration                  current_configuration;
+            QList<QNetworkInterface>               interface_list;
+            QList<QNetworkInterface>::iterator     interface_list_iterator;
             QNetworkInterface                      current_interface;
-            QList<QNetworkConfiguration>::iterator configurations_list_iterator;
             QList<QNetworkAddressEntry>            addresses_list;
             QNetworkAddressEntry                   current_address;
             QList<QNetworkAddressEntry>::iterator  addresses_list_iterator;

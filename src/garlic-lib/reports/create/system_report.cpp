@@ -44,7 +44,9 @@ void Reporting::CreateSystemReport::createNetwork()
     MyNetwork->resetInterface();
     for(int i = 0; i < MyNetwork->countInterfaces(); i++)
     {
-        appendNetworkChilds();
+        if (MyNetwork->isRealInterface())
+            appendNetworkChilds();
+
         MyNetwork->nextInterface();
     }
 }
@@ -110,8 +112,8 @@ void Reporting::CreateSystemReport::appendNetworkChilds()
     interface = document.createElement("interface");
     interface.setAttribute("id", MyNetwork->getInterfaceId());
     network.appendChild(interface);
-    interface.appendChild(createTagWithTextValue("type", MyNetwork->getNetType()));
     interface.appendChild(createTagWithTextValue("mac", MyNetwork->getMac()));
+    interface.appendChild(createTagWithTextValue("type", MyNetwork->getType()));
     for(int i = 0; i < MyNetwork->countAddresses(); i++)
     {
         appendNetworkAddressChilds();
@@ -121,7 +123,24 @@ void Reporting::CreateSystemReport::appendNetworkChilds()
 
 void Reporting::CreateSystemReport::appendNetworkAddressChilds()
 {
-    interface.appendChild(createTagWithTextValue("ip", MyNetwork->getIP()));
-    interface.appendChild(createTagWithTextValue("netmask", MyNetwork->getNetMask()));
-    interface.appendChild(createTagWithTextValue("broadcast", MyNetwork->getBroadcast()));
+    switch (MyNetwork->getProtocol())
+    {
+        case QAbstractSocket::IPv4Protocol:
+            interface.appendChild(createTagWithTextValue("ip_v4", MyNetwork->getIP()));
+            interface.appendChild(createTagWithTextValue("netmask_v4", MyNetwork->getNetMask()));
+            interface.appendChild(createTagWithTextValue("broadcast_v4", MyNetwork->getBroadcast()));
+            break;
+        case QAbstractSocket::IPv6Protocol:
+            interface.appendChild(createTagWithTextValue("ip_v6", MyNetwork->getIP()));
+            interface.appendChild(createTagWithTextValue("netmask_v6", MyNetwork->getNetMask()));
+            break;
+        case QAbstractSocket::AnyIPProtocol:
+            interface.appendChild(createTagWithTextValue("ip_both", MyNetwork->getIP()));
+            interface.appendChild(createTagWithTextValue("netmask_both", MyNetwork->getNetMask()));
+            interface.appendChild(createTagWithTextValue("broadcast_both", MyNetwork->getBroadcast()));
+            break;
+         default:
+            break;
+
+    }
 }

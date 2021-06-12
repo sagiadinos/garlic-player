@@ -19,7 +19,7 @@
 
 SystemInfos::Network::Network(QObject *parent) : QObject(parent)
 {
-    configurations_list = configuration_manager.allConfigurations(QNetworkConfiguration::Active);
+    interface_list = QNetworkInterface::allInterfaces();
     resetInterface();
 }
 
@@ -27,15 +27,15 @@ bool SystemInfos::Network::resetInterface()
 {
     if (countInterfaces() == 0)
         return false;
-    configurations_list_iterator = configurations_list.begin();
+    interface_list_iterator = interface_list.begin();
     prepareCurrentInterface();
     return true;
 }
 
 bool SystemInfos::Network::nextInterface()
 {
-    configurations_list_iterator++;
-    if (configurations_list_iterator == configurations_list.end())
+    interface_list_iterator++;
+    if (interface_list_iterator == interface_list.end())
         return false;
     prepareCurrentInterface();
     return true;
@@ -46,7 +46,15 @@ bool SystemInfos::Network::resetAddress()
     if (countAddresses() == 0)
         return false;
     addresses_list_iterator = addresses_list.begin();
-    current_address = *addresses_list_iterator;
+    current_address         = *addresses_list_iterator;
+    return true;
+}
+
+bool SystemInfos::Network::isRealInterface()
+{
+    if (!current_interface.isValid() || current_interface.addressEntries().size() == 0 || getMac().isEmpty())
+        return false;
+
     return true;
 }
 
@@ -61,7 +69,7 @@ bool SystemInfos::Network::nextAddress()
 
 int SystemInfos::Network::countInterfaces()
 {
-   return configurations_list.size();
+   return interface_list.size();
 }
 
 int SystemInfos::Network::countAddresses()
@@ -69,24 +77,54 @@ int SystemInfos::Network::countAddresses()
     return addresses_list.size();
 }
 
-bool SystemInfos::Network::isWifi()
-{
-    return (current_configuration.bearerType() == QNetworkConfiguration::BearerWLAN);
-}
-
 QString SystemInfos::Network::getInterfaceId()
 {
     return current_interface.name();
 }
 
-QString SystemInfos::Network::getNetType()
-{
-    return current_configuration.bearerTypeName();
-}
-
 QString SystemInfos::Network::getMac()
 {
     return current_interface.hardwareAddress();
+}
+
+int SystemInfos::Network::getProtocol()
+{
+    return current_address.ip().protocol();
+}
+
+QString SystemInfos::Network::getType()
+{
+   switch (current_interface.type())
+   {
+       case QNetworkInterface::Loopback:
+           return "loopback";
+       case QNetworkInterface::Virtual:
+           return "virtual";
+       case QNetworkInterface::Ethernet:
+           return "ethernet";
+       case QNetworkInterface::Wifi:
+          return "wifi";
+       case QNetworkInterface::CanBus:
+          return "canbus";
+       case QNetworkInterface::Ppp:
+          return "Ppp";
+       case QNetworkInterface::Slip:
+          return "slip";
+       case QNetworkInterface::Phonet:
+          return "phonet";
+       case QNetworkInterface::Ieee802154:
+          return "ieee802154";
+       case QNetworkInterface::SixLoWPAN:
+          return "SixLoWPAN";
+       case QNetworkInterface::Ieee80216:
+          return "wimax";
+       case QNetworkInterface::Ieee1394:
+          return "firewire";
+        default:
+           return "unknown";
+
+
+   }
 }
 
 QString SystemInfos::Network::getIP()
@@ -106,9 +144,7 @@ QString SystemInfos::Network::getBroadcast()
 
 void SystemInfos::Network::prepareCurrentInterface()
 {
-    current_configuration    = *configurations_list_iterator;
-    QNetworkSession session(current_configuration);
-    current_interface        = session.interface();
-    addresses_list           = current_interface.addressEntries();
+    current_interface    = *interface_list_iterator;
+    addresses_list       = current_interface.addressEntries();
     resetAddress();
 }
