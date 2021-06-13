@@ -50,6 +50,13 @@ void Files::MediaManager::registerFile(QString src)
         return;
     }
 
+    if (src.contains(".wgt"))
+    {
+        QString wgt_path = MyMediaModel->handleWgt(src); // extract etc...
+        MyMediaModel->insertCacheableFile(src, wgt_path);
+        return;
+    }
+
     // if we reach here the can be a local file or a "data:" string
     // look at https://en.wikipedia.org/wiki/Data_URI_scheme
     MyMediaModel->insertAsLocalFile(src);

@@ -77,8 +77,12 @@ bool Wgt::extract()
     if (!isOpen())
         return false;
 
-    QFileInfo fi(local_file_path);
-    DiscSpace MyDiscSpace(fi.absolutePath());
+
+    if (!mustExtract())
+        return true;
+
+    QFileInfo wgt_file(local_file_path);
+    DiscSpace MyDiscSpace(wgt_file.absolutePath());
     qint64 calc = MyDiscSpace.calculateNeededDiscSpaceToFree(calculateUncompressedSize());
     if (calc > 0 && !MyDiscSpace.freeDiscSpace(calc))
     {
@@ -86,14 +90,14 @@ bool Wgt::extract()
         return "";
     }
 
-    QString folder_path = fi.absolutePath()+"/"+fi.baseName();
-    QDir dir(folder_path);
-    if (dir.exists() && !dir.removeRecursively())
+    QString folder_path = wgt_file.absolutePath()+"/"+wgt_file.baseName();
+    QDir wgt_dir(folder_path);
+    if (wgt_dir.exists() && !wgt_dir.removeRecursively())
     {
         qWarning(ContentManager) << local_file_path << " Widget was not extracted. Previuos directory cannot be deleted";
         return false;
     }
-    if (!dir.mkdir(folder_path))
+    if (!wgt_dir.mkdir(folder_path))
     {
         qWarning(ContentManager) << local_file_path << " Widget was not extracted. Directory cannot be created";
         return false;
@@ -102,4 +106,17 @@ bool Wgt::extract()
     JlCompress::extractDir(local_file_path, folder_path+"/");
 
     return true;
+}
+
+bool Wgt::mustExtract()
+{
+    QFileInfo wgt_file(local_file_path);
+    QFileInfo wgt_dir(wgt_file.absolutePath()+"/"+wgt_file.baseName());
+
+    QDateTime file = wgt_file.lastModified();
+    QDateTime dir  = wgt_dir.lastModified();
+    if (wgt_dir.exists() && dir > file)
+        return false;
+    else
+        return true;
 }

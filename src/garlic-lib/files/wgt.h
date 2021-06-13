@@ -26,20 +26,19 @@
 class Wgt : public QObject
 {
     Q_OBJECT
-public:
-    explicit Wgt(QString file_path = "", QObject *parent=Q_NULLPTR);
-    ~Wgt();
-    void         setFilePath(QString file_path);
-    bool         isOpen();
-    QString      handleRealPath();
-    bool         extract();
-    qint64       calculateUncompressedSize();
-protected:
-    QuaZip zip;
-    QString local_file_path;
-signals:
+    public:
+        explicit Wgt(QString file_path = "", QObject *parent=Q_NULLPTR);
+        ~Wgt();
 
-public slots:
+        QString      handleRealPath();
+    private:
+        void         setFilePath(QString file_path);
+        bool         isOpen();
+        bool         extract();
+        bool         mustExtract();
+        qint64       calculateUncompressedSize();
+        QuaZip zip;
+        QString local_file_path;
 };
 
 #endif // WGT_H 
