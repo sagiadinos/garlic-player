@@ -52,7 +52,7 @@ JNIEXPORT void JNICALL Java_com_sagiadinos_garlic_player_java_SmilIndexReceiver_
         jobject /*this_obj*/,
         jstring path)
 {
-    const char *str = env->GetStringUTFChars(path, NULL);
+    QString str(env->GetStringUTFChars(path, NULL));
     GlobalLibfacede->reloadWithNewIndex(str);
 }
 

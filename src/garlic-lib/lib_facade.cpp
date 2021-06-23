@@ -86,7 +86,7 @@ void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_par
  */
 void LibFacade::reloadWithNewIndex(QString index_path)
 {
-    MyConfiguration->setIndexUri(index_path);
+    MyConfiguration->determineIndexUri(index_path);
     initParser();
 }
 

@@ -43,6 +43,20 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts); // Raspberry and POT needs this http://thebugfreeblog.blogspot.de/2018/01/pot-570-with-qt-5100-built-for-armv8.html
 
     QApplication app(argc, argv);
+
+// must be checked and before app create directories
+#if defined Q_OS_ANDROID
+    // Register our QML type
+    AndroidManager *MyAndroidManager = new AndroidManager();
+    if (!MyAndroidManager->checkPermissiones())
+    {
+        MyAndroidManager->sendCloseCorrect();
+        QApplication::quit();
+    }
+    MyAndroidManager->disableScreenSaver();
+#endif
+
+
     MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
     MyPlayerConfiguration->determineInitConfigValues();
@@ -55,15 +69,6 @@ int main(int argc, char *argv[])
     QtWebView::initialize();
 
 #if defined Q_OS_ANDROID
-    // Register our QML type
-    AndroidManager *MyAndroidManager = new AndroidManager();
-    if (!MyAndroidManager->checkPermissiones())
-    {
-        MyAndroidManager->sendCloseCorrect();
-        QApplication::quit();
-    }
-    MyAndroidManager->disableScreenSaver();
-
     if (MyAndroidManager->hasLauncher())
     {
         MyLibFacade->toggleLauncher(MyAndroidManager->hasLauncher());

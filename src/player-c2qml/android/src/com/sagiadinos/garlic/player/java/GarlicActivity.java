@@ -58,9 +58,6 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
             retrieveUUID();
             retrieveLauncherVersion();
         }
-  //      PowerManager mgr = (PowerManager) getSystemService(Context.POWER_SERVICE);
-  //      PowerManager.WakeLock wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MA_PLAYER:GARLIC_PLAYER");
-  //      wakeLock.acquire();
     }
 
     public void registerBroadcastReceiver()

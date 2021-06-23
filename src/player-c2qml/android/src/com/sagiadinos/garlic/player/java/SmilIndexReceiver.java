@@ -45,7 +45,7 @@ public class SmilIndexReceiver extends BroadcastReceiver
             return;
         }
 
-       path = intent.getStringExtra("config_path");
+       path = intent.getStringExtra("smil_index_path");
 
        getSmilIndexPath(path);
     }
