@@ -6,6 +6,7 @@ Image::Image(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : P
     QString str(
                 "import QtQuick 2.12\n \
                     Image {  \
+                        cache: false; \
                         id: "+getRegionId()+"_image; \
                         anchors.fill: parent; \n \
                 }\n"
