@@ -117,7 +117,7 @@ bool MainConfiguration::validateContentUrl(QString url_string)
         error = true;
     }
 
-    if (url.scheme() != "") // prevent things like HtTp or httP
+    if (url.scheme() != "") // prevent thingsq like HtTp or httP
     {
         if (url.toString(QUrl::RemoveScheme).mid(0, 2) != "//")
         {

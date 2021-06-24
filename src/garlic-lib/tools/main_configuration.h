@@ -30,7 +30,7 @@
 
 
 /**
- * @brief The TConfiguration class
+ * @brief The MainConfiguration class
  */
 class MainConfiguration  : public QObject
 {
