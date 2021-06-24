@@ -46,7 +46,6 @@ int main(int argc, char *argv[])
 
 // must be checked and before app create directories
 #if defined Q_OS_ANDROID
-    // Register our QML type
     AndroidManager *MyAndroidManager = new AndroidManager();
     if (!MyAndroidManager->checkPermissiones())
     {
@@ -59,14 +58,10 @@ int main(int argc, char *argv[])
 
     MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
-    MyPlayerConfiguration->determineInitConfigValues();
     qInstallMessageHandler(handleMessages);
+    QtWebView::initialize();
 
     LibFacade  *MyLibFacade = new LibFacade();
-    MyLibFacade->init(MyMainConfiguration);
-    MyPlayerConfiguration->printVersionInformation();
-
-    QtWebView::initialize();
 
 #if defined Q_OS_ANDROID
     if (MyAndroidManager->hasLauncher())
@@ -80,6 +75,11 @@ int main(int argc, char *argv[])
 
     setGlobalLibFaceForJava(MyLibFacade);
 #endif
+
+    // This inits must be after Launcher inits
+    MyPlayerConfiguration->determineInitConfigValues();
+    MyLibFacade->init(MyMainConfiguration);
+    MyPlayerConfiguration->printVersionInformation();
 
     qmlRegisterType<LibFacade>("com.garlic.LibFacade", 1, 0, "LibFacade");
 
