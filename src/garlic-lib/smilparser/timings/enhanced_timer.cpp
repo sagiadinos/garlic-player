@@ -156,6 +156,7 @@ void Timings::EnhancedTimer::start()
                   next_trigger     = ts->MyWallClock->calculateNextTrigger();
                   if (next_trigger > 0)
                      ts->MyTimer->start(next_trigger);
+                break;
             case TYPE_SYNCBASE:
                 ts->MySyncBase->setActive(true); // rest is done by Timings::EnhancedTimer::startFromExternalTrigger
             break;

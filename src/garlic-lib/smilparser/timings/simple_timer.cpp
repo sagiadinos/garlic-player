@@ -50,11 +50,12 @@ void Timings::SimpleTimer::parse(QString attr_value)
 
 bool Timings::SimpleTimer::isActive()
 {
-    if (MyTimer == Q_NULLPTR)
-        return false;
 
     if (type != TYPE_INDEFINITE) // when infinite timer will never end
          return true;
+
+    if (MyTimer == Q_NULLPTR)
+        return false;
 
     if (type != TYPE_MEDIA)
          return false;
@@ -64,12 +65,12 @@ bool Timings::SimpleTimer::isActive()
 
 bool Timings::SimpleTimer::start()
 {
-    if (MyTimer == Q_NULLPTR || type != TYPE_CLOCKVALUE)
-        return false;
-
     // todo what happens if end !="indefinite"
     if (getType() == TYPE_INDEFINITE)
         return true; // no timer needed on indefinite
+
+    if (MyTimer == Q_NULLPTR || type != TYPE_CLOCKVALUE)
+        return false;
 
     MyTimer->start(clock_in_ms-tolerance);
     return true;
