@@ -24,7 +24,7 @@ void Timings::BeginTimer::start()
         {
             case TYPE_OFFSET:
                   next_trigger = ts->MyClockValue->getTriggerInMSec();
-                  if (next_trigger == 0)
+                  if (next_trigger <= 0)
                      emitTimeout();
                   else
                      ts->MyTimer->start(next_trigger);

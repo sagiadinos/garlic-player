@@ -44,6 +44,9 @@ void Timings::SimpleTimer::parse(QString attr_value)
         MyClockValue.parse(attr_value);
         initTimer();
         clock_in_ms = MyClockValue.getTriggerInMSec();
+        if (clock_in_ms < 0)
+            clock_in_ms = 0;
+
     }
     return;
 }
