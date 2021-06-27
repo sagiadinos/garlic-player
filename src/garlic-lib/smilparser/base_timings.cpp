@@ -256,6 +256,8 @@ bool BaseTimings::startDurTimer()
     if (DurTimer == Q_NULLPTR)
         return false;
 
+    // needed when a begin trigger ist started in the past
+    DurTimer->recalculateTimeClock(BeginTimer->getNegativeTrigger());
     return DurTimer->start();
 }
 
@@ -292,6 +294,14 @@ bool BaseTimings::isEndTimerActive()
         return false;
     else
         return EndTimer->isActive();
+}
+
+bool BaseTimings::hasDurTimer()
+{
+    if (DurTimer == Q_NULLPTR)
+        return false;
+    else
+        return true;
 }
 
 bool BaseTimings::isDurTimerActive()
@@ -391,10 +401,7 @@ void BaseTimings::setRepeatCount(QString rC)
 
 void BaseTimings::handleBeginTimer()
 {
-    if (DurTimer != Q_NULLPTR)
-        BeginTimer = new Timings::BeginTimer(DurTimer, this);
-    else
-        BeginTimer = new Timings::BeginTimer(Q_NULLPTR, this);
+    BeginTimer = new Timings::EnhancedTimer(this);
 
     connect(BeginTimer, SIGNAL(timeout()), this, SLOT(prepareDurationTimerBeforePlay()));
     QString begin_value = "";

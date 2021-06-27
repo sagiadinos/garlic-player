@@ -55,10 +55,14 @@ namespace Timings
         bool        resume();
         bool        isActive();
         bool        hasExternalTrigger();
+        qint64      getNegativeTrigger();
         QHash<QString, QString> fetchTriggerList();
     protected:
         qint64      pause_start;
         bool        has_external_trigger = false;
+        bool        has_negative_trigger = false;
+        qint64      negative_trigger = 0;
+        void        calculateNegativeTrigger(qint64 negative_time);
         struct TriggerStruct
         {
             QTimer     *MyTimer      = Q_NULLPTR;

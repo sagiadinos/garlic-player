@@ -129,7 +129,14 @@ void TSeq::collectActivatedChilds()
 
 void TSeq::prepareDurationTimerBeforePlay()
 {
-    if (startDurTimer() || isEndTimerActive() || childs_list.size() > 0)
+    // when a durtimer exists use it!
+    if (hasDurTimer() && !startDurTimer() && !isEndTimerActive())
+    {
+        skipElement();
+        return;
+    }
+
+    if (childs_list.size() > 0)
     {
         resetInternalRepeatCount();
         emitStartElementSignal(this);

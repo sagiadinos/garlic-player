@@ -65,7 +65,14 @@ void TExcl::preloadParse(QDomElement element)
 
 void TExcl::prepareDurationTimerBeforePlay()
 {
-    if (startDurTimer() || isEndTimerActive() || PriorityClassList.size() > 0)
+    // when a durtimer exists use it!
+    if (hasDurTimer() && !startDurTimer() && !isEndTimerActive())
+    {
+        skipElement();
+        return;
+    }
+
+    if (PriorityClassList.size() > 0)
     {
         emitStartElementSignal(this);
     }

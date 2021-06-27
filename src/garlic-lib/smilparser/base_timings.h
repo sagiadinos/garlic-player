@@ -21,7 +21,7 @@
 
 #include <QTimer>
 #include "smilparser/base.h"
-#include "smilparser/timings/begin_timer.h"
+#include "smilparser/timings/enhanced_timer.h"
 #include "smilparser/trigger/target_trigger.h"
 
 /**
@@ -114,12 +114,13 @@ class BaseTimings : public TBase
                 bool           handleRepeatCountStatus();
                 bool           isBeginTimerActive();
                 bool           isEndTimerActive();
+                bool           hasDurTimer();
                 bool           isDurTimerActive();
                 bool           isRestartable();
     protected slots:
                 void           finishedActiveDuration();
     private:
-                Timings::BeginTimer    *BeginTimer   = Q_NULLPTR;
+                Timings::EnhancedTimer *BeginTimer   = Q_NULLPTR;
                 Timings::EnhancedTimer *EndTimer     = Q_NULLPTR;
                 Timings::SimpleTimer   *DurTimer     = Q_NULLPTR;
                 TargetTrigger          *BeginTargets = Q_NULLPTR;

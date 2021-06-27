@@ -49,8 +49,7 @@ namespace Timings
         void         resume();
         void         stop();
         int          getType(){return type;}
-        void         setExternCalculatedTimeClock(qint64 new_clock);
-        qint64       getOriginalTimeClock();
+        void         recalculateTimeClock(qint64 negative_trigger);
         int          getRemaining() const;
 
     protected:

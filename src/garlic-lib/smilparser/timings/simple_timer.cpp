@@ -66,13 +66,21 @@ bool Timings::SimpleTimer::isActive()
     return MyTimer->isActive();
 }
 
+/**
+ * returns a true when a simple duration exist
+ * @return
+ */
 bool Timings::SimpleTimer::start()
 {
     // todo what happens if end !="indefinite"
     if (getType() == TYPE_INDEFINITE)
         return true; // no timer needed on indefinite
 
+    // this implicited also that it could be type == TYPE_MEDIA
     if (MyTimer == Q_NULLPTR || type != TYPE_CLOCKVALUE)
+        return false;
+
+    if (clock_in_ms <= 0)
         return false;
 
     MyTimer->start(clock_in_ms-tolerance);
@@ -107,18 +115,15 @@ void Timings::SimpleTimer::stop()
     remaining = 0;
 }
 
-void Timings::SimpleTimer::setExternCalculatedTimeClock(qint64 new_clock)
+void Timings::SimpleTimer::recalculateTimeClock(qint64 negative_trigger)
 {
-    clock_in_ms = new_clock;
-}
+    if (negative_trigger >= 0)
+        return;
 
+    if (clock_in_ms <= 0)
+        return;
 
-qint64 Timings::SimpleTimer::getOriginalTimeClock()
-{
-    if (type != TYPE_CLOCKVALUE)
-        return type;
-
-    return clock_in_ms;
+    clock_in_ms = clock_in_ms + negative_trigger;
 }
 
 int Timings::SimpleTimer::getRemaining() const

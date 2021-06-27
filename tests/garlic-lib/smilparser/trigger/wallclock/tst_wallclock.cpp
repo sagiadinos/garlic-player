@@ -225,6 +225,11 @@ void TestWallClock::test_getTimerTriggerWithoutPeriod()
     MyWallClock.calculateCurrentTrigger(QDateTime::fromString("2016-01-13 02:02:02", "yyyy-MM-dd HH:mm:ss"));
     QCOMPARE(MyWallClock.getNextTimerTrigger(), qint64(0));
     QCOMPARE(MyWallClock.getPreviousTimerTrigger(), qint64(-31539661000));
+
+    MyWallClock.parse("2021-01-01T01:01:01");
+    MyWallClock.calculateCurrentTrigger(QDateTime::fromString("2020-01-01 01:01:01", "yyyy-MM-dd HH:mm:ss"));
+    QCOMPARE(MyWallClock.getNextTimerTrigger(), qint64(31622400000)); // leap year ;)
+    QCOMPARE(MyWallClock.getPreviousTimerTrigger(), qint64(0));
 }
 
 void TestWallClock::test_getTimerTriggerWithWeekPeriod1()

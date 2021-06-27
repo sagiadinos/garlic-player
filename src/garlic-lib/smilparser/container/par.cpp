@@ -45,7 +45,14 @@ void TPar::preloadParse(QDomElement element)
 
 void TPar::prepareDurationTimerBeforePlay()
 {
-    if (startDurTimer() || isEndTimerActive() || childs_list.size() > 0)
+    // when a durtimer exists use it!
+    if (hasDurTimer() && !startDurTimer() && !isEndTimerActive())
+    {
+        skipElement();
+        return;
+    }
+
+    if (childs_list.size() > 0)
     {
         resetInternalRepeatCount();
         emitStartElementSignal(this);

@@ -138,30 +138,38 @@ void Timings::EnhancedTimer::start()
 {
     if (MyTriggerList.size() == 0)
         return;
-    qint64 next_trigger;
+    qint64 next_trigger, previous_trigger;
     for (TriggerStruct *ts : qAsConst(MyTriggerList))
     {
         switch (ts->type)
         {
             case TYPE_OFFSET:
                   next_trigger = ts->MyClockValue->getTriggerInMSec();
-                  if (next_trigger == 0)
-                     emitTimeout();
+                  if (next_trigger <= 0)
+                      calculateNegativeTrigger(next_trigger);
                   else
                      ts->MyTimer->start(next_trigger);
             break;
             case TYPE_WALLCLOCK:
                   // we need to calculate a previous trigger, cause it can be possible that an
-                  // element triggrered active in the past and last on due to a high duration
-                  next_trigger     = ts->MyWallClock->calculateNextTrigger();
+                  // element triggrered active in the past and last on du to long or indefinite (active) duration
+                  ts->MyWallClock->calculateCurrentTrigger();
+                  next_trigger     = ts->MyWallClock->getNextTimerTrigger();
+                  previous_trigger = ts->MyWallClock->getPreviousTimerTrigger();
                   if (next_trigger > 0)
                      ts->MyTimer->start(next_trigger);
+
+                  if (previous_trigger <= 0)
+                      calculateNegativeTrigger(previous_trigger);
+
                 break;
             case TYPE_SYNCBASE:
                 ts->MySyncBase->setActive(true); // rest is done by Timings::EnhancedTimer::startFromExternalTrigger
             break;
         }
     }
+    if (has_negative_trigger)
+        emitTimeout();
 }
 
 void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
@@ -276,12 +284,16 @@ bool Timings::EnhancedTimer::isActive()
         }
     }
     return false;
-
 }
 
 bool Timings::EnhancedTimer::hasExternalTrigger()
 {
     return has_external_trigger;
+}
+
+qint64 Timings::EnhancedTimer::getNegativeTrigger()
+{
+    return negative_trigger;
 }
 
 QHash<QString, QString> Timings::EnhancedTimer::fetchTriggerList()
@@ -301,8 +313,14 @@ QHash<QString, QString> Timings::EnhancedTimer::fetchTriggerList()
         }
     }
     return ret;
+}
 
+void Timings::EnhancedTimer::calculateNegativeTrigger(qint64 negative_time)
+{
+    has_negative_trigger = true;
 
+    if (negative_trigger == 0 || negative_trigger < negative_time)
+        negative_trigger = negative_time;
 }
 
 void Timings::EnhancedTimer::emitTimeout()

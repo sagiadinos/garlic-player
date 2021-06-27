@@ -32,8 +32,8 @@ ios {
 
   #  QMAKE_INFO_PLIST = path/to/your/Info.plist
   #  QMAKE_TARGET_BUNDLE_PREFIX = com.smilcontrol
-   # QMAKE_BUNDLE = garlic-player
-   # QMAKE_IOS_DEPLOYMENT_TARGET = 12.0
+   QMAKE_BUNDLE = garlic-player
+    QMAKE_IOS_DEPLOYMENT_TARGET = 12.0
   #  QMAKE_APPLE_TARGETED_DEVICE_FAMILY = 1,2
 }
 
