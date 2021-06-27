@@ -28,61 +28,64 @@ namespace Timings
 {
     class EnhancedTimer : public QObject
     {
-        Q_OBJECT
-    public:
-        enum Constants
-        {
-            TYPE_NOT_SET        = 0,
-            TYPE_OFFSET         = 1, // same as clock value but depends on type of container https://www.w3.org/TR/REC-smil/smil-timing.html#Timing-OffsetValueSyntax
-            TYPE_SYNCBASE       = 2,
-            TYPE_EVENT          = 3,
-            TYPE_REPEAT         = 4,
-            TYPE_ACCESSKEY      = 5,
-            TYPE_MEDIAMARKER    = 6,
-            TYPE_WALLCLOCK      = 7,
-            TYPE_INDEFINITE     = 8
-        };
+            Q_OBJECT
+        public:
+            enum Constants
+            {
+                TYPE_NOT_SET        = 0,
+                TYPE_OFFSET         = 1, // same as clock value but depends on type of container https://www.w3.org/TR/REC-smil/smil-timing.html#Timing-OffsetValueSyntax
+                TYPE_SYNCBASE       = 2,
+                TYPE_EVENT          = 3,
+                TYPE_REPEAT         = 4,
+                TYPE_ACCESSKEY      = 5,
+                TYPE_MEDIAMARKER    = 6,
+                TYPE_WALLCLOCK      = 7,
+                TYPE_INDEFINITE     = 8
+            };
 
 
-        explicit EnhancedTimer(QObject *parent = nullptr);
-        ~EnhancedTimer();
-        void        parse(QString svalue);
-        void        deleteTimer();
-        void        start();
-        void        startFromExternalTrigger(QString source_id);
-        void        pause();
-        void        stop();
-        bool        resume();
-        bool        isActive();
-        bool        hasExternalTrigger();
-        qint64      getNegativeTrigger();
-        QHash<QString, QString> fetchTriggerList();
-    protected:
-        qint64      pause_start;
-        bool        has_external_trigger = false;
-        bool        has_negative_trigger = false;
-        qint64      negative_trigger = 0;
-        void        calculateNegativeTrigger(qint64 negative_time);
-        struct TriggerStruct
-        {
-            QTimer     *MyTimer      = Q_NULLPTR;
-            ClockValue *MyClockValue = Q_NULLPTR;
-            WallClock  *MyWallClock  = Q_NULLPTR;
-            SyncBase   *MySyncBase     = Q_NULLPTR;
-            QString     id           = "";
-            QString     event        = "";
-            int         type         = TYPE_NOT_SET;
-            int         remaining    = 0;
-        };
-        bool        is_indefinite = false;
-        QList<TriggerStruct *> MyTriggerList;
-        void        initTimer(int type, QString value);
+            explicit EnhancedTimer(QObject *parent = nullptr);
+            ~EnhancedTimer();
+            void        parse(QString svalue);
+            void        deleteTimer();
+            void        start();
+            void        startFromExternalTrigger(QString source_id);
+            void        pause();
+            void        stop();
+            bool        resume();
+            bool        isActive();
+            bool        hasExternalTrigger();
+            QHash<QString, QString> fetchTriggerList();
+        protected:
+            struct TriggerStruct
+            {
+                QTimer     *MyTimer      = Q_NULLPTR;
+                ClockValue *MyClockValue = Q_NULLPTR;
+                WallClock  *MyWallClock  = Q_NULLPTR;
+                SyncBase   *MySyncBase     = Q_NULLPTR;
+                QString     id           = "";
+                QString     event        = "";
+                int         type         = TYPE_NOT_SET;
+                int         remaining    = 0;
+            };
+            qint64      pause_start;
+            bool        has_external_trigger = false;
+            bool        has_negative_offset_trigger = false;
+            bool        has_wallclock_next_trigger = false;
+            qint64      negative_trigger = 0;
+    virtual bool        fireImmediately()       = 0;
+            void        handleStartOffsetTrigger(TriggerStruct *ts);
+            void        handleStartWallClockTrigger(TriggerStruct *ts);
+            void        calculateNegativeTrigger(qint64 negative_time);
+            bool        is_indefinite = false;
+            QList<TriggerStruct *> MyTriggerList;
+            void        initTimer(int type, QString value);
 
-    protected slots:
-      void   emitTimeout();
+        protected slots:
+          void   emitTimeout();
 
-    signals:
-        void timeout();
+        signals:
+            void timeout();
     };
 }
 #endif // ENHANCEDTIMER_H

@@ -21,7 +21,8 @@
 
 #include <QTimer>
 #include "smilparser/base.h"
-#include "smilparser/timings/enhanced_timer.h"
+#include "smilparser/timings/begin_timer.h"
+#include "smilparser/timings/end_timer.h"
 #include "smilparser/trigger/target_trigger.h"
 
 /**
@@ -120,8 +121,8 @@ class BaseTimings : public TBase
     protected slots:
                 void           finishedActiveDuration();
     private:
-                Timings::EnhancedTimer *BeginTimer   = Q_NULLPTR;
-                Timings::EnhancedTimer *EndTimer     = Q_NULLPTR;
+                Timings::BeginTimer    *BeginTimer   = Q_NULLPTR;
+                Timings::EndTimer      *EndTimer     = Q_NULLPTR;
                 Timings::SimpleTimer   *DurTimer     = Q_NULLPTR;
                 TargetTrigger          *BeginTargets = Q_NULLPTR;
                 TargetTrigger          *EndTargets   = Q_NULLPTR;

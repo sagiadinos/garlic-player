@@ -52,13 +52,17 @@ BaseTimings::~BaseTimings()
 void BaseTimings::startTimers()
 {
     qDebug() << "prepare Play: " + getID() + " parent: " + getParentContainer()->getID();
-    if (EndTimer != Q_NULLPTR)
-        EndTimer->start();
 
     // must before start otherwise when begin = 0s
     // elements starts play method immediately get the played status and will be overwriten here
     status = _waiting;
     BeginTimer->start();
+
+    if (EndTimer != Q_NULLPTR)
+    {
+        EndTimer->setActiveBeginTimeTrigger(BeginTimer->getElapsedButActiveTimeTrigger());
+        EndTimer->start();
+    }
 }
 
 void BaseTimings::pauseTimers()
@@ -202,7 +206,8 @@ void BaseTimings::parseTimingAttributes()
     setBaseAttributes();
     if (root_element.hasAttribute("end"))
     {
-        EndTimer = new Timings::EnhancedTimer(this);
+        EndTimer = new Timings::EndTimer(this);
+
         connect(EndTimer, SIGNAL(timeout()), this, SLOT(finishedActiveDuration()));
         EndTimer->parse(root_element.attribute("end"));
 
@@ -257,7 +262,7 @@ bool BaseTimings::startDurTimer()
         return false;
 
     // needed when a begin trigger ist started in the past
-    DurTimer->recalculateTimeClock(BeginTimer->getNegativeTrigger());
+    DurTimer->recalculateTimeClock(BeginTimer->getElapsedButActiveTimeTrigger());
     return DurTimer->start();
 }
 
@@ -401,8 +406,7 @@ void BaseTimings::setRepeatCount(QString rC)
 
 void BaseTimings::handleBeginTimer()
 {
-    BeginTimer = new Timings::EnhancedTimer(this);
-
+    BeginTimer = new Timings::BeginTimer(this);
     connect(BeginTimer, SIGNAL(timeout()), this, SLOT(prepareDurationTimerBeforePlay()));
     QString begin_value = "";
 
