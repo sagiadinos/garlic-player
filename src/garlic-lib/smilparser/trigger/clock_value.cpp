@@ -26,6 +26,8 @@ ClockValue::ClockValue(QObject *parent) : QObject(parent)
 void ClockValue::parse(QString attr_value)
 {
     ms     = calculateMilliseconds(attr_value);
+    if (sign == '-')
+        ms = ms * (-1);
 }
 
 qint64 ClockValue::getTriggerInMSec()
@@ -34,15 +36,19 @@ qint64 ClockValue::getTriggerInMSec()
 }
 
 /**
- * @brief TTiming::calculateDuration converts clock or timecount values to milliseconds
+ * @brief ClockValue::calculateDuration converts clock or timecount values to milliseconds
  *
  * @param  dur
  * @return
  */
 qint64 ClockValue::calculateMilliseconds(QString dur)
 {
-    int length = dur.length();
     int duration = 0;
+
+    dur = separateSign(dur);
+
+    int length = dur.length(); // must be after a legthshorten with + or -
+
     if (dur.contains(QChar(':'))) // Full clock or partial clock values
     {
         QStringList ar = dur.split(QChar(':'));
@@ -66,4 +72,20 @@ qint64 ClockValue::calculateMilliseconds(QString dur)
             duration = dur.toFloat()*1000;
     }
     return duration;
+}
+
+QString ClockValue::separateSign(QString dur)
+{
+    sign = '+';
+
+    if(dur.at(0).isDigit())
+        return dur;
+
+    QChar c = dur.at(0);
+    dur.remove(0, 1);
+
+    if (c == '+' || c == '-')
+        sign = c;
+
+    return dur;
 }

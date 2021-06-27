@@ -35,7 +35,9 @@ public:
     qint64   getTriggerInMSec();
 protected:
     qint64    ms          = 100;
-    qint64    calculateMilliseconds(QString duration);
+    qint64    calculateMilliseconds(QString dur);
+    QString   separateSign(QString dur);
+    QChar     sign;
 signals:
 
 public slots:

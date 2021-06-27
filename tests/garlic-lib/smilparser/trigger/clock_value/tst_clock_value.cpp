@@ -29,6 +29,8 @@ public:
 
 private Q_SLOTS:
     void test_parse();
+    void test_negativeValues();
+    void test_RubbishSigned();
 };
 
 void TestClockValue::test_parse()
@@ -36,23 +38,64 @@ void TestClockValue::test_parse()
     ClockValue MyClockValue;
     // Full clock
     MyClockValue.parse("02:31:05.5");
-    QCOMPARE(MyClockValue.getNextTimerTrigger(), qint64(9065500));
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(9065500));
     MyClockValue.parse("5.02s");
-    QCOMPARE(MyClockValue.getNextTimerTrigger(), qint64(5020));
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(5020));
     MyClockValue.parse("5.02");
-    QCOMPARE(MyClockValue.getNextTimerTrigger(), qint64(5020));
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(5020));
     MyClockValue.parse("2h");
-    QCOMPARE(MyClockValue.getNextTimerTrigger(), qint64(7200000));
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(7200000));
     MyClockValue.parse("2.213h");
-    QCOMPARE(MyClockValue.getNextTimerTrigger(), qint64(7966800));
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(7966800));
     MyClockValue.parse("12.7713h");
-    QCOMPARE(MyClockValue.getNextTimerTrigger(), qint64(45976680));
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(45976680));
     MyClockValue.parse("11min");
-    QCOMPARE(MyClockValue.getNextTimerTrigger(), qint64(660000));
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(660000));
     MyClockValue.parse("4.15min");
-    QCOMPARE(MyClockValue.getNextTimerTrigger(), qint64(249000));
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(249000));
     MyClockValue.parse("some waste");
-    QCOMPARE(MyClockValue.getNextTimerTrigger(), qint64(0));
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(0));
+    return;
+}
+
+
+void TestClockValue::test_negativeValues()
+{
+    ClockValue MyClockValue;
+    // Full clock
+    MyClockValue.parse("-02:31:05.5");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(-9065500));
+    MyClockValue.parse("-5.02s");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(-5020));
+    MyClockValue.parse("-5.02");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(-5020));
+    MyClockValue.parse("-2h");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(-7200000));
+    MyClockValue.parse("-2.213h");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(-7966800));
+    MyClockValue.parse("-12.7713h");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(-45976680));
+    MyClockValue.parse("-11min");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(-660000));
+    MyClockValue.parse("-4.15min");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(-249000));
+    return;
+}
+
+void TestClockValue::test_RubbishSigned()
+{
+    ClockValue MyClockValue;
+    // Full clock
+    MyClockValue.parse("p02:31:05.5");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(9065500));
+    MyClockValue.parse("a5.02s");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(5020));
+    MyClockValue.parse("r5.02");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(5020));
+    MyClockValue.parse("s2h");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(7200000));
+    MyClockValue.parse("ererer2.213h");
+    QCOMPARE(MyClockValue.getTriggerInMSec(), qint64(0));
     return;
 }
 
