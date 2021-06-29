@@ -27,7 +27,7 @@ Timings::EnhancedTimer::~EnhancedTimer()
     deleteTimer();
 }
 
-void Timings::EnhancedTimer::initTimer(int type, QString value)
+bool Timings::EnhancedTimer::initTimer(int type, QString value)
 {
     TriggerStruct *ts = new TriggerStruct();
     ts->type        = type;
@@ -37,12 +37,17 @@ void Timings::EnhancedTimer::initTimer(int type, QString value)
     ts->MyTimer->setTimerType(Qt::PreciseTimer);
     ts->MyTimer->setSingleShot(true);
     connect(ts->MyTimer, SIGNAL(timeout()), this, SLOT(emitTimeout()));
-
+    bool ret = false;
     switch (ts->type)
     {
+        case TYPE_INDEFINITE:
+            is_indefinite = true;
+            ret = true;
+        break;
         case TYPE_OFFSET:
             ts->MyClockValue = new ClockValue();
             ts->MyClockValue->parse((value));
+            ret = true;
         break;
         case TYPE_WALLCLOCK:
             ts->MyWallClock = new WallClock();
@@ -50,13 +55,31 @@ void Timings::EnhancedTimer::initTimer(int type, QString value)
         break;
         case TYPE_SYNCBASE:
             ts->MySyncBase = new SyncBase();
-            ts->MySyncBase->parse(value);
-            if (ts->MySyncBase->hasExternTrigger())
+            ret = ts->MySyncBase->parse(value);
+            if (!ret)
+                delete ts->MySyncBase;
+
+            if (ret && ts->MySyncBase->hasExternTrigger())
+                has_external_trigger = true;
+        break;
+        case TYPE_EVENT:
+            ts->MyEvent = new Event();
+            ret = ts->MyEvent->parse(value);
+
+            if (!ret)
+                delete ts->MyEvent;
+
+            if (ret && ts->MyEvent->hasExternTrigger())
                 has_external_trigger = true;
         break;
     }
 
-    MyTriggerList.append(ts);
+    // add only when trigger item is valid
+    if (ret)
+        MyTriggerList.append(ts);
+    else
+        delete ts;
+    return ret;
 }
 
 void Timings::EnhancedTimer::deleteTimer()
@@ -77,6 +100,9 @@ void Timings::EnhancedTimer::deleteTimer()
             case TYPE_SYNCBASE:
                 delete ts->MySyncBase;
             break;
+            case TYPE_EVENT:
+                delete ts->MyEvent;
+            break;
         }
         delete ts->MyTimer;
         delete ts;
@@ -84,10 +110,14 @@ void Timings::EnhancedTimer::deleteTimer()
     MyTriggerList.clear();
 }
 
-void Timings::EnhancedTimer::parse(QString attr_value)
+bool Timings::EnhancedTimer::parse(QString attr_value)
 {
     // do not toLower here, we need origial values e.g. for ISO 8601
     QStringList value_list = attr_value.simplified().split(';');
+
+    // if there is one parsable item in the list the the bigin/end trigger is valid
+    // otherwise trigger is invalid an would be handlet in BaseTimings-Class
+    bool        is_parsable = false;
     for (const auto& value : qAsConst(value_list))
     {
         if (value.isEmpty()) // some might end with semikolon
@@ -95,24 +125,27 @@ void Timings::EnhancedTimer::parse(QString attr_value)
 
         if (value.contains("indefinite"))
         {
-            is_indefinite = true;
+            initTimer(TYPE_INDEFINITE, "indefinite");
+            is_parsable = true;
         }
         else if (value.mid(0, 9) == "wallclock" )
         {
             initTimer(TYPE_WALLCLOCK, value.mid(10,value.length()-11));
+            is_parsable = true;
         }
         else if (value.at(0) == '+' || value.at(0) == '-')
         {
-            // we do not support negative values currently
             initTimer(TYPE_OFFSET, value);
+            is_parsable = true;
         }
         else if (value.at(0).isDigit())
         {
             initTimer(TYPE_OFFSET, value);
+            is_parsable = true;
         }
         else if (value.endsWith("begin") || value.endsWith("end"))
         {
-            initTimer(TYPE_SYNCBASE, value);
+            is_parsable = initTimer(TYPE_SYNCBASE, value);
         }
         else if (value.mid(0, 9) == "accesskey" )
         {
@@ -120,18 +153,17 @@ void Timings::EnhancedTimer::parse(QString attr_value)
         }
         else if (value.at(0).isLetter() && value.contains("."))
         {
-            // todo support for event ( click, load, focus )
+            is_parsable = initTimer(TYPE_EVENT, value);;
         }
         else
         {
-            // todo maybe something default?
         }
     }
 
     if (value_list.size() > 1) // in a value an indefinite can be ignored
         is_indefinite = false;
 
-    return;
+    return is_parsable;
 }
 
 void Timings::EnhancedTimer::start()
@@ -150,6 +182,9 @@ void Timings::EnhancedTimer::start()
                 break;
             case TYPE_SYNCBASE:
                 ts->MySyncBase->setActive(true); // rest is done by Timings::EnhancedTimer::startFromExternalTrigger
+            break;
+            case TYPE_EVENT:
+                ts->MyEvent->setActive(true); // rest is done by Timings::EnhancedTimer::startFromExternalTrigger
             break;
         }
     }
@@ -179,9 +214,15 @@ void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
                 }
             break;
             case TYPE_EVENT:
-                // ToDo
+                if (ts->MyEvent->getSourceId() == source_id)
+                {
+                    next_trigger = ts->MyEvent->getTimeTrigger();
+                    if (next_trigger == 0)
+                        emitTimeout();
+                    else
+                       ts->MyTimer->start(next_trigger);
+                }
                 break;
-
         }
     }
 }
@@ -214,6 +255,9 @@ void Timings::EnhancedTimer::stop()
             break;
             case TYPE_SYNCBASE:
                 ts->MySyncBase->setActive(false);
+            break;
+            case TYPE_EVENT:
+                ts->MyEvent->setActive(false);
             break;
         }
     }
@@ -266,7 +310,11 @@ bool Timings::EnhancedTimer::isActive()
                 return true;
             case TYPE_SYNCBASE:
                 if (ts->MySyncBase->isActive())
-                    return true;
+                    return false;
+            break;
+            case TYPE_EVENT:
+                if (ts->MyEvent->isActive())
+                    return false;
             break;
         }
     }
@@ -292,6 +340,10 @@ QHash<QString, QString> Timings::EnhancedTimer::fetchTriggerList()
                 if (ts->MySyncBase->hasExternTrigger())
                     ret.insert(ts->MySyncBase->getSourceId(), ts->MySyncBase->getSymbol());
             break;
+            case TYPE_EVENT:
+                if (ts->MyEvent->hasExternTrigger())
+                    ret.insert(ts->MyEvent->getSourceId(), ts->MyEvent->getNmToken());
+            break;
         }
     }
     return ret;
@@ -300,7 +352,11 @@ QHash<QString, QString> Timings::EnhancedTimer::fetchTriggerList()
 void Timings::EnhancedTimer::handleStartOffsetTrigger(Timings::EnhancedTimer::TriggerStruct *ts)
 {
     qint64 next_trigger = ts->MyClockValue->getTriggerInMSec();
-    if (next_trigger <= 0)
+    if (next_trigger == 0)
+    {
+        emitTimeout();
+    }
+    else if (next_trigger < 0)
     {
         has_negative_offset_trigger = true;
         calculateNegativeTrigger(next_trigger);
@@ -317,18 +373,22 @@ void Timings::EnhancedTimer::handleStartWallClockTrigger(Timings::EnhancedTimer:
     ts->MyWallClock->calculateCurrentTrigger();
     qint64 next_trigger     = ts->MyWallClock->getNextTimerTrigger();
     qint64 previous_trigger = ts->MyWallClock->getPreviousTimerTrigger();
-    if (next_trigger > 0)
+    if (next_trigger == 0)
+    {
+        fire_immediately = true;
+    }
+    else if (next_trigger > 0)
     {
         has_wallclock_next_trigger = true;
         ts->MyTimer->start(next_trigger);
     }
-    if (previous_trigger <= 0)
+    if (previous_trigger < 0)
         calculateNegativeTrigger(previous_trigger);
 }
 
 void Timings::EnhancedTimer::calculateNegativeTrigger(qint64 negative_time)
 {
-    if (negative_trigger == 0 || negative_trigger < negative_time)
+    if (negative_trigger == 1 || negative_trigger < negative_time)
         negative_trigger = negative_time;
 }
 

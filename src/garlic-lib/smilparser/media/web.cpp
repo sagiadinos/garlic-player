@@ -42,7 +42,7 @@ void TWeb::prepareDurationTimerBeforePlay()
         return;
 
     // do not mind if cached
-    if (startDurTimer() || isEndTimerActive())
+    if (startDurTimer() || hasEndTimer())
     {
         emitStartElementSignal(this);
     }

@@ -1,7 +1,7 @@
 # garlic-player - Open Source SMIL Player for Digital Signage
 
-The goal is to create a as most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet [Digital Signage Softwarel](https://smil-control.com/) needs.
-Garlic-player can be used online with Smil 3 compatible [Digital Signage Softwarel](https://smil-control.com/software/) or other.
+The goal is to create a as most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet [Digital Signage](https://smil-control.com/) needs.
+Garlic-player can be used online with Smil 3.0 compatible [Digital Signage Softwarel](https://smil-control.com/software/) or other.
 Offline usage via command-line is also possible.
 Garlic is able to play local and remote (via http) SMIL Files with the features described below.
 
@@ -140,6 +140,6 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 
 ## future ToDo's
  - interactivity trigger (touch, keyboard, ean-codes)
- - REST Api 
+ - REST API
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)

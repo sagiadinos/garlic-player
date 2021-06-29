@@ -45,8 +45,8 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
     if (!ke->modifiers().testFlag(Qt::ControlModifier))
     {
-      MyInteractions->handleKeyPress(ke);
-      return;
+        MyInteractions->handleKeyPress(ke);
+        return;
     }
     switch (ke->key())
     {
@@ -89,14 +89,27 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 bool MainWindow::event(QEvent *event)
 {
     event->accept();
-    if(event->type() == QEvent::TouchBegin)
+    if(event->type() == QEvent::TouchBegin || event->type() == QEvent::MouseButtonPress)
     {
-        num_touched++;
-        if (num_touched > 4)
+        qint64 delay = QDateTime::currentMSecsSinceEpoch() - last_touch;
+        if (delay < 500)
         {
-            openDebugInfos();
-            num_touched = 0;
+            count_touch++;
         }
+        else
+        {
+            count_touch = 0;
+        }
+
+        if (count_touch > 9)
+        {
+            count_touch = 0;
+            openDebugInfos();
+        }
+    }
+    if(event->type() == QEvent::TouchEnd || event->type() == QEvent::MouseButtonRelease)
+    {
+        last_touch = QDateTime::currentMSecsSinceEpoch();
     }
     return QMainWindow::event(event);
 }

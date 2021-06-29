@@ -66,7 +66,7 @@ void TExcl::preloadParse(QDomElement element)
 void TExcl::prepareDurationTimerBeforePlay()
 {
     // when a durtimer exists use it!
-    if (hasDurTimer() && !startDurTimer() && !isEndTimerActive())
+    if (hasDurTimer() && !startDurTimer() && !hasEndTimer())
     {
         skipElement();
         return;
@@ -288,10 +288,21 @@ bool TExcl::determineContinue(BaseTimings *new_element)
  */
 void TExcl::traverseChilds()
 {
-    QDomNodeList  priority_class_childs       = root_element.elementsByTagName("priorityClass");
-    if (priority_class_childs.length() > 0)
+    QDomNodeList  priority_classes       = root_element.elementsByTagName("priorityClass");
+
+    // a nested excl can cause problems with elementsByTagName
+    // so we need to secure that are only
+    // priorityClasses with this excl (root_element) as parent.
+    QList<QDomElement> priority_childs;
+    for (int i = 0; i < priority_classes.length(); i++)
     {
-        traversePriorityClasses(priority_class_childs);
+        if (priority_classes.item(i).parentNode().toElement() == root_element)
+            priority_childs.append(priority_classes.item(i).toElement());
+    }
+
+    if (priority_childs.length() > 0)
+    {
+        traversePriorityClasses(priority_childs);
     }
     else
     {
@@ -299,11 +310,11 @@ void TExcl::traverseChilds()
     }
 }
 
-void TExcl::traversePriorityClasses(QDomNodeList  priority_class_childs)
+void TExcl::traversePriorityClasses(QList<QDomElement>  priority_class_childs)
 {
-    for (int i = 0; i < priority_class_childs.length(); i++)
+    for (auto& de : priority_class_childs)
     {
-        parsePriorityClass(priority_class_childs.item(i).toElement());
+        parsePriorityClass(de);
     }
 }
 

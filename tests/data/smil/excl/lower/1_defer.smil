@@ -15,7 +15,7 @@
 		begin | 1 for 5s, then 2, 3, 4, 5 | 1 for 5s, then 2, 3, 4, 5 | end
 
 		Remarks:
-		Both time the same the same sequence although begin time are vice versa the second time
+		Both have the same sequence although the begin times are in vice versa order the second time
 		The reason is that the queued will play in the order from high to lower priority
 
 		peers default is stop, higher set to stop

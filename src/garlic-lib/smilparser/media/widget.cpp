@@ -41,7 +41,7 @@ void TWidget::prepareDurationTimerBeforePlay()
     if (status == _playing && !isRestartable())
         return;
 
-    if (startDurTimer() || isEndTimerActive())
+    if (startDurTimer() || hasEndTimer())
     {
         emitStartElementSignal(this);
     }

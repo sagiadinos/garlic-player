@@ -23,6 +23,7 @@
 #include "timings/simple_timer.h"
 #include "trigger/wallclock.h"
 #include "trigger/syncbase.h"
+#include "trigger/event.h"
 #include <QList>
 namespace Timings
 {
@@ -46,7 +47,7 @@ namespace Timings
 
             explicit EnhancedTimer(QObject *parent = nullptr);
             ~EnhancedTimer();
-            void        parse(QString svalue);
+            bool        parse(QString svalue);
             void        deleteTimer();
             void        start();
             void        startFromExternalTrigger(QString source_id);
@@ -62,24 +63,26 @@ namespace Timings
                 QTimer     *MyTimer      = Q_NULLPTR;
                 ClockValue *MyClockValue = Q_NULLPTR;
                 WallClock  *MyWallClock  = Q_NULLPTR;
-                SyncBase   *MySyncBase     = Q_NULLPTR;
+                SyncBase   *MySyncBase   = Q_NULLPTR;
+                Event      *MyEvent      = Q_NULLPTR;
                 QString     id           = "";
                 QString     event        = "";
                 int         type         = TYPE_NOT_SET;
                 int         remaining    = 0;
             };
             qint64      pause_start;
+            bool        fire_immediately = false;
             bool        has_external_trigger = false;
             bool        has_negative_offset_trigger = false;
             bool        has_wallclock_next_trigger = false;
-            qint64      negative_trigger = 0;
+            qint64      negative_trigger = 1;
     virtual bool        fireImmediately()       = 0;
             void        handleStartOffsetTrigger(TriggerStruct *ts);
             void        handleStartWallClockTrigger(TriggerStruct *ts);
             void        calculateNegativeTrigger(qint64 negative_time);
             bool        is_indefinite = false;
             QList<TriggerStruct *> MyTriggerList;
-            void        initTimer(int type, QString value);
+            bool initTimer(int type, QString value);
 
         protected slots:
           void   emitTimeout();

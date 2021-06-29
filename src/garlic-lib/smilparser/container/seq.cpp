@@ -130,7 +130,7 @@ void TSeq::collectActivatedChilds()
 void TSeq::prepareDurationTimerBeforePlay()
 {
     // when a durtimer exists use it!
-    if (hasDurTimer() && !startDurTimer() && !isEndTimerActive())
+    if (hasDurTimer() && !startDurTimer() && !hasEndTimer())
     {
         skipElement();
         return;

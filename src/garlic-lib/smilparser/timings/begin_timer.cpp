@@ -13,6 +13,9 @@ qint64 Timings::BeginTimer::getElapsedButActiveTimeTrigger()
 
 bool Timings::BeginTimer::fireImmediately()
 {
+    if (fire_immediately)
+        return true;
+
     return (negative_trigger <= 0);
 }
 

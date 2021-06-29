@@ -116,6 +116,7 @@ class BaseTimings : public TBase
                 bool           isBeginTimerActive();
                 bool           isEndTimerActive();
                 bool           hasDurTimer();
+                bool           hasEndTimer();
                 bool           isDurTimerActive();
                 bool           isRestartable();
     protected slots:

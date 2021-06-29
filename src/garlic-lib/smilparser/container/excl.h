@@ -20,6 +20,7 @@
 #define TEXCL_H
 
 #include <QMap>
+#include <QList>
 #include "priorityclass.h"
 
 class TExcl : public TContainer
@@ -50,7 +51,7 @@ class TExcl : public TContainer
         QString endsync = "last";
         void    removeQueuedElements();
         void    traverseChilds();
-        void    traversePriorityClasses(QDomNodeList priority_class_childs);
+        void    traversePriorityClasses(QList<QDomElement> priority_class_childs);
         void    parsePriorityClass(QDomElement element);
         void    priorityStop();
         void    priorityPause();

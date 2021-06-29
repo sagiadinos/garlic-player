@@ -46,7 +46,7 @@ void TPar::preloadParse(QDomElement element)
 void TPar::prepareDurationTimerBeforePlay()
 {
     // when a durtimer exists use it!
-    if (hasDurTimer() && !startDurTimer() && !isEndTimerActive())
+    if (hasDurTimer() && !startDurTimer() && !hasEndTimer())
     {
         skipElement();
         return;

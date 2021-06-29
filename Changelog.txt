@@ -6,7 +6,8 @@ Changelog
 1. New Features
 	* resumable downloads
 	* support endsync for excl and par (first|last|id-value)
-	* support restart in seq, par and excl (always|never|whenNotActive|defaukt)	
+ 	* support negative Values for Offset
+	* support restart in seq, par and excl (always|never|whenNotActive|default)	
 	* support for media-element brush and attribute color
 	* support for syncbase values in combination with positive clock values for begin/end
 

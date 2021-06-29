@@ -37,7 +37,7 @@
 				<img xml:id="imgB0002" src="../../../images/0002.jpg" begin="2s" dur="1s" fit="meet" />
 			</priorityClass>
 			<priorityClass xml:id="prio 5" lower="never" higher="stop">
-				<img xml:id="imgB010" src="../../../images/0010.jpg" begin="3s" dur="1s" fit="meet" />
+				<img xml:id="imgB010" src="../../../images/0010.jpg" begin="3.01s" dur="1s" fit="meet" />
 			</priorityClass>
 			<priorityClass xml:id="prio 6" lower="never" higher="stop">
 				<seq xml:id="seq2" begin="7s">

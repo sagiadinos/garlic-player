@@ -16,7 +16,7 @@
 	<!--
 
 	sequences
-		up left display: counter for 105
+		up left display: counter for 15
 
 
 		up   right display:	 begin, 1, 2, 3, end => wait until parent will repeated
@@ -47,7 +47,6 @@
 					<img region="screen1" src="../../images/0015.jpg" dur="1s" fit="meet" />
 				</seq>
 			</par>
-
 			<par xml:id="par_never" begin="0s" endsync="last">
 				<seq xml:id="seq1" begin="0s;2s;5s;11s" restart="never">
 					<img region="screen2" xml:id="imgAbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
@@ -67,7 +66,7 @@
 				</seq>
 			</par>
 			<par xml:id="par3" begin="0s" endsync="last">
-				<seq xml:id="seq3" begin="0s;4s;6s;11.1s" restart="whenNotActive">
+				<seq xml:id="seq3" begin="0s;4s;6s;11s" restart="whenNotActive">
 					<img region="screen4" xml:id="imgCbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
 					<img region="screen4" xml:id="imgC0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
 					<img region="screen4" xml:id="imgC0002" src="../../images/0002.jpg" dur="1s" fit="meet" />
@@ -75,8 +74,6 @@
 					<img region="screen4" xml:id="imgCend" src="../../images/end.jpg" dur="1s"  fit="meet" />
 				</seq>
 			</par>
-
-
-	</par>
+		</par>
 	</body>
 </smil>

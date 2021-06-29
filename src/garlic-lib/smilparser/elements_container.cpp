@@ -82,8 +82,7 @@ void ElementsContainer::distributeBeginTrigger(BaseTimings *bt_target)
         while (j != target_trigger_list.end())
         {
             bt_source = elements_list.find(j.key()).value();
-
-             bt_source->addToExternalBegins(j.value(),target_id);
+            bt_source->addToExternalBegins(j.value(),target_id);
             j++;
         }
     }

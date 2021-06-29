@@ -164,7 +164,7 @@ QHash<QString, QString> BaseTimings::fetchExternalBegins()
 
 QHash<QString, QString> BaseTimings::fetchExternalEnds()
 {
-    if (!isEndTimerActive() || !EndTimer->hasExternalTrigger())
+    if (EndTimer == Q_NULLPTR || (EndTimer != Q_NULLPTR && !EndTimer->hasExternalTrigger()))
         return {};
 
    return EndTimer->fetchTriggerList();
@@ -207,11 +207,15 @@ void BaseTimings::parseTimingAttributes()
     if (root_element.hasAttribute("end"))
     {
         EndTimer = new Timings::EndTimer(this);
-
-        connect(EndTimer, SIGNAL(timeout()), this, SLOT(finishedActiveDuration()));
-        EndTimer->parse(root_element.attribute("end"));
-
-        // todo: Check for sync und event trigger
+        if (EndTimer->parse(root_element.attribute("end")))
+        {
+            connect(EndTimer, SIGNAL(timeout()), this, SLOT(finishedActiveDuration()));
+        }
+        else
+        {
+            delete EndTimer;
+            EndTimer = Q_NULLPTR;
+        }
 
     }
     if (root_element.hasAttribute("dur"))
@@ -248,10 +252,20 @@ bool BaseTimings::startDurTimer()
         {
             emit triggerBeginSignal(target_id, getID());
         }
+        sl = BeginTargets->findTargetIDsByTrigger("beginEvent");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerBeginSignal(target_id, getID());
+        }
     }
     if (EndTargets != Q_NULLPTR)
     {
         sl = EndTargets->findTargetIDsByTrigger("begin");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerEndSignal(target_id, getID());
+        }
+        sl = EndTargets->findTargetIDsByTrigger("beginEvent");
         for (const auto& target_id : qAsConst(sl))
         {
             emit triggerEndSignal(target_id, getID());
@@ -309,6 +323,14 @@ bool BaseTimings::hasDurTimer()
         return true;
 }
 
+bool BaseTimings::hasEndTimer()
+{
+    if (EndTimer == Q_NULLPTR)
+        return false;
+    else
+        return true;
+}
+
 bool BaseTimings::isDurTimerActive()
 {
     if (DurTimer == Q_NULLPTR)
@@ -345,10 +367,20 @@ void BaseTimings::finishedActiveDuration()
         {
             emit triggerBeginSignal(target_id, getID());
         }
+        sl = BeginTargets->findTargetIDsByTrigger("endEvent");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerBeginSignal(target_id, getID());
+        }
     }
     if (EndTargets != Q_NULLPTR)
     {
         sl = EndTargets->findTargetIDsByTrigger("end");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerEndSignal(target_id, getID());
+        }
+        sl = EndTargets->findTargetIDsByTrigger("endEvent");
         for (const auto& target_id : qAsConst(sl))
         {
             emit triggerEndSignal(target_id, getID());
@@ -407,7 +439,6 @@ void BaseTimings::setRepeatCount(QString rC)
 void BaseTimings::handleBeginTimer()
 {
     BeginTimer = new Timings::BeginTimer(this);
-    connect(BeginTimer, SIGNAL(timeout()), this, SLOT(prepareDurationTimerBeforePlay()));
     QString begin_value = "";
 
     if (getParentTag() == SMIL_TAG::excl)
@@ -415,7 +446,18 @@ void BaseTimings::handleBeginTimer()
     else
         begin_value = getAttributeFromRootElement("begin", "0s");
 
-    BeginTimer->parse(begin_value);
+    // in case begin_value is not parsable force default values
+    if (!BeginTimer->parse(begin_value))
+    {
+        delete BeginTimer;
+        BeginTimer = new Timings::BeginTimer(this);
+        if (getParentTag() == SMIL_TAG::excl)
+            BeginTimer->parse("indefinite");
+        else
+            BeginTimer->parse("0s");
+    }
+
+    connect(BeginTimer, SIGNAL(timeout()), this, SLOT(prepareDurationTimerBeforePlay()));
 }
 
 void BaseTimings::setRestart(QString attr_value)

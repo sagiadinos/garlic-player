@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMap>
 /**
- * @brief Comntainer to handle and store the TargetTrigger
+ * @brief Container to handle and store the TargetTrigger
  * for an BasTiming Object
  */
 class TargetTrigger : public QObject

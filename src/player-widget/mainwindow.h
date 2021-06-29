@@ -48,7 +48,8 @@ class MainWindow : public QMainWindow
         const int                 WINDOWED      = 0;
         const int                 FULLSCREEN    = 1;
         const int                 BIGFULLSCREEN = 2;
-        int                       num_touched   = 0;
+        qint64                    last_touch = 0;
+        int                       count_touch = 0;
         Interactions             *MyInteractions;
         QScopedPointer<Launcher>  MyLauncher;
         QWidget                  *centralWidget;

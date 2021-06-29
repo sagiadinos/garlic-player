@@ -13,6 +13,9 @@ void Timings::EndTimer::setActiveBeginTimeTrigger(qint64 value)
 
 bool Timings::EndTimer::fireImmediately()
 {
+    if (fire_immediately)
+        return true;
+
     // if this is an end attribute and a clock with negative offset
     // then it does not matter => fire the end signal!
     if (has_negative_offset_trigger)

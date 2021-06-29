@@ -5,7 +5,7 @@
 		<layout>
 			<root-layout id="display:0" width="1920" height="1080" />
 			<region regionName="screen1" top="0" left="0" width="960" height="540" z-index="1" backgroundColor="#f00" backgroundImage="../../images/bg_0002.jpg" backgroundRepeat="repeatX" />
-			<region regionName="screen2" top="0" left="960" width="960" height="540" z-index="1" backgroundColor="#0f0" backgroundImage="http://testing.smil-admin.com/garlic/bg_0002.jpg" backgroundRepeat="repeatY"/>
+			<region regionName="screen2" top="0" left="960" width="960" height="540" z-index="1" backgroundColor="#0f0" />
 			<region regionName="screen3" top="540" left="0" width="960" height="540" z-index="1" backgroundColor="#00f" backgroundImage="../../images/bg_0002.jpg" backgroundRepeat="repeat" />
 			<region regionName="screen4" top="540" left="960" width="960" height="540" z-index="1" backgroundColor="#0ff" backgroundImage="../../images/bg_0002.jpg" backgroundRepeat="noRepeat" />
 		</layout>

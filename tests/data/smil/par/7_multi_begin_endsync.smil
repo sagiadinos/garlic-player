@@ -30,7 +30,7 @@
 		<par>
 			<par repeatCount="indefinite" begin="0s" endsync="last">
 				<img region="screen1" xml:id="imgAbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
-				<seq xml:id="seq1" begin="0s;4.1s;8.2s;12.3s">
+				<seq xml:id="seq1" begin="0s;4s;8s;12s">
 					<img region="screen2" xml:id="imgA0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
 					<img region="screen2" xml:id="imgA0002" src="../../images/0002.jpg" dur="1s" fit="meet" />
 					<img region="screen2" xml:id="imgA0003" src="../../images/0003.jpg" dur="1s" fit="meet" />
@@ -41,7 +41,7 @@
 
 			<par repeatCount="indefinite" begin="0s" endsync="first">
 				<img region="screen3" xml:id="imgBbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
-				<seq xml:id="seq2" begin="0s;4.1s;8.2s;12.3s">
+				<seq xml:id="seq2" begin="0s;4s;8s;12s">
 					<img region="screen4" xml:id="imgB0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
 					<img region="screen4" xml:id="imgB0002" src="../../images/0002.jpg" dur="1s" fit="meet" />
 					<img region="screen4" xml:id="imgB0003" src="../../images/0003.jpg" dur="1s" fit="meet" />

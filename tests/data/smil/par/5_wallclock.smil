@@ -21,8 +21,6 @@
 		down down right begin,1,2,3,end    	at second 10, 25, 40, 55
 	repeated indefinite
 
-	remark: the begin and end of par2 depends on the player clock so scond sequence is not one after one
-			so there can be gaps betwen the sequences
 	-->
 		<par xml:id="par1" >
 			<seq xml:id="seq1" repeatCount="indefinite">

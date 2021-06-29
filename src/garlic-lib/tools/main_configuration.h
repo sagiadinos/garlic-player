@@ -36,22 +36,22 @@ class MainConfiguration  : public QObject
 {
     Q_OBJECT
     public:
-        const     QString        OS_ANDROID  = "Android";
-        const     QString        OS_DARWIN   = "Darwin";
-        const     QString        OS_HURD     = "Hurd";
+        const     QString        OS_ANDROID  = "android";
+        const     QString        OS_DARWIN   = "darwin";
+        const     QString        OS_HURD     = "hurd";
         const     QString        OS_IOS      = "iOS";
-        const     QString        OS_LINUX    = "Linux";
+        const     QString        OS_LINUX    = "linux";
         const     QString        OS_NETBSD   = "BSD";
         const     QString        OS_OSX      = "macOS";
-        const     QString        OS_WINDOWS  = "Windows";
-        const     QString        OS_UNKNOWN  = "Unknown";
+        const     QString        OS_WINDOWS  = "windows";
+        const     QString        OS_UNKNOWN  = "unknown";
 
         explicit        MainConfiguration(QSettings *uc, QObject *parent = Q_NULLPTR);
         QString         getVersion(){return version;}
         void            setAdditionalVersion(QString value);
         void            setAppName(QString value){app_name = value;}
         QString         getAppName(){return app_name;}
-        QString         getDescription() {return "SMIL Media Player for Digital Signage";}
+        QString         getDescription() {return "SMIL Player for Digital Signage";}
 
         static QString  log_directory;
         static QString  getLogDir();

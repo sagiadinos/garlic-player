@@ -18,7 +18,7 @@
 		upper left count seconds
 		begin then;
 		on lower left Video lowerright shows an image with video
-		then end image for 2s
+		then end image for 2s in screen 2
 
 	-->
 
@@ -36,9 +36,10 @@
 				<img region="screen1" src="../../images/0009.jpg" dur="1s" fit="meet" />
 				<img region="screen1" src="../../images/0010.jpg" dur="1s" fit="meet" />
 			</seq>
+
 			<video region="screen3" xml:id="video0001" src="../../videos/0001.mp4" fit="meet" />
 			<img region="screen4" xml:id="img_video" src="../../images/video.jpg" begin="video0001.begin" end="video0001.end" fit="meet" />
- 			<img region="screen4" xml:id="img_end" src="../../images/end.jpg"  begin="video0001.end" dur="2s" fit="meet" />
+			<img region="screen2" xml:id="img_end" src="../../images/end.jpg" begin="video0001.end" dur="2s" fit="meet" />
 		</par>
 
 

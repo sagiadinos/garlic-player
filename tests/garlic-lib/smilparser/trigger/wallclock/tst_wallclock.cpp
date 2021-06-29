@@ -39,6 +39,7 @@ private Q_SLOTS:
     void test_getTimerTriggerWithoutPeriod();
     void test_getTimerTriggerWithWeekPeriod1();
     void test_getTimerTriggerWithWeekPeriod2();
+    void test_getTimerTriggerWithWeekPeriod3();
 };
 
 void TestWallClock::test_parse1()
@@ -301,9 +302,22 @@ void TestWallClock::test_getTimerTriggerWithWeekPeriod2()
     MyWallClock.calculateCurrentTrigger(current);
     QCOMPARE(current.addMSecs(MyWallClock.getNextTimerTrigger()), next_expected);
     QCOMPARE(current.addMSecs(MyWallClock.getPreviousTimerTrigger()), prev_expected);
-
 }
 
+void TestWallClock::test_getTimerTriggerWithWeekPeriod3()
+{
+    WallClock MyWallClock;
+    MyWallClock.parse("R/2020-01-01+w2T00:00/P1W");
+
+    QDateTime current = QDateTime::fromString("2021-06-29 02:00:00", "yyyy-MM-dd HH:mm:ss");
+    QDateTime next_expected = QDateTime::fromString("2021-07-06 00:00:00", "yyyy-MM-dd HH:mm:ss");
+    QDateTime prev_expected = QDateTime::fromString("2021-06-29 00:00:00", "yyyy-MM-dd HH:mm:ss");
+
+    MyWallClock.calculateCurrentTrigger(current);
+    QCOMPARE(current.addMSecs(MyWallClock.getNextTimerTrigger()), next_expected);
+    QCOMPARE(current.addMSecs(MyWallClock.getPreviousTimerTrigger()), prev_expected);
+
+}
 
 
 QTEST_APPLESS_MAIN(TestWallClock)
