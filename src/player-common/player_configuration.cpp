@@ -23,8 +23,6 @@ void PlayerConfiguration::determineInitConfigValues()
 
     QDir dir(".");
     MyMainConfiguration->determineBasePath(dir.absolutePath());
-    MyMainConfiguration->createDirectories();
-
 }
 
 void PlayerConfiguration::setHasLauncher(bool value)

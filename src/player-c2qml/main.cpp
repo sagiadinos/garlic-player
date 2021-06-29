@@ -57,8 +57,10 @@ int main(int argc, char *argv[])
 
 
     MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
+    MyMainConfiguration->createDirectories();
+    qInstallMessageHandler(handleMessages); // must set after createDiretories
+
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
-    qInstallMessageHandler(handleMessages);
     QtWebView::initialize();
 
     LibFacade  *MyLibFacade = new LibFacade();
@@ -78,6 +80,7 @@ int main(int argc, char *argv[])
 
     // This inits must be after Launcher inits
     MyPlayerConfiguration->determineInitConfigValues();
+
     MyLibFacade->init(MyMainConfiguration);
     MyPlayerConfiguration->printVersionInformation();
 

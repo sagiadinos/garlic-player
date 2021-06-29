@@ -35,9 +35,10 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
     MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
+    MyMainConfiguration->createDirectories();
+    qInstallMessageHandler(handleMessages); // must be after create Diretories
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
     MyPlayerConfiguration->determineInitConfigValues();
-    qInstallMessageHandler(handleMessages);
 
     LibFacade      *MyLibFacade     = new LibFacade();
     MyLibFacade->init(MyMainConfiguration);
