@@ -21,7 +21,6 @@
 MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
 {
     centralWidget          = new QWidget(this); // had to be there to get fullscreen simulation over multiple monitors
-    MyInteractions         = new Interactions(lib_facade, this);
     MyScreen               = screen;
     MyLibFacade            = lib_facade;
     connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia*)), this, SLOT(startShowMedia(BaseMedia*)));
@@ -45,7 +44,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
     if (!ke->modifiers().testFlag(Qt::ControlModifier))
     {
-        MyInteractions->handleKeyPress(ke);
+        MyLibFacade->transferAccessKey(ke->text().toLower().at(0));
         return;
     }
     switch (ke->key())
@@ -91,6 +90,7 @@ bool MainWindow::event(QEvent *event)
     event->accept();
     if(event->type() == QEvent::TouchBegin || event->type() == QEvent::MouseButtonPress)
     {
+        first_touch = QDateTime::currentMSecsSinceEpoch();
         qint64 delay = QDateTime::currentMSecsSinceEpoch() - last_touch;
         if (delay < 500)
         {
@@ -101,7 +101,7 @@ bool MainWindow::event(QEvent *event)
             count_touch = 0;
         }
 
-        if (count_touch > 9)
+        if (count_touch > 5)
         {
             count_touch = 0;
             openDebugInfos();
@@ -110,6 +110,8 @@ bool MainWindow::event(QEvent *event)
     if(event->type() == QEvent::TouchEnd || event->type() == QEvent::MouseButtonRelease)
     {
         last_touch = QDateTime::currentMSecsSinceEpoch();
+        if (last_touch - first_touch > 10000)
+            openDebugInfos();
     }
     return QMainWindow::event(event);
 }

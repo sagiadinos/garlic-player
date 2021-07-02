@@ -72,6 +72,40 @@ void TRegion::stopShowMedia(BaseMedia *media)
         layout.data()->removeWidget(widget);
     }
     MyMedia->deinit();
+    MyMedia = Q_NULLPTR;
+}
+
+bool TRegion::event(QEvent *event)
+{
+
+    if(event->type() == QEvent::TouchBegin || event->type() == QEvent::MouseButtonPress)
+    {
+        qint64 delay = QDateTime::currentMSecsSinceEpoch() - last_touch;
+        if (delay < 500)
+        {
+            count_touch++;
+        }
+        else
+        {
+            count_touch = 0;
+        }
+
+        if (count_touch > 2)
+        {
+            count_touch = 0;
+        }
+    }
+    if(event->type() == QEvent::TouchEnd || event->type() == QEvent::MouseButtonRelease)
+    {
+        last_touch = QDateTime::currentMSecsSinceEpoch();
+        if (count_touch < 2 && MyMedia != Q_NULLPTR)
+        {
+            event->accept();
+            MyMedia->getSmilMedia()->emitActivated();
+        }
+    }
+    return QWidget::event(event);
+
 }
 
 /**

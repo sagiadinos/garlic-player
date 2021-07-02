@@ -1,7 +1,6 @@
 #ifndef SYNCBASE_H
 #define SYNCBASE_H
 
-#include <QObject>
 #include "base_trigger.h"
 
 class SyncBase : public Trigger::BaseTrigger

@@ -41,6 +41,7 @@ public:
     void                               beginPreloading(QDomElement body);
     void                               startPlayingBody();
     void                               endPlayingBody();
+    void                               triggerAccessKey(QChar key);
 
 protected:
     QDomElement                        parser;
@@ -53,7 +54,6 @@ protected:
     CurrentPlayingMedia               *MyCurrentPlayingMedia;
     void                               emitStartShowMedia(BaseMedia *media);
     void                               emitStopShowMedia(BaseMedia *media);
-
     void                               connectSlots(BaseTimings *element);
 protected slots:
     void                               preloadElement(TContainer *ParentContainer, QDomElement dom_element);
@@ -65,8 +65,7 @@ protected slots:
     void                               stopElement(BaseTimings *element);
     void                               resumeQueuedElement(BaseTimings *element);
     void                               pauseElement(BaseTimings*element);
-    void                               fireBegin(QString target_id, QString source_id);
-    void                               fireEnd(QString target_id, QString source_id);
+    void                               fireTrigger(QString trigger, QString target_id, QString source_id);
 
 signals:
     void                               startShowMedia(BaseMedia *media);

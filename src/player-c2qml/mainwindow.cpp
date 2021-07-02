@@ -23,7 +23,6 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade, PlayerConfigurati
     MyScreen               = screen;
     MyLibFacade            = lib_facade;
     MyPlayerConfiguration  = pc;
-    MyInteractions         = new Interactions(lib_facade, this);
     MyRegionsList          = new RegionsList(this);
     MyLauncher.reset(new Launcher());
 }
@@ -36,8 +35,8 @@ MainWindow::~MainWindow()
 void MainWindow::init()
 {
     connect (this, SIGNAL(statusChanged(QQuickView::Status)), this, SLOT(doStatusChanged(QQuickView::Status)));
-    connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia *)), this, SLOT(startShowMedia(BaseMedia *)));
-    connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia *)), this, SLOT(stopShowMedia(BaseMedia *)));
+    connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia*)), this, SLOT(startShowMedia(BaseMedia*)));
+    connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia*)), this, SLOT(stopShowMedia(BaseMedia*)));
     connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
 
     connect(MyLibFacade, SIGNAL(newConfig()), this, SLOT(sendConfig()));
@@ -51,43 +50,43 @@ void MainWindow::init()
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
-/*    if (!ke->modifiers().testFlag(Qt::ControlModifier))
+    /*
+    if (!ke->modifiers().testFlag(Qt::ControlModifier))
     {
-        MyInteractions->handleKeyPress(ke);
+        MyLibFacade->transferAccessKey(ke->text().toLower().at(0));
+        return;
     }
-    else
+    */
+    switch (ke->key())
     {
-*/        switch (ke->key())
-        {
-            case Qt::Key_F:
-            if (screen_state != FULLSCREEN)
-                    resizeAsNormalFullScreen();
-                else
-                    resizeAsWindow();
+        case Qt::Key_F:
+        if (screen_state != FULLSCREEN)
+                resizeAsNormalFullScreen();
+            else
+                resizeAsWindow();
+        break;
+        case Qt::Key_B:
+            if (screen_state != BIGFULLSCREEN)
+                 resizeAsBigFullScreen();
+            else
+                resizeAsWindow();
+        break;
+        case Qt::Key_D:
+            setCursor(Qt::ArrowCursor);
+            openDebugInfos();
+            setCursor(Qt::BlankCursor);
             break;
-            case Qt::Key_B:
-                if (screen_state != BIGFULLSCREEN)
-                     resizeAsBigFullScreen();
-                else
-                    resizeAsWindow();
-            break;
-            case Qt::Key_D:
-                setCursor(Qt::ArrowCursor);
-                openDebugInfos();
-                setCursor(Qt::BlankCursor);
-                break;
-            case Qt::Key_S:  // Ctrl-C will not work during qwebengineview
-                openConfigDialog();
-            break;
+        case Qt::Key_S:  // Ctrl-C will not work during qwebengineview
+            openConfigDialog();
+        break;
 
-            case Qt::Key_Q: // quit app normal
-                quitApplication();
-            break;
-            case Qt::Key_C: // quit app not normal e.g. to simulate a crash
-                QApplication::quit();
-            break;
-        }
-//    }
+        case Qt::Key_Q: // quit app normal
+            quitApplication();
+        break;
+        case Qt::Key_C: // quit app not normal e.g. to simulate a crash
+            QApplication::quit();
+        break;
+    }
     return;
 }
 
@@ -115,7 +114,7 @@ bool MainWindow::event(QEvent *event)
     {
         last_touch = QDateTime::currentMSecsSinceEpoch();
     }
-    return QQuickView::event(event);
+    return true;
 
 }
 

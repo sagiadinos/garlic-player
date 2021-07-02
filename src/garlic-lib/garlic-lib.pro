@@ -82,6 +82,7 @@ SOURCES += \
     smilparser/timings/begin_timer.cpp \
     smilparser/timings/end_timer.cpp \
     smilparser/timings/enhanced_timer.cpp \
+    smilparser/trigger/accesskey.cpp \
     smilparser/trigger/base_trigger.cpp \
     smilparser/trigger/clock_value.cpp \
     smilparser/timings/simple_timer.cpp \
@@ -161,6 +162,7 @@ HEADERS += \
     smilparser/timings/begin_timer.h \
     smilparser/timings/end_timer.h \
     smilparser/timings/enhanced_timer.h \
+    smilparser/trigger/accesskey.h \
     smilparser/trigger/base_trigger.h \
     smilparser/trigger/clock_value.h \
     smilparser/timings/simple_timer.h \

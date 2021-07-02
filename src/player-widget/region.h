@@ -28,6 +28,7 @@
 #include <QStyle>
 #include <QStyleOption>
 #include <QGraphicsOpacityEffect>
+#include <event.h>
 #include "head_parser.h"
 #include "lib_facade.h"
 
@@ -46,7 +47,10 @@ public:
     void                startShowMedia(BaseMedia *media);
     void                stopShowMedia(BaseMedia *media);
     Region             *getRegion() {return &region;}
+    bool                event(QEvent *event);
 protected:
+    qint64                last_touch = 0;
+    int                   count_touch = 0;
     qreal                 root_width_px = 0;
     qreal                 root_height_px = 0;
     QString               actual_media = "";

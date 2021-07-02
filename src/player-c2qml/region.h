@@ -36,6 +36,8 @@ public:
     void                stopShowMedia(BaseMedia *media);
 
 protected:
+    qint64                last_touch = 0;
+    int                   count_touch = 0;
     QQuickItem           *root_item;
     QQmlEngine           *engine;
     LibFacade            *MyLibFacade;
@@ -48,7 +50,14 @@ protected:
     QScopedPointer<MediaFactory>        MyMediaFactory;
     qreal                 root_width_px = 0;
     qreal                 root_height_px = 0;
-    void                  resizeGeometry();
+
+    void                mousePressEvent(QMouseEvent *event);
+    void                mouseReleaseEvent(QMouseEvent *event);
+    void                touchEvent(QTouchEvent *event);
+    void                registerEventStarts();
+    void                registerEventEnds();
+
+    void                resizeGeometry();
 };
 
 #endif // TREGION_H

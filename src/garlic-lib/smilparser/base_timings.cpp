@@ -93,8 +93,14 @@ void BaseTimings::stopTimers()
 
 void BaseTimings::startTrigger(QString source_id)
 {
-    startTimers();
+    qDebug() << "prepare triger Play from : " + source_id + " and " + getID() + " parent: " + getParentContainer()->getID();
+    status = _waiting;
     BeginTimer->startFromExternalTrigger(source_id);
+    if (EndTimer != Q_NULLPTR)
+    {
+        EndTimer->setActiveBeginTimeTrigger(BeginTimer->getElapsedButActiveTimeTrigger());
+        EndTimer->start();
+    }
 }
 
 void BaseTimings::stopTrigger(QString source_id)
@@ -154,7 +160,7 @@ void BaseTimings::addToExternalEnds(QString symbol, QString target_id)
     EndTargets->insert(symbol, target_id);
 }
 
-QHash<QString, QString> BaseTimings::fetchExternalBegins()
+QHash<QString, QString>  BaseTimings::fetchExternalBegins()
 {
     if (!BeginTimer->hasExternalTrigger())
         return {};
@@ -197,6 +203,27 @@ void BaseTimings::skipElement()
         InternalTimer->setTimerType(Qt::PreciseTimer);
     }
     InternalTimer->start(100);
+}
+
+void BaseTimings::emitActivated()
+{
+    QStringList sl = {};
+    if (BeginTargets != Q_NULLPTR)
+    {
+        sl = BeginTargets->findTargetIDsByTrigger("activateEvent");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerSignal("begin", target_id, getID());
+        }
+    }
+    if (EndTargets != Q_NULLPTR)
+    {
+        sl = EndTargets->findTargetIDsByTrigger("activateEvent");
+        for (const auto& target_id : qAsConst(sl))
+        {
+            emit triggerSignal("end", target_id, getID());
+        }
+    }
 }
 
 // ========================= protected methods ======================================================
@@ -250,12 +277,12 @@ bool BaseTimings::startDurTimer()
         sl = BeginTargets->findTargetIDsByTrigger("begin");
         for (const auto& target_id : qAsConst(sl))
         {
-            emit triggerBeginSignal(target_id, getID());
+            emit triggerSignal("begin", target_id, getID());
         }
         sl = BeginTargets->findTargetIDsByTrigger("beginEvent");
         for (const auto& target_id : qAsConst(sl))
         {
-            emit triggerBeginSignal(target_id, getID());
+            emit triggerSignal("begin", target_id, getID());
         }
     }
     if (EndTargets != Q_NULLPTR)
@@ -263,12 +290,12 @@ bool BaseTimings::startDurTimer()
         sl = EndTargets->findTargetIDsByTrigger("begin");
         for (const auto& target_id : qAsConst(sl))
         {
-            emit triggerEndSignal(target_id, getID());
+            emit triggerSignal("end", target_id, getID());
         }
         sl = EndTargets->findTargetIDsByTrigger("beginEvent");
         for (const auto& target_id : qAsConst(sl))
         {
-            emit triggerEndSignal(target_id, getID());
+            emit triggerSignal("end", target_id, getID());
         }
     }
 
@@ -365,12 +392,12 @@ void BaseTimings::finishedActiveDuration()
         sl = BeginTargets->findTargetIDsByTrigger("end");
         for (const auto& target_id : qAsConst(sl))
         {
-            emit triggerBeginSignal(target_id, getID());
+            emit triggerSignal("begin", target_id, getID());
         }
         sl = BeginTargets->findTargetIDsByTrigger("endEvent");
         for (const auto& target_id : qAsConst(sl))
         {
-            emit triggerBeginSignal(target_id, getID());
+            emit triggerSignal("begin", target_id, getID());
         }
     }
     if (EndTargets != Q_NULLPTR)
@@ -378,12 +405,12 @@ void BaseTimings::finishedActiveDuration()
         sl = EndTargets->findTargetIDsByTrigger("end");
         for (const auto& target_id : qAsConst(sl))
         {
-            emit triggerEndSignal(target_id, getID());
+            emit triggerSignal("end", target_id, getID());
         }
         sl = EndTargets->findTargetIDsByTrigger("endEvent");
         for (const auto& target_id : qAsConst(sl))
         {
-            emit triggerEndSignal(target_id, getID());
+            emit triggerSignal("end", target_id, getID());
         }
     }
     qDebug() << getID() <<  " end active duration";

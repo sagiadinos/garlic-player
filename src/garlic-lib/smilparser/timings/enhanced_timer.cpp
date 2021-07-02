@@ -47,17 +47,33 @@ bool Timings::EnhancedTimer::initTimer(int type, QString value)
         case TYPE_OFFSET:
             ts->MyClockValue = new ClockValue();
             ts->MyClockValue->parse((value));
-            ret = true;
+            ret = true; // we assume offset alays return at least 0
         break;
         case TYPE_WALLCLOCK:
             ts->MyWallClock = new WallClock();
             ts->MyWallClock->parse(value);
+            ret = true; // we assume always return at least 2000-01-01 00:00:00
+        break;
+        case TYPE_ACCESSKEY:
+            ts->MyAccessKey = new AccessKey();
+            ret = ts->MyAccessKey->parse(value);
+            if (!ret)
+            {
+                delete ts->MyAccessKey;
+                ts->MyAccessKey = Q_NULLPTR;
+            }
+            if (ret && ts->MyAccessKey->hasExternTrigger())
+                has_external_trigger = true;
         break;
         case TYPE_SYNCBASE:
             ts->MySyncBase = new SyncBase();
             ret = ts->MySyncBase->parse(value);
+
             if (!ret)
+            {
                 delete ts->MySyncBase;
+                ts->MySyncBase = Q_NULLPTR;
+            }
 
             if (ret && ts->MySyncBase->hasExternTrigger())
                 has_external_trigger = true;
@@ -67,7 +83,10 @@ bool Timings::EnhancedTimer::initTimer(int type, QString value)
             ret = ts->MyEvent->parse(value);
 
             if (!ret)
+            {
                 delete ts->MyEvent;
+                ts->MyEvent = Q_NULLPTR;
+            }
 
             if (ret && ts->MyEvent->hasExternTrigger())
                 has_external_trigger = true;
@@ -97,11 +116,16 @@ void Timings::EnhancedTimer::deleteTimer()
             case TYPE_WALLCLOCK:
                 delete ts->MyWallClock;
             break;
+            case TYPE_ACCESSKEY:
+                if (ts->MyAccessKey != Q_NULLPTR)
+                    delete ts->MyAccessKey;
             case TYPE_SYNCBASE:
-                delete ts->MySyncBase;
+                if (ts->MySyncBase != Q_NULLPTR)
+                    delete ts->MySyncBase;
             break;
             case TYPE_EVENT:
-                delete ts->MyEvent;
+                if (ts->MyEvent != Q_NULLPTR)
+                    delete ts->MyEvent;
             break;
         }
         delete ts->MyTimer;
@@ -143,17 +167,18 @@ bool Timings::EnhancedTimer::parse(QString attr_value)
             initTimer(TYPE_OFFSET, value);
             is_parsable = true;
         }
-        else if (value.endsWith("begin") || value.endsWith("end"))
-        {
-            is_parsable = initTimer(TYPE_SYNCBASE, value);
-        }
         else if (value.mid(0, 9) == "accesskey" )
         {
-            // todo: add support for accesskeys
+            is_parsable = initTimer(TYPE_ACCESSKEY, value);
         }
         else if (value.at(0).isLetter() && value.contains("."))
         {
-            is_parsable = initTimer(TYPE_EVENT, value);;
+            QString symbol = determineSymbol(value);
+
+            if (symbol.endsWith("begin") || symbol.endsWith("end"))
+                is_parsable = initTimer(TYPE_SYNCBASE, value);
+            else
+                is_parsable = initTimer(TYPE_EVENT, value);
         }
         else
         {
@@ -180,6 +205,9 @@ void Timings::EnhancedTimer::start()
             case TYPE_WALLCLOCK:
                   handleStartWallClockTrigger(ts);
                 break;
+            case TYPE_ACCESSKEY:
+                ts->MyAccessKey->setActive(true);
+            break;
             case TYPE_SYNCBASE:
                 ts->MySyncBase->setActive(true); // rest is done by Timings::EnhancedTimer::startFromExternalTrigger
             break;
@@ -192,7 +220,6 @@ void Timings::EnhancedTimer::start()
     if (fireImmediately())
         emitTimeout();
 }
-
 
 void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
 {
@@ -225,6 +252,7 @@ void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
                 break;
         }
     }
+
 }
 
 void Timings::EnhancedTimer::pause()
@@ -252,6 +280,9 @@ void Timings::EnhancedTimer::stop()
             case TYPE_WALLCLOCK:
                 ts->MyTimer->stop();
                 ts->remaining = 0;
+            break;
+            case TYPE_ACCESSKEY:
+                ts->MyAccessKey->setActive(false);
             break;
             case TYPE_SYNCBASE:
                 ts->MySyncBase->setActive(false);
@@ -308,6 +339,11 @@ bool Timings::EnhancedTimer::isActive()
             break;
             case TYPE_INDEFINITE:
                 return true;
+
+            case TYPE_ACCESSKEY:
+                if (ts->MyAccessKey->isActive())
+                    return false;
+            break;
             case TYPE_SYNCBASE:
                 if (ts->MySyncBase->isActive())
                     return false;
@@ -340,6 +376,10 @@ QHash<QString, QString> Timings::EnhancedTimer::fetchTriggerList()
                 if (ts->MySyncBase->hasExternTrigger())
                     ret.insert(ts->MySyncBase->getSourceId(), ts->MySyncBase->getSymbol());
             break;
+            case TYPE_ACCESSKEY:
+                if (ts->MyAccessKey->hasExternTrigger())
+                    ret.insert("accesskey", ts->MyAccessKey->getCharSymbol());
+            break;
             case TYPE_EVENT:
                 if (ts->MyEvent->hasExternTrigger())
                     ret.insert(ts->MyEvent->getSourceId(), ts->MyEvent->getNmToken());
@@ -347,6 +387,28 @@ QHash<QString, QString> Timings::EnhancedTimer::fetchTriggerList()
         }
     }
     return ret;
+}
+
+QString Timings::EnhancedTimer::determineSymbol(QString value)
+{
+    QStringList sl = {};
+    QStringList sl2 = {};
+    if (value.contains("+"))
+    {
+        sl = value.split("+");
+        sl2 = sl.at(0).split(".");
+    }
+    else if (value.contains("-"))
+    {
+        sl = value.split("-");
+        sl2 = sl.at(0).split(".");
+    }
+    else
+    {
+        sl2 = value.split(".");
+    }
+
+    return sl2.at(1);
 }
 
 void Timings::EnhancedTimer::handleStartOffsetTrigger(Timings::EnhancedTimer::TriggerStruct *ts)

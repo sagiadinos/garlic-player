@@ -24,6 +24,9 @@ TRegion::TRegion(LibFacade *lf, QObject *parent)
 {
     MyLibFacade = lf;
     root_item = qobject_cast<QQuickItem*>(parent);
+    setAcceptedMouseButtons(Qt::LeftButton);
+    setAcceptTouchEvents(true);
+
 }
 
 TRegion::~TRegion()
@@ -65,6 +68,59 @@ void TRegion::setRegion(Region r, Launcher *lc, QQmlEngine *e)
     MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, lc, this));
 }
 
+void TRegion::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    registerEventStarts();
+}
+
+void TRegion::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    registerEventEnds();
+}
+
+void TRegion::touchEvent(QTouchEvent *event)
+{
+    Q_UNUSED(event);
+    if(event->type() == QEvent::TouchBegin)
+    {
+        registerEventStarts();
+    }
+    if(event->type() == QEvent::TouchEnd)
+    {
+        registerEventEnds();
+    }
+    return;
+}
+
+void TRegion::registerEventStarts()
+{
+    qint64 delay = QDateTime::currentMSecsSinceEpoch() - last_touch;
+    if (delay < 500)
+    {
+        count_touch++;
+    }
+    else
+    {
+        count_touch = 0;
+    }
+
+    if (count_touch > 2)
+    {
+        count_touch = 0;
+    }
+}
+
+void TRegion::registerEventEnds()
+{
+    last_touch = QDateTime::currentMSecsSinceEpoch();
+    if (count_touch < 2 && MyMedia != Q_NULLPTR)
+    {
+        MyMedia->getSmilMedia()->emitActivated();
+    }
+}
+
 void TRegion::startShowMedia(BaseMedia *media)
 {
     MyMedia = MyMediaFactory.data()->initMedia(media);
@@ -82,7 +138,7 @@ void TRegion::stopShowMedia(BaseMedia *media)
     }
 
     MyMedia->setParentItem(NULL);
-    MyMedia->deinit();    
+    MyMedia->deinit();
 }
 
 void TRegion::resizeGeometry()

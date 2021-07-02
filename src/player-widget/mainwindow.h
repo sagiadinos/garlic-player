@@ -26,7 +26,6 @@
 #include "../player-common/configdialog.h"
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
-#include "../player-common/interactions.h"
 #include "../player-common/launcher.h"
 #include "files/index_manager.h"
 #include "files/media_manager.h"
@@ -49,8 +48,8 @@ class MainWindow : public QMainWindow
         const int                 FULLSCREEN    = 1;
         const int                 BIGFULLSCREEN = 2;
         qint64                    last_touch = 0;
+        qint64                    first_touch = 0;
         int                       count_touch = 0;
-        Interactions             *MyInteractions;
         QScopedPointer<Launcher>  MyLauncher;
         QWidget                  *centralWidget;
         LibFacade                *MyLibFacade      = Q_NULLPTR;

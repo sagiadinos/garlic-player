@@ -1,9 +1,16 @@
 # garlic-player - Open Source SMIL Player for Digital Signage
 
-The goal is to create a as most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet [Digital Signage](https://smil-control.com/) needs.
-Garlic-player can be used online with Smil 3.0 compatible [Digital Signage Softwarel](https://smil-control.com/software/) or other.
-Offline usage via command-line is also possible.
-Garlic is able to play local and remote (via http) SMIL Files with the features described below.
+The garlic-player is SMIL 3.0 compatible [Digital Signage Player](https://smil-control.com/magazine/what-is-a-digital-signage-player/).
+
+The goal for the development is to create a most as neccessary SMIL 3.0 compatible and as most as possible platform independen free open source multimedia player to meet the needs of the digital signage industry. Currently we have reached a high level of compatibility and the player is used on many projects.
+
+[Digital Signage](https://smil-control.com/) is a relatively young business and it has a lack of standards. As customer you can easily trapped into a vendor-lock. SMIL gives you independence back.
+
+The garlic-player can be used offline and online.
+
+As it based on [SMIL standard](https://www.w3.org/TR/SMIL3/) it works together with every compatible [Digital Signage Software](https://smil-control.com/software/).
+
+You are able to play local and remote (via http) SMIL files with the features described below.
 
 ## Libraries used
  - [Qt5](https://www.qt.io) >= 5.10 (5.12.x LTS recommended)
@@ -90,16 +97,27 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
 #### Attributes for mbrush
 - **color** color in CSS Stsyle
 
-### Attributes for media and time container:
+### Attributes for media and container (Timings and Synchronization)
 - **xml:id** with Fallback for SMIL 2.0 id
 - **title** stub
 - **restart** (always|never|whenNotActive|default)
 - **class** stub
 - **xml:lang** stub
-- **dur** with values indefinite, media, Clock values (full+partial clock),  normal (h min s and ms)
-- **begin** with Clock values, snycbase values and wallclock with weekday (-/+) periods and repeats. Date is supported only in full ISO 8601 format not short date like 201634W. value lists seperated by ";"
-- **end** has the same features as begin
 - **repeatCount** (currently only positive integer values)
+
+#### Begin and End Attributes
+- **Clock values* like dur
+- **Wallclock** with weekday (-/+) periods and repeats. Date is supported in full ISO 8601 format not short date like 201634W.
+- **Events** beginEvent, endEvent, activateEvent with additional clock value like id.endEvent+2s
+- **Syncbase values** with additional clock value like id.begin+2s
+- **accesskey** with additional clock value like accesskey('w')+2s
+- **indefinite**
+- **value lists** seperated by ";"
+
+#### Timings with Dur
+- **indefinite**
+- **media**
+- **clock values** (full+partial clock),  normal (h min s and ms)
 
 ### Layered multizone layouts elements:
 - **root-layout**
@@ -139,7 +157,8 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
  - open configuration dialog with Ctrl-S
 
 ## future ToDo's
- - interactivity trigger (touch, keyboard, ean-codes)
- - REST API
+- REST API
+- trigger for strings like ean-codes
+
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)

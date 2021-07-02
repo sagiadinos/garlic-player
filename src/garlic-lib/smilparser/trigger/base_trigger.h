@@ -25,8 +25,9 @@ namespace Trigger
             QString     clock_value = "0";
             QString     source_id = "";
             bool        has_extern_trigger = false;
-            QString     splitPossibleClockValue(QString sync_value);
-            QString     splitClockValue(QString sync_value);
+            QString     handlePossibleClockValue(QString value);
+        private:
+            QString     splitClockValue(QString value);
     };
 }
 #endif // BASETRIGGER_H

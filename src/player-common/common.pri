@@ -1,5 +1,4 @@
 SOURCES += \
-    $$PWD/interactions.cpp \
     $$PWD/launcher.cpp \
     ../player-common/player_configuration.cpp \
     $$PWD/touch_manager.cpp \
@@ -9,7 +8,6 @@ SOURCES += \
     ../player-common/screen.cpp
 
 HEADERS  += \
-    $$PWD/interactions.h \
     $$PWD/launcher.h \
     ../player-common/player_configuration.h \
     $$PWD/touch_manager.h \

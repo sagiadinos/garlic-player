@@ -218,6 +218,11 @@ void TExcl::collectActivatedChilds()
 
 bool TExcl::determineContinue(BaseTimings *new_element)
 {
+    if (current_activated_element == new_element) // if element has been activated from a trigger previously
+    {
+        return true;
+    }
+
     if (current_activated_element == Q_NULLPTR) // if first element we can continue to show
     {
         CurrentPriority = findPriorityClass(new_element->getRootElement());
@@ -277,6 +282,8 @@ bool TExcl::determineContinue(BaseTimings *new_element)
 
     return ret;
 }
+
+
 
 /**
  *   Check for priorityClass childs and create the priority objects

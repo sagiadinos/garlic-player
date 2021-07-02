@@ -73,34 +73,43 @@ void ElementsContainer::distributeTriggers()
 
 void ElementsContainer::distributeBeginTrigger(BaseTimings *bt_target)
 {
-    QHash<QString, QString> target_trigger_list = bt_target->fetchExternalBegins();
-    QString                           target_id = bt_target->getID();
+    QHash<QString, QString>  target_trigger_list = bt_target->fetchExternalBegins();
+    QString                                           target_id = bt_target->getID();
     if (!target_trigger_list.isEmpty())
     {
         BaseTimings *bt_source = Q_NULLPTR;
-        QHash<QString, QString>::Iterator j = target_trigger_list.begin();
+        QHash<QString, QString> ::Iterator j = target_trigger_list.begin();
         while (j != target_trigger_list.end())
         {
-            bt_source = elements_list.find(j.key()).value();
-            bt_source->addToExternalBegins(j.value(),target_id);
+            QHash<QString, BaseTimings *> ::Iterator test;
+            test = elements_list.find(j.key());
+            if (test != elements_list.end())
+            {
+                bt_source = test.value();
+                bt_source->addToExternalBegins(j.value(),target_id);
+            }
             j++;
         }
     }
 }
 
-
 void ElementsContainer::distributeEndTrigger(BaseTimings *bt_target)
 {
     QHash<QString, QString> target_trigger_list = bt_target->fetchExternalEnds();
-    QString                           target_id = bt_target->getID();
+    QString                                          target_id = bt_target->getID();
     if (!target_trigger_list.isEmpty())
     {
         BaseTimings *bt_source = Q_NULLPTR;
-        QHash<QString, QString>::Iterator j = target_trigger_list.begin();
+        QHash<QString, QString> ::Iterator j = target_trigger_list.begin();
         while (j != target_trigger_list.end())
         {
-            bt_source = elements_list.find(j.key()).value();
-            bt_source->addToExternalEnds(j.value(),target_id);
+            QHash<QString, BaseTimings *> ::Iterator test;
+            test = elements_list.find(j.key());
+            if (test != elements_list.end())
+            {
+                bt_source = test.value();
+                bt_source->addToExternalEnds(j.value(),target_id);
+            }
             j++;
         }
     }

@@ -26,7 +26,6 @@
 #include "../player-common/configdialog.h"
 #include "../player-common/screen.h"
 #include "../player-common/debug_infos.h"
-#include "../player-common/interactions.h"
 #include "../player-common/launcher.h"
 #include "../player-common/player_configuration.h"
 #include "files/index_manager.h"
@@ -52,7 +51,6 @@ class MainWindow : public QQuickView
         const int                 FULLSCREEN    = 1;
         const int                 BIGFULLSCREEN = 2;
         QScopedPointer<Launcher>  MyLauncher;
-        Interactions             *MyInteractions;
         LibFacade                *MyLibFacade           = Q_NULLPTR;
         PlayerConfiguration      *MyPlayerConfiguration = Q_NULLPTR;
         TScreen                  *MyScreen;

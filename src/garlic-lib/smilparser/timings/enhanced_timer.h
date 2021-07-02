@@ -24,6 +24,7 @@
 #include "trigger/wallclock.h"
 #include "trigger/syncbase.h"
 #include "trigger/event.h"
+#include "trigger/accesskey.h"
 #include <QList>
 namespace Timings
 {
@@ -65,6 +66,7 @@ namespace Timings
                 WallClock  *MyWallClock  = Q_NULLPTR;
                 SyncBase   *MySyncBase   = Q_NULLPTR;
                 Event      *MyEvent      = Q_NULLPTR;
+                AccessKey  *MyAccessKey  = Q_NULLPTR;
                 QString     id           = "";
                 QString     event        = "";
                 int         type         = TYPE_NOT_SET;
@@ -76,6 +78,7 @@ namespace Timings
             bool        has_negative_offset_trigger = false;
             bool        has_wallclock_next_trigger = false;
             qint64      negative_trigger = 1;
+            QString     determineSymbol(QString value);
     virtual bool        fireImmediately()       = 0;
             void        handleStartOffsetTrigger(TriggerStruct *ts);
             void        handleStartWallClockTrigger(TriggerStruct *ts);

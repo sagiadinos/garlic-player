@@ -51,13 +51,10 @@ class LibFacade : public QObject
         void               setConfigFromExternal(QString config_path, bool restart_smil_parsing = true);
         void               toggleLauncher(bool value){has_launcher = value;}
 
+        void               transferAccessKey(QChar key);
         void               reloadWithNewIndex(QString index_path);
         void               beginSmilPlaying();
         QString            requestLoaddableMediaPath(QString path);
-        // Interactions
-        void               nextSmilMedia(int zone = 1);
-        void               previousSmilMedia(int zone = 1);
-        void               jumpToSmilMedia(int position, int zone = 1);
         void               shutDownParsing();
 public slots:
         void               initParser();

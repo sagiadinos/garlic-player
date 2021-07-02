@@ -72,6 +72,7 @@ class BaseTimings : public TBase
                 void           finishedNotFound();
                 void           skipElement();
                 BaseTimings   *getParentContainer(){return parent_container;}
+                void           emitActivated();
 
         virtual void           start()       = 0;
         virtual void           stop()        = 0;
@@ -135,8 +136,7 @@ class BaseTimings : public TBase
                 void           finishActiveDurationSignal(BaseTimings*);
                 void           finishSimpleDurationSignal(BaseTimings*);
 
-                void  triggerBeginSignal(QString,QString);
-                void  triggerEndSignal(QString,QString);
+                void  triggerSignal(QString,QString,QString); // signal(begin, end,activateI), target_id, source_id, clockvalue in ms)
                 void  startElementSignal(BaseTimings*);
                 void  stopElementSignal(BaseTimings*);
                 void  resumeElementSignal(BaseTimings*);

@@ -34,29 +34,28 @@ bool Trigger::BaseTrigger::isActive() const
     return is_active;
 }
 
-QString Trigger::BaseTrigger::splitPossibleClockValue(QString sync_value)
+QString Trigger::BaseTrigger::handlePossibleClockValue(QString value)
 {
-    if (sync_value.contains("+") || sync_value.contains("-"))
-          return splitClockValue(sync_value);
+    if (value.contains("+") || value.contains("-"))
+          return splitClockValue(value);
     else
-        return sync_value;
-
+        return value;
 }
 
-QString Trigger::BaseTrigger::splitClockValue(QString sync_value)
+QString Trigger::BaseTrigger::splitClockValue(QString value)
 {
 
     QStringList sl;
     MyClockValue = new ClockValue;
-    if (sync_value.contains("+"))
+    if (value.contains("+"))
     {
         operant = '+';
-        sl = sync_value.split("+");
+        sl = value.split("+");
     }
     else
     {
         operant = '-';
-        sl = sync_value.split("-");
+        sl = value.split("-");
     }
     MyClockValue->parse(sl.at(1));
 

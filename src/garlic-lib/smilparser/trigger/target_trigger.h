@@ -14,7 +14,7 @@ class TargetTrigger : public QObject
         explicit     TargetTrigger(QObject *parent = nullptr);
         explicit     TargetTrigger();
         void         insert(QString trigger, QString target_id);
-        QStringList  findTargetIDsByTrigger(QString trigger);
+        QStringList findTargetIDsByTrigger(QString trigger);
     private:
         QMap<QString, QString> trigger_list = {};
     signals:

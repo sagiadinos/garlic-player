@@ -48,7 +48,7 @@ void WallClock::parse(QString iso_date)
     else
         trigger_datetime = MyIsoDate.analyseDate(iso_date);
 
-//    neccesary? 2021.05-05
+//    necessary? 2021.05-05
 //    if (repeats > 0)
 //        calculateWithRemainingRepeats(QDateTime::currentDateTime());
     return;

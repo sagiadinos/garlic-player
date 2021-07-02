@@ -8,7 +8,7 @@ Event::Event(QObject *parent) : Trigger::BaseTrigger(parent)
 bool Event::parse(QString sync_value)
 {
     has_extern_trigger = false;
-    QStringList sl = splitPossibleClockValue(sync_value).split(".");
+    QStringList sl = handlePossibleClockValue(sync_value).split(".");
     if (sl.length() < 2)
         return false;
 

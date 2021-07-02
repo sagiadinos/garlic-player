@@ -202,19 +202,40 @@ void BodyParser::resumeQueuedElement(BaseTimings *element)
     }
 }
 
-void BodyParser::fireBegin(QString target_id, QString source_id)
+void BodyParser::triggerAccessKey(QChar key)
 {
-    BaseTimings  *bt = MyElementsContainer->findSmilElementById(target_id);
-
-    // todo check if parent container is actived
-    // cause only active elements can be triggered
-    bt->startTrigger(source_id);
+    qDebug() << " dummy triggerAccessskey: " << key;
 }
 
-void BodyParser::fireEnd(QString target_id, QString source_id)
+void BodyParser::fireTrigger(QString trigger, QString target_id, QString source_id)
 {
-    BaseTimings  *bt = MyElementsContainer->findSmilElementById(target_id);
-    bt->stopTrigger(source_id);
+    BaseTimings  *element = MyElementsContainer->findSmilElementById(target_id);
+
+    // check if parent container is actived
+    // cause only active elements can be triggered
+   if (element->getParentContainer()->getStatus() != element->_playing) // _stopped todo later
+       return;
+
+   // We need a functionality which stops lower priorities here
+   // it can be possible that a trigger has an additional ClockValue like begin="xyz.begin+2s"
+   // it must stop/pause the lower priority class first then starting the timer
+
+   // look for tests/data/smil/excl/trigger/2_indefinite_with_clockvalkue.smil
+   // in this scenario otherwise we get a kind of deadlock and never reach BodyParser::startElement
+   TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
+   if (ParentContainer != Q_NULLPTR && ParentContainer->objectName() == "TExcl")
+   {
+       TExcl   *MyExclParent   = qobject_cast<TExcl *> (ParentContainer);
+       // determine if stop or pause previous or next child
+       // check if current active has lower priority and then stop or pause it.
+       if (!MyExclParent->determineContinue(element))
+           return;
+   }
+
+   if (trigger == "begin")
+        element->startTrigger(source_id);
+    else
+        element->stopTrigger(source_id);
 }
 
 
@@ -225,8 +246,7 @@ void BodyParser::connectSlots(BaseTimings *element)
     connect(element, SIGNAL(resumeElementSignal(BaseTimings*)), this, SLOT(resumeQueuedElement(BaseTimings*)));
     connect(element, SIGNAL(pauseElementSignal(BaseTimings*)), this, SLOT(pauseElement(BaseTimings*)));
 
-    connect(element, SIGNAL(triggerBeginSignal(QString,QString)), this, SLOT(fireBegin(QString,QString)));
-    connect(element, SIGNAL(triggerEndSignal(QString,QString)), this, SLOT(fireEnd(QString,QString)));
+    connect(element, SIGNAL(triggerSignal(QString,QString,QString)), this, SLOT(fireTrigger(QString,QString,QString)));
 
     if (element->getBaseType() == "container")
         connect(element, SIGNAL(preloadElementSignal(TContainer*,QDomElement)), this, SLOT(preloadElement(TContainer*,QDomElement)));

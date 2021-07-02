@@ -78,6 +78,11 @@ void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_par
     MyXMLConfiguration.data()->processFromLocalFile(config_path);
 }
 
+void LibFacade::transferAccessKey(QChar key)
+{
+    MyBodyParser.data()->triggerAccessKey(key);
+}
+
 /**
  * When new index/content_url came from an external source like a launcher at runtime
  *
@@ -100,23 +105,6 @@ QString LibFacade::requestLoaddableMediaPath(QString path)
 {
     return MyMediaManager.data()->requestLoadablePath(path);
 }
-
-void LibFacade::nextSmilMedia(int zone)
-{
-    Q_UNUSED(zone);
-}
-
-void LibFacade::previousSmilMedia(int zone)
-{
-    Q_UNUSED(zone);
-}
-
-void LibFacade::jumpToSmilMedia(int position, int zone)
-{
-    Q_UNUSED(position);
-    Q_UNUSED(zone);
-}
-
 
 void LibFacade::loadIndex()
 {

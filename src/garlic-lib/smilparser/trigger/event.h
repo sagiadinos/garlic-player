@@ -1,7 +1,6 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include <QObject>
 #include "base_trigger.h"
 
 class Event : public Trigger::BaseTrigger
