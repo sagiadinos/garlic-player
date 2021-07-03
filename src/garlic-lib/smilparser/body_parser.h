@@ -55,6 +55,8 @@ protected:
     void                               emitStartShowMedia(BaseMedia *media);
     void                               emitStopShowMedia(BaseMedia *media);
     void                               connectSlots(BaseTimings *element);
+    bool                               determineContinueBasedOnParent(BaseTimings *element);
+    void                               fireTrigger(QString trigger, BaseTimings *element, QString source_id);
 protected slots:
     void                               preloadElement(TContainer *ParentContainer, QDomElement dom_element);
 
@@ -65,7 +67,7 @@ protected slots:
     void                               stopElement(BaseTimings *element);
     void                               resumeQueuedElement(BaseTimings *element);
     void                               pauseElement(BaseTimings*element);
-    void                               fireTrigger(QString trigger, QString target_id, QString source_id);
+    void                               prepareFireTrigger(QString trigger, QString target_id, QString source_id);
 
 signals:
     void                               startShowMedia(BaseMedia *media);

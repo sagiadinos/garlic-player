@@ -15,9 +15,12 @@ public:
     BaseTimings  *findSmilElementById(QString id);
     void          insertSmilElement(BaseTimings *MyBaseTimings);
     void          distributeTriggers();
-
+    BaseTimings  *findAccessKeysForBegin(QChar key);
+    BaseTimings  *findAccessKeysForEnd(QChar key);
 private:
-    QHash<QString, BaseTimings *>          elements_list;
+    QHash<QString, BaseTimings *>       elements_list;
+    QMap<QChar, BaseTimings *>          begin_accesskey_list;
+    QMap<QChar, BaseTimings *>          end_accesskey_list;
     void  distributeBeginTrigger(BaseTimings *bt_target );
     void  distributeEndTrigger(BaseTimings *bt_target );
 

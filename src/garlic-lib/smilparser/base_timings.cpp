@@ -93,7 +93,7 @@ void BaseTimings::stopTimers()
 
 void BaseTimings::startTrigger(QString source_id)
 {
-    qDebug() << "prepare triger Play from : " + source_id + " and " + getID() + " parent: " + getParentContainer()->getID();
+    qDebug() << "prepare trigger Play from : " + source_id + " and " + getID() + " parent: " + getParentContainer()->getID();
     status = _waiting;
     BeginTimer->startFromExternalTrigger(source_id);
     if (EndTimer != Q_NULLPTR)

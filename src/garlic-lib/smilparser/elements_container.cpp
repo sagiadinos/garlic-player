@@ -71,6 +71,27 @@ void ElementsContainer::distributeTriggers()
     }
 }
 
+BaseTimings *ElementsContainer::findAccessKeysForBegin(QChar key)
+{
+    QMap<QChar, BaseTimings *>::Iterator i = begin_accesskey_list.find(key);
+    if(i != begin_accesskey_list.end())
+    {
+        return  i.value();
+    }
+    return Q_NULLPTR;
+}
+
+BaseTimings *ElementsContainer::findAccessKeysForEnd(QChar key)
+{
+    QMap<QChar, BaseTimings *>::Iterator i = end_accesskey_list.find(key);
+    if(i != end_accesskey_list.end())
+    {
+        return i.value();
+    }
+
+    return Q_NULLPTR;
+}
+
 void ElementsContainer::distributeBeginTrigger(BaseTimings *bt_target)
 {
     QHash<QString, QString>  target_trigger_list = bt_target->fetchExternalBegins();
@@ -81,12 +102,19 @@ void ElementsContainer::distributeBeginTrigger(BaseTimings *bt_target)
         QHash<QString, QString> ::Iterator j = target_trigger_list.begin();
         while (j != target_trigger_list.end())
         {
-            QHash<QString, BaseTimings *> ::Iterator test;
-            test = elements_list.find(j.key());
-            if (test != elements_list.end())
+            if (j.key() == "accesskey")
             {
-                bt_source = test.value();
-                bt_source->addToExternalBegins(j.value(),target_id);
+                begin_accesskey_list.insert(j.value().at(0), bt_target);
+            }
+            else
+            {
+                QHash<QString, BaseTimings *> ::Iterator test;
+                test = elements_list.find(j.key());
+                if (test != elements_list.end())
+                {
+                    bt_source = test.value();
+                    bt_source->addToExternalBegins(j.value(),target_id);
+                }
             }
             j++;
         }
@@ -103,12 +131,19 @@ void ElementsContainer::distributeEndTrigger(BaseTimings *bt_target)
         QHash<QString, QString> ::Iterator j = target_trigger_list.begin();
         while (j != target_trigger_list.end())
         {
-            QHash<QString, BaseTimings *> ::Iterator test;
-            test = elements_list.find(j.key());
-            if (test != elements_list.end())
+            if (j.key() == "accesskey")
             {
-                bt_source = test.value();
-                bt_source->addToExternalEnds(j.value(),target_id);
+                end_accesskey_list.insert(j.value().at(0), bt_target);
+            }
+            else
+            {
+                QHash<QString, BaseTimings *> ::Iterator test;
+                test = elements_list.find(j.key());
+                if (test != elements_list.end())
+                {
+                    bt_source = test.value();
+                    bt_source->addToExternalEnds(j.value(),target_id);
+                }
             }
             j++;
         }

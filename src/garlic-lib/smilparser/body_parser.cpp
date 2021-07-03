@@ -134,14 +134,8 @@ void BodyParser::endPlayingBody()
  */
 void BodyParser::startElement(BaseTimings *element)
 {
-    TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
-    if (ParentContainer != Q_NULLPTR && ParentContainer->objectName() == "TExcl")
-    {
-        TExcl   *MyExclParent   = qobject_cast<TExcl *> (ParentContainer);
-        // determine if stop or pause previous or next child
-        if (!MyExclParent->determineContinue(element))
-            return;
-    }
+    if (!determineContinueBasedOnParent(element))
+        return;
 
     element->start();
     qDebug() << "Start: " + element->getID();
@@ -204,40 +198,39 @@ void BodyParser::resumeQueuedElement(BaseTimings *element)
 
 void BodyParser::triggerAccessKey(QChar key)
 {
-    qDebug() << " dummy triggerAccessskey: " << key;
+    BaseTimings *element = MyElementsContainer->findAccessKeysForBegin(key);
+
+    if (element != Q_NULLPTR)
+    {
+        fireTrigger("begin", element, "accesskey");
+        return;
+    }
+
+    element = MyElementsContainer->findAccessKeysForEnd(key);
+    if (element != Q_NULLPTR)
+        fireTrigger("end", element, "accesskey");
 }
 
-void BodyParser::fireTrigger(QString trigger, QString target_id, QString source_id)
+void BodyParser::prepareFireTrigger(QString trigger, QString target_id, QString source_id)
 {
     BaseTimings  *element = MyElementsContainer->findSmilElementById(target_id);
+    fireTrigger(trigger, element, source_id);
+}
 
-    // check if parent container is actived
-    // cause only active elements can be triggered
-   if (element->getParentContainer()->getStatus() != element->_playing) // _stopped todo later
-       return;
+void BodyParser::fireTrigger(QString trigger, BaseTimings *element, QString source_id)
+{
 
-   // We need a functionality which stops lower priorities here
-   // it can be possible that a trigger has an additional ClockValue like begin="xyz.begin+2s"
-   // it must stop/pause the lower priority class first then starting the timer
+    if (element->getParentContainer()->getStatus() != element->_playing) // only active elements!
+        return;
 
-   // look for tests/data/smil/excl/trigger/2_indefinite_with_clockvalkue.smil
-   // in this scenario otherwise we get a kind of deadlock and never reach BodyParser::startElement
-   TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
-   if (ParentContainer != Q_NULLPTR && ParentContainer->objectName() == "TExcl")
-   {
-       TExcl   *MyExclParent   = qobject_cast<TExcl *> (ParentContainer);
-       // determine if stop or pause previous or next child
-       // check if current active has lower priority and then stop or pause it.
-       if (!MyExclParent->determineContinue(element))
-           return;
-   }
+    if (!determineContinueBasedOnParent(element))
+        return;
 
    if (trigger == "begin")
         element->startTrigger(source_id);
     else
         element->stopTrigger(source_id);
 }
-
 
 void BodyParser::connectSlots(BaseTimings *element)
 {
@@ -246,10 +239,34 @@ void BodyParser::connectSlots(BaseTimings *element)
     connect(element, SIGNAL(resumeElementSignal(BaseTimings*)), this, SLOT(resumeQueuedElement(BaseTimings*)));
     connect(element, SIGNAL(pauseElementSignal(BaseTimings*)), this, SLOT(pauseElement(BaseTimings*)));
 
-    connect(element, SIGNAL(triggerSignal(QString,QString,QString)), this, SLOT(fireTrigger(QString,QString,QString)));
+    connect(element, SIGNAL(triggerSignal(QString,QString,QString)), this, SLOT(prepareFireTrigger(QString,QString,QString)));
 
     if (element->getBaseType() == "container")
         connect(element, SIGNAL(preloadElementSignal(TContainer*,QDomElement)), this, SLOT(preloadElement(TContainer*,QDomElement)));
+}
+
+bool BodyParser::determineContinueBasedOnParent(BaseTimings *element)
+{
+    // When tehre is excl as parent container we need to stops or pause lower and activate higher priorityClass.
+    // but it is not enough to put these method only in BodyParser::startElement
+    // this is only adequate when children have wallclock or clock values
+
+    // a external trigger can have an additional ClockValue like begin="xyz.begin+2s" or end="accesskey(w)+3s";
+    // In this case we must stop/pause the lower priority classes before starting the additional timer
+
+    // look for tests/data/smil/excl/trigger/2_indefinite_with_clock.smil
+    // in this scenario we would get a kind of deadlock and never reach BodyParser::startElement
+    // so this method must called 2 times in case of a external trigger
+
+    TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
+    if (ParentContainer != Q_NULLPTR && ParentContainer->objectName() == "TExcl")
+    {
+        TExcl   *MyExclParent   = qobject_cast<TExcl *> (ParentContainer);
+        // check if current active has lower priority and then stop or pause it.
+        return MyExclParent->determineContinue(element);
+    }
+
+    return true; // always true, when not excl parent
 }
 
 void BodyParser::emitStartShowMedia(BaseMedia *media)

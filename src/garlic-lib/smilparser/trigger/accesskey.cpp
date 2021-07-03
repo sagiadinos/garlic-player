@@ -16,8 +16,9 @@ bool AccessKey::parse(QString char_value)
         return false;
 
     bool    ret = false;
+    source_id   = "accesskey";
     char_symbol = cleared.at(0).toLower();
-    if (char_symbol.isDigit() || char_symbol.isLetter())// isUpper()  || char_symbol.isLower())
+    if (char_symbol.isDigit() || char_symbol.isLetter())
         ret = true;
 
     if (ret)
@@ -34,8 +35,6 @@ QChar AccessKey::getCharSymbol()
 
 QString AccessKey::determineAccesskey(QString value)
 {
-    // as regex =>  \((.*?)\)
-
     // accesskey( => 10
     return value.mid(10, value.length()-11);
 }

@@ -230,6 +230,16 @@ void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
     {
         switch (ts->type)
         {
+            case TYPE_ACCESSKEY: // source_id == accesskey
+                if (ts->MyAccessKey->getSourceId() == source_id)
+                {
+                    next_trigger = ts->MyAccessKey->getTimeTrigger();
+                    if (next_trigger == 0)
+                        emitTimeout();
+                    else
+                       ts->MyTimer->start(next_trigger);
+                 }
+            break;
             case TYPE_SYNCBASE:
                 if (ts->MySyncBase->getSourceId() == source_id)
                 {

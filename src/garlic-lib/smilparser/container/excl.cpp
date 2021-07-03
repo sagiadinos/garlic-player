@@ -218,7 +218,7 @@ void TExcl::collectActivatedChilds()
 
 bool TExcl::determineContinue(BaseTimings *new_element)
 {
-    if (current_activated_element == new_element) // if element has been activated from a trigger previously
+    if (current_activated_element == new_element) // if element has already been activated from a trigger previously
     {
         return true;
     }
