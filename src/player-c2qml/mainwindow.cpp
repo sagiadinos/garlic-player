@@ -46,17 +46,17 @@ void MainWindow::init()
 
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
     setMainWindowSize(QSize(980, 540)); // set default
+    MyRegionsList->installEventFilter(this);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
-    /*
     if (!ke->modifiers().testFlag(Qt::ControlModifier))
     {
-        MyLibFacade->transferAccessKey(ke->text().toLower().at(0));
+        // todo prevent crash when shift and look if problem also occurs on alt etc...
+        //MyLibFacade->transferAccessKey(ke->text().toLower().at(0));
         return;
     }
-    */
     switch (ke->key())
     {
         case Qt::Key_F:
@@ -114,8 +114,7 @@ bool MainWindow::event(QEvent *event)
     {
         last_touch = QDateTime::currentMSecsSinceEpoch();
     }
-    return true;
-
+    return QQuickView::event(event);
 }
 
 void MainWindow::openDebugInfos()

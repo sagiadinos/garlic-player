@@ -65,7 +65,6 @@ class MainWindow : public QQuickView
         void                      keyPressEvent(QKeyEvent *ke);
         bool                      event(QEvent *event);
 
-
         void                      sendClosePlayerCorrect();
         void                      quitApplication();
     protected slots:

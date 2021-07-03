@@ -79,7 +79,7 @@ qreal Video::determineVolume(QString percent)
 {
     qreal vol = 0;
     if (percent.endsWith('%'))
-        vol = percent.mid(0, percent.length()-1).toFloat();
+        vol = percent.midRef(0, percent.length()-1).toFloat();
 
     return vol / (float) 100;
 }

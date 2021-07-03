@@ -39,7 +39,6 @@ QString PlayerBaseMedia::createPlayLogXml()
     return xml;
 }
 
-
 bool PlayerBaseMedia::load(QQuickItem *item)
 {
     QString source = SmilMedia->getLoadablePath();

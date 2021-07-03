@@ -26,38 +26,37 @@
 
 class TRegion : public QQuickItem
 {
-    Q_OBJECT
-public:
-    explicit TRegion(LibFacade *lf, QObject *parent);
-    ~TRegion();
-    void                setRootSize(int w, int h);
-    void                setRegion(Region r, Launcher *lc, QQmlEngine *e);
-    void                startShowMedia(BaseMedia *media);
-    void                stopShowMedia(BaseMedia *media);
+        Q_OBJECT
+    public:
+        explicit TRegion(LibFacade *lf, QObject *parent);
+        ~TRegion();
+        void                setRootSize(int w, int h);
+        void                setRegion(Region r, Launcher *lc, QQmlEngine *e);
+        void                startShowMedia(BaseMedia *media);
+        void                stopShowMedia(BaseMedia *media);
+    public slots:
+        void clickSlot();
 
-protected:
-    qint64                last_touch = 0;
-    int                   count_touch = 0;
-    QQuickItem           *root_item;
-    QQmlEngine           *engine;
-    LibFacade            *MyLibFacade;
-    Region                region;
-    PlayerBaseMedia                    *MyMedia = Q_NULLPTR;
-    QScopedPointer<QQmlComponent>       rectangle;
-    QScopedPointer<QQmlComponent>       media_component;
-    QScopedPointer<QQuickItem>          rectangle_item;
+    protected:
+        qint64                last_touch = 0;
+        int                   count_touch = 0;
+        QQuickItem           *root_item;
+        QQmlEngine           *engine;
+        LibFacade            *MyLibFacade;
+        Region                region;
+        PlayerBaseMedia                    *MyMedia = Q_NULLPTR;
+        QScopedPointer<QQmlComponent>       rectangle;
+        QScopedPointer<QQmlComponent>       media_component;
+        QScopedPointer<QQuickItem>          rectangle_item;
 
-    QScopedPointer<MediaFactory>        MyMediaFactory;
-    qreal                 root_width_px = 0;
-    qreal                 root_height_px = 0;
+        QScopedPointer<MediaFactory>        MyMediaFactory;
+        qreal                 root_width_px = 0;
+        qreal                 root_height_px = 0;
 
-    void                mousePressEvent(QMouseEvent *event);
-    void                mouseReleaseEvent(QMouseEvent *event);
-    void                touchEvent(QTouchEvent *event);
-    void                registerEventStarts();
-    void                registerEventEnds();
+        void                registerEventStarts();
+        void                registerEventEnds();
 
-    void                resizeGeometry();
+        void                resizeGeometry();
 };
 
 #endif // TREGION_H

@@ -24,9 +24,6 @@ TRegion::TRegion(LibFacade *lf, QObject *parent)
 {
     MyLibFacade = lf;
     root_item = qobject_cast<QQuickItem*>(parent);
-    setAcceptedMouseButtons(Qt::LeftButton);
-    setAcceptTouchEvents(true);
-
 }
 
 TRegion::~TRegion()
@@ -59,40 +56,47 @@ void TRegion::setRegion(Region r, Launcher *lc, QQmlEngine *e)
     {
         region.backgroundColor = "black";
     }
-    QString str("import QtQuick 2.12\nRectangle {color: \""+region.backgroundColor+"\"}");
+    QString str("import QtQuick 2.12\n \
+    Rectangle { \
+        id: region_" + region.regionName + "; \
+        color: \""+region.backgroundColor+"\"; \
+        signal qmlClick()\n \
+        MouseArea{ \
+            anchors.fill: parent; \
+            onClicked: { region_" + region.regionName + ".qmlClick()}\n}\n}");
     rectangle.data()->setData(str.toUtf8(), QUrl());
-
     rectangle_item.reset(qobject_cast<QQuickItem *>(rectangle.data()->create()));
     rectangle_item.data()->setParentItem(root_item);
 
+    connect(rectangle_item.data(), SIGNAL(qmlClick()), this, SLOT(clickSlot()));
     MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, lc, this));
 }
 
-void TRegion::mousePressEvent(QMouseEvent *event)
+
+void TRegion::clickSlot()
 {
-    Q_UNUSED(event);
-    registerEventStarts();
+    qint64 delay = QDateTime::currentMSecsSinceEpoch() - last_touch;
+    if (delay < 500)
+    {
+        count_touch++;
+    }
+    else
+    {
+        count_touch = 0;
+    }
+
+    if (count_touch > 2)
+    {
+        count_touch = 0;
+    }
+
+    last_touch = QDateTime::currentMSecsSinceEpoch();
+    if (count_touch < 2 && MyMedia != Q_NULLPTR)
+    {
+        MyMedia->getSmilMedia()->emitActivated();
+    }
 }
 
-void TRegion::mouseReleaseEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event);
-    registerEventEnds();
-}
-
-void TRegion::touchEvent(QTouchEvent *event)
-{
-    Q_UNUSED(event);
-    if(event->type() == QEvent::TouchBegin)
-    {
-        registerEventStarts();
-    }
-    if(event->type() == QEvent::TouchEnd)
-    {
-        registerEventEnds();
-    }
-    return;
-}
 
 void TRegion::registerEventStarts()
 {
@@ -140,6 +144,7 @@ void TRegion::stopShowMedia(BaseMedia *media)
     MyMedia->setParentItem(NULL);
     MyMedia->deinit();
 }
+
 
 void TRegion::resizeGeometry()
 {

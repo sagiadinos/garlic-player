@@ -8,8 +8,8 @@ Image::Image(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : P
                     Image {  \
                         cache: false; \
                         id: "+getRegionId()+"_image; \
-                        anchors.fill: parent; \n \
-                }\n"
+                        anchors.fill: parent; \
+                }"
     );
     image_item.reset(createMediaItem(mc, str));
  }
