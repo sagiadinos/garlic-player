@@ -51,10 +51,9 @@ void MainWindow::init()
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
-    if (!ke->modifiers().testFlag(Qt::ControlModifier))
+    if (ke->modifiers().testFlag(Qt::NoModifier))
     {
-        // todo prevent crash when shift and look if problem also occurs on alt etc...
-        //MyLibFacade->transferAccessKey(ke->text().toLower().at(0));
+        MyLibFacade->transferAccessKey(ke->text().toLower().at(0));
         return;
     }
     switch (ke->key())

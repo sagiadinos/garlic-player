@@ -42,7 +42,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
-    if (!ke->modifiers().testFlag(Qt::ControlModifier))
+    if (ke->modifiers().testFlag(Qt::NoModifier))
     {
         MyLibFacade->transferAccessKey(ke->text().toLower().at(0));
         return;
