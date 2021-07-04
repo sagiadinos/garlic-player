@@ -1,14 +1,14 @@
 # garlic-player - Open Source SMIL Player for Digital Signage
 
-The garlic-player is SMIL 3.0 compatible [Digital Signage Player](https://smil-control.com/magazine/what-is-a-digital-signage-player/).
+The garlic-player is a SMIL 3.0 compatible [Digital Signage Player](https://smil-control.com/magazine/what-is-a-digital-signage-player/).
 
-The goal for the development is to create a most as neccessary SMIL 3.0 compatible and as most as possible platform independen free open source multimedia player to meet the needs of the digital signage industry. Currently we have reached a high level of compatibility and the player is used on many projects.
+The goal for the development is to create a most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet the needs of the digital signage industry. Currently garlic-player has reached a high level of compatibility and stability. So it is used in many projects and some android hardware solutions.
 
-[Digital Signage](https://smil-control.com/) is a relatively young business and it has a lack of standards. As customer you can easily trapped into a vendor-lock. SMIL gives you independence back.
+[Digital Signage](https://smil-control.com/) is a relatively young business and it has a lack of standards. As customer you can easily trapped into a vendor-lock. A standard like SMIL gives you independence back.
 
 The garlic-player can be used offline and online.
 
-As it based on [SMIL standard](https://www.w3.org/TR/SMIL3/) it works together with every compatible [Digital Signage Software](https://smil-control.com/software/).
+Based on [SMIL standard](https://www.w3.org/TR/SMIL3/) it works together with every compatible [Digital Signage Software](https://smil-control.com/software/).
 
 You are able to play local and remote (via http) SMIL files with the features described below.
 
@@ -34,7 +34,7 @@ You are able to play local and remote (via http) SMIL files with the features de
  - MacOS M1: Big Sur (via Rosetta 2)
  - iOS 14.4.2 (experimental)
 
-For Android and iOS player-c2qml is needed, cause QtMultimedia-Widgets are not supported.
+For Android and iOS player-c2qml is needed, cause only QML Multimedia is supported on this operating systems.
 
 *garlic.sh [options] SMIL_INDEX*
 
@@ -49,7 +49,7 @@ For Android and iOS player-c2qml is needed, cause QtMultimedia-Widgets are not s
 Arguments:
 SMIL_INDEX        Path to SMIL index
 
-Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
+Binaries can be downloaded at [garlic-player.com](https://garlic-player.com). You will find stable releases and nightly build there.
 
 ## Features (master trunk)
  - Support for multiple screens (not on Android)
@@ -60,7 +60,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com)
  - lot's of video formats 
  - media cache
  - SMIL3 subset, HTML5, HTML5-Widgets and (depending on device) WebGL support
- - WebWidgets also support parameters
+ - WebWidgets with also support parameters
 
 ## Currently supported SMIL-Features
 
