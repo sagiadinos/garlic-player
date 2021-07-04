@@ -40,7 +40,7 @@ void Files::MediaManager::clearQueues()
 
 void Files::MediaManager::registerFile(QString src)
 {
-    if (isRelative(src)) // when media is relative we need the Indexpath set in front
+    if (isRelative(src)) // when media is relative we need the Indexpath set before
     {
         src = MyConfiguration->getIndexPath() + src;
     }
@@ -50,9 +50,15 @@ void Files::MediaManager::registerFile(QString src)
         return;
     }
 
+    // only for local files
+
+    // make sure that local wgt files will be extracted on start
+    // and insert as cachable because wgt-dir/index.html is the real path and we
+    // must use MediaModel::determinePathByMedia
+    // ToDo: Think about a more elegant implementation
     if (src.contains(".wgt"))
     {
-        QString wgt_path = MyMediaModel->handleWgt(src); // extract etc...
+        QString wgt_path = MyMediaModel->handleWgt(src); // also extract when necessary.
         MyMediaModel->insertCacheableFile(src, wgt_path);
         return;
     }
@@ -60,6 +66,15 @@ void Files::MediaManager::registerFile(QString src)
     // if we reach here the can be a local file or a "data:" string
     // look at https://en.wikipedia.org/wiki/Data_URI_scheme
     MyMediaModel->insertAsLocalFile(src);
+}
+
+void Files::MediaManager::checkForUpdate(QString src)
+{
+    if (isRemote(src))
+    {
+        QString local_path = MyConfiguration->getPaths("cache") + MyMediaModel->determineHashedFilePath(src);
+        MyDownloadQueue->insertQueue(src, local_path);
+    }
 }
 
 void Files::MediaManager::registerAsUncachable(QString src)

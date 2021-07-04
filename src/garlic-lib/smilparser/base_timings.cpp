@@ -468,7 +468,7 @@ void BaseTimings::handleBeginTimer()
     BeginTimer = new Timings::BeginTimer(this);
     QString begin_value = "";
 
-    if (getParentTag() == SMIL_TAG::excl)
+    if (getParentContainer() != Q_NULLPTR && getParentContainer()->objectName() == "TExcl")
         begin_value = getAttributeFromRootElement("begin", "indefinite");
     else
         begin_value = getAttributeFromRootElement("begin", "0s");
@@ -478,7 +478,7 @@ void BaseTimings::handleBeginTimer()
     {
         delete BeginTimer;
         BeginTimer = new Timings::BeginTimer(this);
-        if (getParentTag() == SMIL_TAG::excl)
+        if (getParentContainer() != Q_NULLPTR && getParentContainer()->objectName() == "TExcl")
             BeginTimer->parse("indefinite");
         else
             BeginTimer->parse("0s");

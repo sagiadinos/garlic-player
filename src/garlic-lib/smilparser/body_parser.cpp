@@ -37,17 +37,12 @@ BodyParser::~BodyParser()
  *
  * @param body
  */
-void BodyParser::beginPreloading(QDomElement body)
+void BodyParser::beginPreloading(TBase *smil, QDomElement body)
 {
-    MyBody.reset(new TBody(Q_NULLPTR));
-    connect(MyBody.data(), SIGNAL(preloadElementSignal(TContainer*,QDomElement)), this, SLOT(preloadElement(TContainer*,QDomElement)));
-    connect(MyBody.data(), SIGNAL(finishPreloadSignal()), this, SLOT(emitPreloadingBodyCompleted()));
-    // pause and presume not neccessary
-    connect(MyBody.data(), SIGNAL(startElementSignal(BaseTimings*)), this, SLOT(startElement(BaseTimings*)));
-    connect(MyBody.data(), SIGNAL(stopElementSignal(BaseTimings*)), this, SLOT(stopElement(BaseTimings*)));
-
+    MyBody.reset(new TBody(smil, Q_NULLPTR));
+    connectSlots(MyBody.data());
     MyBody.data()->preloadParse(body);
-    return;
+    MyElementsContainer->distributeTriggers();
 }
 
 void BodyParser::preloadElement(TContainer *ParentContainer, QDomElement dom_element)
@@ -59,6 +54,7 @@ void BodyParser::preloadElement(TContainer *ParentContainer, QDomElement dom_ele
     // Todo: integrate the necessary region for the deafult values
     // for fit, soundlevel, and mediaAlign
     MyBaseTimings->preloadParse(dom_element);
+
     // media must be initialised after parse
     if (MyBaseTimings->getBaseType() == "media")
     {
@@ -68,16 +64,6 @@ void BodyParser::preloadElement(TContainer *ParentContainer, QDomElement dom_ele
     MyElementsContainer->insertSmilElement(MyBaseTimings);
     return;
 }
-
-void BodyParser::emitPreloadingBodyCompleted()
-{   
-    // check if there are elements which needs to start or end by a syncbase or event trigger
-    // the distribute the to the trigger elements
-    MyElementsContainer->distributeTriggers();
-
-    emit preloadingBodyCompleted();
-}
-
 
 /**
  * @brief BodyParser::initMedia media must be init e.g. to start download
@@ -220,7 +206,7 @@ void BodyParser::prepareFireTrigger(QString trigger, QString target_id, QString 
 void BodyParser::fireTrigger(QString trigger, BaseTimings *element, QString source_id)
 {
 
-    if (element->getParentContainer()->getStatus() != element->_playing) // only active elements!
+    if (qobject_cast<TContainer *> (element->getParentContainer())->isPlaying() != true) // only active elements!
         return;
 
     if (!determineContinueBasedOnParent(element))

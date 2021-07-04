@@ -18,123 +18,12 @@
 
 #include "body.h"
 
-TBody::TBody(QObject *parent) : TContainer(parent)
+TBody::TBody(TBase *pc, QObject *parent) : TSeq(pc, parent)
 {
-    parent_container       = Q_NULLPTR;
-    setParentTag("seq");
     setObjectName("TBody");
 }
 
 TBody::~TBody()
 {
     childs_list.clear();
-}
-
-void TBody::preloadParse(QDomElement element)
-{
-    root_element   = element;
-    parseTimingAttributes();
-    id             = "body";  // useful for debug
-    if (root_element.hasChildNodes())
-    {
-        active_element   = root_element.firstChildElement();
-        traverseChilds();
-    }
-    else
-    {
-        active_element = root_element;
-        finishedActiveDuration();
-    }
-    emit finishPreloadSignal   ();
-}
-
-void TBody::startTimers()
-{
-   prepareDurationTimerBeforePlay(); // currently there is no timing in body tag
-}
-
-void TBody::prepareDurationTimerBeforePlay()
-{
-    if (childs_list.size() > 0)
-    {
-        resetInternalRepeatCount();
-        emitStartElementSignal(this);
-    }
-    else
-    {
-        skipElement();
-    }
-    return;
-}
-
-void TBody::next(BaseTimings *ended_element)
-{
-    removeActivatedChild(ended_element);
-
-    if (hasActivatedChild())
-    {
-        startTimersOfFirstActivatedChild();
-        return;
-    }
-
-    finishedActiveDuration();
-}
-
-
-void TBody::start()
-{
-    collectActivatedChilds();
-    status = _playing;
-    startTimersOfFirstActivatedChild();
-}
-
-void TBody::resume()
-{
-    status = _playing;
-}
-
-void TBody::pause()
-{
-    status = _paused;
-}
-
-void TBody::stop()
-{
-    status = _stopped;
-}
-
-void TBody::interruptByEndSync()
-{
-    status = _stopped;
-}
-
-void TBody::collectActivatedChilds()
-{
-    for (childs_list_iterator = childs_list.begin(); childs_list_iterator < childs_list.end(); childs_list_iterator++)
-    {
-        active_element = *childs_list_iterator;
-        activateFoundElement();
-    }
-}
-
-void TBody::traverseChilds()
-{
-    QDomNodeList childs = active_element.parentNode().childNodes();
-    int          length = childs.length();
-    QDomElement  element;
-    for (int i = 0; i < length; i++)
-    {
-        element = childs.item(i).toElement();
-        if (element.tagName() != "")
-        {
-            childs_list.append(element);
-            emit preloadElementSignal(this, element);
-        }
-    }
-    childs_list_iterator = childs_list.begin();
-}
-
-void TBody::finishedSimpleDuration()
-{
-    //dummy cause body cannot have duration etc.
 }

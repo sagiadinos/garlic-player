@@ -25,7 +25,7 @@ class TImage : public BaseMedia
 {
     Q_OBJECT
     public:
-        explicit TImage(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+        explicit TImage(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
         ~TImage();
     public slots:
         void     prepareDurationTimerBeforePlay();

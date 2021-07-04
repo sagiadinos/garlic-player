@@ -35,6 +35,7 @@ namespace Files
             void            activateRefresh(int value);
             void            deactivateRefresh();
             bool            exists();
+            QDomElement     getSmil();
             QDomElement     getHead();
             QDomElement     getBody();
             void            lookUpForUpdatedIndex();

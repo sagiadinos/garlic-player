@@ -23,6 +23,7 @@
 #include "smilparser/element_factory.h"
 #include "container.h"
 #include "base_media.h"
+#include "smil.h"
 #include "elements_container.h"
 
 /**
@@ -38,7 +39,7 @@ class BodyParser : public QObject
 public:
     explicit BodyParser(ElementFactory *ef, Files::MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
     ~BodyParser();
-    void                               beginPreloading(QDomElement body);
+    void                               beginPreloading(TBase *smil, QDomElement body);
     void                               startPlayingBody();
     void                               endPlayingBody();
     void                               triggerAccessKey(QChar key);
@@ -61,7 +62,6 @@ protected slots:
     void                               preloadElement(TContainer *ParentContainer, QDomElement dom_element);
 
     void                               initMedia(BaseMedia *MyMedia);
-    void                               emitPreloadingBodyCompleted();
 
     void                               startElement(BaseTimings *element);
     void                               stopElement(BaseTimings *element);
@@ -72,7 +72,6 @@ protected slots:
 signals:
     void                               startShowMedia(BaseMedia *media);
     void                               stopShowMedia(BaseMedia *media);
-    void                               preloadingBodyCompleted();
 };
 
 #endif // SMILPARSER_H

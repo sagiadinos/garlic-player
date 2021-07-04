@@ -17,10 +17,9 @@
 *************************************************************************************/
 #include "widget.h"
 
-TWidget::TWidget(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+TWidget::TWidget(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     parent_container = pc;
-    setParentTag(pc->getRootElement().nodeName());
     setObjectName("TWidget");
     is_media = true;
 }

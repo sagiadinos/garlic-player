@@ -62,10 +62,10 @@ void DownloadQueue::processQueue()
         if (download_slots.find(paths.second) == download_slots.end())
         {
             Downloader *MyDownloader = new Downloader(MyConfiguration, this);
-            connect(MyDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
-            connect(MyDownloader, SIGNAL(notcacheable(TNetworkAccess*)), SLOT(doNotCacheable(TNetworkAccess *)));
-            connect(MyDownloader, SIGNAL(notmodified(TNetworkAccess*)), SLOT(doNotModified(TNetworkAccess *)));
-            connect(MyDownloader, SIGNAL(failed(TNetworkAccess *)), SLOT(doFailed(TNetworkAccess *)));
+            connect(MyDownloader, SIGNAL(succeed(TNetworkAccess*)), SLOT(doSucceed(TNetworkAccess*)));
+            connect(MyDownloader, SIGNAL(notcacheable(TNetworkAccess*)), SLOT(doNotCacheable(TNetworkAccess*)));
+            connect(MyDownloader, SIGNAL(notmodified(TNetworkAccess*)), SLOT(doNotModified(TNetworkAccess*)));
+            connect(MyDownloader, SIGNAL(failed(TNetworkAccess*)), SLOT(doFailed(TNetworkAccess*)));
             if (MyInventoryTable != Q_NULLPTR)
                 MyDownloader->setInventoryTable(MyInventoryTable);
             download_slots.insert(paths.second, MyDownloader);

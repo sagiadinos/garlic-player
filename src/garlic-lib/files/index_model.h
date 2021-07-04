@@ -33,6 +33,7 @@ class IndexModel : public QObject
         explicit IndexModel(QObject *parent=Q_NULLPTR);
         QDomElement     getHead();
         QDomElement     getBody();
+        QDomElement     getSmil();
         bool            loadDocument(QString file_path);
         QDomDocument getDocument() const;
         void setDocument(const QDomDocument &value);

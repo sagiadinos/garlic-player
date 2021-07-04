@@ -95,10 +95,6 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, TContainer *par
     {
         return new TExcl(parent_container, parent);
     }
-    else if (type == "body")
-    {
-        return new TBody(parent);
-    }
 
     return new TUnknown(parent_container, MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
 }

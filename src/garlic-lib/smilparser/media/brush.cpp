@@ -17,10 +17,9 @@
 *************************************************************************************/
 #include "brush.h"
 
-TBrush::TBrush(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+TBrush::TBrush(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     parent_container = pc;
-    setParentTag(pc->getRootElement().nodeName());
     setObjectName("TBrush");
     is_media = true;
 }

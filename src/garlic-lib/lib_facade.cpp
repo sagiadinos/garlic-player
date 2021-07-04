@@ -32,7 +32,7 @@ LibFacade::~LibFacade()
 /**
  * This is needed because qmlRegisterType in player-c2qml did not work
  * with constructor params except QObject
- * So we need to make the dependencyinjections here
+ * So we need to make the dependency injections here
  *
  * @brief LibFacade::init
  * @param config
@@ -95,7 +95,6 @@ void LibFacade::reloadWithNewIndex(QString index_path)
     initParser();
 }
 
-
 void LibFacade::beginSmilPlaying()
 {
     MyBodyParser.data()->startPlayingBody();
@@ -113,7 +112,6 @@ void LibFacade::loadIndex()
     {
         MyBodyParser.data()->endPlayingBody();
         MyIndexManager.data()->deactivateRefresh();
-
     }
 
     // Start with this only when it is absolutly sure that in the player component is no activity anymore.
@@ -165,18 +163,17 @@ void LibFacade::processBodyParsing()
 
     MyBodyParser.reset(new BodyParser(MyElementFactory.data(), MyMediaManager.data(), MyElementsContainer.data(), this));
 
-    connect(MyBodyParser.data(), SIGNAL(preloadingBodyCompleted()), this, SLOT(preparedForPlaying()));
     connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia*)), this, SLOT(emitStartShowMedia(BaseMedia*)));
     connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia*)), this, SLOT(emitStopShowMedia(BaseMedia*)));
+
     qDebug() <<  " begin preloading" ;
-    MyBodyParser->beginPreloading(MyIndexManager->getBody());
+    MySmil.reset(new Smil(this));
+    MySmil.data()->preloadParse(MyIndexManager->getSmil());
+
+    MyBodyParser->beginPreloading(MySmil.data(), MyIndexManager->getBody());
     qDebug() <<  " end preloading" ;
-}
 
-void LibFacade::preparedForPlaying()
-{
     MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
-
     emit readyForPlaying();
 }
 

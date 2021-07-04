@@ -24,7 +24,7 @@ class TAudio : public BaseMedia
 {
     Q_OBJECT
 public:
-    explicit TAudio(TContainer *pc, Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+    explicit TAudio(TBase *pc, Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
     ~TAudio();
     QString                 getSoundLevel(){return soundLevel;}
 protected:

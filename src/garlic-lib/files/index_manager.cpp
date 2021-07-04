@@ -86,6 +86,11 @@ bool Files::IndexManager::exists()
    return QFile::exists(MyConfiguration->getLastPlayedIndexPath());
 }
 
+QDomElement Files::IndexManager::getSmil()
+{
+    return MyIndexModel->getSmil();
+}
+
 QDomElement Files::IndexManager::getHead()
 {
     return MyIndexModel->getHead();

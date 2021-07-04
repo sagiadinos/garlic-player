@@ -18,10 +18,10 @@
 #ifndef LIB_FACADE_H
 #define LIB_FACADE_H
 
-#include <QObject>
 #include "files/index_manager.h"
 #include "files/media_manager.h"
 #include "smilparser/head_parser.h"
+#include "smil.h"
 #include "body_parser.h"
 #include "tools/resource_monitor.h"
 #include "head/placeholder.h"
@@ -56,9 +56,9 @@ class LibFacade : public QObject
         void               beginSmilPlaying();
         QString            requestLoaddableMediaPath(QString path);
         void               shutDownParsing();
-public slots:
+    public slots:
         void               initParser();
-protected:
+    protected:
         int                                     resource_monitor_timer_id;
         bool                                    has_launcher = false;
         QScopedPointer<DB::InventoryTable>      MyInventoryTable;
@@ -88,8 +88,8 @@ protected:
         void               emitStartShowMedia(BaseMedia *media);
         void               emitStopShowMedia(BaseMedia *media);
         void               processBodyParsing();
-        void               preparedForPlaying();
-
+    private:
+        QScopedPointer<Smil> MySmil;
     signals:
         void               startShowMedia(BaseMedia *media);
         void               stopShowMedia(BaseMedia *media);

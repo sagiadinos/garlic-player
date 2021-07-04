@@ -79,6 +79,7 @@ SOURCES += \
     smilparser/media/web.cpp \
     smilparser/media/widget.cpp \
     smilparser/medialist.cpp \
+    smilparser/smil.cpp \
     smilparser/timings/begin_timer.cpp \
     smilparser/timings/end_timer.cpp \
     smilparser/timings/enhanced_timer.cpp \
@@ -159,6 +160,7 @@ HEADERS += \
     smilparser/media/web.h \
     smilparser/media/widget.h \
     smilparser/medialist.h \
+    smilparser/smil.h \
     smilparser/timings/begin_timer.h \
     smilparser/timings/end_timer.h \
     smilparser/timings/enhanced_timer.h \

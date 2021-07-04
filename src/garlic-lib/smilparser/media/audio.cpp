@@ -18,10 +18,9 @@
 
 #include "audio.h"
 
-TAudio::TAudio(TContainer *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent)  : BaseMedia(mm, config, ph, parent)
+TAudio::TAudio(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent)  : BaseMedia(mm, config, ph, parent)
 {
     parent_container = pc;
-    setParentTag(pc->getRootElement().nodeName());
     setObjectName("TAudio");
     is_media = true;
 }

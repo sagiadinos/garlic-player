@@ -18,10 +18,9 @@
 
 #include "seq.h"
 
-TSeq::TSeq(TContainer *pc, QObject *parent) : TContainer(parent)
+TSeq::TSeq(TBase *pc, QObject *parent) : TContainer(parent)
 {
     parent_container = pc;
-    setParentTag(pc->getRootElement().nodeName());
     setObjectName("TSeq");
 }
 
@@ -136,7 +135,8 @@ void TSeq::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (childs_list.size() > 0)
+    // otherwise empty container with dur will not start
+    if (childs_list.size() > 0 || isDurTimerActive() || isEndTimerActive())
     {
         resetInternalRepeatCount();
         emitStartElementSignal(this);

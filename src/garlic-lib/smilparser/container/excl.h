@@ -27,7 +27,7 @@ class TExcl : public TContainer
 {
         Q_OBJECT
     public:
-        explicit TExcl(TContainer *pc, QObject *parent = Q_NULLPTR);
+        explicit TExcl(TBase *pc, QObject *parent = Q_NULLPTR);
                 ~TExcl();
 
         void    preloadParse(QDomElement element);

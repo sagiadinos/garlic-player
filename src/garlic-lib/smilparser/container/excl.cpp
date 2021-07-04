@@ -25,10 +25,9 @@
  * @param pc
  * @param parent
  */
-TExcl::TExcl(TContainer *pc, QObject *parent) : TContainer(parent)
+TExcl::TExcl(TBase *pc, QObject *parent) : TContainer(parent)
 {
     parent_container       = pc;
-    setParentTag(pc->getRootElement().nodeName());
     CurrentPriority    = NULL;
     NewPriority = NULL;
     setObjectName("TExcl");
@@ -72,7 +71,8 @@ void TExcl::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (PriorityClassList.size() > 0)
+    // otherwise empty container with dur will not start
+    if (PriorityClassList.size() > 0 || isDurTimerActive() || isEndTimerActive())
     {
         emitStartElementSignal(this);
     }

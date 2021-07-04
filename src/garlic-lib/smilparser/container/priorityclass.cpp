@@ -19,7 +19,6 @@
 
 TPriorityClass::TPriorityClass(QObject *parent) : TBase(parent)
 {
-    setParentTag("excl");
     setObjectName("TPriorityClass");
 }
 

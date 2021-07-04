@@ -18,10 +18,9 @@
 
 #include "par.h"
 
-TPar::TPar(TContainer *pc, QObject *parent) : TContainer(parent)
+TPar::TPar(TBase *pc, QObject *parent) : TContainer(parent)
 {
     parent_container = pc;
-    setParentTag(pc->getRootElement().nodeName());
     setObjectName("TPar");
 }
 
@@ -52,7 +51,8 @@ void TPar::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (childs_list.size() > 0)
+    // otherwise empty container with dur will not start
+    if (childs_list.size() > 0 || isDurTimerActive() || isEndTimerActive())
     {
         resetInternalRepeatCount();
         emitStartElementSignal(this);

@@ -18,35 +18,14 @@
 
 #ifndef TBODY_H
 #define TBODY_H
-#include "container.h"
 #include "seq.h"
 
-class TBody : public TContainer
+class TBody : public TSeq
 {
         Q_OBJECT
     public:
-        explicit TBody(QObject *parent = Q_NULLPTR);
+        explicit TBody(TBase *pc, QObject *parent = Q_NULLPTR);
         ~TBody();
-        void      preloadParse(QDomElement element);
-        void      startTimers();
-        void      endPlay(){}
-        void      next(BaseTimings *ended_element);
-        void      resume();
-        void      start();
-        void      pause();
-        void      stop();
-        void      interruptByEndSync();
-        void      collectActivatedChilds();
-
-       // bool      isChildPlayable(BaseTimings *element);
-    public slots:
-        void      finishedSimpleDuration();
-        void      prepareDurationTimerBeforePlay();
-    protected:
-        void      traverseChilds();
-    signals:
-        void      finishPreloadSignal();
-
 };
 
 #endif // TBODY_H

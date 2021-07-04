@@ -45,13 +45,15 @@ public:
             QString       getLang(){return lang;}
             QString       getClass(){return a_class;}
             QDomElement   getRootElement(){return root_element;}
-            void          setParentTag(QString tag);
-            SMIL_TAG      getParentTag();
     static  QString       parseID(QDomElement element);
+            TBase        *getParentContainer(){return parent_container;}
 protected:
+            TBase        *parent_container;
             SMIL_TAG      parent_tag;
             // core attributes for every Tag
             QObject      *parent;
+            QString       version        = "3.0";
+            QString       base_profile   = "Tiny";
             QString       id             = "";
             QString       title          = "";
             QString       alt            = "";

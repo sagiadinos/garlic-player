@@ -31,6 +31,11 @@ QDomElement IndexModel::getBody()
     return getTag("body");
 }
 
+QDomElement IndexModel::getSmil()
+{
+    return getTag("smil");
+}
+
 bool IndexModel::loadDocument(QString file_path)
 {
     QFile       file(file_path);

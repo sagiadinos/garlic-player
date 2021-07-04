@@ -69,9 +69,9 @@ class BaseTimings : public TBase
                 QHash<QString, QString> fetchExternalBegins();
                 QHash<QString, QString> fetchExternalEnds();
                 int            getStatus(){return status;}
+                bool           isPlaying(){return (status == _playing);}
                 void           finishedNotFound();
                 void           skipElement();
-                BaseTimings   *getParentContainer(){return parent_container;}
                 void           emitActivated();
 
         virtual void           start()       = 0;
@@ -97,7 +97,6 @@ class BaseTimings : public TBase
         virtual void           prepareDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
                 void           finishedSimpleDuration();
     protected:
-                BaseTimings   *parent_container;
                 QTimer        *InternalTimer = Q_NULLPTR;
                 int            restart = ALWAYS;
                 QString        fill    = "remove"; // dummy! functionality not implemented
