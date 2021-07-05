@@ -12,8 +12,11 @@ namespace Timings
         public:
             BeginTimer(QObject *parent = nullptr);
             qint64 getElapsedButActiveTimeTrigger();
+            void   setDurTimer(SimpleTimer *dur);
         protected:
             bool fireImmediately();
+        private:
+            SimpleTimer *DurTimer = Q_NULLPTR;
      };
 }
 #endif // BEGINTIMER_H

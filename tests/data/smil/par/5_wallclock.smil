@@ -21,6 +21,10 @@
 		down down right begin,1,2,3,end    	at second 10, 25, 40, 55
 	repeated indefinite
 
+		start of sequence depends on real time of the operating system
+			when clock is before  0s, 15s, 30s and 45s seq2 starts first (upper right zone)
+			when clock is before  5s, 20s, 35s and 50s seq3 starts first (lower left zone)
+			when clock is before 10s, 25s, 40s and 55s seq4 starts first (lower right zone)
 	-->
 		<par xml:id="par1" >
 			<seq xml:id="seq1" repeatCount="indefinite">

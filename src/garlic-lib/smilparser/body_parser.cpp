@@ -205,7 +205,6 @@ void BodyParser::prepareFireTrigger(QString trigger, QString target_id, QString 
 
 void BodyParser::fireTrigger(QString trigger, BaseTimings *element, QString source_id)
 {
-
     if (qobject_cast<TContainer *> (element->getParentContainer())->isPlaying() != true) // only active elements!
         return;
 
@@ -233,7 +232,7 @@ void BodyParser::connectSlots(BaseTimings *element)
 
 bool BodyParser::determineContinueBasedOnParent(BaseTimings *element)
 {
-    // When tehre is excl as parent container we need to stops or pause lower and activate higher priorityClass.
+    // When there is excl as parent container we need to stops or pause lower and activate higher priorityClass.
     // but it is not enough to put these method only in BodyParser::startElement
     // this is only adequate when children have wallclock or clock values
 

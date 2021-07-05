@@ -24,11 +24,14 @@
 	<!--
 
 		upper left shows standby
-		upper left shows 1, 2, 3, 4
+		upper left shows 1, 2, 3, 4, 5
 
+	excl1 plays standby.jpg because the higher priority has begin="indefinite"
+
+	excl2 plays the number count because both seq starts at the same time (begin="0") but the above has the higher priority
 	-->
 		<par>
-			<excl repeatCount="indefinite">
+			<excl id="excl1" repeatCount="indefinite">
 				<priorityClass>
 					<seq begin="indefinite" repeatCount="indefinite">
 						<img dur="1" src="{__url001}" region="screen1" fit="fill" />
@@ -42,12 +45,14 @@
 					</seq>
 				</priorityClass>
 			</excl>
-			<excl repeatCount="indefinite">
+			<excl id="excl2" repeatCount="indefinite">
 				<priorityClass>
 					<seq begin="0" repeatCount="indefinite">
 						<img dur="1" src="{__url001}" region="screen2" fit="fill" />
 						<img dur="1" src="{__url002}" region="screen2" fit="fill" />
 						<img dur="1" src="{__url003}" region="screen2" fit="fill" />
+						<img dur="1" src="{__url004}" region="screen2" fit="fill" />
+						<img dur="1" src="{__url005}" region="screen2" fit="fill" />
 					</seq>
 				</priorityClass>
 				<priorityClass>

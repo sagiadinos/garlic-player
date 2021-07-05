@@ -231,6 +231,9 @@ void BaseTimings::emitActivated()
 void BaseTimings::parseTimingAttributes()
 {
     setBaseAttributes();
+
+    handleBeginTimer();
+
     if (root_element.hasAttribute("end"))
     {
         EndTimer = new Timings::EndTimer(this);
@@ -245,14 +248,14 @@ void BaseTimings::parseTimingAttributes()
         }
 
     }
+
     if (root_element.hasAttribute("dur"))
     {
         DurTimer = new Timings::SimpleTimer(this);
         connect(DurTimer, SIGNAL(timeout()), this, SLOT(finishedSimpleDuration()));
         DurTimer->parse(root_element.attribute("dur"));
+        BeginTimer->setDurTimer(DurTimer);
     }
-
-    handleBeginTimer();
 
     if (root_element.hasAttribute("repeatCount"))
     {

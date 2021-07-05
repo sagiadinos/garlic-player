@@ -31,10 +31,13 @@ namespace Timings
     {
         Q_OBJECT
     public:
-        const     int        TYPE_CLOCKVALUE     = -1;
-        const     int        TYPE_INDEFINITE     = -2;
-        const     int        TYPE_MEDIA          = -3;
-        const     int        TYPE_NONE           = -4;
+        enum Constants
+        {
+            TYPE_NONE        = 0,
+            TYPE_CLOCKVALUE  = 1,
+            TYPE_INDEFINITE  = 2,
+            TYPE_MEDIA       = 3,
+        };
 
         // need 10ms tolerances to handle timer latencies
         const     int        tolerance           = 10; // in milli seconds
@@ -48,6 +51,7 @@ namespace Timings
         void         pause();
         void         resume();
         void         stop();
+        qint64       getParsedClock();
         int          getType(){return type;}
         void         recalculateTimeClock(qint64 negative_trigger);
         int          getRemaining() const;

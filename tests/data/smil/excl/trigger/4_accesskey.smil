@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <smil>
     <head>
-  		<meta name="title" content="Testing timings with indefinite" />
+  		<meta name="title" content="Testing timings with accesskey" />
        <state>
             <data>
                 <__url000>../../../images/stand-by.jpg</__url000>
@@ -26,7 +26,7 @@
 		lower left shows standby indefinite
 
 		when key w pressed on keyboard standby image  closes
-		and 1, 2, 3 starts indefinite in right lower region
+		and 1, 2, 3 4, 5starts indefinite in right lower region
 
 		Remark: Repeated pressing of w restarts count on 1
 	-->
@@ -36,6 +36,8 @@
 						<img dur="1" src="{__url001}" region="screen4" fit="fill" />
 						<img dur="1" src="{__url002}" region="screen4" fit="fill" />
 						<img dur="1" src="{__url003}" region="screen4" fit="fill" />
+						<img dur="1" src="{__url004}" region="screen4" fit="fill" />
+						<img dur="1" src="{__url005}" region="screen4" fit="fill" />
 					</seq>
 				</priorityClass>
 				<priorityClass higher="stop">

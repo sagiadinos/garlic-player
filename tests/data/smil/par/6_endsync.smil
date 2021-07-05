@@ -17,11 +17,11 @@
 
 	sequence
 		up left Count to ten for control
-		up right display: begin, 1, 2, 3, ,4, 5, 4s wait end,
+		up right display endsync="last" which is also the default value: begin, 1, 2, 3, ,4, 5, 4s wait end,
 
-		down left display: begin only (endless repeat)
+		down left display endsync="first": begin only (endless repeat)
 
-		down right display: begin, 1,2,3, 4, (endless repeated)
+		down right display endsync="seq3": begin, 1,2,3, 4, (endless repeated) end if seq3 is end so end.jpg is never shown
 
 	repeated indefinite
 
@@ -60,7 +60,6 @@
 				</seq>
 				<img begin="10s" region="screen3" xml:id="imgCend" src="../../images/end.jpg" dur="1s"  fit="meet" />
 			</par>
-
 			<par xml:id="par_id" repeatCount="indefinite" begin="0s" endsync="seq3">
 				<img region="screen4" xml:id="imgDbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
 				<seq xml:id="seq3" begin="1s">

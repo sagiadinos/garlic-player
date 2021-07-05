@@ -135,7 +135,7 @@ class BaseTimings : public TBase
                 void           finishActiveDurationSignal(BaseTimings*);
                 void           finishSimpleDurationSignal(BaseTimings*);
 
-                void  triggerSignal(QString,QString,QString); // signal(begin, end,activateI), target_id, source_id, clockvalue in ms)
+                void  triggerSignal(QString,QString,QString); // signal(begin, end, activateEvent), target_id, source_id)
                 void  startElementSignal(BaseTimings*);
                 void  stopElementSignal(BaseTimings*);
                 void  resumeElementSignal(BaseTimings*);

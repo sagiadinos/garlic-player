@@ -25,7 +25,7 @@
 			</seq>
 
 			<par id="wrap_prefetch" repeatCount="indefinite">
-				<seq id="blocker" dur="10"/>
+				<seq id="blocker" dur="10s"/>
 				<seq id="prefetch">
 					<img region="screen1" src="../../images/0001.jpg" dur="1s" fit="meet" />
 					<img region="screen1" src="../../images/0002.jpg" dur="1s" fit="meet" />

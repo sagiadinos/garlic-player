@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <smil>
     <head>
-  		<meta name="title" content="Testing timings with indefinite" />
+  		<meta name="title" content="Testing timings with activateEvent and with clock value" />
        <state>
             <data>
                 <__url000>../../../images/stand-by.jpg</__url000>

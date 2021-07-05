@@ -143,7 +143,7 @@ void TExcl::next(BaseTimings *ended_element)
 
 void TExcl::start()
 {
-    if (PriorityClassList.size() == 0) // childs_list will always be 0
+    if (PriorityClassList.size() == 0) // childs_list will always be 0 in excl
         return;
 
     // check if this is a restart attempt and check restart attribute

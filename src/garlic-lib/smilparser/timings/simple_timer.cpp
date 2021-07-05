@@ -53,14 +53,10 @@ void Timings::SimpleTimer::parse(QString attr_value)
 
 bool Timings::SimpleTimer::isActive()
 {
-
-    if (type != TYPE_INDEFINITE) // when infinite timer will never end
+    if (type == TYPE_INDEFINITE) // when infinite timer will never end
          return true;
 
-    if (MyTimer == Q_NULLPTR)
-        return false;
-
-    if (type != TYPE_MEDIA)
+    if (MyTimer == Q_NULLPTR || type == TYPE_MEDIA)
          return false;
 
     return MyTimer->isActive();
@@ -113,6 +109,11 @@ void Timings::SimpleTimer::stop()
         MyTimer->stop();
     }
     remaining = 0;
+}
+
+qint64 Timings::SimpleTimer::getParsedClock()
+{
+    return MyClockValue.getTriggerInMSec();
 }
 
 void Timings::SimpleTimer::recalculateTimeClock(qint64 negative_trigger)

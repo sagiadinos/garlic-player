@@ -6,10 +6,10 @@
         <metadata />
         <state>
             <data>
-                <__url000>../../../images/stand-by.jpg</__url000>
-                <__url001>../../../images/0001.jpg</__url001>
-                <__url002>../../../images/0002.jpg</__url002>
-                <__url003>../../../images/0003.jpg</__url003>
+                <url000>../../images/stand-by.jpg</url000>
+                <url001>../../images/0001.jpg</url001>
+                <url002>../../images/0002.jpg</url002>
+                <url003>../../images/0003.jpg</url003>
             </data>
         </state>
         <layout>
@@ -29,25 +29,28 @@
 		a child from a excl which begin is indefinite (default for excl-childs) should wait
 	-->
 
-        <par>
-            <excl begin="0" repeatCount="indefinite">
-                <priorityClass id="prio1">
-                    <par id="error_par" begin="indefinite">
+		<par>
+			<excl begin="0" repeatCount="indefinite">
+				<priorityClass id="prio1">
+					<par id="error_par">
 						<excl id="error_excl" repeatCount="indefinite">
 							<priorityClass id="prio1_intern" higher="stop" lower="never" peer="stop">
 								<seq begin="0" repeatCount="indefinite">
-									<img dur="1" src="{__url001}" region="screen" fit="fill" />
-									<img dur="1" src="{__url002}" region="screen" fit="fill" />
-									<img dur="1" src="{__url003}" region="screen" fit="fill" />
+									<img dur="1" src="{url001}" region="screen" fit="fill" />
+									<img dur="1" src="{url002}" region="screen" fit="fill" />
+									<img dur="1" src="{url003}" region="screen" fit="fill" />
 								</seq>
 							</priorityClass>
 						</excl>
-                    </par>
-                </priorityClass>
-                <priorityClass id="prio2">
-					<img id="standby" begin="0" dur="10s" src="{__url000}" region="screen" fit="fill" />
-                </priorityClass>
-            </excl>
-        </par>
+					</par>
+				</priorityClass>
+				<priorityClass id="prio2">
+					<seq begin="0" repeatCount="indefinite">
+						<img id="standby" dur="10s" src="{url000}" region="screen" fit="fill" />
+					</seq>
+				</priorityClass>
+			</excl>
+		</par>
+
     </body>
 </smil>

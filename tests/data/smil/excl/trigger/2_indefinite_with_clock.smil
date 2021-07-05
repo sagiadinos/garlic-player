@@ -26,8 +26,9 @@
 		lower left shows standby
 		lower right shows 1, 2, 3 repeated indefinetely 2s after standby end
 
-		Remark: repeatCount="indefinite" in seq which wraps standby will ignored
+		Remark: repeatCount="indefinite" in seq which wraps standby will stopped by higher priority
 	-->
+	<par>
 ´			<excl repeatCount="indefinite">
 				<priorityClass>
 					<seq begin="standby.end+2s" repeatCount="indefinite">

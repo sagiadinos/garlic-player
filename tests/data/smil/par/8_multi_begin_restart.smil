@@ -19,12 +19,11 @@
 		up left display: counter for 15
 
 
-		up   right display:	 begin, 1, 2, 3, end => wait until parent will repeated
-	    down left  display:  begin, 1, begin, 1,2,3, end wait, begin, begin 1, 2, 3, end
-		down right display:  begin, 1, 2, 3, end, 1s blank screen, begin, 1, 2, 3, end, begin, 1, 2, 3, end
+		up   right restart="never" :	     begin, 1, 2, 3, end => wait until parent will repeated
+	    down left  restart="always":         begin, 1, begin, 1,2,3, end wait, begin, begin 1, 2, 3, end
+		down right restart="whenNotActive":  begin, 1, 2, 3, end, 1s blank screen, begin, 1, 2, 3, end, begin, 1, 2, 3, end
 
 	repeated indefinite
-
 	-->
 
 		<par xml:id="par_global" repeatCount="indefinite" begin="0s" endsync="last">
