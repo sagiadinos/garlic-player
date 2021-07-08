@@ -58,6 +58,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com). Yo
  - resume downloads
  - 301 redirect support
  - lot's of video formats 
+ - supported SVG 1.2. Tiny Profile, Jpg, Png and Gif
  - media cache
  - SMIL3 subset, HTML5, HTML5-Widgets and (depending on device) WebGL support
  - WebWidgets with also support parameters

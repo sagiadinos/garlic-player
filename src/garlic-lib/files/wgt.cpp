@@ -90,7 +90,10 @@ bool Wgt::extract()
         return "";
     }
 
-    QString folder_path = wgt_file.absolutePath()+"/"+wgt_file.baseName();
+    // wgt_file.absolutePath() fails when files has an . in name like xyz.secret.wgt
+    // we need to get full path - .wgt
+
+    QString folder_path = wgt_file.absoluteFilePath().mid(0, wgt_file.absoluteFilePath().length()-4);
     QDir wgt_dir(folder_path);
     if (wgt_dir.exists() && !wgt_dir.removeRecursively())
     {
