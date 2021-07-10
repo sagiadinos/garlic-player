@@ -50,7 +50,8 @@ int main(int argc, char *argv[])
     if (!MyAndroidManager->checkPermissiones())
     {
         MyAndroidManager->sendCloseCorrect();
-        QApplication::quit();
+        app.quit();
+        return -1;
     }
     MyAndroidManager->disableScreenSaver();
 #endif
