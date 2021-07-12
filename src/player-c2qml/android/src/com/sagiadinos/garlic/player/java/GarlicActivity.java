@@ -132,15 +132,11 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
 
     public static void rebootOS(String task_id)
     {
-        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.RebootReceiver");
-        intent.putExtra("task_id", task_id);
-        m_instance.sendBroadcast(intent);
-
-/*        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");
+        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");
         intent.putExtra("command", "reboot");
         intent.putExtra("task_id", task_id);
         m_instance.sendBroadcast(intent);
-*/    }
+    }
 
     public static void applyConfig(String config_path)
     {
