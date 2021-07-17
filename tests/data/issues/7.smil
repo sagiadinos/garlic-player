@@ -8,6 +8,6 @@
                 </layout>
         </head>
         <body>
-			<text region="screen" xml:id="text2" src="http://testing.smil-admin.com/garlic/" dur="4s" fit="meetbest" />
+			<text region="screen" xml:id="text2" src="http://stefan.konink.de/test.html" dur="4s" fit="meetbest" />
         </body>
  </smil>

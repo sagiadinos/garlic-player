@@ -12,6 +12,7 @@ Changelog
 	* support for syncbase values in combination with positive clock values for begin/end
 	* support for event values and interactivity (beginEvent, endEvent) in combination with positive clock values for begin/end
 	* support for interactive events (mouseclick and touch)
+	* support for accessskey
 
 2. Improvements
 	* additional SMIL-Indexes for testing

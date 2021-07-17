@@ -34,7 +34,7 @@
 			calculation dur of children as intrisic duration look at seq in column 106
 			We need a Zero value to start correct.
 
-	all 5 images should be shown 0001 and standby jog are not centered
+	all 5 images should be shown 0001 and standby jpg are not centered
 
 
 	-->
@@ -103,11 +103,7 @@
 				</priorityClass>
 			</excl>
 			<seq />
-			<!--
-				begin="0; is necesssary cause garlic do not calculate intrisic duration of children currently
-				alternative use a dur="86000"
-			-->
-			<seq xml:id="AMQEFQPDUac154a22" begin="0;wallclock(R/2007-01-01+w7T00:00:00/P1W);wallclock(R/2007-01-01+w1T00:00:00/P1W);wallclock(R/2007-01-01+w2T00:00:00/P1W);wallclock(R/2007-01-01+w3T00:00:00/P1W);wallclock(R/2007-01-01+w4T00:00:00/P1W);wallclock(R/2007-01-01+w5T00:00:00/P1W);wallclock(R/2007-01-01+w6T00:00:00/P1W)" end="wallclock(R/2007-01-01+w7T23:59:59/P1W);wallclock(R/2007-01-01+w1T23:59:59/P1W);wallclock(R/2007-01-01+w2T23:59:59/P1W);wallclock(R/2007-01-01+w3T23:59:59/P1W);wallclock(R/2007-01-01+w4T23:59:59/P1W);wallclock(R/2007-01-01+w5T23:59:59/P1W);wallclock(R/2007-01-01+w6T23:59:59/P1W)">
+			<seq xml:id="AMQEFQPDUac154a22" begin="wallclock(R/2007-01-01+w7T00:00:00/P1W);wallclock(R/2007-01-01+w1T00:00:00/P1W);wallclock(R/2007-01-01+w2T00:00:00/P1W);wallclock(R/2007-01-01+w3T00:00:00/P1W);wallclock(R/2007-01-01+w4T00:00:00/P1W);wallclock(R/2007-01-01+w5T00:00:00/P1W);wallclock(R/2007-01-01+w6T00:00:00/P1W)" end="wallclock(R/2007-01-01+w7T23:59:59/P1W);wallclock(R/2007-01-01+w1T23:59:59/P1W);wallclock(R/2007-01-01+w2T23:59:59/P1W);wallclock(R/2007-01-01+w3T23:59:59/P1W);wallclock(R/2007-01-01+w4T23:59:59/P1W);wallclock(R/2007-01-01+w5T23:59:59/P1W);wallclock(R/2007-01-01+w6T23:59:59/P1W)">
 				<seq repeatCount="indefinite">
 					<seq xml:id="AMQEFQPDV8169f1b5" dur="0.1" begin="0" />
 				</seq>

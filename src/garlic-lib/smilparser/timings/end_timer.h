@@ -11,12 +11,9 @@ namespace Timings
             Q_OBJECT
         public:
             EndTimer(QObject *parent = nullptr);
-            void setActiveBeginTimeTrigger(qint64 value);
-        protected:
-            bool fireImmediately();
-        private:
-            qint64     active_begin_time_trigger = 0;
-
+            qint64 getNegativeTrigger();
+            qint64 getPositiveTrigger();
+            qint64 hasFireImmediately();
     };
 }
 #endif // ENDTIMER_H

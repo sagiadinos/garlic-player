@@ -306,16 +306,23 @@ void TestWallClock::test_getTimerTriggerWithWeekPeriod2()
 
 void TestWallClock::test_getTimerTriggerWithWeekPeriod3()
 {
-    WallClock MyWallClock;
-    MyWallClock.parse("R/2020-01-01+w2T00:00/P1W");
+    WallClock MyWallClock1;
+    MyWallClock1.parse("R/2007-01-01+w6T00:00:00/P1W");
 
-    QDateTime current = QDateTime::fromString("2021-06-29 02:00:00", "yyyy-MM-dd HH:mm:ss");
-    QDateTime next_expected = QDateTime::fromString("2021-07-06 00:00:00", "yyyy-MM-dd HH:mm:ss");
-    QDateTime prev_expected = QDateTime::fromString("2021-06-29 00:00:00", "yyyy-MM-dd HH:mm:ss");
+    QDateTime current = QDateTime::fromString("2021-07-17 21:36:00", "yyyy-MM-dd HH:mm:ss");
+    QDateTime prev_expected1 = QDateTime::fromString("2021-07-17 00:00:00", "yyyy-MM-dd HH:mm:ss");
 
-    MyWallClock.calculateCurrentTrigger(current);
-    QCOMPARE(current.addMSecs(MyWallClock.getNextTimerTrigger()), next_expected);
-    QCOMPARE(current.addMSecs(MyWallClock.getPreviousTimerTrigger()), prev_expected);
+    MyWallClock1.calculateCurrentTrigger(current);
+    QCOMPARE(current.addMSecs(MyWallClock1.getPreviousTimerTrigger()), prev_expected1);
+
+
+    WallClock MyWallClock2;
+    MyWallClock2.parse("R/2007-01-01+w6T23:59:59/P1W");
+
+    QDateTime prev_expected2 = QDateTime::fromString("2021-07-10 23:59:59", "yyyy-MM-dd HH:mm:ss");
+    MyWallClock2.calculateCurrentTrigger(current);
+    QCOMPARE(current.addMSecs(MyWallClock2.getPreviousTimerTrigger()), prev_expected2);
+
 
 }
 

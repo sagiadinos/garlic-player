@@ -216,9 +216,6 @@ void Timings::EnhancedTimer::start()
             break;
         }
     }
-
-    if (fireImmediately())
-        emitTimeout();
 }
 
 void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
@@ -424,9 +421,10 @@ QString Timings::EnhancedTimer::determineSymbol(QString value)
 void Timings::EnhancedTimer::handleStartOffsetTrigger(Timings::EnhancedTimer::TriggerStruct *ts)
 {
     qint64 next_trigger = ts->MyClockValue->getTriggerInMSec();
+
     if (next_trigger == 0)
     {
-        emitTimeout();
+        fire_immediately = true;
     }
     else if (next_trigger < 0)
     {
@@ -435,7 +433,6 @@ void Timings::EnhancedTimer::handleStartOffsetTrigger(Timings::EnhancedTimer::Tr
     }
     else
        ts->MyTimer->start(next_trigger);
-
 }
 
 void Timings::EnhancedTimer::handleStartWallClockTrigger(Timings::EnhancedTimer::TriggerStruct *ts)
@@ -445,6 +442,7 @@ void Timings::EnhancedTimer::handleStartWallClockTrigger(Timings::EnhancedTimer:
     ts->MyWallClock->calculateCurrentTrigger();
     qint64 next_trigger     = ts->MyWallClock->getNextTimerTrigger();
     qint64 previous_trigger = ts->MyWallClock->getPreviousTimerTrigger();
+
     if (next_trigger == 0)
     {
         fire_immediately = true;
@@ -454,14 +452,25 @@ void Timings::EnhancedTimer::handleStartWallClockTrigger(Timings::EnhancedTimer:
         has_wallclock_next_trigger = true;
         ts->MyTimer->start(next_trigger);
     }
+
     if (previous_trigger < 0)
         calculateNegativeTrigger(previous_trigger);
+    else
+        calculatePositiveTrigger(next_trigger);
 }
 
 void Timings::EnhancedTimer::calculateNegativeTrigger(qint64 negative_time)
 {
-    if (negative_trigger == 1 || negative_trigger < negative_time)
+    // we must find the negative trigger which is nearest to zero
+    if (negative_trigger == 0 || negative_trigger < negative_time)
         negative_trigger = negative_time;
+}
+
+void Timings::EnhancedTimer::calculatePositiveTrigger(qint64 positive_time)
+{
+    // we must find the positibe trigger which is nearest to zero
+    if (positive_trigger == 0 || positive_time < positive_trigger)
+        positive_trigger = positive_time;
 }
 
 void Timings::EnhancedTimer::emitTimeout()

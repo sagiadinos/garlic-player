@@ -77,12 +77,13 @@ namespace Timings
             bool        has_external_trigger = false;
             bool        has_negative_offset_trigger = false;
             bool        has_wallclock_next_trigger = false;
-            qint64      negative_trigger = 1;
+            qint64      negative_trigger = 0;
+            qint64      positive_trigger = 0;
             QString     determineSymbol(QString value);
-    virtual bool        fireImmediately()       = 0;
             void        handleStartOffsetTrigger(TriggerStruct *ts);
             void        handleStartWallClockTrigger(TriggerStruct *ts);
             void        calculateNegativeTrigger(qint64 negative_time);
+            void        calculatePositiveTrigger(qint64 positive_time);
             bool        is_indefinite = false;
             QList<TriggerStruct *> MyTriggerList;
             bool initTimer(int type, QString value);

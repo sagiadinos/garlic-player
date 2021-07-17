@@ -24,7 +24,7 @@
 	<!--
 
 		upper left shows standby
-		upper left shows 1, 2, 3, 4, 5
+		upper right shows 1, 2, 3, 4, 5
 
 	excl1 plays standby.jpg because the higher priority has begin="indefinite"
 

@@ -60,9 +60,15 @@ void BaseTimings::startTimers()
 
     if (EndTimer != Q_NULLPTR)
     {
-        EndTimer->setActiveBeginTimeTrigger(BeginTimer->getElapsedButActiveTimeTrigger());
         EndTimer->start();
     }
+
+    if (BeginTimer->mustStartImmediately())
+    {
+        prepareDurationTimerBeforePlay();
+    }
+
+
 }
 
 void BaseTimings::pauseTimers()
@@ -98,7 +104,7 @@ void BaseTimings::startTrigger(QString source_id)
     BeginTimer->startFromExternalTrigger(source_id);
     if (EndTimer != Q_NULLPTR)
     {
-        EndTimer->setActiveBeginTimeTrigger(BeginTimer->getElapsedButActiveTimeTrigger());
+     //   EndTimer->setBeginPositiveTrigger(BeginTimer->getElapsedButActiveTimeTrigger());
         EndTimer->start();
     }
 }
@@ -246,6 +252,7 @@ void BaseTimings::parseTimingAttributes()
             delete EndTimer;
             EndTimer = Q_NULLPTR;
         }
+        BeginTimer->setEndTimer(EndTimer);
 
     }
 
@@ -306,6 +313,10 @@ bool BaseTimings::startDurTimer()
         return false;
 
     // needed when a begin trigger ist started in the past
+    // DurTime reduction can only happens on the first playlist run
+
+    // So we are able to determine if past begin trigger is currently active
+    // when a simple duration (dur-attribute) is last long enough
     DurTimer->recalculateTimeClock(BeginTimer->getElapsedButActiveTimeTrigger());
     return DurTimer->start();
 }

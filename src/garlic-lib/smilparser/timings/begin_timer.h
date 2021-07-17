@@ -1,7 +1,7 @@
 #ifndef BEGINTIMER_H
 #define BEGINTIMER_H
 
-#include "enhanced_timer.h"
+#include "end_timer.h"
 #include <QObject>
 
 namespace Timings
@@ -13,10 +13,16 @@ namespace Timings
             BeginTimer(QObject *parent = nullptr);
             qint64 getElapsedButActiveTimeTrigger();
             void   setDurTimer(SimpleTimer *dur);
+            void   setEndTimer(Timings::EndTimer *end);
+            bool   mustStartImmediately();
         protected:
-            bool fireImmediately();
         private:
             SimpleTimer *DurTimer = Q_NULLPTR;
+            EndTimer *EndTimer = Q_NULLPTR;
+            void resetNegativeTimeTrigger();
+            bool allowFireImmediately();
+            bool allowByDurTimer();
+
      };
 }
 #endif // BEGINTIMER_H

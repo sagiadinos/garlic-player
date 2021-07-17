@@ -11,11 +11,11 @@
 	<!--
 	
 		sequence should be: yellow background
-		begin, 1, 5sec. video, 2, 4sec google.com, 3, 4s nothing, 4, end
+		begin, 1, svg-logo, 5sec. video, 2, 4sec google.com, 3, 4s nothing, 4, end
 		
 	-->
 		<img xml:id="img_begin" src="../../images/begin.jpg" dur="2s" fit="meetbest" />
-		<img xml:id="svg0001" src="../../images/svg-logo.svg" dur="1s" fit="meetbest" />
+		<img xml:id="svg0001" src="../../images/svg-logo.svg" dur="1s" fit="meet" />
 		<img xml:id="img0001" src="../../images/0001.jpg" dur="1s" fit="meetbest" />
 		<video xml:id="video_star" src="../../videos/0001.mp4" dur="5s" fit="meetbest" />
 		<img xml:id="img002" src="../../images/0002.jpg" dur="1s" fit="fill" />

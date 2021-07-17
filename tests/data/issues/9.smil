@@ -9,7 +9,7 @@
         </head>
         <body>
 		
-			<img region="screen" xml:id="img1" src="http://testing.smil-admin.com/garlic/server.jpg" dur="2s" fit="meetbest" />
+			<img region="screen" xml:id="img1" src="http://stefan.konink.de/i/oog.jpg" dur="2s" fit="meetbest" />
             <text region="screen" xml:id="text1" src="data:,Willemijn's%2011th%20Birthday%20Party" dur="2s" fit="meetbest" />
 			<text region="screen" xml:id="text2" src="file:///etc/resolv.conf" dur="2s" fit="meetbest" />
             <text region="screen" xml:id="text3" src="/etc/hosts" dur="2s" fit="meetbest" />
