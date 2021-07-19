@@ -17,8 +17,8 @@ namespace Timings
             bool   mustStartImmediately();
         protected:
         private:
-            SimpleTimer *DurTimer = Q_NULLPTR;
-            EndTimer *EndTimer = Q_NULLPTR;
+            Timings::SimpleTimer *DurTimer = Q_NULLPTR;
+            Timings::EndTimer *EndTimer = Q_NULLPTR;
             void resetNegativeTimeTrigger();
             bool allowFireImmediately();
             bool allowByDurTimer();

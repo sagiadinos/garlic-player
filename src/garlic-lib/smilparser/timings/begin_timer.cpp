@@ -85,7 +85,7 @@ bool Timings::BeginTimer::allowByDurTimer()
                     ret = (negative_trigger + DurTimer->getParsedClock() > 0);
                 if (!ret)
                     resetNegativeTimeTrigger();
-           break;
+            break;
         }
     }
     return ret;

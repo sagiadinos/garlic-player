@@ -119,6 +119,7 @@ void Timings::EnhancedTimer::deleteTimer()
             case TYPE_ACCESSKEY:
                 if (ts->MyAccessKey != Q_NULLPTR)
                     delete ts->MyAccessKey;
+            break;
             case TYPE_SYNCBASE:
                 if (ts->MySyncBase != Q_NULLPTR)
                     delete ts->MySyncBase;
