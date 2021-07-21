@@ -77,7 +77,7 @@ class TContainer : public BaseTimings
                 QList<QDomElement>::iterator  childs_list_iterator;
                 QHash<QString, BaseTimings *> elements_list;
                 QDomElement                   active_element;
-
+                bool  proceedStart();
         virtual void  traverseChilds() = 0;
                 void  activateFoundElement();
                 void  insertActivatedChild(BaseTimings *MyBaseTimings);

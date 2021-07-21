@@ -153,6 +153,25 @@ void TContainer::emitfinishedActiveDuration() // slot called from EndTimer
     emitStopElementSignal(this);
 }
 
+bool TContainer::proceedStart()
+{
+    if (hasActivatedChild())
+    {
+        // check if this is a restart attempt and check restart attribute
+        if (isRestartable())
+        {
+            interruptByRestart();
+        }
+        else
+        {
+            return false;
+        }
+    }
+    collectActivatedChilds();
+
+    return true;
+}
+
 void TContainer::emitPause()
 {
     emitPauseElementSignal(this);

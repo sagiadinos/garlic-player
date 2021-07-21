@@ -102,19 +102,11 @@ void TPar::start()
         return;
 
     // check if this is a restart attempt and check restart attribute
-    if (hasActivatedChild())
+    if (!proceedStart())
     {
-        if (isRestartable())
-        {
-            interruptByRestart();
-        }
-        else
-        {
-            return;
-        }
+       return;
     }
 
-    collectActivatedChilds();
     status       = _playing;
     startTimersOfAllActivatedChilds();
 }

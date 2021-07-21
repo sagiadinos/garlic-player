@@ -51,6 +51,12 @@ void TSeq::next(BaseTimings *ended_element)
 
     removeActivatedChild(ended_element);
 
+    if (MyShuffle != Q_NULLPTR && !MyShuffle->decreasePickCounter())
+    {
+        emitfinishedActiveDuration(); // for not sending any end trigger
+        return;
+    }
+
     if (hasActivatedChild())
     {
         startTimersOfFirstActivatedChild();
@@ -67,20 +73,13 @@ void TSeq::start()
     if (childs_list.size() == 0)
         return;
 
-    // check if this is a restart attempt and check restart attribute
-    if (hasActivatedChild())
-    {
-        if (isRestartable())
-        {
-            interruptByRestart();
-        }
-        else
-        {
-            return;
-        }
-    }
 
-    collectActivatedChilds();
+    // we must determine if this re-start caused by a trigger or somewhere else
+    // or if it starts cause this is a random playlist with pick
+    if (!proceedReStartWithShuffleCheck())
+        return;
+
+
     status = _playing;
     startTimersOfFirstActivatedChild();
 }
@@ -91,7 +90,9 @@ void TSeq::stop()
     stopTimers();               // because there can be a dur or begin timer active
     stopTimersOfAllActivatedChilds();
     emitStopToAllActivatedChilds();
-    removeAllActivatedChilds();
+
+    if (!MyShuffle->isPausedByPickNumber()) // we need the remaining activeChilds for shuffle play
+        removeAllActivatedChilds();
 }
 
 void TSeq::interruptByEndSync()
@@ -161,4 +162,27 @@ void TSeq::traverseChilds()
         }
     }
     childs_list_iterator = childs_list.begin();
+}
+
+bool TSeq::proceedReStartWithShuffleCheck()
+{
+    // if is shuffleplay and paused by pickNumber no check for restart-Attribute needed
+    if (MyShuffle != Q_NULLPTR && MyShuffle->isPausedByPickNumber())
+    {
+        prepareShuffleForReStart();
+    }
+    else if (!proceedStart())
+    {
+       return false;
+    }
+
+    return true;
+}
+
+void TSeq::prepareShuffleForReStart()
+{
+    if (!hasActivatedChild())
+        collectActivatedChilds();
+
+    MyShuffle->resetPickCounter();
 }

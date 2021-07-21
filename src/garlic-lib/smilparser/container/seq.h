@@ -45,6 +45,9 @@ class TSeq : public TContainer
         TShuffle    *MyShuffle = Q_NULLPTR;
         int          count             = 0;
         void         traverseChilds();
+    private:
+        bool         proceedReStartWithShuffleCheck();
+        void         prepareShuffleForReStart();
 };
 
 #endif // SEQ_H

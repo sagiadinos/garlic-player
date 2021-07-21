@@ -38,7 +38,7 @@ void TShuffle::parse(QDomElement metadata)
                 pickingBehavior = element.attribute("content");
             else if (element.attribute("name") == "adapi:pickNumber")
                 pickNumber = element.attribute("content").toInt();
-            internal_pick = pickNumber;
+            resetPickCounter();
             randomizePlaylist();
         }
     }
@@ -50,6 +50,28 @@ QList<QDomElement> TShuffle::getShuffeledList()
     return shuffle_list;
 }
 
+void TShuffle::resetPickCounter()
+{
+    pick_counter = pickNumber;
+    is_paused_cause_picked = false;
+}
+
+bool TShuffle::decreasePickCounter()
+{
+    pick_counter--;
+    if (pick_counter <= 0)
+    {
+        is_paused_cause_picked = true;
+        return false;
+    }
+    else
+        return true;
+}
+
+bool TShuffle::isPausedByPickNumber()
+{
+    return is_paused_cause_picked;
+}
 
 void TShuffle::randomizePlaylist()
 {
