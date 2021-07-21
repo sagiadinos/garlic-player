@@ -91,7 +91,7 @@ void TSeq::stop()
     stopTimersOfAllActivatedChilds();
     emitStopToAllActivatedChilds();
 
-    if (!MyShuffle->isPausedByPickNumber()) // we need the remaining activeChilds for shuffle play
+    if (MyShuffle != Q_NULLPTR && !MyShuffle->isPausedByPickNumber()) // we need the remaining activeChilds for shuffle play
         removeAllActivatedChilds();
 }
 
