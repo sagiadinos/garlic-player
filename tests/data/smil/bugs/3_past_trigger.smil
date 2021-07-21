@@ -1,0 +1,34 @@
+<smil xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<head>
+		<meta http-equiv="refresh" content="30" />
+		<layout>
+			<root-layout xml:id="display:0" width="1920" height="1080" />
+			<region xml:id="screen" width="100%" height="100%" left="0" top="0" fit="fill" z-index="0" backgroundColor="transparent" />
+		</layout>
+	</head>
+	<body systemComponent="http://www.w3.org/1999/xhtml">
+		<excl repeatCount="indefinite" begin="0">
+			<priorityClass higher="stop" lower="never" peer="stop" weight="5">
+				<seq dur="19198" xml:id="sa_18_40_until_midnight" begin="wallclock(R/2020-01-01+w6T21:06/P1W)" restart="whenNotActive">
+					<seq repeatCount="indefinite" begin="0">
+						<seq>
+							<img dur="indefinite" src="../../../images/0006.jpg" region="screen" fit="meet" />
+						</seq>
+					</seq>
+				</seq>
+			</priorityClass>
+
+			<priorityClass higher="stop" lower="never" peer="stop" weight="1">
+				<seq xml:id="daily_7_seq" dur="53999" begin="wallclock(R/2020-09-24T07:00/P1D)" restart="whenNotActive">
+					<seq repeatCount="indefinite" begin="0">
+						<seq>
+							<img id="daily_at_seven"  dur="20" src="../../../images/begin.jpg" region="screen" soundLevel="0%" fit="fill">
+								<param name="logContentId" value="3 begin" />
+							</img>
+						</seq>
+					</seq>
+				</seq>
+			</priorityClass>
+		</excl>
+	</body>
+</smil>
