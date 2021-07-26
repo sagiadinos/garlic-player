@@ -32,27 +32,19 @@
  */
 class TShuffle : public QObject
 {
-    Q_OBJECT
-public:
-    explicit TShuffle(QList<QDomElement> list, QObject *parent = Q_NULLPTR);
-    void         parse(QDomElement metadata);
-    QList<QDomElement> getShuffeledList();
-    int                getInternalPick(){return pick_counter;}
-    void               resetPickCounter();
-    bool               decreasePickCounter();
-    bool               isPausedByPickNumber();
-protected:
-        QList<QDomElement>            dom_list, shuffle_list;
+        Q_OBJECT
+    public:
+        explicit TShuffle(QList<QDomElement> list, QObject *parent = Q_NULLPTR);
+        void         parse(QDomElement metadata);
+        QList<QDomElement> getShuffeledList();
+    private:
+        QList<QDomElement>            dom_list, shuffle_list, work_list;
         QList<QDomElement>::iterator  shuffle_iterator;
         QString pickingAlgorithm = "shuffle";
         QString pickingBehavior  = "pickN";
         int     pickNumber       = 1;
-        int     pick_counter    = 0;
-        bool    is_paused_cause_picked = false;
+        void    checkForResetWorkList();
         void    randomizePlaylist();
-signals:
-
-public slots:
 };
 
 #endif // TSHUFFLE_H

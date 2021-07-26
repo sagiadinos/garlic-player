@@ -29,25 +29,22 @@ class TSeq : public TContainer
 {
         Q_OBJECT
     public:
-        explicit TSeq(TBase *pc, QObject *parent = Q_NULLPTR);
+        explicit TSeq(QObject *parent);
                 ~TSeq();
         void         preloadParse(QDomElement element);
         void         next(BaseTimings *ended_element);
-        void         pause();
         void         start();
+        void         repeat();
         void         stop();
-        void         interruptByEndSync();
+        void         pause();
         void         resume();
-        void         collectActivatedChilds();
+        void         collectActivatableChilds();
     public slots:
-        void         prepareDurationTimerBeforePlay();
+        void         prepareDurationTimers();
     protected:
         TShuffle    *MyShuffle = Q_NULLPTR;
         int          count             = 0;
         void         traverseChilds();
-    private:
-        bool         proceedReStartWithShuffleCheck();
-        void         prepareShuffleForReStart();
 };
 
 #endif // SEQ_H

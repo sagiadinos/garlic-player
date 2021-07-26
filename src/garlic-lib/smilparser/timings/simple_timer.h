@@ -59,7 +59,6 @@ namespace Timings
     protected:
         QTimer      *MyTimer = Q_NULLPTR;
         ClockValue   MyClockValue;
-        qint64       pause_start;
         qint64       clock_in_ms;
         int          remaining = 0;
         int          type = 3;

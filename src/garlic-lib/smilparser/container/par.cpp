@@ -18,9 +18,8 @@
 
 #include "par.h"
 
-TPar::TPar(TBase *pc, QObject *parent) : TContainer(parent)
+TPar::TPar(QObject *parent) : TContainer(parent)
 {
-    parent_container = pc;
     setObjectName("TPar");
 }
 
@@ -36,13 +35,13 @@ void TPar::preloadParse(QDomElement element)
     if (element.hasAttribute("endsync"))
         endsync = element.attribute("endsync");
 
-    if (element.hasChildNodes())
-    {
-        traverseChilds();
-    }
+    if (!element.hasChildNodes())
+        return;
+
+    traverseChilds();
 }
 
-void TPar::prepareDurationTimerBeforePlay()
+void TPar::prepareDurationTimers()
 {
     // when a durtimer exists use it!
     if (hasDurTimer() && !startDurTimer() && !hasEndTimer())
@@ -52,7 +51,7 @@ void TPar::prepareDurationTimerBeforePlay()
     }
 
     // otherwise empty container with dur will not start
-    if (childs_list.size() > 0 || isDurTimerActive() || isEndTimerActive())
+    if (dom_childs_list.size() > 0 || isDurTimerActive() || isEndTimerActive())
     {
         resetInternalRepeatCount();
         emitStartElementSignal(this);
@@ -74,31 +73,34 @@ void TPar::next(BaseTimings *ended_element)
     if (status == _stopped)
         return;
 
-    removeActivatedChild(ended_element);
+    if (ended_element->getStatus() == _stopped)
+        removeActiveChild(ended_element);
 
-    // Active DurTimer or EndTimer results in ignore endsync
-    if ((endsync == "first" || endsync == ended_element->getID()) && !isDurTimerActive() && !isEndTimerActive())
-    {
-        interruptByEndSync();
-        return;
-    }
+    interruptByEndSync(ended_element->getID());
 
-    // do nothing when childs are active endsyc
-    if (hasActivatedChild())
+    if (hasActivatedChild()) // do nothing when childs are active
         return;
 
     // not stopped by parent
-    if (status == _playing)
-    {
+    if (status == _active)
         finishIntrinsicDuration(); // check for dur and then for repeat play
-        return;
-    }
+}
 
+bool TPar::interruptByEndSync(QString id)
+{
+    // Active DurTimer or EndTimer results in ignore endsync
+    if ((endsync == "first" || endsync == id) && !isDurTimerActive() && !isEndTimerActive())
+    {
+        stopTimersOfAllActivatedChilds();
+        removeAllActiveChilds();
+        return true;
+    }
+    return false;
 }
 
 void TPar::start()
 {
-    if (childs_list.size() == 0)
+    if (dom_childs_list.size() == 0)
         return;
 
     // check if this is a restart attempt and check restart attribute
@@ -107,42 +109,43 @@ void TPar::start()
        return;
     }
 
-    status       = _playing;
-    startTimersOfAllActivatedChilds();
+    startTimersOfAllActiveChilds();
+}
+
+void TPar::repeat()
+{
+    if (dom_childs_list.size() == 0)
+        return;
+
+    collectActivatableChilds();
+    startTimersOfAllActiveChilds();
 }
 
 void TPar::stop()
 {
-    status = _stopped;
-    stopTimers();               // because there can be a dur or begin timer active
-    stopTimersOfAllActivatedChilds();
-    emitStopToAllActivatedChilds();
-    removeAllActivatedChilds();
-}
-
-void TPar::interruptByEndSync()
-{
-    stop();
-    if (handleRepeatCountStatus())
-        start();
-}
-
-void TPar::resume()
-{
-    status = _playing;
+    handleTriggerStops();
+    removeAllActiveChilds();
 }
 
 void TPar::pause()
 {
     status = _paused;
+    pauseAllTimers();
+    pauseTimersOfAllActivatedChilds();
 }
 
-void TPar::collectActivatedChilds()
+void TPar::resume()
 {
-    for (childs_list_iterator = childs_list.begin(); childs_list_iterator < childs_list.end(); childs_list_iterator++)
+    status = _active;
+    resumeAllTimers();
+    resumeTimersOfAllActivatedChilds();
+}
+
+void TPar::collectActivatableChilds()
+{
+    for (dom_childs_list_iterator = dom_childs_list.begin(); dom_childs_list_iterator < dom_childs_list.end(); dom_childs_list_iterator++)
     {
-        active_element = *childs_list_iterator;
-        activateFoundElement();
+        insertAsActiveChildFromDom(*dom_childs_list_iterator);
     }
 }
 
@@ -156,7 +159,7 @@ void TPar::traverseChilds()
         tag_name = childs.item(i).toElement().tagName();
         if (tag_name != "") // e.g. comments
         {
-            childs_list.append(childs.item(i).toElement());
+            dom_childs_list.append(childs.item(i).toElement());
             emit preloadElementSignal(this, childs.item(i).toElement());
         }
     }

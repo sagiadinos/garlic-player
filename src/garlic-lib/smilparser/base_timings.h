@@ -47,34 +47,38 @@ class BaseTimings : public TBase
             DEFAULT            = 3
         };
         const     int        _stopped  = 0;
-        const     int        _waiting  = 1; // wait for first start
-        const     int        _playing  = 2;
+        const     int        _pending  = 1; // wait for first start
+        const     int        _active   = 2;
         const     int        _paused   = 3;
-        // means: simple duration ended, but begin or end timer are active. Can be restarted by begin-valuelist
-        const     int        _pending  = 4;
-        const     int        _ended    = 5;
 
-        explicit               BaseTimings(QObject * parent = Q_NULLPTR);
+        explicit               BaseTimings(QObject * parent);
                               ~BaseTimings();
 
-                void           startTimers();
-                void           pauseTimers();
-                void           stopTimers();
+                void           activateTriggerTimers();
+                void           pauseAllTimers();
+                void          deferAllTimers();
+                void           selectWhichTimerShouldStop();
+                void           stopAllTimers();
+                void           stopSimpleTimers();
                 void           startTrigger(QString source_id);
                 void           stopTrigger(QString source_id);
-                void           resumeTimers();
+                void           resumeAllTimers();
                 bool           hasActiveTimers();
+                bool           isBeginTimerActive();
+                bool           isEndTimerActive();
                 void           addToExternalBegins(QString symbol, QString target_id);
                 void           addToExternalEnds(QString symbol, QString target_id);
                 QHash<QString, QString> fetchExternalBegins();
                 QHash<QString, QString> fetchExternalEnds();
+
                 int            getStatus(){return status;}
-                bool           isPlaying(){return (status == _playing);}
+                bool           isActive(){return (status == _active);}
                 void           finishedNotFound();
                 void           skipElement();
                 void           emitActivated();
 
         virtual void           start()       = 0;
+        virtual void           repeat()       = 0;
         virtual void           stop()        = 0;
         virtual void           interruptByRestart()   = 0;
         virtual void           pause()       = 0;
@@ -85,36 +89,37 @@ class BaseTimings : public TBase
         virtual void           emitResume() = 0;
 
                 void           emitStartElementSignal(BaseTimings* bt){emit startElementSignal(bt);}
-                void           emitStopElementSignal(BaseTimings* bt){emit stopElementSignal(bt);}
+                void           emitStopElementSignal(BaseTimings* bt, bool has_prio){emit stopElementSignal(bt, has_prio);}
                 void           emitResumeElementSignal(BaseTimings* bt){emit resumeElementSignal(bt);}
                 void           emitPauseElementSignal(BaseTimings* bt){emit pauseElementSignal(bt);}
 
 
                 void           finishIntrinsicDuration();
-
+                bool           has_started  = false;
+                bool           is_deferred  = false;
     public slots:
-        virtual void           emitfinishedActiveDuration() = 0;
-        virtual void           prepareDurationTimerBeforePlay() = 0; // called from begin-Timer to check if
+        virtual void           emitfinishedElement() = 0;
+        virtual void           prepareDurationTimers() = 0; // slot fro begin-Timer
                 void           finishedSimpleDuration();
     protected:
                 QTimer        *InternalTimer = Q_NULLPTR;
                 int            restart = ALWAYS;
-                QString        fill    = "remove"; // dummy! functionality not implemented
-                QString        begin    = "remove";
-                QString        dur    = "m"; //
-                QString        end    = "indefinite";
-                QString        max    = "indefinite";
+                QString        begin   = "0";
+                QString        dur     = "media";
+                QString        end     = "indefinite";
+                QString        fill    = "remove";     // stub ToDo
+                QString        min     = "0";          // stub ToDo
+                QString        max     = "indefinite"; // stub ToDo
 
-                int            status         = 0;
+                int            status         = _stopped;
                 int            repeatCount    = 0;
                 bool           indefinite     = false;
                 int            internal_count = 1;
+                void           sendTriggerSignalToListeners(QStringList listener, QString trigger_signal);
                 void           parseTimingAttributes();
                 void           resetInternalRepeatCount();
                 bool           startDurTimer();
                 bool           handleRepeatCountStatus();
-                bool           isBeginTimerActive();
-                bool           isEndTimerActive();
                 bool           hasDurTimer();
                 bool           hasEndTimer();
                 bool           isDurTimerActive();
@@ -125,6 +130,7 @@ class BaseTimings : public TBase
                 Timings::BeginTimer    *BeginTimer   = Q_NULLPTR;
                 Timings::EndTimer      *EndTimer     = Q_NULLPTR;
                 Timings::SimpleTimer   *DurTimer     = Q_NULLPTR;
+
                 TargetTrigger          *BeginTargets = Q_NULLPTR;
                 TargetTrigger          *EndTargets   = Q_NULLPTR;
            //     Timings::SimpleTimer   *repeatDur  = Q_NULLPTR;
@@ -132,12 +138,9 @@ class BaseTimings : public TBase
                 void           handleBeginTimer();
                 void           setRestart(QString attr_value);
     signals:
-                void           finishActiveDurationSignal(BaseTimings*);
-                void           finishSimpleDurationSignal(BaseTimings*);
-
                 void  triggerSignal(QString,QString,QString); // signal(begin, end, activateEvent), target_id, source_id)
                 void  startElementSignal(BaseTimings*);
-                void  stopElementSignal(BaseTimings*);
+                void  stopElementSignal(BaseTimings*,bool);
                 void  resumeElementSignal(BaseTimings*);
                 void  pauseElementSignal(BaseTimings*);
 

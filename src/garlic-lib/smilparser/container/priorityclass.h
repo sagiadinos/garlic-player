@@ -32,7 +32,7 @@ class TPriorityClass : public TBase
 {
     Q_OBJECT
 public:
-    explicit TPriorityClass(QObject *parent = 0);
+    explicit TPriorityClass(QObject *parent);
     ~TPriorityClass();
     void                          preloadParse(QDomElement element);
 
@@ -53,6 +53,7 @@ private:
     QString                       peers  = "stop";   // how elements inside a group interrupts each other stop|pause|defer|never
     QString                       higher = "pause";  // how a group with higher priority interrupts this group pause|stop
     QString                       lower  = "defer";  // how a group with lower priority interrupts this group defer|never
+    QString                       pause_display = "show"; // dummy
     int                           count_childs       = 0;
     void                          setAttributes();
     void                          traverseChilds();

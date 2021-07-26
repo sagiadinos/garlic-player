@@ -93,7 +93,11 @@ void Timings::SimpleTimer::resume()
     if (MyTimer == Q_NULLPTR || type != TYPE_CLOCKVALUE)
         return;
 
-    MyTimer->start(remaining);
+    // pause in simpleTimer pauses "playback"
+    if (remaining > 0)
+        MyTimer->start(remaining);
+    else
+        emitTimeout();
 }
 
 
@@ -104,7 +108,6 @@ void Timings::SimpleTimer::pause()
         remaining = MyTimer->remainingTime();
         MyTimer->stop();
     }
-    pause_start = QDateTime::currentMSecsSinceEpoch();
 }
 
 void Timings::SimpleTimer::stop()

@@ -97,7 +97,7 @@ void LibFacade::reloadWithNewIndex(QString index_path)
 
 void LibFacade::beginSmilPlaying()
 {
-    MyBodyParser.data()->startPlayingBody();
+    MyBodyParser.data()->startPresentationAfterPreload();
 }
 
 QString LibFacade::requestLoaddableMediaPath(QString path)

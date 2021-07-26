@@ -37,9 +37,12 @@ private Q_SLOTS:
     void test_getTimerTriggerWithHourPeriod();
     void test_getTimerTriggerWithSecondPeriod();
     void test_getTimerTriggerWithoutPeriod();
+    void test_getTimerTriggerWithoutPeriodAndLeapYear();
     void test_getTimerTriggerWithWeekPeriod1();
     void test_getTimerTriggerWithWeekPeriod2();
     void test_getTimerTriggerWithWeekPeriod3();
+    void test_getTimerTriggerWithMinutePeriodRepeated();
+    void test_getTimerTriggerWithSecondsPeriodRepeated();
 };
 
 void TestWallClock::test_parse1()
@@ -227,6 +230,11 @@ void TestWallClock::test_getTimerTriggerWithoutPeriod()
     QCOMPARE(MyWallClock.getNextTimerTrigger(), qint64(0));
     QCOMPARE(MyWallClock.getPreviousTimerTrigger(), qint64(-31539661000));
 
+}
+
+void TestWallClock::test_getTimerTriggerWithoutPeriodAndLeapYear()
+{
+    WallClock MyWallClock;
     MyWallClock.parse("2021-01-01T01:01:01");
     MyWallClock.calculateCurrentTrigger(QDateTime::fromString("2020-01-01 01:01:01", "yyyy-MM-dd HH:mm:ss"));
     QCOMPARE(MyWallClock.getNextTimerTrigger(), qint64(31622400000)); // leap year ;)
@@ -322,7 +330,47 @@ void TestWallClock::test_getTimerTriggerWithWeekPeriod3()
     QDateTime prev_expected2 = QDateTime::fromString("2021-07-10 23:59:59", "yyyy-MM-dd HH:mm:ss");
     MyWallClock2.calculateCurrentTrigger(current);
     QCOMPARE(current.addMSecs(MyWallClock2.getPreviousTimerTrigger()), prev_expected2);
+}
 
+void TestWallClock::test_getTimerTriggerWithMinutePeriodRepeated()
+{
+    WallClock MyWallClock1;
+    MyWallClock1.parse("R/2021-07-22T13:49:30/PT1M");
+
+    QDateTime current1 = QDateTime::fromString("2021-07-22 13:50:40", "yyyy-MM-dd HH:mm:ss");
+    QDateTime prev_expected1 = QDateTime::fromString("2021-07-22 13:50:30", "yyyy-MM-dd HH:mm:ss");
+    QDateTime next_expected1 = QDateTime::fromString("2021-07-22 13:51:30", "yyyy-MM-dd HH:mm:ss");
+
+    MyWallClock1.calculateCurrentTrigger(current1);
+    QCOMPARE(current1.addMSecs(MyWallClock1.getPreviousTimerTrigger()), prev_expected1);
+    QCOMPARE(current1.addMSecs(MyWallClock1.getNextTimerTrigger()), next_expected1);
+
+    QDateTime current2 = QDateTime::fromString("2021-07-22 13:51:40", "yyyy-MM-dd HH:mm:ss");
+    QDateTime next_expected2 = QDateTime::fromString("2021-07-22 13:52:30", "yyyy-MM-dd HH:mm:ss");
+
+    MyWallClock1.calculateNextTrigger(current2);
+    QCOMPARE(current2.addMSecs(MyWallClock1.getNextTimerTrigger()), next_expected2);
+
+    QDateTime current3 = QDateTime::fromString("2021-07-22 19:13:31", "yyyy-MM-dd HH:mm:ss");
+    QDateTime next_expected3 = QDateTime::fromString("2021-07-22 19:14:30", "yyyy-MM-dd HH:mm:ss");
+
+    MyWallClock1.calculateNextTrigger(current3);
+    qint64 next = MyWallClock1.getNextTimerTrigger();
+    QCOMPARE(current3.addMSecs(next), next_expected3);
+}
+
+void TestWallClock::test_getTimerTriggerWithSecondsPeriodRepeated()
+{
+    WallClock MyWallClock1;
+    MyWallClock1.parse("R/2021-07-22T13:51:00/PT10S");
+
+    QDateTime current1 = QDateTime::fromString("2021-07-23 00:29:44", "yyyy-MM-dd HH:mm:ss");
+    QDateTime prev_expected1 = QDateTime::fromString("2021-07-23 00:29:40", "yyyy-MM-dd HH:mm:ss");
+    QDateTime next_expected1 = QDateTime::fromString("2021-07-23 00:29:50", "yyyy-MM-dd HH:mm:ss");
+
+    MyWallClock1.calculateCurrentTrigger(current1);
+    QCOMPARE(current1.addMSecs(MyWallClock1.getPreviousTimerTrigger()), prev_expected1);
+    QCOMPARE(current1.addMSecs(MyWallClock1.getNextTimerTrigger()), next_expected1);
 
 }
 

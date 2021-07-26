@@ -67,7 +67,7 @@ void TPriorityClass::removeQueuedElements()
 {
     for (BaseTimings *bt : qAsConst(queue_stack))
     {
-       bt->stopTimers();
+       bt->stopAllTimers();
     }
 }
 

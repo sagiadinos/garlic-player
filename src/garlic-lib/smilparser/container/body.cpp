@@ -18,12 +18,12 @@
 
 #include "body.h"
 
-TBody::TBody(TBase *pc, QObject *parent) : TSeq(pc, parent)
+TBody::TBody(QObject *parent) : TSeq(parent)
 {
     setObjectName("TBody");
 }
 
 TBody::~TBody()
 {
-    childs_list.clear();
+    dom_childs_list.clear();
 }

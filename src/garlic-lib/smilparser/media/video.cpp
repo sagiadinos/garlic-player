@@ -18,9 +18,8 @@
 
 #include "video.h"
 
-TVideo::TVideo(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : TAudio(pc, mm, config, ph, parent)
+TVideo::TVideo(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : TAudio(mm, config, ph, parent)
 {
-    parent_container = pc;
     setObjectName("TVideo");
     is_media = true;
 }

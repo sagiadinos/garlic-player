@@ -25,10 +25,10 @@ class TImage : public BaseMedia
 {
     Q_OBJECT
     public:
-        explicit TImage(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+        explicit TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
         ~TImage();
     public slots:
-        void     prepareDurationTimerBeforePlay();
+        void     prepareDurationTimers();
     protected:
         void     setAttributes();
 };

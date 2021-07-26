@@ -26,10 +26,10 @@ class TRefCommand : public BaseMedia
 {
     Q_OBJECT
 public:
-    explicit TRefCommand(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+    explicit TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
     ~TRefCommand();
 public slots:
-    void     prepareDurationTimerBeforePlay();
+    void     prepareDurationTimers();
 protected:
     void     setAttributes();
 };

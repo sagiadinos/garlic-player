@@ -74,24 +74,30 @@ QString BaseMedia::getLoadablePath()
 
 void BaseMedia::start()
 {
-    status = _playing;
+    status      = _active;
+    has_started = true;
+}
+
+void BaseMedia::repeat()
+{
+    status = _active;
 }
 
 void BaseMedia::stop()
 {
-    stopTimers();        // because there can be a dur or begin timer active
-    status = _stopped;
-    // check for repeat
+    selectWhichTimerShouldStop();
 }
 
 void BaseMedia::pause()
 {
     status = _paused;
+    pauseAllTimers();
 }
 
 void BaseMedia::resume()
 {
-    start();
+    status = _active;
+    resumeAllTimers();
 }
 
 void BaseMedia::interruptByRestart()
@@ -142,9 +148,9 @@ void BaseMedia::parseBaseMediaAttributes()
     MyExpr.setExpression(getAttributeFromRootElement("expr", ""));
 }
 
-void BaseMedia::emitfinishedActiveDuration() // called from finishedActiveDuration() BaseTimings
+void BaseMedia::emitfinishedElement() // called from finishedActiveDuration() BaseTimings
 {
-    emitStopElementSignal(this);
+    emitStopElementSignal(this, false);
 }
 
 void BaseMedia::parseBaseParameters()

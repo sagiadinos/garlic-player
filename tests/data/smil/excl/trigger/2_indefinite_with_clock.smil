@@ -28,7 +28,7 @@
 
 		Remark: repeatCount="indefinite" in seq which wraps standby will stopped by higher priority
 	-->
-	<par>
+		<par>
 ´			<excl repeatCount="indefinite">
 				<priorityClass>
 					<seq begin="standby.end+2s" repeatCount="indefinite">

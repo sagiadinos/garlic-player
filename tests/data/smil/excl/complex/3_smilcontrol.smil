@@ -23,20 +23,20 @@
 		<!--
 
 			all 10 images should be shown 0001 and standby jpg are not centered
-			Before 13:00 srandby image should be shown
+			At 30s of every Minute number count started
+			At 00s of every Minute number count stopped
 
+			At 45s count will interupted by video
 		-->
 
-	<excl repeatCount="indefinite">
+		<excl>
 			<priorityClass higher="pause">
-				<seq id="interupt_start" begin="wallclock(R/2001-01-01T22:05:10/P1D)">
-					<img src="../../../images/video.jpg" dur="10s" fit="meet" />
-					<img src="../../../images/image.jpg" dur="10s" fit="meet" />
+				<seq id="interupt_start" begin="wallclock(R/2021-07-22T13:00:45/PT1M)">
+					<img src="../../../images/video.jpg" dur="1s" fit="meet" />
 				</seq>
 			</priorityClass>
-
 			<priorityClass higher="pause">
-				<seq id="monitor" begin="wallclock(R/2001-01-01T13:00:01/P1D)" end="wallclock(R/2001-01-01T23:59:59/P1D)">
+				<seq id="monitor" begin="wallclock(R/2021-07-22T13:00:30/PT1M)" end="wallclock(R/2021-07-22T13:00:00/PT1M)">
 					<par>
 						<seq repeatCount="indefinite">
 							<img src="../../../images/0001.jpg" dur="1s" fit="meet" />
@@ -49,7 +49,7 @@
 							<img src="../../../images/0008.jpg" dur="1s" fit="meet" />
 							<img src="../../../images/0009.jpg" dur="1s" fit="meet" />
 							<img src="../../../images/0010.jpg" dur="1s" fit="meet" />
-						</seq>
+							-->						</seq>
 
 						<par repeatCount="indefinite">
 							<seq dur="900"/>

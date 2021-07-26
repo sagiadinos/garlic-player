@@ -24,7 +24,7 @@ class TVideo : public TAudio
 {
     Q_OBJECT
 public:
-    explicit TVideo(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = 0);
+    explicit TVideo(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
 };
 
 #endif // TVIDEO_H

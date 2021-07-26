@@ -7,7 +7,7 @@ class Smil : public TBase
 {
         Q_OBJECT
     public:
-        Smil(QObject *parent = Q_NULLPTR);
+        Smil(QObject *parent);
         void preloadParse(QDomElement element);
 };
 

@@ -25,21 +25,22 @@ class TPar : public TContainer
 {
         Q_OBJECT
     public:
-        explicit TPar(TBase *pc, QObject *parent = Q_NULLPTR);
+        explicit TPar(QObject *parent);
         ~TPar();
         void                preloadParse(QDomElement element);
         void                next(BaseTimings *ended_element);
-        void                pause();
+        bool                interruptByEndSync(QString id);
         void                start();
+        void                repeat();
         void                stop();
-        void                interruptByEndSync();
 
+        void                pause();
         void                resume();
-        void                collectActivatedChilds();
+        void                collectActivatableChilds();
     protected:
         void                traverseChilds();
     protected slots:
-        void                prepareDurationTimerBeforePlay();
+        void                prepareDurationTimers();
     private:
         QString             endsync            = "last";
         bool                is_endsync   = false;

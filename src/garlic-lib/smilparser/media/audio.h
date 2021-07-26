@@ -24,7 +24,7 @@ class TAudio : public BaseMedia
 {
     Q_OBJECT
 public:
-    explicit TAudio(TBase *pc, Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+    explicit TAudio(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent);
     ~TAudio();
     QString                 getSoundLevel(){return soundLevel;}
 protected:
@@ -32,7 +32,7 @@ protected:
     void                    setAttributes();
     bool                    loadMedia();
 protected slots:
-    void                    prepareDurationTimerBeforePlay();
+    void                    prepareDurationTimers();
 };
 
 #endif // TAUDIO_H

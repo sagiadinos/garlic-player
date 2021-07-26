@@ -17,15 +17,14 @@
 *************************************************************************************/
 #include "unknown.h"
 
-TUnknown::TUnknown(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+TUnknown::TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
-    parent_container = pc;
     setObjectName("Unknown");
     is_media = false;
 
 }
 
-void TUnknown::prepareDurationTimerBeforePlay()
+void TUnknown::prepareDurationTimers()
 {
     Q_UNUSED(dur);
     qWarning(Develop) << src << " Unknown tag";

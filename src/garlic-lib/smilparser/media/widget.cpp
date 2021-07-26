@@ -17,9 +17,8 @@
 *************************************************************************************/
 #include "widget.h"
 
-TWidget::TWidget(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+TWidget::TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
-    parent_container = pc;
     setObjectName("TWidget");
     is_media = true;
 }
@@ -29,7 +28,7 @@ TWidget::~TWidget()
 {
 }
 
-void TWidget::prepareDurationTimerBeforePlay()
+void TWidget::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
@@ -37,7 +36,7 @@ void TWidget::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (status == _playing && !isRestartable())
+    if (status == _active && !isRestartable())
         return;
 
     if (startDurTimer() || hasEndTimer())

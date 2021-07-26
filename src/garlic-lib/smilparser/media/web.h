@@ -23,10 +23,10 @@ class TWeb : public BaseMedia
 {
     Q_OBJECT
 public:
-    explicit TWeb(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+    explicit TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
     ~TWeb();
 public slots:
-    void            prepareDurationTimerBeforePlay();
+    void            prepareDurationTimers();
 protected:
     void            setAttributes();
 };

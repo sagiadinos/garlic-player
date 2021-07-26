@@ -32,14 +32,15 @@ class BaseMedia : public BaseTimings
     const     int        CACHE_CONTROL_USE_CACHE  = 0;
     const     int        CACHE_CONTROL_ONLY_IF_CACHED  = 1;
 
-        explicit BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+        explicit BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
 
         void                   preloadParse(QDomElement element);
         QString                getLoadablePath();
-        void                   pause();
         void                   start();
+        void                   repeat();
         void                   stop();
         void                   resume();
+        void                   pause();
         void                   interruptByRestart();
 
         void                   setRegion(Region r);
@@ -61,7 +62,7 @@ class BaseMedia : public BaseTimings
         void                   emitResume();
 
     public slots:
-        void                   emitfinishedActiveDuration();
+        void                   emitfinishedElement();
 
     protected:
         Files::MediaManager   *MyMediaManager;

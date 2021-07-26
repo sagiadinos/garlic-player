@@ -21,8 +21,8 @@ private:
     QHash<QString, BaseTimings *>       elements_list;
     QMap<QChar, BaseTimings *>          begin_accesskey_list;
     QMap<QChar, BaseTimings *>          end_accesskey_list;
-    void  distributeBeginTrigger(BaseTimings *bt_target );
-    void  distributeEndTrigger(BaseTimings *bt_target );
+    void  distributeBeginTrigger(BaseTimings *bt_listener);
+    void  distributeEndTrigger(BaseTimings *bt_listener);
 
 signals:
 

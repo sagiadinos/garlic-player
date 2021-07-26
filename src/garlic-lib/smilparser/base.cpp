@@ -20,6 +20,8 @@
 
 TBase::TBase(QObject *parent) : QObject(parent)
 {
+    setParent(parent);
+    parent_container = qobject_cast<TBase *> (parent);
 }
 
 

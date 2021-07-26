@@ -67,11 +67,11 @@ qint64 WallClock::getNextTimerTrigger()
 
 void WallClock::calculateCurrentTrigger(QDateTime current)
 {
-    next_trigger     = calculateNextTrigger(current);
-    previous_trigger = calculatePreviousTrigger(current);
+    calculateNextTrigger(current);
+    calculatePreviousTrigger(current);
 }
 
-qint64 WallClock::calculateNextTrigger(QDateTime current)
+void WallClock::calculateNextTrigger(QDateTime current)
 {
     qint64    ret       = 0;
 
@@ -85,16 +85,17 @@ qint64 WallClock::calculateNextTrigger(QDateTime current)
     }
     else
         ret = current.msecsTo(trigger_datetime);
-    return ret;
+
+    next_trigger = ret;
 }
 
 // ================================ protected methods ===============================================
 
-qint64 WallClock::calculatePreviousTrigger(QDateTime current)
+void WallClock::calculatePreviousTrigger(QDateTime current)
 {
     // the trigger date is in the future there is no previus trigger
     if (trigger_datetime > current)
-         return 0;
+         return;
 
     qint64 ret = 0;
 
@@ -111,7 +112,7 @@ qint64 WallClock::calculatePreviousTrigger(QDateTime current)
     {
         ret = -(trigger_datetime.msecsTo(current));
     }
-    return ret;
+    previous_trigger = ret;
 }
 
 qint64 WallClock::calculateWithInfiniteRepeats(QDateTime current)
@@ -170,12 +171,10 @@ QDateTime WallClock::addOptimizations(QDateTime current)
     QDateTime calculate = trigger_datetime;
     calculate = calculate.addYears(current.date().year() - trigger_datetime.date().year() - period.years);
     calculate = calculate.addMonths(current.date().month() - trigger_datetime.date().month() - period.months);
-    calculate = calculate.addDays(current.date().day() - trigger_datetime.date().day() - period.days);
+    // at least to get sure, that the calculated date is < than current substract 1 extra day
+    // remark: substract 1 hour will not work look at tests
+    calculate = calculate.addDays(current.date().day() - trigger_datetime.date().day() - period.days - 1);
 
-   /* calculate = calculate.addSecs((current.time().hour() - trigger_datetime.time().hour() - period.hours)*3600);
-    calculate = calculate.addSecs((current.time().minute() - trigger_datetime.time().minute() - period.minutes)*60);
-    calculate = calculate.addSecs(current.time().second() - trigger_datetime.time().second() - period.seconds);
-  */
     if (MyIsoDate.hasWeekDay())
     {
         calculate = findNextWeekDay(calculate);

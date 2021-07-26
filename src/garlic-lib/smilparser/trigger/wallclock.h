@@ -32,19 +32,19 @@ class WallClock : public QObject
         IsoPeriod getPeriod(){return period;}
         int       getRepeats(){return repeats;}
         QDateTime getDateTime(){return trigger_datetime;}
-        void      calculateCurrentTrigger(QDateTime current = QDateTime::currentDateTime());
-        qint64    calculateNextTrigger(QDateTime current = QDateTime::currentDateTime());
+        void      calculateCurrentTrigger(QDateTime current);
+        void      calculateNextTrigger(QDateTime current);
         qint64    getPreviousTimerTrigger();
         qint64    getNextTimerTrigger();
     protected:
         int       repeats = 0;
         QDateTime trigger_datetime;
-        qint64    next_trigger;
-        qint64    previous_trigger;
+        qint64    next_trigger     = 0;
+        qint64    previous_trigger = 0;
 
         IsoPeriod period;
         int       remaining_repeats = 0;
-        qint64    calculatePreviousTrigger(QDateTime current);
+        void      calculatePreviousTrigger(QDateTime current);
         qint64    calculateWithInfiniteRepeats(QDateTime current);
         qint64    calculateWithRemainingRepeats(QDateTime current);
 

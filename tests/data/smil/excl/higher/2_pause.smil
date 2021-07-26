@@ -39,7 +39,7 @@
 				<img xml:id="imgA0005" src="../../../images/0005.jpg" begin="3s" dur="2s" fit="meet" />
 			</priorityClass>
 			<priorityClass xml:id="prio A4" higher="pause">
-				<seq begin="0s">
+				<seq id="seq1" begin="0s">
 					<img xml:id="imgA0010" src="../../../images/0010.jpg" dur="1s" fit="meet" />
 					<img xml:id="imgA0009" src="../../../images/0009.jpg" dur="1s" fit="meet" />
 					<img xml:id="imgA0008" src="../../../images/0008.jpg" dur="1s" fit="meet" />

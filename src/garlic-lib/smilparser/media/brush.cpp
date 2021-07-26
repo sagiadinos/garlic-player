@@ -17,9 +17,8 @@
 *************************************************************************************/
 #include "brush.h"
 
-TBrush::TBrush(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+TBrush::TBrush(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
-    parent_container = pc;
     setObjectName("TBrush");
     is_media = true;
 }
@@ -29,7 +28,7 @@ QString TBrush::getColor()
     return color;
 }
 
-void TBrush::prepareDurationTimerBeforePlay()
+void TBrush::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery())
     {
@@ -37,7 +36,7 @@ void TBrush::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (status == _playing && !isRestartable())
+    if (status == _active && !isRestartable())
         return;
 
     if (startDurTimer() || hasEndTimer())

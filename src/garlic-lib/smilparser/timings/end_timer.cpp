@@ -2,7 +2,7 @@
 
 Timings::EndTimer::EndTimer(QObject *parent) : Timings::EnhancedTimer(parent)
 {
-
+    attribute = "end";
 }
 
 

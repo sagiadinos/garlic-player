@@ -24,10 +24,10 @@ class TBrush : public BaseMedia
 {
         Q_OBJECT
     public:
-        TBrush(TBase *pc, Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+        TBrush(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent);
         QString getColor();
     public slots:
-        void     prepareDurationTimerBeforePlay();
+        void     prepareDurationTimers();
     protected:
         QString  color = "inherit";
         void     setAttributes();

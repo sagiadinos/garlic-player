@@ -19,13 +19,13 @@
 #define ENHANCEDTIMER_H
 
 #include <QObject>
-
+#include <QList>
 #include "timings/simple_timer.h"
 #include "trigger/wallclock.h"
 #include "trigger/syncbase.h"
 #include "trigger/event.h"
 #include "trigger/accesskey.h"
-#include <QList>
+#include "tools/logger.h"
 namespace Timings
 {
     class EnhancedTimer : public QObject
@@ -48,14 +48,14 @@ namespace Timings
 
             explicit EnhancedTimer(QObject *parent = nullptr);
             ~EnhancedTimer();
-            bool        parse(QString svalue);
+            bool        parse(QString svalue, QString parent_tag);
             void        deleteTimer();
-            void        start();
+            void        activate();
             void        startFromExternalTrigger(QString source_id);
             void        pause();
             void        stop();
-            bool        resume();
-            bool        isActive();
+            void        resume();
+            bool        isActiveTimerTrigger();
             bool        hasExternalTrigger();
             QHash<QString, QString> fetchTriggerList();
         protected:
@@ -72,6 +72,8 @@ namespace Timings
                 int         type         = TYPE_NOT_SET;
                 int         remaining    = 0;
             };
+            QString     attribute = "";
+            QString     parent_tag = "";
             qint64      pause_start;
             bool        fire_immediately = false;
             bool        has_external_trigger = false;
@@ -80,8 +82,8 @@ namespace Timings
             qint64      negative_trigger = 0;
             qint64      positive_trigger = 0;
             QString     determineSymbol(QString value);
-            void        handleStartOffsetTrigger(TriggerStruct *ts);
-            void        handleStartWallClockTrigger(TriggerStruct *ts);
+            void        activateOffset(TriggerStruct *ts);
+            void        activateWallClock(TriggerStruct *ts);
             void        calculateNegativeTrigger(qint64 negative_time);
             void        calculatePositiveTrigger(qint64 positive_time);
             bool        is_indefinite = false;
@@ -90,6 +92,10 @@ namespace Timings
 
         protected slots:
           void   emitTimeout();
+
+        private:
+          void        handleOffsetResume(TriggerStruct *ts);
+          void        determineNextTrigger();
 
         signals:
             void timeout();

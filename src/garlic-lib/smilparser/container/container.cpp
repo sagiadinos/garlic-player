@@ -22,71 +22,82 @@ TContainer::TContainer(QObject *parent) : BaseTimings(parent)
 {
 }
 
-BaseTimings *TContainer::findDomChild(QDomElement dom_element)
+BaseTimings *TContainer::findChildByDom(QDomElement dom_element)
 {
     BaseTimings                             *MyBaseTimings     = Q_NULLPTR;
-    QHash<QString, BaseTimings *>::iterator  elements_iterator = elements_list.find(TBase::parseID(dom_element));
-    if (elements_iterator != elements_list.end())
+    QHash<QString, BaseTimings *>::iterator  elements_iterator = childs_list.find(TBase::parseID(dom_element));
+    if (elements_iterator != childs_list.end())
     {
         MyBaseTimings = *elements_iterator;
     }
     return MyBaseTimings;
 }
 
-void TContainer::insertDomChild(BaseTimings *MyBaseTimings)
+void TContainer::appendChild(BaseTimings *MyBaseTimings)
 {
-    elements_list.insert(MyBaseTimings->getID(), MyBaseTimings);
-}
-
-void TContainer::setCurrentActivatedElement(BaseTimings *element)
-{
-    current_activated_element = element;
-}
-
-BaseTimings *TContainer::getCurrentActivatedElement()
-{
-    return current_activated_element;
+    childs_list.insert(MyBaseTimings->getID(), MyBaseTimings);
 }
 
 void TContainer::interruptByRestart()
 {
-    stopTimersOfAllActivatedChilds();
     emitStopToAllActivatedChilds();
-    removeAllActivatedChilds();
+    // maybe useless when emitted stop
+      //  stopTimersOfAllActivatedChilds(); // must be after emit stop
+    removeAllActiveChilds();
 }
 
-
-void TContainer::removeActivatedChild(BaseTimings *element)
+void TContainer::removeActiveChild(BaseTimings *element)
 {
     qDebug() << "remove: " + element->getID() + " parent: " + element->getParentContainer()->getID();
     if (activated_childs.indexOf(element) >= 0)
         activated_childs.removeOne(element);
 }
 
-void TContainer::removeAllActivatedChilds()
+void TContainer::removeAllActiveChilds()
 {
     activated_childs.clear();
 }
 
-void TContainer::startTimersOfAllActivatedChilds()
+void TContainer::startTimersOfFirstActivatedChild()
 {
+    status = _active;
+    if (activated_childs.size() == 0)
+        return;
+
+    BaseTimings *bt = activated_childs.first();
+    bt->activateTriggerTimers();
+}
+
+void TContainer::pauseTimersOfFirstActivatedChild()
+{
+    if (activated_childs.size() == 0)
+        return;
+
+    BaseTimings *bt = activated_childs.first();
+    bt->pauseAllTimers();
+}
+
+void TContainer::resumeTimersOfFirstActivatedChild()
+{
+    status = _active;
+    if (activated_childs.size() == 0)
+        return;
+
+    BaseTimings *bt = activated_childs.first();
+    bt->resumeAllTimers();
+}
+
+void TContainer::startTimersOfAllActiveChilds()
+{
+    status      = _active;
     if (activated_childs.size() == 0)
         return;
 
     for ( BaseTimings *bt : qAsConst(activated_childs))
     {
-        bt->startTimers();
+        if (bt->getStatus() == _stopped)
+            bt->activateTriggerTimers();
     }
-}
-
-void TContainer::startTimersOfFirstActivatedChild()
-{
-    if (activated_childs.size() == 0)
-        return;
-
-    QList<BaseTimings *>::iterator i = activated_childs.begin();
-    BaseTimings *bt = *i;
-    bt->startTimers();
 }
 
 void TContainer::stopTimersOfAllActivatedChilds()
@@ -96,10 +107,54 @@ void TContainer::stopTimersOfAllActivatedChilds()
 
     for (BaseTimings *bt : qAsConst(activated_childs))
     {
-        bt->stopTimers();
+        bt->stopAllTimers();
     }
 }
 
+void TContainer::pauseTimersOfAllActivatedChilds()
+{
+    if (activated_childs.size() == 0)
+        return;
+
+    for (BaseTimings *bt : qAsConst(activated_childs))
+    {
+        bt->pauseAllTimers();
+    }
+}
+
+void TContainer::resumeTimersOfAllActivatedChilds()
+{
+    if (activated_childs.size() == 0)
+        return;
+
+    for (BaseTimings *bt : qAsConst(activated_childs))
+    {
+        bt->resumeAllTimers();
+    }
+}
+
+void TContainer::deferTimersOfActivatedChilds()
+{
+    if (activated_childs.size() == 0)
+        return;
+
+// ToDo: Think about a more elegant solution to this and the first/all shit.
+// Mybe excl and par should inherited from a middle Object
+
+    if (objectName() == "TSeq")
+    {
+        BaseTimings *bt = activated_childs.first();
+        bt->deferAllTimers();
+    }
+    else
+    {
+        for ( BaseTimings *bt : qAsConst(activated_childs))
+        {
+            if (bt->getStatus() == _stopped)
+                bt->deferAllTimers();
+        }
+    }
+}
 
 void TContainer::emitStopToAllActivatedChilds()
 {
@@ -108,9 +163,9 @@ void TContainer::emitStopToAllActivatedChilds()
 
     for (BaseTimings *bt : qAsConst(activated_childs))
     {
-        if (bt->getStatus() == _playing || bt->getStatus() == _waiting)
+        if (bt->getStatus() == _active || bt->getStatus() == _pending)
         {
-            bt->emitfinishedActiveDuration();
+            bt->emitfinishedElement();
         }
     }
 }
@@ -122,7 +177,7 @@ void TContainer::emitPauseToAllActivatedChilds()
 
     for (BaseTimings *bt : qAsConst(activated_childs))
     {
-        if (bt->getStatus() == _playing || bt->getStatus() == _waiting)
+        if (bt->getStatus() == _active || bt->getStatus() == _pending)
         {
             bt->emitPause();
         }
@@ -148,14 +203,24 @@ bool TContainer::hasActivatedChild()
     return (activated_childs.size() > 0);
 }
 
-void TContainer::emitfinishedActiveDuration() // slot called from EndTimer
+void TContainer::emitfinishedElement() // slot called from EndTimer
 {
-    emitStopElementSignal(this);
+    emitStopElementSignal(this, false);
+}
+
+void TContainer::handleTriggerStops()
+{
+    // if a repeated timer trigger like begin-end wallclock or a begin-end list perform a check
+    selectWhichTimerShouldStop();
+    emitStopToAllActivatedChilds();
+
+    // commented maybe useless when emitted stop
+    //  stopTimersOfAllActivatedChilds(); // must be after emit stop
 }
 
 bool TContainer::proceedStart()
 {
-    if (hasActivatedChild())
+    if (has_started)
     {
         // check if this is a restart attempt and check restart attribute
         if (isRestartable())
@@ -167,7 +232,8 @@ bool TContainer::proceedStart()
             return false;
         }
     }
-    collectActivatedChilds();
+    collectActivatableChilds();
+    has_started = true;
 
     return true;
 }
@@ -182,9 +248,9 @@ void TContainer::emitResume()
     emitResumeElementSignal(this);
 }
 
-void TContainer::activateFoundElement()
+void TContainer::insertAsActiveChildFromDom(QDomElement e)
 {
-    insertActivatedChild(findDomChild(active_element));
+    insertActivatedChild(findChildByDom(e));
 }
 
 void TContainer::insertActivatedChild(BaseTimings *MyBaseTimings)
@@ -192,8 +258,7 @@ void TContainer::insertActivatedChild(BaseTimings *MyBaseTimings)
     if (MyBaseTimings == Q_NULLPTR)
         return;
 
-    qDebug() << "Parent: " + getID() << "activated: " +  MyBaseTimings->getID();
-
+    qDebug() << "Parent: " + getID() << "insert activated: " +  MyBaseTimings->getID();
     if (activated_childs.indexOf(MyBaseTimings) < 0) // do not have double items
         activated_childs.append(MyBaseTimings);
 }

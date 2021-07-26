@@ -32,7 +32,7 @@
 				<img xml:id="imgA0009" src="../../../images/0009.jpg" begin="3s" dur="1s" fit="meet" />
 				<img xml:id="imgA0010" src="../../../images/0010.jpg" begin="4s" dur="1s" fit="meet" />
 			</priorityClass>	
-			</excl>
+		</excl>
 		<excl xml:id="excl3_end">
 			<priorityClass peers="defer">
 				<img xml:id="imgB0001" src="../../../images/0001.jpg" begin="0s" end="1s" fit="meet" />
@@ -60,6 +60,7 @@
 					<img xml:id="imgC0004" src="../../../images/0004.jpg" dur="1s" fit="meet" />
 					<img xml:id="imgC0005" src="../../../images/0005.jpg" dur="1s" fit="meet" />
 				</seq>
+
 				<seq xml:id="seq2" begin="0">
 					<img xml:id="imgC0006" src="../../../images/0006.jpg" dur="1s" fit="meet" />
 					<img xml:id="imgC0007" src="../../../images/0007.jpg" dur="1s" fit="meet" />

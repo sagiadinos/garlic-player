@@ -24,7 +24,7 @@ class TBody : public TSeq
 {
         Q_OBJECT
     public:
-        explicit TBody(TBase *pc, QObject *parent = Q_NULLPTR);
+        explicit TBody(QObject *parent);
         ~TBody();
 };
 

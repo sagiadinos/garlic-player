@@ -18,9 +18,8 @@
 
 #include "image.h"
 
-TImage::TImage(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+TImage::TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
-    parent_container = pc;
     setObjectName("TImage");
     is_media = true;
 }
@@ -29,7 +28,7 @@ TImage::~TImage()
 {
 }
 
-void TImage::prepareDurationTimerBeforePlay()
+void TImage::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
@@ -37,7 +36,7 @@ void TImage::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (status == _playing && !isRestartable())
+    if (status == _active && !isRestartable())
         return;
 
     if (startDurTimer() || hasEndTimer())

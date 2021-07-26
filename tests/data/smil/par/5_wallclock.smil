@@ -14,8 +14,8 @@
 	
 	<!--
 		
-	sequence up left is 1,2,3,4,6,7,8,9 10 repeated indefinite
-	sequence
+	sequence up left is 1,2,3,4,6,7,8,9 10,11,12,13,14,15 repeated indefinite starts at second 00, 15, 30, 45 of a Minute
+	count almost synchron to:
 		up right begin,1,2,3,end 			at second 00, 15, 30, 45
 		down left right begin,1,2,3,end		at second 05, 20, 35, 50
 		down down right begin,1,2,3,end    	at second 10, 25, 40, 55
@@ -25,9 +25,11 @@
 			when clock is before  0s, 15s, 30s and 45s seq2 starts first (upper right zone)
 			when clock is before  5s, 20s, 35s and 50s seq3 starts first (lower left zone)
 			when clock is before 10s, 25s, 40s and 55s seq4 starts first (lower right zone)
+
+	Remark: WAIT! Start of sequences depends on time.
 	-->
 		<par xml:id="par1" >
-			<seq xml:id="seq1" repeatCount="indefinite">
+			<seq xml:id="seq1" begin="wallclock(R/2021-04-01T00:00:00/PT15S)" repeatCount="indefinite">
 				<img region="screen1" xml:id="Aimg0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
 				<img region="screen1" xml:id="Aimg0002" src="../../images/0002.jpg" dur="1s" fit="meet" />
 				<img region="screen1" xml:id="Aimg0003" src="../../images/0003.jpg" dur="1s" fit="meet" />
@@ -38,6 +40,11 @@
 				<img region="screen1" xml:id="Aimg0008" src="../../images/0008.jpg" dur="1s" fit="meet" />
 				<img region="screen1" xml:id="Aimg0009" src="../../images/0009.jpg" dur="1s" fit="meet" />
 				<img region="screen1" xml:id="Aimg0010" src="../../images/0010.jpg" dur="1s" fit="meet" />
+				<img region="screen1" xml:id="Aimg0011" src="../../images/0011.jpg" dur="1s" fit="meet" />
+				<img region="screen1" xml:id="Aimg0012" src="../../images/0012.jpg" dur="1s" fit="meet" />
+				<img region="screen1" xml:id="Aimg0013" src="../../images/0013.jpg" dur="1s" fit="meet" />
+				<img region="screen1" xml:id="Aimg0014" src="../../images/0014.jpg" dur="1s" fit="meet" />
+				<img region="screen1" xml:id="Aimg0015" src="../../images/0015.jpg" dur="1s" fit="meet" />
 			</seq>
 			<par xml:id="par2" repeatCount="indefinite">
 				<seq xml:id="seq2" begin="wallclock(R/2021-04-01T00:00:00/PT15S)">

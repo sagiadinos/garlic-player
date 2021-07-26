@@ -17,9 +17,6 @@
 *************************************************************************************/
 
 #include "base_timings.h"
-// remarks ... delete after refactoring
-// set end here cause begin and end depending on start of the par/excl parent. With seq it depends on last element
-// end attribute has priority over dur (simple duration
 
 BaseTimings::BaseTimings(QObject * parent) : TBase(parent)
 {
@@ -27,11 +24,9 @@ BaseTimings::BaseTimings(QObject * parent) : TBase(parent)
 
 BaseTimings::~BaseTimings()
 {
-    if (BeginTimer != Q_NULLPTR)
-    {
-        BeginTimer->stop();
-        delete BeginTimer;
-    }
+    BeginTimer->stop();
+    delete BeginTimer;
+
     if (DurTimer != Q_NULLPTR)
     {
        DurTimer->stop();
@@ -49,33 +44,39 @@ BaseTimings::~BaseTimings()
     }
 }
 
-void BaseTimings::startTimers()
+/**
+ * @brief BaseTimings::activate
+ *
+ * begin and end timer/trigger must be activated first.
+ *
+ * The begin trigger decides when to send signal for playing
+ *
+ */
+void BaseTimings::activateTriggerTimers()
 {
-    qDebug() << "prepare Play: " + getID() + " parent: " + getParentContainer()->getID();
+    qDebug() << "activateAllTimers: " + getID() + " parent: " + getParentContainer()->getID();
 
     // must before start otherwise when begin = 0s
     // elements starts play method immediately get the played status and will be overwriten here
-    status = _waiting;
-    BeginTimer->start();
+    status       = _pending;
+    has_started  = false;
+    BeginTimer->activate();
 
     if (EndTimer != Q_NULLPTR)
     {
-        EndTimer->start();
+        EndTimer->activate();
     }
 
     if (BeginTimer->mustStartImmediately())
     {
-        prepareDurationTimerBeforePlay();
+        prepareDurationTimers();
     }
-
-
 }
 
-void BaseTimings::pauseTimers()
+void BaseTimings::pauseAllTimers()
 {
-    qDebug() << "prepare Plause: " + getID() + " parent: " + getParentContainer()->getID();
-    if (BeginTimer != Q_NULLPTR)
-        BeginTimer->pause();
+    qDebug() << "pauseAllTimers: " + getID() + " parent: " + getParentContainer()->getID();
+    BeginTimer->pause();
 
     if (DurTimer != Q_NULLPTR)
         DurTimer->pause();
@@ -84,28 +85,114 @@ void BaseTimings::pauseTimers()
         EndTimer->pause();
 }
 
-void BaseTimings::stopTimers()
+void BaseTimings::deferAllTimers()
 {
-    qDebug() << "prepare Stop: " + getID() + " parent: " + getParentContainer()->getID();
-    if (BeginTimer != Q_NULLPTR)
-        BeginTimer->stop();
+    // for excl defer
+    status       = _pending;
+    has_started  = false;
+    is_deferred  = true;
+    BeginTimer->activate();
+    BeginTimer->pause();
+    if (DurTimer != Q_NULLPTR)
+    {
+        DurTimer->start();
+        DurTimer->pause();
+    }
+
+    if (EndTimer != Q_NULLPTR)
+    {
+        EndTimer->activate();
+        EndTimer->pause();
+    }
+}
+
+void BaseTimings::resumeAllTimers()
+{
+    qDebug() << "resumeAllTimers: " + getID() + " parent: " + getParentContainer()->getID();
+
+    BeginTimer->resume();
+
+    if (DurTimer != Q_NULLPTR)
+        DurTimer->resume();
+
+    if (EndTimer != Q_NULLPTR)
+        EndTimer->resume();
+
+    if (is_deferred == true)
+    {
+        // if it was defered a Begin trigger and prepareDurationTimers
+        // where comitted in teh past
+        is_deferred = false;
+        prepareDurationTimers();
+    }
+
+}
+
+void BaseTimings::selectWhichTimerShouldStop()
+{
+    if (isBeginTimerActive())
+    {
+        status = _pending;
+        stopSimpleTimers();
+    }
+    else
+    {
+        stopAllTimers();
+    }
+}
+
+void BaseTimings::stopAllTimers()
+{
+    qDebug() << "stopAllTimers: " + getID() + " parent: " + getParentContainer()->getID();
+    BeginTimer->stop();
 
     if (EndTimer != Q_NULLPTR)
         EndTimer->stop();
 
+    stopSimpleTimers();
+    status = _stopped;
+
+}
+
+/**
+ * @brief BaseTimings::stopSimpleTimers is used when you want to stop element, but not the triggers
+ *
+ * The happens when there is an begin-value-list or a wallclock with repeat periods
+ * for example a stop from an higher priorityClass
+ *
+ * In this pending situation stopping begin/end triggers will prevent element from restart
+ *
+ * That is also the reason why Begin/End-Trogger fired to the listeners here
+ */
+void BaseTimings::stopSimpleTimers()
+{
+    qDebug() << "stopSimpleTimer: " + getID() + " parent: " + getParentContainer()->getID();
     if (DurTimer != Q_NULLPTR)
         DurTimer->stop();
+
+    // fire begin trigger to all elements which are listening for the ending of this element
+    QStringList sl = {};
+    if (BeginTargets != Q_NULLPTR)
+    {
+        sl = BeginTargets->findListenerIDsByTriggerList({"end", "endEvent"});
+        sendTriggerSignalToListeners(sl, "begin");
+    }
+    // fire end trigger to all elements which are listening for the ending of this element
+    if (EndTargets != Q_NULLPTR)  // fire begin trigger to all elements which are listening
+    {
+        sl = EndTargets->findListenerIDsByTriggerList({"end", "endEvent"});
+        sendTriggerSignalToListeners(sl, "end");
+    }
 }
 
 void BaseTimings::startTrigger(QString source_id)
 {
     qDebug() << "prepare trigger Play from : " + source_id + " and " + getID() + " parent: " + getParentContainer()->getID();
-    status = _waiting;
+    status = _pending;
     BeginTimer->startFromExternalTrigger(source_id);
     if (EndTimer != Q_NULLPTR)
     {
-     //   EndTimer->setBeginPositiveTrigger(BeginTimer->getElapsedButActiveTimeTrigger());
-        EndTimer->start();
+        EndTimer->activate();
     }
 }
 
@@ -115,25 +202,6 @@ void BaseTimings::stopTrigger(QString source_id)
        EndTimer->startFromExternalTrigger(source_id);
     else
        finishedActiveDuration();
-}
-
-void BaseTimings::resumeTimers()
-{
-    qDebug() << "prepare Resume: " + getID() + " parent: " + getParentContainer()->getID();
-    if (EndTimer != Q_NULLPTR && !EndTimer->resume())
-    {
-        finishedActiveDuration();
-        return; // not go further when ended
-    }
-
-    if (BeginTimer != Q_NULLPTR && BeginTimer->resume())
-    {
-        status          = _waiting;
-        return; // not go further when a begin trigger is set
-    }
-
-    if (DurTimer != Q_NULLPTR)
-        DurTimer->resume();
 }
 
 bool BaseTimings::hasActiveTimers()
@@ -189,7 +257,7 @@ void BaseTimings::finishedNotFound()
     // when a lonely element (e.g video without dur) in a repeatCount=indefinite playlist not found,
     // a finishedActiveDuration will cause segmentation fault (heap crash) after some some hundreds runs
     // so we need to wait some milliseconds when timer is set.
-    if (!BeginTimer->isActive() && isEndTimerActive() && isDurTimerActive())
+    if (!BeginTimer->isActiveTimerTrigger() && isEndTimerActive() && isDurTimerActive())
     {
         skipElement();
     }
@@ -216,19 +284,13 @@ void BaseTimings::emitActivated()
     QStringList sl = {};
     if (BeginTargets != Q_NULLPTR)
     {
-        sl = BeginTargets->findTargetIDsByTrigger("activateEvent");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("begin", target_id, getID());
-        }
+        sl = BeginTargets->findListenerIDsByTriggerList({"activateEvent", "click"});
+        sendTriggerSignalToListeners(sl, "begin");
     }
     if (EndTargets != Q_NULLPTR)
     {
-        sl = EndTargets->findTargetIDsByTrigger("activateEvent");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("end", target_id, getID());
-        }
+        sl = EndTargets->findListenerIDsByTriggerList({"activateEvent", "click"});
+        sendTriggerSignalToListeners(sl, "end");
     }
 }
 
@@ -243,7 +305,7 @@ void BaseTimings::parseTimingAttributes()
     if (root_element.hasAttribute("end"))
     {
         EndTimer = new Timings::EndTimer(this);
-        if (EndTimer->parse(root_element.attribute("end")))
+        if (EndTimer->parse(root_element.attribute("end"), parent()->objectName()))
         {
             connect(EndTimer, SIGNAL(timeout()), this, SLOT(finishedActiveDuration()));
         }
@@ -253,7 +315,6 @@ void BaseTimings::parseTimingAttributes()
             EndTimer = Q_NULLPTR;
         }
         BeginTimer->setEndTimer(EndTimer);
-
     }
 
     if (root_element.hasAttribute("dur"))
@@ -284,29 +345,13 @@ bool BaseTimings::startDurTimer()
     QStringList sl = {};
     if (BeginTargets != Q_NULLPTR)
     {
-        sl = BeginTargets->findTargetIDsByTrigger("begin");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("begin", target_id, getID());
-        }
-        sl = BeginTargets->findTargetIDsByTrigger("beginEvent");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("begin", target_id, getID());
-        }
+        sl = BeginTargets->findListenerIDsByTriggerList({"begin", "beginEvent"});
+        sendTriggerSignalToListeners(sl, "begin");
     }
     if (EndTargets != Q_NULLPTR)
     {
-        sl = EndTargets->findTargetIDsByTrigger("begin");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("end", target_id, getID());
-        }
-        sl = EndTargets->findTargetIDsByTrigger("beginEvent");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("end", target_id, getID());
-        }
+        sl = EndTargets->findListenerIDsByTriggerList({"begin", "beginEvent"});
+        sendTriggerSignalToListeners(sl, "end");
     }
 
     if (DurTimer == Q_NULLPTR)
@@ -319,6 +364,14 @@ bool BaseTimings::startDurTimer()
     // when a simple duration (dur-attribute) is last long enough
     DurTimer->recalculateTimeClock(BeginTimer->getElapsedButActiveTimeTrigger());
     return DurTimer->start();
+}
+
+void BaseTimings::sendTriggerSignalToListeners(QStringList listener, QString trigger_signal)
+{
+    for (const auto& target_id : qAsConst(listener))
+    {
+        emit triggerSignal(trigger_signal, target_id, getID());
+    }
 }
 
 /**
@@ -342,10 +395,7 @@ bool BaseTimings::handleRepeatCountStatus()
 
 bool BaseTimings::isBeginTimerActive()
 {
-    if (BeginTimer == Q_NULLPTR)
-        return false;
-    else
-        return BeginTimer->isActive();
+    return BeginTimer->isActiveTimerTrigger();
 }
 
 bool BaseTimings::isEndTimerActive()
@@ -353,7 +403,7 @@ bool BaseTimings::isEndTimerActive()
     if (EndTimer == Q_NULLPTR)
         return false;
     else
-        return EndTimer->isActive();
+        return EndTimer->isActiveTimerTrigger();
 }
 
 bool BaseTimings::hasDurTimer()
@@ -390,45 +440,15 @@ bool BaseTimings::isRestartable()
             else
                 return false;
         case NEVER:
-             stopTimers(); // important to prevent any kind of restart in this activity cycle
+             // important to prevent any kind of restart in this lifecycle
+            // end this element without check for pending
+             status = _active;
+             emitStopElementSignal(this, false);
              return false;
         case ALWAYS:
         default:
             return true;
     }
-}
-
-void BaseTimings::finishedActiveDuration()
-{
-    QStringList sl = {};
-    if (BeginTargets != Q_NULLPTR)
-    {
-        sl = BeginTargets->findTargetIDsByTrigger("end");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("begin", target_id, getID());
-        }
-        sl = BeginTargets->findTargetIDsByTrigger("endEvent");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("begin", target_id, getID());
-        }
-    }
-    if (EndTargets != Q_NULLPTR)
-    {
-        sl = EndTargets->findTargetIDsByTrigger("end");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("end", target_id, getID());
-        }
-        sl = EndTargets->findTargetIDsByTrigger("endEvent");
-        for (const auto& target_id : qAsConst(sl))
-        {
-            emit triggerSignal("end", target_id, getID());
-        }
-    }
-    qDebug() << getID() <<  " end active duration";
-    emitfinishedActiveDuration();
 }
 
 /**
@@ -442,28 +462,46 @@ void BaseTimings::finishedActiveDuration()
  */
 void BaseTimings::finishIntrinsicDuration()
 {
-    if (isDurTimerActive()) // video/audio can can have a dur-value > media duration
+    if (isDurTimerActive())
         return;
 
+    qDebug() << getID() <<  " end intrinsic duration";
     finishedSimpleDuration();
 }
 
 void BaseTimings::finishedSimpleDuration()
 {
-    qDebug() << getID() <<  " end simple duration";
-    if (handleRepeatCountStatus())
+    if (handleRepeatCountStatus()) // repeatCount and repeatDur extends simple duration
     {
-        start();
+        // ToDo: activate probably repeat event trigger here
+        qDebug() << getID() <<  "repeat by repeatCount";
+        repeat();
         return;
     }
 
-    if (BeginTimer->isActive() || isEndTimerActive())
+    qDebug() << getID() <<  " end simple duration";
+
+    if (BeginTimer->isActiveTimerTrigger() || isEndTimerActive())
     {
         status = _pending;
+        emitfinishedElement();
         return;
     }
 
     finishedActiveDuration();
+}
+
+void BaseTimings::finishedActiveDuration()
+{
+    // when finishActiveDuration called by an end trigger perform a check
+    // to determine if there are there are further time based triggers active
+    // if yes, then stop send trigger to listener and go to next element
+    // but set status to pending, so that a element stop did not stop end begin.
+    if (BeginTimer->isActiveTimerTrigger())
+        status = _pending;
+
+    qDebug() << getID() <<  " end active duration";
+    emitfinishedElement();
 }
 
 // ========================= private methods ======================================================
@@ -482,23 +520,24 @@ void BaseTimings::handleBeginTimer()
     BeginTimer = new Timings::BeginTimer(this);
     QString begin_value = "";
 
-    if (getParentContainer() != Q_NULLPTR && getParentContainer()->objectName() == "TExcl")
+    if (parent()->objectName() == "TExcl")
         begin_value = getAttributeFromRootElement("begin", "indefinite");
     else
         begin_value = getAttributeFromRootElement("begin", "0s");
 
     // in case begin_value is not parsable force default values
-    if (!BeginTimer->parse(begin_value))
+    // we need poarent cause seq cannot have wallclocks
+    if (!BeginTimer->parse(begin_value, parent()->objectName()))
     {
         delete BeginTimer;
         BeginTimer = new Timings::BeginTimer(this);
-        if (getParentContainer() != Q_NULLPTR && getParentContainer()->objectName() == "TExcl")
-            BeginTimer->parse("indefinite");
+        if (parent()->objectName() == "TExcl")
+            BeginTimer->parse("indefinite", "");
         else
-            BeginTimer->parse("0s");
+            BeginTimer->parse("0s", "");
     }
 
-    connect(BeginTimer, SIGNAL(timeout()), this, SLOT(prepareDurationTimerBeforePlay()));
+    connect(BeginTimer, SIGNAL(timeout()), this, SLOT(prepareDurationTimers()));
 }
 
 void BaseTimings::setRestart(QString attr_value)

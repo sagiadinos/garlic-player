@@ -24,7 +24,8 @@ ElementsContainer::ElementsContainer(QObject *parent) : QObject(parent)
 
 ElementsContainer::~ElementsContainer()
 {
-    qDeleteAll(elements_list);
+    // qDeleteAll crashes always lets trust Qt garbage collection
+
     elements_list.clear();
 }
 
@@ -53,20 +54,17 @@ void ElementsContainer::insertSmilElement(BaseTimings *MyBaseTimings)
 void ElementsContainer::distributeTriggers()
 {
     QHash<QString, BaseTimings *>::Iterator i = elements_list.begin();
-    BaseTimings *bt_target = Q_NULLPTR;
-    // traverse elements_container to find possible trigger set in begin or end values
-    // then find the trigger source ids and set them which element they must informed when a trigger point fired
-    //for example
-    // target begin = source.end or source.begin
-    // target end   = source.end or source.begin
+    BaseTimings *bt_listener = Q_NULLPTR;
+
+    // traverse elements_container to find possible listeners which have external trigger
     while (i != elements_list.end())
     {
-        bt_target = i.value();
-        // fetch all target id for their begin triggers
-        distributeBeginTrigger(bt_target);
+        bt_listener = i.value();
+        // check if this is a listener and his begin depends on an external signal
+        distributeBeginTrigger(bt_listener);
 
-        // fetch all target id for their end triggers
-        distributeEndTrigger(bt_target);
+        // check if this is a listener and his end depends on an external signal
+        distributeEndTrigger(bt_listener);
         i++;
     }
 }
@@ -92,60 +90,62 @@ BaseTimings *ElementsContainer::findAccessKeysForEnd(QChar key)
     return Q_NULLPTR;
 }
 
-void ElementsContainer::distributeBeginTrigger(BaseTimings *bt_target)
+void ElementsContainer::distributeBeginTrigger(BaseTimings *bt_listener)
 {
-    QHash<QString, QString>  target_trigger_list = bt_target->fetchExternalBegins();
-    QString                                           target_id = bt_target->getID();
-    if (!target_trigger_list.isEmpty())
+    QHash<QString, QString>  listener_trigger_list = bt_listener->fetchExternalBegins();
+    QString                          listener_id   = bt_listener->getID();
+    if (listener_trigger_list.isEmpty())
+        return;
+
+    // the element listen to one ore more external begin trigger
+    // find the source and informs that they had to send triggers to the listener
+    BaseTimings *bt_source = Q_NULLPTR;
+    QHash<QString, QString> ::Iterator j = listener_trigger_list.begin();
+    while (j != listener_trigger_list.end())
     {
-        BaseTimings *bt_source = Q_NULLPTR;
-        QHash<QString, QString> ::Iterator j = target_trigger_list.begin();
-        while (j != target_trigger_list.end())
+        if (j.key() == "accesskey")
         {
-            if (j.key() == "accesskey")
-            {
-                begin_accesskey_list.insert(j.value().at(0), bt_target);
-            }
-            else
-            {
-                QHash<QString, BaseTimings *> ::Iterator test;
-                test = elements_list.find(j.key());
-                if (test != elements_list.end())
-                {
-                    bt_source = test.value();
-                    bt_source->addToExternalBegins(j.value(),target_id);
-                }
-            }
-            j++;
+            begin_accesskey_list.insert(j.value().at(0), bt_listener);
         }
+        else
+        {
+            QHash<QString, BaseTimings *> ::Iterator test;
+            test = elements_list.find(j.key());
+            if (test != elements_list.end())
+            {
+                bt_source = test.value();
+                bt_source->addToExternalBegins(j.value(),listener_id);
+            }
+        }
+        j++;
     }
 }
 
-void ElementsContainer::distributeEndTrigger(BaseTimings *bt_target)
+void ElementsContainer::distributeEndTrigger(BaseTimings *bt_listener)
 {
-    QHash<QString, QString> target_trigger_list = bt_target->fetchExternalEnds();
-    QString                                          target_id = bt_target->getID();
-    if (!target_trigger_list.isEmpty())
+    QHash<QString, QString> listener_trigger_list = bt_listener->fetchExternalEnds();
+    QString                           listener_id = bt_listener->getID();
+    if (listener_trigger_list.isEmpty())
+        return;
+
+    BaseTimings *bt_source = Q_NULLPTR;
+    QHash<QString, QString> ::Iterator j = listener_trigger_list.begin();
+    while (j != listener_trigger_list.end())
     {
-        BaseTimings *bt_source = Q_NULLPTR;
-        QHash<QString, QString> ::Iterator j = target_trigger_list.begin();
-        while (j != target_trigger_list.end())
+        if (j.key() == "accesskey")
         {
-            if (j.key() == "accesskey")
-            {
-                end_accesskey_list.insert(j.value().at(0), bt_target);
-            }
-            else
-            {
-                QHash<QString, BaseTimings *> ::Iterator test;
-                test = elements_list.find(j.key());
-                if (test != elements_list.end())
-                {
-                    bt_source = test.value();
-                    bt_source->addToExternalEnds(j.value(),target_id);
-                }
-            }
-            j++;
+            end_accesskey_list.insert(j.value().at(0), bt_listener);
         }
+        else
+        {
+            QHash<QString, BaseTimings *> ::Iterator test;
+            test = elements_list.find(j.key());
+            if (test != elements_list.end())
+            {
+                bt_source = test.value();
+                bt_source->addToExternalEnds(j.value(),listener_id);
+            }
+        }
+        j++;
     }
 }

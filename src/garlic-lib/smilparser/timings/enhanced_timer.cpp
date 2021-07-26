@@ -17,9 +17,8 @@
 *************************************************************************************/
 #include "enhanced_timer.h"
 
-Timings::EnhancedTimer::EnhancedTimer(QObject *parent)
+Timings::EnhancedTimer::EnhancedTimer(QObject *parent) : QObject(parent)
 {
-    Q_UNUSED(parent);
 }
 
 Timings::EnhancedTimer::~EnhancedTimer()
@@ -45,17 +44,17 @@ bool Timings::EnhancedTimer::initTimer(int type, QString value)
             ret = true;
         break;
         case TYPE_OFFSET:
-            ts->MyClockValue = new ClockValue();
+            ts->MyClockValue = new ClockValue(this);
             ts->MyClockValue->parse((value));
-            ret = true; // we assume offset alays return at least 0
+            ret = true; // we assume offset always return at least 0
         break;
         case TYPE_WALLCLOCK:
-            ts->MyWallClock = new WallClock();
+            ts->MyWallClock = new WallClock(this);
             ts->MyWallClock->parse(value);
             ret = true; // we assume always return at least 2000-01-01 00:00:00
         break;
         case TYPE_ACCESSKEY:
-            ts->MyAccessKey = new AccessKey();
+            ts->MyAccessKey = new AccessKey(this);
             ret = ts->MyAccessKey->parse(value);
             if (!ret)
             {
@@ -66,7 +65,7 @@ bool Timings::EnhancedTimer::initTimer(int type, QString value)
                 has_external_trigger = true;
         break;
         case TYPE_SYNCBASE:
-            ts->MySyncBase = new SyncBase();
+            ts->MySyncBase = new SyncBase(this);
             ret = ts->MySyncBase->parse(value);
 
             if (!ret)
@@ -79,7 +78,7 @@ bool Timings::EnhancedTimer::initTimer(int type, QString value)
                 has_external_trigger = true;
         break;
         case TYPE_EVENT:
-            ts->MyEvent = new Event();
+            ts->MyEvent = new Event(this);
             ret = ts->MyEvent->parse(value);
 
             if (!ret)
@@ -135,7 +134,7 @@ void Timings::EnhancedTimer::deleteTimer()
     MyTriggerList.clear();
 }
 
-bool Timings::EnhancedTimer::parse(QString attr_value)
+bool Timings::EnhancedTimer::parse(QString attr_value, QString parent_tag)
 {
     // do not toLower here, we need origial values e.g. for ISO 8601
     QStringList value_list = attr_value.simplified().split(';');
@@ -153,7 +152,7 @@ bool Timings::EnhancedTimer::parse(QString attr_value)
             initTimer(TYPE_INDEFINITE, "indefinite");
             is_parsable = true;
         }
-        else if (value.mid(0, 9) == "wallclock" )
+        else if (value.mid(0, 9) == "wallclock" && parent_tag != "TSeq")
         {
             initTimer(TYPE_WALLCLOCK, value.mid(10,value.length()-11));
             is_parsable = true;
@@ -192,7 +191,7 @@ bool Timings::EnhancedTimer::parse(QString attr_value)
     return is_parsable;
 }
 
-void Timings::EnhancedTimer::start()
+void Timings::EnhancedTimer::activate()
 {
     if (MyTriggerList.size() == 0)
         return;
@@ -201,10 +200,10 @@ void Timings::EnhancedTimer::start()
         switch (ts->type)
         {
             case TYPE_OFFSET:
-                  handleStartOffsetTrigger(ts);
+                  activateOffset(ts);
             break;
             case TYPE_WALLCLOCK:
-                  handleStartWallClockTrigger(ts);
+                  activateWallClock(ts);
                 break;
             case TYPE_ACCESSKEY:
                 ts->MyAccessKey->setActive(true);
@@ -257,22 +256,10 @@ void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
                     else
                        ts->MyTimer->start(next_trigger);
                 }
-                break;
+            break;
         }
     }
 
-}
-
-void Timings::EnhancedTimer::pause()
-{
-    if (MyTriggerList.size() == 0)
-        return;
-    for (TriggerStruct *ts : qAsConst(MyTriggerList))
-    {        
-        ts->remaining = ts->MyTimer->remainingTime();
-        ts->MyTimer->stop();
-    }
-    pause_start = QDateTime::currentMSecsSinceEpoch();
 }
 
 void Timings::EnhancedTimer::stop()
@@ -302,34 +289,76 @@ void Timings::EnhancedTimer::stop()
     }
 }
 
-bool Timings::EnhancedTimer::resume()
+void Timings::EnhancedTimer::pause()
 {
-    qint64 elapsed     = QDateTime::currentMSecsSinceEpoch() - pause_start;
-    bool   ret         = false;
     if (MyTriggerList.size() == 0)
-        return ret;
+        return;
     for (TriggerStruct *ts : qAsConst(MyTriggerList))
     {
         switch (ts->type)
         {
             case TYPE_OFFSET:
-            case TYPE_WALLCLOCK:
-                if ((ts->remaining - elapsed) > 0)
-                {
-                    ts->MyTimer->start(ts->remaining - elapsed);
-                    ret = true;
-                }
+                ts->remaining = ts->MyTimer->remainingTime();
             break;
-            case TYPE_INDEFINITE:
-                ret = true;
+            case TYPE_WALLCLOCK:
+            break;
+        }
+        if (ts->MyTimer != Q_NULLPTR)
+            ts->MyTimer->stop();
+    }
+    pause_start = QDateTime::currentMSecsSinceEpoch();
+}
+
+void Timings::EnhancedTimer::resume()
+{
+    if (MyTriggerList.size() == 0)
+        return;
+
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
+    {
+        switch (ts->type)
+        {
+            case TYPE_OFFSET:
+                handleOffsetResume(ts);
+            break;
+            case TYPE_WALLCLOCK:
+                activateWallClock(ts); // wallclock depends on concrete times
             break;
         }
     }
-    return ret;
 }
 
-bool Timings::EnhancedTimer::isActive()
+/**
+ * @brief Timings::EnhancedTimer::handleOffsetResume
+ * @param remaining
+ *
+ * pause in enhancedTimer do not stop counting
+ *
+ */
+void Timings::EnhancedTimer::handleOffsetResume(TriggerStruct *ts)
 {
+     // <= 0 means that a begin/end trigger had already fired
+    // proceeding will cause an unneccessary timeout with side effects
+    if (ts->remaining <= 0)
+        return;
+
+    qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - pause_start;
+    qint64 rest    = 0;
+
+    rest = ts->remaining - elapsed;
+
+    if (rest > 0)
+        ts->MyTimer->start(rest);
+    else
+        emitTimeout();
+}
+
+
+bool Timings::EnhancedTimer::isActiveTimerTrigger()
+{
+  // it is useless to check for non time trigger,
+  // because they do not affect the lifetime of an element
+
     if (MyTriggerList.size() == 0)
         return false;
 
@@ -347,19 +376,6 @@ bool Timings::EnhancedTimer::isActive()
             break;
             case TYPE_INDEFINITE:
                 return true;
-
-            case TYPE_ACCESSKEY:
-                if (ts->MyAccessKey->isActive())
-                    return false;
-            break;
-            case TYPE_SYNCBASE:
-                if (ts->MySyncBase->isActive())
-                    return false;
-            break;
-            case TYPE_EVENT:
-                if (ts->MyEvent->isActive())
-                    return false;
-            break;
         }
     }
     return false;
@@ -419,7 +435,7 @@ QString Timings::EnhancedTimer::determineSymbol(QString value)
     return sl2.at(1);
 }
 
-void Timings::EnhancedTimer::handleStartOffsetTrigger(Timings::EnhancedTimer::TriggerStruct *ts)
+void Timings::EnhancedTimer::activateOffset(Timings::EnhancedTimer::TriggerStruct *ts)
 {
     qint64 next_trigger = ts->MyClockValue->getTriggerInMSec();
 
@@ -436,13 +452,13 @@ void Timings::EnhancedTimer::handleStartOffsetTrigger(Timings::EnhancedTimer::Tr
        ts->MyTimer->start(next_trigger);
 }
 
-void Timings::EnhancedTimer::handleStartWallClockTrigger(Timings::EnhancedTimer::TriggerStruct *ts)
+void Timings::EnhancedTimer::activateWallClock(Timings::EnhancedTimer::TriggerStruct *ts)
 {
     // we need to calculate a previous trigger, cause it can be possible that an
     // element triggrered active in the past and last on  du to long or indefinite (active) duration
-    ts->MyWallClock->calculateCurrentTrigger();
-    qint64 next_trigger     = ts->MyWallClock->getNextTimerTrigger();
+    ts->MyWallClock->calculateCurrentTrigger(QDateTime::currentDateTime());
     qint64 previous_trigger = ts->MyWallClock->getPreviousTimerTrigger();
+    qint64 next_trigger     = ts->MyWallClock->getNextTimerTrigger();
 
     if (next_trigger == 0)
     {
@@ -476,5 +492,23 @@ void Timings::EnhancedTimer::calculatePositiveTrigger(qint64 positive_time)
 
 void Timings::EnhancedTimer::emitTimeout()
 {
+    determineNextTrigger();
     emit timeout();
+}
+
+
+void Timings::EnhancedTimer::determineNextTrigger()
+{
+    if (MyTriggerList.size() == 0)
+        return;
+
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
+    {
+        if (ts->type == TYPE_WALLCLOCK && ts->MyTimer != Q_NULLPTR && !ts->MyTimer->isActive())
+        {
+            ts->MyWallClock->calculateNextTrigger(QDateTime::currentDateTime());
+            qint64 next_trigger     = ts->MyWallClock->getNextTimerTrigger();
+            ts->MyTimer->start(next_trigger);
+        }
+    }
 }

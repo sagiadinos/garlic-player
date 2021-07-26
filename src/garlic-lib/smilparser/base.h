@@ -37,7 +37,7 @@ class TBase : public QObject
 {
     Q_OBJECT
 public:
-    explicit TBase(QObject *parent = Q_NULLPTR);
+    explicit TBase(QObject *parent);
     virtual void          preloadParse(QDomElement element) = 0;
 
             QString       getID(){return id;}
@@ -51,7 +51,6 @@ protected:
             TBase        *parent_container;
             SMIL_TAG      parent_tag;
             // core attributes for every Tag
-            QObject      *parent;
             QString       version        = "3.0";
             QString       base_profile   = "Tiny";
             QString       id             = "";
@@ -59,7 +58,7 @@ protected:
             QString       alt            = "";
             QString       longdesc       = "";
             QString       lang           = "";
-            QString       a_class        = ""; // cause class is reserved word. a_class means attribut_class
+            QString       a_class        = ""; // cause class is reserved word, a_class means attribut_class
             QDomElement   root_element;
             void          setBaseAttributes();
             QString       getAttributeFromRootElement(const QString attribute_name, const QString default_value);

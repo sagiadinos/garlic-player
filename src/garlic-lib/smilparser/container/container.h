@@ -34,28 +34,30 @@ class TContainer : public BaseTimings
 {
     Q_OBJECT
     public:
-        explicit TContainer(QObject *parent = Q_NULLPTR);
+        explicit TContainer(QObject *parent);
         virtual void         next(BaseTimings *ended_element) = 0;
 
                 QString      getBaseType() {return "container";}
-                // next two used only in excl => move later when sure
-                void         setCurrentActivatedElement(BaseTimings *element);
-                BaseTimings *getCurrentActivatedElement();
 
-                BaseTimings *findDomChild(QDomElement dom_element);
-                void         insertDomChild(BaseTimings *element);
-        virtual void         interruptByEndSync()   = 0;
+                BaseTimings *findChildByDom(QDomElement dom_element);
+                void         appendChild(BaseTimings *element);
                 void         interruptByRestart();
 
 
-        virtual void         collectActivatedChilds() = 0;
-                void         removeActivatedChild(BaseTimings *element);
-                void         removeAllActivatedChilds();
+        virtual void         collectActivatableChilds() = 0;
+                void         removeActiveChild(BaseTimings *element);
+                void         removeAllActiveChilds();
 
-                void         startTimersOfAllActivatedChilds();
+                // seq only maybe move to seq
+                void         startTimersOfAllActiveChilds();
                 void         startTimersOfFirstActivatedChild();
-                void         stopTimersOfAllActivatedChilds();
+                void         pauseTimersOfFirstActivatedChild();
+                void         resumeTimersOfFirstActivatedChild();
 
+                void         stopTimersOfAllActivatedChilds();
+                void         pauseTimersOfAllActivatedChilds();
+                void         resumeTimersOfAllActivatedChilds();
+                void         deferTimersOfActivatedChilds();
                 void         emitStopToAllActivatedChilds();
                 void         emitPauseToAllActivatedChilds();
                 void         emitResumeToAllActivatedChilds();
@@ -65,21 +67,21 @@ class TContainer : public BaseTimings
                 void         emitPause();
                 void         emitResume();
     public slots:
-                void         emitfinishedActiveDuration();
+                void         emitfinishedElement();
 
     protected:
                 QList<BaseTimings *>          activated_childs;
-                bool                          is_child_active    = false;
-                // used only in excl => move later
-                BaseTimings                  *current_activated_element = Q_NULLPTR;
+                QHash<QString, BaseTimings *> childs_list;
 
-                QList<QDomElement>            childs_list;
-                QList<QDomElement>::iterator  childs_list_iterator;
-                QHash<QString, BaseTimings *> elements_list;
-                QDomElement                   active_element;
+                QList<QDomElement>            dom_childs_list;
+                QList<QDomElement>::iterator  dom_childs_list_iterator;
+
+                bool                          is_child_active    = false;
+
+                void  handleTriggerStops();
                 bool  proceedStart();
         virtual void  traverseChilds() = 0;
-                void  activateFoundElement();
+                void  insertAsActiveChildFromDom(QDomElement e);
                 void  insertActivatedChild(BaseTimings *MyBaseTimings);
     signals:
                 void  preloadElementSignal(TContainer*, QDomElement);

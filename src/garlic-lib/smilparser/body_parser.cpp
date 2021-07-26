@@ -39,7 +39,7 @@ BodyParser::~BodyParser()
  */
 void BodyParser::beginPreloading(TBase *smil, QDomElement body)
 {
-    MyBody.reset(new TBody(smil, Q_NULLPTR));
+    MyBody.reset(new TBody(smil));
     connectSlots(MyBody.data());
     MyBody.data()->preloadParse(body);
     MyElementsContainer->distributeTriggers();
@@ -47,32 +47,25 @@ void BodyParser::beginPreloading(TBase *smil, QDomElement body)
 
 void BodyParser::preloadElement(TContainer *ParentContainer, QDomElement dom_element)
 {
-    BaseTimings *MyBaseTimings = MyElementFactory->createBase(dom_element, ParentContainer, this);
+    BaseTimings *MyBaseTimings = MyElementFactory->createBase(dom_element, ParentContainer);
     connectSlots(MyBaseTimings);
 
     // Important! Slots needs to be connected before parsing!
-    // Todo: integrate the necessary region for the deafult values
-    // for fit, soundlevel, and mediaAlign
+    // Todo: integrate region with default values for fit, soundlevel, and mediaAlign
     MyBaseTimings->preloadParse(dom_element);
 
-    // media must be initialised after parse
+    // media must registered after parse
     if (MyBaseTimings->getBaseType() == "media")
     {
-        initMedia(qobject_cast<BaseMedia *> (MyBaseTimings));
+        registerMedia(qobject_cast<BaseMedia *> (MyBaseTimings));
     }
-    ParentContainer->insertDomChild(MyBaseTimings);
+    ParentContainer->appendChild(MyBaseTimings);
     MyElementsContainer->insertSmilElement(MyBaseTimings);
     return;
 }
 
-/**
- * @brief BodyParser::initMedia media must be init e.g. to start download
- * @param MyMedia
- */
-void BodyParser::initMedia(BaseMedia *MyMedia)
+void BodyParser::registerMedia(BaseMedia *MyMedia)
 {
-    // media must be initialised after parse, because register needs src
-    // and insertSmilMedia needs the region
     QString type   = MyMedia->objectName();
     if (type == "TImage" || type == "TAudio"  || type == "TVideo"  || type == "TWidget")
     {
@@ -82,15 +75,12 @@ void BodyParser::initMedia(BaseMedia *MyMedia)
     {
         MyMedia->registerInMediaManagerAsUncachable();
     }
-    // do nothing with unknown
+    // do nothing with other e.g. unknown
 }
 
-/**
- * start initial playing smil after preoload
- */
-void BodyParser::startPlayingBody()
+void BodyParser::startPresentationAfterPreload()
 {
-    MyBody.data()->startTimers();
+    MyBody.data()->activateTriggerTimers(); // the parse journey begin
 }
 
 /**
@@ -104,7 +94,7 @@ void BodyParser::endPlayingBody()
     while (MyCurrentPlayingMedia->count() > 0) // stop all currently playing media
     {
         MyMedia = MyCurrentPlayingMedia->getFirstPlayingObject();
-        MyMedia->stopTimers();
+        MyMedia->stopAllTimers();
         emitStopShowMedia(MyMedia);
     }
     return;
@@ -112,15 +102,18 @@ void BodyParser::endPlayingBody()
 
 
 /**
- * @brief TSmil::startedElement slot catch the start signal from a element and check if it is allowed to play.
- *        If the element is a media a signal will emitted to an output interface which can show the media e.g. player-widget
- *
- * @param parent
+ * @brief TSmil::startedElement
  * @param element
+ *
+ * startElement fired by the prepareDurationTimers-methods
+ * this means a first begin-trigger was fired already
+ *
+ * a media must be shown
+ * a container collect his children and start their timer
  */
 void BodyParser::startElement(BaseTimings *element)
 {
-    if (!determineContinueBasedOnParent(element))
+    if (!determineContinueBasedOnParent(element)) // neccessary for excl
         return;
 
     element->start();
@@ -131,34 +124,35 @@ void BodyParser::startElement(BaseTimings *element)
 
 /**
  * @brief TSmil::finishedElement slot get called when emit finishedMedia | finishedContainer
- *        => Activice Duration
+ *        => Active Duration
  * @param parent
  * @param element
  */
-void BodyParser::stopElement(BaseTimings *element)
+void BodyParser::stopElement(BaseTimings *element, bool from_prio)
 {
-    element->stop();
+    element->stop();  //
     qDebug() << "Stop: " + element->getID();
 
-    TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
     if (element->getBaseType() == "media")
         emitStopShowMedia(qobject_cast<BaseMedia *> (element));
 
-    if (ParentContainer == Q_NULLPTR) // that means TBody as parent
+    TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
+    if (ParentContainer == Q_NULLPTR)
         return;
 
-    ParentContainer->next(element);
+    // prevent that an priority stopped child starts next child or end of simple/active duration
+    if (!from_prio)
+        ParentContainer->next(element);
 }
 
 void BodyParser::pauseElement(BaseTimings *element)
 {
     qDebug() <<  "Pause " + element->getID();;
-
-    element->pauseTimers();
     element->pause();
+
     if (element->getBaseType() == "media")
         emitStopShowMedia(qobject_cast<BaseMedia *> (element));
-    else
+    else // we do not know if paused container displayed a media child currently
         (qobject_cast<TContainer *> (element))->emitPauseToAllActivatedChilds();
 }
 
@@ -168,18 +162,11 @@ void BodyParser::resumeQueuedElement(BaseTimings *element)
         return;
 
     qDebug() << "Resume: " + element->getID();
-    element->resumeTimers();
     element->resume();
     if (element->getBaseType() == "media")
         emitStartShowMedia(qobject_cast<BaseMedia *> (element));
     else
-    {
-        TContainer *ParentContainer = qobject_cast<TContainer *> (element);
-        if (ParentContainer->objectName() != "TSeq")
-            ParentContainer->emitResumeToAllActivatedChilds();
-        else
-            ParentContainer->startTimersOfFirstActivatedChild();
-    }
+        (qobject_cast<TContainer *> (element))->emitResumeToAllActivatedChilds();
 }
 
 void BodyParser::triggerAccessKey(QChar key)
@@ -205,7 +192,7 @@ void BodyParser::prepareFireTrigger(QString trigger, QString target_id, QString 
 
 void BodyParser::fireTrigger(QString trigger, BaseTimings *element, QString source_id)
 {
-    if (qobject_cast<TContainer *> (element->getParentContainer())->isPlaying() != true) // only active elements!
+    if (qobject_cast<TContainer *> (element->getParentContainer())->isActive() != true) // only active elements!
         return;
 
     if (!determineContinueBasedOnParent(element))
@@ -220,7 +207,7 @@ void BodyParser::fireTrigger(QString trigger, BaseTimings *element, QString sour
 void BodyParser::connectSlots(BaseTimings *element)
 {
     connect(element, SIGNAL(startElementSignal(BaseTimings*)), this, SLOT(startElement(BaseTimings*)));
-    connect(element, SIGNAL(stopElementSignal(BaseTimings*)), this, SLOT(stopElement(BaseTimings*)));
+    connect(element, SIGNAL(stopElementSignal(BaseTimings*,bool)), this, SLOT(stopElement(BaseTimings*,bool)));
     connect(element, SIGNAL(resumeElementSignal(BaseTimings*)), this, SLOT(resumeQueuedElement(BaseTimings*)));
     connect(element, SIGNAL(pauseElementSignal(BaseTimings*)), this, SLOT(pauseElement(BaseTimings*)));
 

@@ -2,7 +2,7 @@
 #define TARGETTRIGGER_H
 
 #include <QObject>
-#include <QMap>
+#include <QMultiMap>
 /**
  * @brief Container to handle and store the TargetTrigger
  * for an BasTiming Object
@@ -13,10 +13,11 @@ class TargetTrigger : public QObject
     public:
         explicit     TargetTrigger(QObject *parent = nullptr);
         explicit     TargetTrigger();
-        void         insert(QString trigger, QString target_id);
-        QStringList findTargetIDsByTrigger(QString trigger);
+        void         insert(QString trigger, QString listener_id);
+        QStringList findListenerIDsByTriggerList(QStringList trigger_list);
+        QStringList findListenersByTrigger(QString trigger);
     private:
-        QMap<QString, QString> trigger_list = {};
+        QMultiMap<QString, QString> trigger_list = {};
     signals:
 
 };

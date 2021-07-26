@@ -245,7 +245,7 @@ void HeadParser::parseRegions(QDomNodeList childs)
         if (element.hasAttribute("backgroundRepeat"))
             region.backgroundRepeat = element.attribute("backgroundRepeat");
         region_list.append(region);
-        std::sort(region_list.begin(), region_list.end()); // sort z-indexes ascending to place Widgets corect in mainwindow
+        std::sort(region_list.begin(), region_list.end()); // sort z-indexes ascending to place Widgets correct in mainwindow
 
     }
     qDebug() << childs.length() << "regions found in SMIL layout-tag and " << region_list.length() << " regions were initialized ";

@@ -27,36 +27,44 @@ class TExcl : public TContainer
 {
         Q_OBJECT
     public:
-        explicit TExcl(TBase *pc, QObject *parent = Q_NULLPTR);
+        explicit TExcl(QObject *parent);
                 ~TExcl();
 
         void    preloadParse(QDomElement element);
         void    next(BaseTimings *ended_element);
         bool    determineContinue(BaseTimings *new_element);
-        void    pause();
+        bool    interruptByEndSync(QString id); // called only when interrupted from endsync
         void    start();
+        void    repeat();
         void    stop(); // called from regulary ended active duration
-        void    interruptByEndSync(); // called only when interrupted from endsync
+        void    pause();
         void    resume();
-        void    collectActivatedChilds();
+        void    collectActivatableChilds();
 
     public slots:
-        void    prepareDurationTimerBeforePlay();
+        void    prepareDurationTimers();
 
     private:
+        QString endsync = "last";
+
         TPriorityClass               *CurrentPriority, *NewPriority;
         QMap<int, TPriorityClass *>   PriorityClassList;
         TPriorityClass               *findPriorityClass(QDomElement dom_element);
+        BaseTimings                  *current_activated_element = Q_NULLPTR;
 
-        QString endsync = "last";
-        void    removeQueuedElements();
-        void    traverseChilds();
-        void    traversePriorityClasses(QList<QDomElement> priority_class_childs);
-        void    parsePriorityClass(QDomElement element);
-        void    priorityStop();
-        void    priorityPause();
-        void    priorityNever(BaseTimings *new_element);
-        void    priorityDefer(BaseTimings *new_element);
+        void         setCurrentActivedElement(BaseTimings *element);
+        BaseTimings *getCurrentActiveElement();
+
+        bool         areQueuesToProceed();
+        void         saveRemoveActivated(BaseTimings *element);
+        void         removeQueuedElements();
+        void         traverseChilds();
+        void         traversePriorityClasses(QList<QDomElement> priority_class_childs);
+        void         parsePriorityClass(QDomElement element);
+        void         priorityStop();
+        void         priorityPause();
+        void         priorityNever(BaseTimings *new_element);
+        void         priorityDefer(BaseTimings *new_element);
 };
 
 #endif // TEXCL_H

@@ -5,9 +5,9 @@
 		<meta name="adapi:renderer" content="6d33fe72-05fa-11dd-b015-000000010004" />
 		<layout>
 			<root-layout xml:id="display:0" width="1920" height="1080" />
-			<region xml:id="47596" width="100%" height="100%" left="0" top="0" fit="fill" z-index="1" backgroundColor="transparent" />
-			<region xml:id="47598" width="100%" height="100%" left="0%" top="0%" fit="fill" z-index="-1" backgroundColor="transparent" />
 			<region xml:id="47597" width="100%" height="100%" left="0" top="0" fit="fill" z-index="0" backgroundColor="transparent" />
+			<region xml:id="47598" width="100%" height="100%" left="0%" top="0%" fit="fill" z-index="-1" backgroundColor="transparent" />
+			<region xml:id="47596" width="100%" height="100%" left="0" top="0" fit="fill" z-index="0" backgroundColor="transparent" />
 		</layout>
 	</head>
 	<body systemComponent="http://www.w3.org/1999/xhtml">

@@ -24,10 +24,10 @@ class TPrefetch : public BaseMedia
 {
     Q_OBJECT
 public:
-    explicit TPrefetch(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+    explicit TPrefetch(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
     ~TPrefetch();
 public slots:
-    void     prepareDurationTimerBeforePlay();
+    void     prepareDurationTimers();
 protected:
     void     setAttributes();
 };

@@ -18,9 +18,8 @@
 
 #include "seq.h"
 
-TSeq::TSeq(TBase *pc, QObject *parent) : TContainer(parent)
+TSeq::TSeq(QObject *parent) : TContainer(parent)
 {
-    parent_container = pc;
     setObjectName("TSeq");
 }
 
@@ -32,102 +31,20 @@ void TSeq::preloadParse(QDomElement element)
 {
     root_element   = element;
     parseTimingAttributes();
-    if (root_element.hasChildNodes())
+    if (!root_element.hasChildNodes())
+        return;
+
+    traverseChilds();
+
+    QDomElement e = root_element.firstChildElement();
+    if (e.tagName() == "metadata")
     {
-        active_element = root_element.firstChildElement();
-        traverseChilds();
-        if (active_element.tagName() == "metadata")
-        {
-            MyShuffle = new TShuffle(childs_list, this);
-            MyShuffle->parse(active_element);
-        }
+        MyShuffle = new TShuffle(dom_childs_list, this);
+        MyShuffle->parse(e);
     }
 }
 
-void TSeq::next(BaseTimings *ended_element)
-{
-    if (status == _stopped)
-        return;
-
-    removeActivatedChild(ended_element);
-
-    if (MyShuffle != Q_NULLPTR && !MyShuffle->decreasePickCounter())
-    {
-        emitfinishedActiveDuration(); // for not sending any end trigger
-        return;
-    }
-
-    if (hasActivatedChild())
-    {
-        startTimersOfFirstActivatedChild();
-        return;
-    }
-
-    // not stopped by parent
-    if (status == _playing)
-        finishIntrinsicDuration(); // check for dur and the for repeat play
-}
-
-void TSeq::start()
-{
-    if (childs_list.size() == 0)
-        return;
-
-
-    // we must determine if this re-start caused by a trigger or somewhere else
-    // or if it starts cause this is a random playlist with pick
-    if (!proceedReStartWithShuffleCheck())
-        return;
-
-
-    status = _playing;
-    startTimersOfFirstActivatedChild();
-}
-
-void TSeq::stop()
-{
-    status = _stopped;
-    stopTimers();               // because there can be a dur or begin timer active
-    stopTimersOfAllActivatedChilds();
-    emitStopToAllActivatedChilds();
-
-    if (MyShuffle != Q_NULLPTR && !MyShuffle->isPausedByPickNumber()) // we need the remaining activeChilds for shuffle play
-        removeAllActivatedChilds();
-}
-
-void TSeq::interruptByEndSync()
-{
-    stop();
-}
-
-void TSeq::pause()
-{
-    status = _paused;
-}
-
-void TSeq::resume()
-{
-    status = _playing;
-}
-
-void TSeq::collectActivatedChilds()
-{
-    QList<QDomElement>            list;
-    QList<QDomElement>::iterator  iterator;
-
-    if (MyShuffle == Q_NULLPTR)
-        list = childs_list;
-    else
-        list = MyShuffle->getShuffeledList();
-
-    for (iterator = list.begin(); iterator < list.end(); iterator++)
-    {
-        active_element = *iterator;
-        activateFoundElement();
-    }
-}
-
-void TSeq::prepareDurationTimerBeforePlay()
+void TSeq::prepareDurationTimers()
 {
     // when a durtimer exists use it!
     if (hasDurTimer() && !startDurTimer() && !hasEndTimer())
@@ -137,7 +54,7 @@ void TSeq::prepareDurationTimerBeforePlay()
     }
 
     // otherwise empty container with dur will not start
-    if (childs_list.size() > 0 || isDurTimerActive() || isEndTimerActive())
+    if (dom_childs_list.size() > 0 || isDurTimerActive() || isEndTimerActive())
     {
         resetInternalRepeatCount();
         emitStartElementSignal(this);
@@ -145,6 +62,83 @@ void TSeq::prepareDurationTimerBeforePlay()
     else
     {
         skipElement();
+    }
+}
+
+void TSeq::next(BaseTimings *ended_element)
+{
+    if (status == _stopped)
+        return;
+
+    removeActiveChild(ended_element);
+
+    if (hasActivatedChild())
+    {
+        startTimersOfFirstActivatedChild();
+        return;
+    }
+
+    // not stopped by parent
+    if (status == _active)
+        finishIntrinsicDuration(); // check for dur and the for repeat play
+}
+
+void TSeq::start()
+{
+    if (dom_childs_list.size() == 0)
+        return;
+
+    // check if this is a restart attempt and check restart attribute
+    if (!proceedStart())
+    {
+       return;
+    }
+
+    startTimersOfFirstActivatedChild();
+}
+
+void TSeq::repeat()
+{
+    if (dom_childs_list.size() == 0)
+        return;
+
+    collectActivatableChilds();
+    startTimersOfFirstActivatedChild();
+}
+
+void TSeq::stop()
+{
+    handleTriggerStops();
+    removeAllActiveChilds();
+}
+
+void TSeq::pause()
+{
+    status = _paused;
+    pauseAllTimers();
+    pauseTimersOfFirstActivatedChild();
+}
+
+void TSeq::resume()
+{
+    status = _active;
+    resumeAllTimers();
+    resumeTimersOfFirstActivatedChild();
+}
+
+void TSeq::collectActivatableChilds()
+{
+    QList<QDomElement>            list;
+    QList<QDomElement>::iterator  iterator;
+
+    if (MyShuffle == Q_NULLPTR)
+        list = dom_childs_list;
+    else
+        list = MyShuffle->getShuffeledList();
+
+    for (iterator = list.begin(); iterator < list.end(); iterator++)
+    {
+        insertAsActiveChildFromDom(*iterator);
     }
 }
 
@@ -157,32 +151,10 @@ void TSeq::traverseChilds()
         element = childs.item(i).toElement();
         if (element.tagName() != "metadata" && element.tagName() != "") // e.g. comments
         {
-            childs_list.append(element);
+            dom_childs_list.append(element);
             emit preloadElementSignal(this, element);
         }
     }
-    childs_list_iterator = childs_list.begin();
+    dom_childs_list_iterator = dom_childs_list.begin();
 }
 
-bool TSeq::proceedReStartWithShuffleCheck()
-{
-    // if is shuffleplay and paused by pickNumber no check for restart-Attribute needed
-    if (MyShuffle != Q_NULLPTR && MyShuffle->isPausedByPickNumber())
-    {
-        prepareShuffleForReStart();
-    }
-    else if (!proceedStart())
-    {
-       return false;
-    }
-
-    return true;
-}
-
-void TSeq::prepareShuffleForReStart()
-{
-    if (!hasActivatedChild())
-        collectActivatedChilds();
-
-    MyShuffle->resetPickCounter();
-}

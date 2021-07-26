@@ -18,9 +18,8 @@
 
 #include "web.h"
 
-TWeb::TWeb(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+TWeb::TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
-    parent_container = pc;
     setObjectName("TWeb");
     is_media = true;
 }
@@ -29,7 +28,7 @@ TWeb::~TWeb()
 {
 }
 
-void TWeb::prepareDurationTimerBeforePlay()
+void TWeb::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery())
     {
@@ -37,7 +36,7 @@ void TWeb::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (status == _playing && !isRestartable())
+    if (status == _active && !isRestartable())
         return;
 
     // do not mind if cached

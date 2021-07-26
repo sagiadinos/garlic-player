@@ -18,9 +18,8 @@
 
 #include "audio.h"
 
-TAudio::TAudio(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent)  : BaseMedia(mm, config, ph, parent)
+TAudio::TAudio(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent)  : BaseMedia(mm, config, ph, parent)
 {
-    parent_container = pc;
     setObjectName("TAudio");
     is_media = true;
 }
@@ -30,7 +29,7 @@ TAudio::~TAudio()
 }
 
 
-void TAudio::prepareDurationTimerBeforePlay()
+void TAudio::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
@@ -38,7 +37,7 @@ void TAudio::prepareDurationTimerBeforePlay()
         return;
     }
 
-    if (status == _playing && !isRestartable())
+    if (status == _active && !isRestartable())
         return;
 
     startDurTimer(); // audio/video not need a dur timer, but if there is one it mist be started

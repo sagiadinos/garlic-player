@@ -40,7 +40,7 @@ public:
     explicit BodyParser(ElementFactory *ef, Files::MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
     ~BodyParser();
     void                               beginPreloading(TBase *smil, QDomElement body);
-    void                               startPlayingBody();
+    void                               startPresentationAfterPreload();
     void                               endPlayingBody();
     void                               triggerAccessKey(QChar key);
 
@@ -61,10 +61,10 @@ protected:
 protected slots:
     void                               preloadElement(TContainer *ParentContainer, QDomElement dom_element);
 
-    void                               initMedia(BaseMedia *MyMedia);
+    void                               registerMedia(BaseMedia *MyMedia);
 
     void                               startElement(BaseTimings *element);
-    void                               stopElement(BaseTimings *element);
+    void                               stopElement(BaseTimings *element, bool from_prio);
     void                               resumeQueuedElement(BaseTimings *element);
     void                               pauseElement(BaseTimings*element);
     void                               prepareFireTrigger(QString trigger, QString target_id, QString source_id);

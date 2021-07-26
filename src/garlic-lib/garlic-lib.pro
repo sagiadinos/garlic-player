@@ -60,6 +60,7 @@ SOURCES += \
     smilparser/body_parser.cpp \
     smilparser/conditional/adapi_wrapper.cpp \
     smilparser/conditional/expr.cpp \
+    smilparser/container/tools/childs.cpp \
     smilparser/current_playing_media.cpp \
     smilparser/element_factory.cpp \
     smilparser/elements_container.cpp \
@@ -83,6 +84,7 @@ SOURCES += \
     smilparser/timings/begin_timer.cpp \
     smilparser/timings/end_timer.cpp \
     smilparser/timings/enhanced_timer.cpp \
+    smilparser/timings/wrapper.cpp \
     smilparser/trigger/accesskey.cpp \
     smilparser/trigger/base_trigger.cpp \
     smilparser/trigger/clock_value.cpp \
@@ -141,6 +143,7 @@ HEADERS += \
     smilparser/body_parser.h \
     smilparser/conditional/adapi_wrapper.h \
     smilparser/conditional/expr.h \
+    smilparser/container/tools/childs.h \
     smilparser/current_playing_media.h \
     smilparser/element_factory.h \
     smilparser/elements_container.h \
@@ -164,6 +167,7 @@ HEADERS += \
     smilparser/timings/begin_timer.h \
     smilparser/timings/end_timer.h \
     smilparser/timings/enhanced_timer.h \
+    smilparser/timings/wrapper.h \
     smilparser/trigger/accesskey.h \
     smilparser/trigger/base_trigger.h \
     smilparser/trigger/clock_value.h \

@@ -17,9 +17,8 @@
 *************************************************************************************/
 #include "ref_command.h"
 
-TRefCommand::TRefCommand(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+TRefCommand::TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
-    parent_container = pc;
     setObjectName("TRefCommand");
     is_media = true;
 }
@@ -28,13 +27,16 @@ TRefCommand::~TRefCommand()
 {
 }
 
-void TRefCommand::prepareDurationTimerBeforePlay()
+void TRefCommand::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
         skipElement();
         return;
     }
+
+    if (status == _active && !isRestartable())
+        return;
 
     if (startDurTimer() || isEndTimerActive())
     {

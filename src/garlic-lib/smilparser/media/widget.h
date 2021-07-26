@@ -24,10 +24,10 @@ class TWidget : public BaseMedia
 {
     Q_OBJECT
 public:
-    explicit TWidget(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+    explicit TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
     ~TWidget();
 public slots:
-    void     prepareDurationTimerBeforePlay();
+    void     prepareDurationTimers();
 protected:
     void     setAttributes();
     void     parseWidgetCallParameters(QDomElement param);

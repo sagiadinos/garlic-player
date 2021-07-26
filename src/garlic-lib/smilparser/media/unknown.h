@@ -28,9 +28,9 @@ class TUnknown : public BaseMedia
 {
         Q_OBJECT
     public:
-        explicit TUnknown(TBase *pc, Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+        explicit TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
     public slots:
-        void     prepareDurationTimerBeforePlay();
+        void     prepareDurationTimers();
     protected:
         void     setAttributes();
 

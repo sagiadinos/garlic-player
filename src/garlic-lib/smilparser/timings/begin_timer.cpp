@@ -2,7 +2,7 @@
 
 Timings::BeginTimer::BeginTimer(QObject *parent) : Timings::EnhancedTimer(parent)
 {
-
+    attribute = "begin";
 }
 
 qint64 Timings::BeginTimer::getElapsedButActiveTimeTrigger()
