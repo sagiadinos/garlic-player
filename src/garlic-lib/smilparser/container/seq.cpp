@@ -74,7 +74,7 @@ void TSeq::next(BaseTimings *ended_element)
 
     if (hasActivatedChild())
     {
-        startTimersOfFirstActivatedChild();
+        startFirstActivatedChild();
         return;
     }
 
@@ -94,7 +94,7 @@ void TSeq::start()
        return;
     }
 
-    startTimersOfFirstActivatedChild();
+    startFirstActivatedChild();
 }
 
 void TSeq::repeat()
@@ -103,27 +103,26 @@ void TSeq::repeat()
         return;
 
     collectActivatableChilds();
-    startTimersOfFirstActivatedChild();
+    startFirstActivatedChild();
 }
 
-void TSeq::stop()
+void TSeq::stop(bool is_forced)
 {
-    handleTriggerStops();
-    removeAllActiveChilds();
+    handleTriggerStops(is_forced);
 }
 
 void TSeq::pause()
 {
     status = _paused;
     pauseAllTimers();
-    pauseTimersOfFirstActivatedChild();
+    pauseFirstActivatedChild();
 }
 
 void TSeq::resume()
 {
     status = _active;
     resumeAllTimers();
-    resumeTimersOfFirstActivatedChild();
+    resumeFirstActivatedChild();
 }
 
 void TSeq::collectActivatableChilds()

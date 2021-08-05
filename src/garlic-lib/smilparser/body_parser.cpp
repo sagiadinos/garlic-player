@@ -100,7 +100,6 @@ void BodyParser::endPlayingBody()
     return;
 }
 
-
 /**
  * @brief TSmil::startedElement
  * @param element
@@ -128,9 +127,9 @@ void BodyParser::startElement(BaseTimings *element)
  * @param parent
  * @param element
  */
-void BodyParser::stopElement(BaseTimings *element, bool from_prio)
+void BodyParser::stopElement(BaseTimings *element, bool is_forced)
 {
-    element->stop();  //
+    element->stop(is_forced);  //
     qDebug() << "Stop: " + element->getID();
 
     if (element->getBaseType() == "media")
@@ -141,19 +140,17 @@ void BodyParser::stopElement(BaseTimings *element, bool from_prio)
         return;
 
     // prevent that an priority stopped child starts next child or end of simple/active duration
-    if (!from_prio)
-        ParentContainer->next(element);
+    if (!is_forced)
+         ParentContainer->next(element);
 }
 
 void BodyParser::pauseElement(BaseTimings *element)
 {
-    qDebug() <<  "Pause " + element->getID();;
+    qDebug() <<  "Pause " + element->getID();
     element->pause();
 
     if (element->getBaseType() == "media")
         emitStopShowMedia(qobject_cast<BaseMedia *> (element));
-    else // we do not know if paused container displayed a media child currently
-        (qobject_cast<TContainer *> (element))->emitPauseToAllActivatedChilds();
 }
 
 void BodyParser::resumeQueuedElement(BaseTimings *element)
@@ -165,8 +162,6 @@ void BodyParser::resumeQueuedElement(BaseTimings *element)
     element->resume();
     if (element->getBaseType() == "media")
         emitStartShowMedia(qobject_cast<BaseMedia *> (element));
-    else
-        (qobject_cast<TContainer *> (element))->emitResumeToAllActivatedChilds();
 }
 
 void BodyParser::triggerAccessKey(QChar key)
@@ -190,6 +185,12 @@ void BodyParser::prepareFireTrigger(QString trigger, QString target_id, QString 
     fireTrigger(trigger, element, source_id);
 }
 
+void BodyParser::repeatMedia(BaseMedia *media)
+{
+    emit stopShowMedia(media);
+    emit startShowMedia(media);
+}
+
 void BodyParser::fireTrigger(QString trigger, BaseTimings *element, QString source_id)
 {
     if (qobject_cast<TContainer *> (element->getParentContainer())->isActive() != true) // only active elements!
@@ -208,13 +209,20 @@ void BodyParser::connectSlots(BaseTimings *element)
 {
     connect(element, SIGNAL(startElementSignal(BaseTimings*)), this, SLOT(startElement(BaseTimings*)));
     connect(element, SIGNAL(stopElementSignal(BaseTimings*,bool)), this, SLOT(stopElement(BaseTimings*,bool)));
+
     connect(element, SIGNAL(resumeElementSignal(BaseTimings*)), this, SLOT(resumeQueuedElement(BaseTimings*)));
     connect(element, SIGNAL(pauseElementSignal(BaseTimings*)), this, SLOT(pauseElement(BaseTimings*)));
 
     connect(element, SIGNAL(triggerSignal(QString,QString,QString)), this, SLOT(prepareFireTrigger(QString,QString,QString)));
 
     if (element->getBaseType() == "container")
+    {
         connect(element, SIGNAL(preloadElementSignal(TContainer*,QDomElement)), this, SLOT(preloadElement(TContainer*,QDomElement)));
+    }
+    else
+    {
+        connect(element, SIGNAL(repeat(BaseMedia*)), this, SLOT(repeatMedia(BaseMedia*)));
+    }
 }
 
 bool BodyParser::determineContinueBasedOnParent(BaseTimings *element)

@@ -30,16 +30,15 @@
 
 		<excl>
 			<priorityClass higher="pause">
-				<seq id="interupt" begin="wallclock(R/2021-07-23T13:00:02/PT10S)">
+				<seq id="interupt" begin="wallclock(R/2021-07-27T13:00:02/PT10S)">
 					<img id="video" src="../../../images/video.jpg" dur="1s" fit="meet" />
 				</seq>
 			</priorityClass>
 			<priorityClass higher="pause">
-				<seq id="monitor" begin="wallclock(R/2021-07-22T13:00:00/PT10S)" end="wallclock(R/2021-07-22T13:00:05/PT10S)">
+				<seq id="monitor" begin="wallclock(R/2021-07-27T13:00:00/PT10S)" end="wallclock(R/2021-07-27T13:00:05/PT10S)">
 					<seq repeatCount="indefinite">
 						<img id="Image1" src="../../../images/0001.jpg" dur="1s" fit="meet" />
 						<img id="Image2" src="../../../images/0002.jpg" dur="1s" fit="meet" />
-						<!--		<img id="Image3" src="../../../images/0003.jpg" dur="1s" fit="meet" /> -->
 						<img id="Image4" src="../../../images/0004.jpg" dur="1s" fit="meet" />
 						<img id="Image5" src="../../../images/0005.jpg" dur="1s" fit="meet" />
 					</seq>

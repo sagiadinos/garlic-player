@@ -40,9 +40,7 @@ void TContainer::appendChild(BaseTimings *MyBaseTimings)
 
 void TContainer::interruptByRestart()
 {
-    emitStopToAllActivatedChilds();
-    // maybe useless when emitted stop
-      //  stopTimersOfAllActivatedChilds(); // must be after emit stop
+    stopAllActivatedChilds(false);
     removeAllActiveChilds();
 }
 
@@ -58,7 +56,7 @@ void TContainer::removeAllActiveChilds()
     activated_childs.clear();
 }
 
-void TContainer::startTimersOfFirstActivatedChild()
+void TContainer::startFirstActivatedChild()
 {
     status = _active;
     if (activated_childs.size() == 0)
@@ -68,16 +66,17 @@ void TContainer::startTimersOfFirstActivatedChild()
     bt->activateTriggerTimers();
 }
 
-void TContainer::pauseTimersOfFirstActivatedChild()
+void TContainer::pauseFirstActivatedChild()
 {
     if (activated_childs.size() == 0)
         return;
 
     BaseTimings *bt = activated_childs.first();
     bt->pauseAllTimers();
+    emitPauseElementSignal(bt);
 }
 
-void TContainer::resumeTimersOfFirstActivatedChild()
+void TContainer::resumeFirstActivatedChild()
 {
     status = _active;
     if (activated_childs.size() == 0)
@@ -85,9 +84,10 @@ void TContainer::resumeTimersOfFirstActivatedChild()
 
     BaseTimings *bt = activated_childs.first();
     bt->resumeAllTimers();
+    emitResumeElementSignal(bt);
 }
 
-void TContainer::startTimersOfAllActiveChilds()
+void TContainer::startAllActiveChilds()
 {
     status      = _active;
     if (activated_childs.size() == 0)
@@ -100,7 +100,7 @@ void TContainer::startTimersOfAllActiveChilds()
     }
 }
 
-void TContainer::stopTimersOfAllActivatedChilds()
+void TContainer::stopAllActivatedChilds(bool is_forced)
 {
     if (activated_childs.size() == 0)
         return;
@@ -108,10 +108,11 @@ void TContainer::stopTimersOfAllActivatedChilds()
     for (BaseTimings *bt : qAsConst(activated_childs))
     {
         bt->stopAllTimers();
+        emitStopElementSignal(bt, is_forced);
     }
 }
 
-void TContainer::pauseTimersOfAllActivatedChilds()
+void TContainer::pauseAllActivatedChilds()
 {
     if (activated_childs.size() == 0)
         return;
@@ -119,82 +120,20 @@ void TContainer::pauseTimersOfAllActivatedChilds()
     for (BaseTimings *bt : qAsConst(activated_childs))
     {
         bt->pauseAllTimers();
+        emitPauseElementSignal(bt);
     }
 }
 
-void TContainer::resumeTimersOfAllActivatedChilds()
+void TContainer::resumeAllActivatedChilds()
 {
+    status      = _active;
     if (activated_childs.size() == 0)
         return;
 
     for (BaseTimings *bt : qAsConst(activated_childs))
     {
         bt->resumeAllTimers();
-    }
-}
-
-void TContainer::deferTimersOfActivatedChilds()
-{
-    if (activated_childs.size() == 0)
-        return;
-
-// ToDo: Think about a more elegant solution to this and the first/all shit.
-// Mybe excl and par should inherited from a middle Object
-
-    if (objectName() == "TSeq")
-    {
-        BaseTimings *bt = activated_childs.first();
-        bt->deferAllTimers();
-    }
-    else
-    {
-        for ( BaseTimings *bt : qAsConst(activated_childs))
-        {
-            if (bt->getStatus() == _stopped)
-                bt->deferAllTimers();
-        }
-    }
-}
-
-void TContainer::emitStopToAllActivatedChilds()
-{
-    if (activated_childs.size() == 0)
-        return;
-
-    for (BaseTimings *bt : qAsConst(activated_childs))
-    {
-        if (bt->getStatus() == _active || bt->getStatus() == _pending)
-        {
-            bt->emitfinishedElement();
-        }
-    }
-}
-
-void TContainer::emitPauseToAllActivatedChilds()
-{
-    if (activated_childs.size() == 0)
-        return;
-
-    for (BaseTimings *bt : qAsConst(activated_childs))
-    {
-        if (bt->getStatus() == _active || bt->getStatus() == _pending)
-        {
-            bt->emitPause();
-        }
-    }
-}
-
-void TContainer::emitResumeToAllActivatedChilds()
-{
-    if (activated_childs.size() == 0)
-        return;
-
-    for (BaseTimings *bt : qAsConst(activated_childs))
-    {
-        if (bt->getStatus() == _paused)
-        {
-            bt->emitResume();
-        }
+        emitResumeElementSignal(bt);
     }
 }
 
@@ -208,14 +147,12 @@ void TContainer::emitfinishedElement() // slot called from EndTimer
     emitStopElementSignal(this, false);
 }
 
-void TContainer::handleTriggerStops()
+void TContainer::handleTriggerStops(bool is_forced)
 {
     // if a repeated timer trigger like begin-end wallclock or a begin-end list perform a check
-    selectWhichTimerShouldStop();
-    emitStopToAllActivatedChilds();
-
-    // commented maybe useless when emitted stop
-    //  stopTimersOfAllActivatedChilds(); // must be after emit stop
+    selectWhichTimerShouldStop(is_forced);
+    stopAllActivatedChilds(is_forced); // must be after emit stop
+    removeAllActiveChilds();
 }
 
 bool TContainer::proceedStart()

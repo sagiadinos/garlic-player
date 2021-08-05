@@ -31,6 +31,7 @@ protected:
     QString                 soundLevel = "100%";
     void                    setAttributes();
     bool                    loadMedia();
+    void                    prepareDurationTimersForRepeat();
 protected slots:
     void                    prepareDurationTimers();
 };

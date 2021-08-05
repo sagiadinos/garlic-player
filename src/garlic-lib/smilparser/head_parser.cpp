@@ -49,7 +49,7 @@ void HeadParser::setDefaultValues()
     default_region.width           = 1;
     default_region.height          = 1;
     default_region.z_index         = 0;
-    default_region.backgroundColor = "black";
+    default_region.backgroundColor = "transparent";
     default_region.backgroundImage = "none";
     default_region.backgroundRepeat= "repeat";
     region_list.append(default_region);            void process();

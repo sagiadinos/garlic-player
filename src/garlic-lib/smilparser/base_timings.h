@@ -50,14 +50,14 @@ class BaseTimings : public TBase
         const     int        _pending  = 1; // wait for first start
         const     int        _active   = 2;
         const     int        _paused   = 3;
+        const     int        _defered  = 4;
 
         explicit               BaseTimings(QObject * parent);
                               ~BaseTimings();
 
                 void           activateTriggerTimers();
                 void           pauseAllTimers();
-                void          deferAllTimers();
-                void           selectWhichTimerShouldStop();
+                void           selectWhichTimerShouldStop(bool is_forced);
                 void           stopAllTimers();
                 void           stopSimpleTimers();
                 void           startTrigger(QString source_id);
@@ -71,27 +71,28 @@ class BaseTimings : public TBase
                 QHash<QString, QString> fetchExternalBegins();
                 QHash<QString, QString> fetchExternalEnds();
 
+                void           setDefered(){status = _defered;}
                 int            getStatus(){return status;}
                 bool           isActive(){return (status == _active);}
                 void           finishedNotFound();
                 void           skipElement();
                 void           emitActivated();
 
-        virtual void           start()       = 0;
-        virtual void           repeat()       = 0;
-        virtual void           stop()        = 0;
+        virtual void           start()                = 0;
+        virtual void           repeat()               = 0;
+        virtual void           stop(bool is_forced)   = 0;
         virtual void           interruptByRestart()   = 0;
         virtual void           pause()       = 0;
         virtual void           resume()      = 0;
         virtual QString        getBaseType() = 0;
 
-        virtual void           emitPause() = 0;
+        virtual void           emitPause()   = 0;
         virtual void           emitResume() = 0;
 
-                void           emitStartElementSignal(BaseTimings* bt){emit startElementSignal(bt);}
-                void           emitStopElementSignal(BaseTimings* bt, bool has_prio){emit stopElementSignal(bt, has_prio);}
-                void           emitResumeElementSignal(BaseTimings* bt){emit resumeElementSignal(bt);}
-                void           emitPauseElementSignal(BaseTimings* bt){emit pauseElementSignal(bt);}
+                void           emitStartElementSignal(BaseTimings* bt);
+                void           emitStopElementSignal(BaseTimings* bt, bool has_prio);
+                void           emitResumeElementSignal(BaseTimings* bt);
+                void           emitPauseElementSignal(BaseTimings* bt);
 
 
                 void           finishIntrinsicDuration();

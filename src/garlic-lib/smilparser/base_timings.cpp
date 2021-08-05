@@ -85,27 +85,6 @@ void BaseTimings::pauseAllTimers()
         EndTimer->pause();
 }
 
-void BaseTimings::deferAllTimers()
-{
-    // for excl defer
-    status       = _pending;
-    has_started  = false;
-    is_deferred  = true;
-    BeginTimer->activate();
-    BeginTimer->pause();
-    if (DurTimer != Q_NULLPTR)
-    {
-        DurTimer->start();
-        DurTimer->pause();
-    }
-
-    if (EndTimer != Q_NULLPTR)
-    {
-        EndTimer->activate();
-        EndTimer->pause();
-    }
-}
-
 void BaseTimings::resumeAllTimers()
 {
     qDebug() << "resumeAllTimers: " + getID() + " parent: " + getParentContainer()->getID();
@@ -128,7 +107,7 @@ void BaseTimings::resumeAllTimers()
 
 }
 
-void BaseTimings::selectWhichTimerShouldStop()
+void BaseTimings::selectWhichTimerShouldStop(bool is_forced)
 {
     if (isBeginTimerActive())
     {
@@ -144,13 +123,14 @@ void BaseTimings::selectWhichTimerShouldStop()
 void BaseTimings::stopAllTimers()
 {
     qDebug() << "stopAllTimers: " + getID() + " parent: " + getParentContainer()->getID();
+    status = _stopped;
+
     BeginTimer->stop();
 
     if (EndTimer != Q_NULLPTR)
         EndTimer->stop();
 
     stopSimpleTimers();
-    status = _stopped;
 
 }
 
@@ -162,7 +142,7 @@ void BaseTimings::stopAllTimers()
  *
  * In this pending situation stopping begin/end triggers will prevent element from restart
  *
- * That is also the reason why Begin/End-Trogger fired to the listeners here
+ * That is also the reason why Begin/End-Trigger fired to the listeners here
  */
 void BaseTimings::stopSimpleTimers()
 {
@@ -294,6 +274,26 @@ void BaseTimings::emitActivated()
     }
 }
 
+void BaseTimings::emitStartElementSignal(BaseTimings *bt)
+{
+    emit startElementSignal(bt);
+}
+
+void BaseTimings::emitStopElementSignal(BaseTimings *bt, bool has_prio)
+{
+    emit stopElementSignal(bt, has_prio);
+}
+
+void BaseTimings::emitResumeElementSignal(BaseTimings *bt)
+{
+    emit resumeElementSignal(bt);
+}
+
+void BaseTimings::emitPauseElementSignal(BaseTimings *bt)
+{
+    emit pauseElementSignal(bt);
+}
+
 // ========================= protected methods ======================================================
 
 void BaseTimings::parseTimingAttributes()
@@ -337,7 +337,7 @@ void BaseTimings::parseTimingAttributes()
 
 void BaseTimings::resetInternalRepeatCount()
 {
-    internal_count = 1;
+    internal_count = repeatCount;
 }
 
 bool BaseTimings::startDurTimer()
@@ -374,20 +374,16 @@ void BaseTimings::sendTriggerSignalToListeners(QStringList listener, QString tri
     }
 }
 
-/**
- * @brief  TBaseTiming::checkRepeatCountStatus returns true, when playlist can be repeated
- * @return bool
- */
 bool BaseTimings::handleRepeatCountStatus()
 {
-    bool ret = false;
     if (indefinite)
+        return true;
+
+    bool ret = false;
+    // > 1 because the first pass time was already
+    if (internal_count > 1)
     {
-        ret = true;
-    }
-    else if (repeatCount > 0 && internal_count < repeatCount)
-    {
-        internal_count++;
+        internal_count--;
         ret = true;
     }
     return ret;
@@ -395,7 +391,7 @@ bool BaseTimings::handleRepeatCountStatus()
 
 bool BaseTimings::isBeginTimerActive()
 {
-    return BeginTimer->isActiveTimerTrigger();
+    return (BeginTimer->isActiveTimerTrigger() && isRestartable());
 }
 
 bool BaseTimings::isEndTimerActive()
@@ -435,15 +431,13 @@ bool BaseTimings::isRestartable()
     switch (restart)
     {
         case WHEN_NOT_ACTIVE:
-            if (status == _pending)
+            if (status != _active)
                 return true;
             else
                 return false;
         case NEVER:
              // important to prevent any kind of restart in this lifecycle
             // end this element without check for pending
-             status = _active;
-             emitStopElementSignal(this, false);
              return false;
         case ALWAYS:
         default:
@@ -481,7 +475,7 @@ void BaseTimings::finishedSimpleDuration()
 
     qDebug() << getID() <<  " end simple duration";
 
-    if (BeginTimer->isActiveTimerTrigger() || isEndTimerActive())
+    if (isEndTimerActive())
     {
         status = _pending;
         emitfinishedElement();
@@ -493,13 +487,7 @@ void BaseTimings::finishedSimpleDuration()
 
 void BaseTimings::finishedActiveDuration()
 {
-    // when finishActiveDuration called by an end trigger perform a check
-    // to determine if there are there are further time based triggers active
-    // if yes, then stop send trigger to listener and go to next element
-    // but set status to pending, so that a element stop did not stop end begin.
-    if (BeginTimer->isActiveTimerTrigger())
-        status = _pending;
-
+    status = _pending;
     qDebug() << getID() <<  " end active duration";
     emitfinishedElement();
 }

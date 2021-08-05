@@ -6,10 +6,10 @@
         <metadata />
         <state>
             <data>
-                <url000>../../images/stand-by.jpg</url000>
-                <url001>../../images/0001.jpg</url001>
-                <url002>../../images/0002.jpg</url002>
-                <url003>../../images/0003.jpg</url003>
+                <url000>../../../images/stand-by.jpg</url000>
+                <url001>../../../images/0001.jpg</url001>
+                <url002>../../../images/0002.jpg</url002>
+                <url003>../../../images/0003.jpg</url003>
             </data>
         </state>
         <layout>

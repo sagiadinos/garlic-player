@@ -42,6 +42,7 @@ void TWeb::prepareDurationTimers()
     // do not mind if cached
     if (startDurTimer() || hasEndTimer())
     {
+        resetInternalRepeatCount();
         emitStartElementSignal(this);
     }
     else
@@ -54,4 +55,9 @@ void TWeb::setAttributes()
 {
     parseBaseMediaAttributes();
     src        = getAttributeFromRootElement("src", "");
+}
+
+void TWeb::prepareDurationTimersForRepeat()
+{
+    startDurTimer();
 }

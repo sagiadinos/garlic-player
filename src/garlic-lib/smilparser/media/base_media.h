@@ -38,7 +38,7 @@ class BaseMedia : public BaseTimings
         QString                getLoadablePath();
         void                   start();
         void                   repeat();
-        void                   stop();
+        void                   stop(bool is_forced);
         void                   resume();
         void                   pause();
         void                   interruptByRestart();
@@ -81,12 +81,15 @@ class BaseMedia : public BaseTimings
         QString                log_content_id  = "";
         bool                   is_media        = false;
         void                   parseBaseMediaAttributes();
+        virtual void           prepareDurationTimersForRepeat() = 0;
         void                   parseBaseParameters();
         virtual void           setAttributes() = 0;
 
     private:
         void                   setAdditionalParameters(QDomElement param);
         int                    determineCacheControl(QString value);
+    signals:
+        void                   repeat(BaseMedia *media);
 
 };
 

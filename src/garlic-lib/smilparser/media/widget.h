@@ -31,5 +31,6 @@ public slots:
 protected:
     void     setAttributes();
     void     parseWidgetCallParameters(QDomElement param);
+    void     prepareDurationTimersForRepeat();
 };
 #endif // TWIDGET_H

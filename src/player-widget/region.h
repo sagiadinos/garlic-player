@@ -61,6 +61,7 @@ protected:
     MediaFactory          MyMediaFactory;
     bool                  has_background_image = false;
     void                  resizeGeometry();
+    void                  secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia);
     void                  determineStylesheets();
     QString               determineBackgroundImage();
     QString               determineBackgroundImageRepeat();

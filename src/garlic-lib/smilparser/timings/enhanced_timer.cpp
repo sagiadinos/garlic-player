@@ -134,10 +134,16 @@ void Timings::EnhancedTimer::deleteTimer()
     MyTriggerList.clear();
 }
 
-bool Timings::EnhancedTimer::parse(QString attr_value, QString parent_tag)
+bool Timings::EnhancedTimer::parse(QString attr_value, QString p_tag)
 {
+    parent_tag = p_tag;
     // do not toLower here, we need origial values e.g. for ISO 8601
     QStringList value_list = attr_value.simplified().split(';');
+
+    // seq do not support value-lists get the first value only;
+    if (parent_tag == "TSeq")
+        return parseOneValue(value_list.first());
+
 
     // if there is one parsable item in the list the the bigin/end trigger is valid
     // otherwise trigger is invalid an would be handlet in BaseTimings-Class
@@ -147,42 +153,8 @@ bool Timings::EnhancedTimer::parse(QString attr_value, QString parent_tag)
         if (value.isEmpty()) // some might end with semikolon
             continue;
 
-        if (value.contains("indefinite"))
-        {
-            initTimer(TYPE_INDEFINITE, "indefinite");
-            is_parsable = true;
-        }
-        else if (value.mid(0, 9) == "wallclock" && parent_tag != "TSeq")
-        {
-            initTimer(TYPE_WALLCLOCK, value.mid(10,value.length()-11));
-            is_parsable = true;
-        }
-        else if (value.at(0) == '+' || value.at(0) == '-')
-        {
-            initTimer(TYPE_OFFSET, value);
-            is_parsable = true;
-        }
-        else if (value.at(0).isDigit())
-        {
-            initTimer(TYPE_OFFSET, value);
-            is_parsable = true;
-        }
-        else if (value.mid(0, 9) == "accesskey" )
-        {
-            is_parsable = initTimer(TYPE_ACCESSKEY, value);
-        }
-        else if (value.at(0).isLetter() && value.contains("."))
-        {
-            QString symbol = determineSymbol(value);
+        is_parsable = parseOneValue(value);
 
-            if (symbol.endsWith("begin") || symbol.endsWith("end"))
-                is_parsable = initTimer(TYPE_SYNCBASE, value);
-            else
-                is_parsable = initTimer(TYPE_EVENT, value);
-        }
-        else
-        {
-        }
     }
 
     if (value_list.size() > 1) // in a value an indefinite can be ignored
@@ -413,6 +385,49 @@ QHash<QString, QString> Timings::EnhancedTimer::fetchTriggerList()
     return ret;
 }
 
+bool Timings::EnhancedTimer::parseOneValue(QString value)
+{
+    bool is_parsable = false;
+    if (value.contains("indefinite"))
+    {
+        initTimer(TYPE_INDEFINITE, "indefinite");
+        is_parsable = true;
+    }
+    else if (value.mid(0, 9) == "wallclock" && parent_tag != "TSeq")
+    {
+        initTimer(TYPE_WALLCLOCK, value.mid(10,value.length()-11));
+        is_parsable = true;
+    }
+    else if (value.at(0) == '+' || value.at(0) == '-')
+    {
+        initTimer(TYPE_OFFSET, value);
+        is_parsable = true;
+    }
+    else if (value.at(0).isDigit())
+    {
+        initTimer(TYPE_OFFSET, value);
+        is_parsable = true;
+    }
+    else if (value.mid(0, 9) == "accesskey" )
+    {
+        is_parsable = initTimer(TYPE_ACCESSKEY, value);
+    }
+    else if (value.at(0).isLetter() && value.contains("."))
+    {
+        QString symbol = determineSymbol(value);
+
+        if (symbol.endsWith("begin") || symbol.endsWith("end"))
+            is_parsable = initTimer(TYPE_SYNCBASE, value);
+        else
+            is_parsable = initTimer(TYPE_EVENT, value);
+    }
+    else
+    {
+    }
+
+   return is_parsable;
+}
+
 QString Timings::EnhancedTimer::determineSymbol(QString value)
 {
     QStringList sl = {};
@@ -495,7 +510,6 @@ void Timings::EnhancedTimer::emitTimeout()
     determineNextTrigger();
     emit timeout();
 }
-
 
 void Timings::EnhancedTimer::determineNextTrigger()
 {

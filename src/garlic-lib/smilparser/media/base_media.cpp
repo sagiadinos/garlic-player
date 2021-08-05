@@ -80,12 +80,12 @@ void BaseMedia::start()
 
 void BaseMedia::repeat()
 {
-    status = _active;
+    prepareDurationTimersForRepeat() ;
 }
 
-void BaseMedia::stop()
+void BaseMedia::stop(bool is_forced)
 {
-    selectWhichTimerShouldStop();
+    selectWhichTimerShouldStop(is_forced);
 }
 
 void BaseMedia::pause()

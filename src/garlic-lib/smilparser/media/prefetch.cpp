@@ -44,3 +44,8 @@ void TPrefetch::setAttributes()
     parseBaseMediaAttributes();
     src        = getAttributeFromRootElement("src", "");
 }
+
+void TPrefetch::prepareDurationTimersForRepeat()
+{
+    return;
+}

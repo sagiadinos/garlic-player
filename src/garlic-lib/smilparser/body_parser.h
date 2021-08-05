@@ -64,11 +64,11 @@ protected slots:
     void                               registerMedia(BaseMedia *MyMedia);
 
     void                               startElement(BaseTimings *element);
-    void                               stopElement(BaseTimings *element, bool from_prio);
+    void                               stopElement(BaseTimings *element, bool is_forced);
     void                               resumeQueuedElement(BaseTimings *element);
     void                               pauseElement(BaseTimings*element);
     void                               prepareFireTrigger(QString trigger, QString target_id, QString source_id);
-
+    void                               repeatMedia(BaseMedia *media);
 signals:
     void                               startShowMedia(BaseMedia *media);
     void                               stopShowMedia(BaseMedia *media);

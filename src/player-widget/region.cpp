@@ -58,21 +58,16 @@ void TRegion::startShowMedia(BaseMedia *media)
 void TRegion::stopShowMedia(BaseMedia *media)
 {
 
-    // MyMedia can be null, when file path not found
-    // Workaround: sometimes e.g. peers defer another media which is not shown currently
-    // can be have the advice to stop. So check first and if different ignore;
-    if (MyMedia == Q_NULLPTR || MyMedia->getSmilMedia() != media)
-    {
-        return;
-    }
-    QWidget *widget = MyMedia->getView();
 
-    if (widget != Q_NULLPTR)
+    //  2021-07-21
+    // defer should never send stopShowMedia, but we can have an overlay e.g. brush over image
+    // so we need  to set new media if differs
+    if (MyMedia->getSmilMedia() != media)
     {
-        layout.data()->removeWidget(widget);
+        secureStopDisplayingMedia(MyMediaFactory.initMedia(media));
     }
-    MyMedia->deinit();
-    MyMedia = Q_NULLPTR;
+    else
+        secureStopDisplayingMedia(MyMedia);
 }
 
 bool TRegion::event(QEvent *event)
@@ -140,6 +135,22 @@ void TRegion::resizeGeometry()
     setGeometry(qRound(xr), qRound(yr), qRound(wr), qRound(hr));
     if (MyMedia != Q_NULLPTR)
         MyMedia->changeSize(qRound(wr), qRound(hr));
+}
+
+void TRegion::secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia)
+{
+    // MyMedia can be null, when file path not found
+    if (TmpMedia == Q_NULLPTR)
+        return;
+
+    QWidget *widget = TmpMedia->getView();
+
+    if (widget != Q_NULLPTR)
+    {
+        layout.data()->removeWidget(widget);
+    }
+    TmpMedia->deinit();
+    TmpMedia = Q_NULLPTR;
 }
 
 void TRegion::determineStylesheets()

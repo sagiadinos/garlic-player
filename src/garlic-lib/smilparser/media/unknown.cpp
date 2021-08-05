@@ -35,3 +35,9 @@ void TUnknown::setAttributes()
 {
     parseBaseMediaAttributes();
 }
+
+void TUnknown::prepareDurationTimersForRepeat()
+{
+    // dummy
+    return;
+}

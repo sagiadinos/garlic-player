@@ -51,7 +51,7 @@
 				<img region="screen2" xml:id="imgA0002" src="../../images/0002.jpg" dur="1s" fit="meet" />
 				<img region="screen2" xml:id="imgA0003" src="../../images/0003.jpg" dur="1s" fit="meet" />
 				<img region="screen2" xml:id="imgAend" src="../../images/end.jpg" dur="1s"  fit="meet" />
-				</seq>
+			</seq>
 			<seq xml:id="seq_always" begin="0s;2s;10s;11s" restart="always">
 				<img region="screen3" xml:id="imgBbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
 				<img region="screen3" xml:id="imgB0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
@@ -59,7 +59,7 @@
 				<img region="screen3" xml:id="imgB0003" src="../../images/0003.jpg" dur="1s" fit="meet" />
 				<img region="screen3" xml:id="imgBend" src="../../images/end.jpg" dur="1s"  fit="meet" />
 			</seq>
-			<seq xml:id="seq_whennotactive" begin="0s;4s;6s;11s" restart="whenNotActive">
+			<seq xml:id="seq_whennotactive" begin="0s;2;6s;11s" restart="whenNotActive">
 				<img region="screen4" xml:id="imgCbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
 				<img region="screen4" xml:id="imgC0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
 				<img region="screen4" xml:id="imgC0002" src="../../images/0002.jpg" dur="1s" fit="meet" />

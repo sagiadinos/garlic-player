@@ -49,7 +49,7 @@ struct Region
     int z_index = 0;
     QString fit              = "hidden";
     QString soundLevel      = "100%";
-    QString backgroundColor  = "black";
+    QString backgroundColor  = "transparent";
     QString backgroundImage  = "none";
     QString backgroundRepeat = "repeat";
     bool operator<(const Region& other) const {return z_index < other.z_index;} // use for sorting a list of Regions
@@ -83,7 +83,7 @@ class HeadParser: public QObject
         QString                title;
         bool                   has_backgroundimage = false;
         int                    refresh, width, height;
-        QString                backgroundColor = "black";
+        QString                backgroundColor = "transparent";
         QString                backgroundImage = "none";
         QString                backgroundRepeat= "repeat";
         QDomElement            head;

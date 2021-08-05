@@ -31,6 +31,7 @@ class TImage : public BaseMedia
         void     prepareDurationTimers();
     protected:
         void     setAttributes();
+        void     prepareDurationTimersForRepeat();
 };
 
 #endif // IMAGE_H

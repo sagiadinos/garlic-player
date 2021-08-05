@@ -33,6 +33,7 @@ class TUnknown : public BaseMedia
         void     prepareDurationTimers();
     protected:
         void     setAttributes();
+        void     prepareDurationTimersForRepeat();
 
 };
 

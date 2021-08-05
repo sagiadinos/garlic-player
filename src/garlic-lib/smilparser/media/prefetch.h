@@ -30,6 +30,7 @@ public slots:
     void     prepareDurationTimers();
 protected:
     void     setAttributes();
+    void     prepareDurationTimersForRepeat();
 };
 
 #endif // TPREFETCH_H

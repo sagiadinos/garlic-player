@@ -41,6 +41,7 @@ void TImage::prepareDurationTimers()
 
     if (startDurTimer() || hasEndTimer())
     {
+        resetInternalRepeatCount();
         emitStartElementSignal(this);
     }
     else
@@ -55,6 +56,11 @@ void TImage::setAttributes()
 {
     parseBaseMediaAttributes();
     src        = getAttributeFromRootElement("src", "");
+}
+
+void TImage::prepareDurationTimersForRepeat()
+{
+    startDurTimer();
 }
 
 // ====================  private methods =================================

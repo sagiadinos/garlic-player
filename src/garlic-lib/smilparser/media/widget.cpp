@@ -41,6 +41,7 @@ void TWidget::prepareDurationTimers()
 
     if (startDurTimer() || hasEndTimer())
     {
+        resetInternalRepeatCount();
         emitStartElementSignal(this);
     }
     else
@@ -73,6 +74,11 @@ void TWidget::parseWidgetCallParameters(QDomElement param)
         return;
 
     params_as_query.append(attribute_name + "=" + QUrl::toPercentEncoding(param.attribute("value")));
+}
+
+void TWidget::prepareDurationTimersForRepeat()
+{
+    startDurTimer();
 }
 
 // ====================  private methods =================================

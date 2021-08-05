@@ -53,6 +53,7 @@ class TRegion : public QQuickItem
         qreal                 root_width_px = 0;
         qreal                 root_height_px = 0;
 
+        void                secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia);
         void                registerEventStarts();
         void                registerEventEnds();
 

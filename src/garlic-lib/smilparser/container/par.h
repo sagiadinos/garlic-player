@@ -32,7 +32,7 @@ class TPar : public TContainer
         bool                interruptByEndSync(QString id);
         void                start();
         void                repeat();
-        void                stop();
+        void                stop(bool is_forced);
 
         void                pause();
         void                resume();

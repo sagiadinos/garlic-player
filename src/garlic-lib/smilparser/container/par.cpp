@@ -76,14 +76,14 @@ void TPar::next(BaseTimings *ended_element)
     if (ended_element->getStatus() == _stopped)
         removeActiveChild(ended_element);
 
-    interruptByEndSync(ended_element->getID());
+    if (interruptByEndSync(ended_element->getID()))
+        return;
 
     if (hasActivatedChild()) // do nothing when childs are active
         return;
 
-    // not stopped by parent
     if (status == _active)
-        finishIntrinsicDuration(); // check for dur and then for repeat play
+         finishIntrinsicDuration(); // check for dur and then for repeat play
 }
 
 bool TPar::interruptByEndSync(QString id)
@@ -91,8 +91,10 @@ bool TPar::interruptByEndSync(QString id)
     // Active DurTimer or EndTimer results in ignore endsync
     if ((endsync == "first" || endsync == id) && !isDurTimerActive() && !isEndTimerActive())
     {
-        stopTimersOfAllActivatedChilds();
+        status = _stopped;
+        stopAllActivatedChilds(false);
         removeAllActiveChilds();
+        finishedSimpleDuration();
         return true;
     }
     return false;
@@ -109,7 +111,7 @@ void TPar::start()
        return;
     }
 
-    startTimersOfAllActiveChilds();
+    startAllActiveChilds();
 }
 
 void TPar::repeat()
@@ -118,27 +120,26 @@ void TPar::repeat()
         return;
 
     collectActivatableChilds();
-    startTimersOfAllActiveChilds();
+    startAllActiveChilds();
 }
 
-void TPar::stop()
+void TPar::stop(bool is_forced)
 {
-    handleTriggerStops();
-    removeAllActiveChilds();
+    handleTriggerStops(is_forced);
 }
 
 void TPar::pause()
 {
     status = _paused;
     pauseAllTimers();
-    pauseTimersOfAllActivatedChilds();
+    pauseAllActivatedChilds();
 }
 
 void TPar::resume()
 {
     status = _active;
     resumeAllTimers();
-    resumeTimersOfAllActivatedChilds();
+    resumeAllActivatedChilds();
 }
 
 void TPar::collectActivatableChilds()

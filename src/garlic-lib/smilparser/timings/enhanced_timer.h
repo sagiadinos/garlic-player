@@ -48,7 +48,7 @@ namespace Timings
 
             explicit EnhancedTimer(QObject *parent = nullptr);
             ~EnhancedTimer();
-            bool        parse(QString svalue, QString parent_tag);
+            bool        parse(QString svalue, QString p_tag);
             void        deleteTimer();
             void        activate();
             void        startFromExternalTrigger(QString source_id);
@@ -81,6 +81,7 @@ namespace Timings
             bool        has_wallclock_next_trigger = false;
             qint64      negative_trigger = 0;
             qint64      positive_trigger = 0;
+            bool        parseOneValue(QString value);
             QString     determineSymbol(QString value);
             void        activateOffset(TriggerStruct *ts);
             void        activateWallClock(TriggerStruct *ts);

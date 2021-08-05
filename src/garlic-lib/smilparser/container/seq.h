@@ -35,7 +35,7 @@ class TSeq : public TContainer
         void         next(BaseTimings *ended_element);
         void         start();
         void         repeat();
-        void         stop();
+        void         stop(bool is_forced);
         void         pause();
         void         resume();
         void         collectActivatableChilds();

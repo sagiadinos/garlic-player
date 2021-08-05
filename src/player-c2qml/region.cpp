@@ -97,6 +97,48 @@ void TRegion::clickSlot()
     }
 }
 
+void TRegion::startShowMedia(BaseMedia *media)
+{
+    MyMedia = MyMediaFactory.data()->initMedia(media);
+    if (MyMedia != Q_NULLPTR)
+    {
+        MyMedia->setParentItem(rectangle_item.data());
+    }
+}
+
+void TRegion::stopShowMedia(BaseMedia *media)
+{
+    if (MyMedia->getSmilMedia() != media)
+    {
+        secureStopDisplayingMedia(MyMediaFactory.data()->initMedia(media));
+    }
+    else
+        secureStopDisplayingMedia(MyMedia);
+}
+
+void TRegion::secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia)
+{
+    if (TmpMedia == Q_NULLPTR)
+    {
+        return;
+    }
+
+    TmpMedia->setParentItem(NULL);
+    TmpMedia->deinit();
+}
+
+void TRegion::resizeGeometry()
+{
+    qreal  xr, yr, wr, hr = 0.0;
+    xr = (root_width_px*region.left);
+    yr = (root_height_px*region.top);
+    wr = (root_width_px*region.width*1);
+    hr = (root_height_px*region.height*1);
+    rectangle_item.data()->setX(xr);
+    rectangle_item.data()->setY(yr);
+    rectangle_item.data()->setWidth(wr);
+    rectangle_item.data()->setHeight(hr);
+}
 
 void TRegion::registerEventStarts()
 {
@@ -123,38 +165,4 @@ void TRegion::registerEventEnds()
     {
         MyMedia->getSmilMedia()->emitActivated();
     }
-}
-
-void TRegion::startShowMedia(BaseMedia *media)
-{
-    MyMedia = MyMediaFactory.data()->initMedia(media);
-    if (MyMedia != Q_NULLPTR)
-    {
-        MyMedia->setParentItem(rectangle_item.data());
-    }
-}
-
-void TRegion::stopShowMedia(BaseMedia *media)
-{
-    if (MyMedia == Q_NULLPTR || MyMedia->getSmilMedia() != media)
-    {
-        return;
-    }
-
-    MyMedia->setParentItem(NULL);
-    MyMedia->deinit();
-}
-
-
-void TRegion::resizeGeometry()
-{
-    qreal  xr, yr, wr, hr = 0.0;
-    xr = (root_width_px*region.left);
-    yr = (root_height_px*region.top);
-    wr = (root_width_px*region.width*1);
-    hr = (root_height_px*region.height*1);
-    rectangle_item.data()->setX(xr);
-    rectangle_item.data()->setY(yr);
-    rectangle_item.data()->setWidth(wr);
-    rectangle_item.data()->setHeight(hr);
 }

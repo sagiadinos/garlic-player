@@ -36,7 +36,7 @@ class TExcl : public TContainer
         bool    interruptByEndSync(QString id); // called only when interrupted from endsync
         void    start();
         void    repeat();
-        void    stop(); // called from regulary ended active duration
+        void    stop(bool is_forced); // called from regulary ended active duration
         void    pause();
         void    resume();
         void    collectActivatableChilds();
@@ -47,7 +47,6 @@ class TExcl : public TContainer
     private:
         QString endsync = "last";
 
-        TPriorityClass               *CurrentPriority, *NewPriority;
         QMap<int, TPriorityClass *>   PriorityClassList;
         TPriorityClass               *findPriorityClass(QDomElement dom_element);
         BaseTimings                  *current_activated_element = Q_NULLPTR;
@@ -56,15 +55,15 @@ class TExcl : public TContainer
         BaseTimings *getCurrentActiveElement();
 
         bool         areQueuesToProceed();
-        void         saveRemoveActivated(BaseTimings *element);
+        void         secureRemoveActivated(BaseTimings *element);
         void         removeQueuedElements();
         void         traverseChilds();
         void         traversePriorityClasses(QList<QDomElement> priority_class_childs);
         void         parsePriorityClass(QDomElement element);
         void         priorityStop();
-        void         priorityPause();
+        void         priorityPause(TPriorityClass *NewPriority);
         void         priorityNever(BaseTimings *new_element);
-        void         priorityDefer(BaseTimings *new_element);
+        void         priorityDefer(TPriorityClass *NewPriority, BaseTimings *new_element);
 };
 
 #endif // TEXCL_H

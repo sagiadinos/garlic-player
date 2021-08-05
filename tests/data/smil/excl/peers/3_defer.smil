@@ -21,7 +21,7 @@
 				<img xml:id="imgA0002" src="../../../images/0002.jpg" begin="0s" dur="1s" fit="meet" />
 				<img xml:id="imgA0003" src="../../../images/0003.jpg" begin="0s" dur="1s" fit="meet" />
 				<img xml:id="imgA0004" src="../../../images/0004.jpg" begin="0s" dur="1s" fit="meet" />
-				<img xml:id="imgA0005" src="../../../images/0005.jpg" begin="0s" dur="1s" fit="meet" />
+				<img xml:id="imgA0005" src="../../../images/0005.jpg" begin="0s;5s" dur="1s" fit="meet" />
 			</priorityClass>	
 		</excl>	
 		<excl xml:id="excl2_dur_seq_like">
@@ -33,7 +33,7 @@
 				<img xml:id="imgA0010" src="../../../images/0010.jpg" begin="4s" dur="1s" fit="meet" />
 			</priorityClass>	
 		</excl>
-		<excl xml:id="excl3_end">
+		-->		<excl xml:id="excl3_end">
 			<priorityClass peers="defer">
 				<img xml:id="imgB0001" src="../../../images/0001.jpg" begin="0s" end="1s" fit="meet" />
 				<img xml:id="imgB0002" src="../../../images/0002.jpg" begin="0s" end="1s" fit="meet" />
@@ -51,7 +51,7 @@
 				<img xml:id="imgB0010" src="../../../images/0010.jpg" begin="4s" end="5s" fit="meet" />
 			</priorityClass>	
 		</excl>	
-		<excl xml:id="excl5_with_seq">
+			<excl xml:id="excl5_with_seq">
 			<priorityClass peers="defer">
 				<seq xml:id="seq1" begin="0">
 					<img xml:id="imgC0001" src="../../../images/0001.jpg" dur="1s" fit="meet" />

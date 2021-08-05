@@ -7,17 +7,19 @@ Changelog
 	* resumable downloads
 	* support endsync for excl and par (first|last|id-value)
  	* support negative values for offset
-	* support restart in seq, par and excl (always|never|whenNotActive|default)	
+	* support restart-attribute (always|never|whenNotActive|default)	
 	* support for media-element brush and attribute color
 	* support for syncbase values in combination with positive clock values for begin/end
 	* support for event values and interactivity (beginEvent, endEvent) in combination with positive clock values for begin/end
-	* support for interactive events (mouseclick and touch)
+	* support for interactive events activeEvent and click (mouseclick and touch)
 	* support for accessskey
+	* support for repeatCount in media tags (brush, img, audio, video, ref, text) 
 
 2. Improvements
 	* additional SMIL-Indexes for testing
-	* higher compatibility to some SMIL hardware player
-	* bugfixes
+	* improved compatibility to SMIL standard
+	* improved compatibility to IAdea player
+	* various bugfixes
 
 0.3.0 -> 0.4.0
 ---------------------

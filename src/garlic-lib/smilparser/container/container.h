@@ -49,18 +49,15 @@ class TContainer : public BaseTimings
                 void         removeAllActiveChilds();
 
                 // seq only maybe move to seq
-                void         startTimersOfAllActiveChilds();
-                void         startTimersOfFirstActivatedChild();
-                void         pauseTimersOfFirstActivatedChild();
-                void         resumeTimersOfFirstActivatedChild();
+                void         startFirstActivatedChild();
+                void         pauseFirstActivatedChild();
+                void         resumeFirstActivatedChild();
 
-                void         stopTimersOfAllActivatedChilds();
-                void         pauseTimersOfAllActivatedChilds();
-                void         resumeTimersOfAllActivatedChilds();
-                void         deferTimersOfActivatedChilds();
-                void         emitStopToAllActivatedChilds();
-                void         emitPauseToAllActivatedChilds();
-                void         emitResumeToAllActivatedChilds();
+                void         startAllActiveChilds();
+                void         stopAllActivatedChilds(bool is_forced);
+                void         pauseAllActivatedChilds();
+                void         resumeAllActivatedChilds();
+
                 bool         hasActivatedChild();
 
                 void         emitPreloadElementSignal(TContainer* p, QDomElement e){emit preloadElementSignal(p, e);}
@@ -78,7 +75,7 @@ class TContainer : public BaseTimings
 
                 bool                          is_child_active    = false;
 
-                void  handleTriggerStops();
+                void  handleTriggerStops(bool is_forced);
                 bool  proceedStart();
         virtual void  traverseChilds() = 0;
                 void  insertAsActiveChildFromDom(QDomElement e);

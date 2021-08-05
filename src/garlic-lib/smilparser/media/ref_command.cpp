@@ -40,6 +40,7 @@ void TRefCommand::prepareDurationTimers()
 
     if (startDurTimer() || isEndTimerActive())
     {
+        resetInternalRepeatCount();
         emitStartElementSignal(this);
     }
     else
@@ -54,4 +55,9 @@ void TRefCommand::setAttributes()
 {
     parseBaseMediaAttributes();
     src        = getAttributeFromRootElement("src", "");
+}
+
+void TRefCommand::prepareDurationTimersForRepeat()
+{
+    startDurTimer();
 }

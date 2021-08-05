@@ -40,6 +40,7 @@ void TAudio::prepareDurationTimers()
     if (status == _active && !isRestartable())
         return;
 
+    resetInternalRepeatCount();
     startDurTimer(); // audio/video not need a dur timer, but if there is one it mist be started
 
     emitStartElementSignal(this);
@@ -52,6 +53,12 @@ void TAudio::setAttributes()
     parseBaseMediaAttributes();
     src        = getAttributeFromRootElement("src", "");
     soundLevel = getAttributeFromRootElement("soundLevel", "");
+}
+
+void TAudio::prepareDurationTimersForRepeat()
+{
+    startDurTimer();
+    emit repeat(this);
 }
 
 // ====================  private methods =================================

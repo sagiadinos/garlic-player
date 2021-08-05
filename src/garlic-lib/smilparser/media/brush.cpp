@@ -41,6 +41,7 @@ void TBrush::prepareDurationTimers()
 
     if (startDurTimer() || hasEndTimer())
     {
+        resetInternalRepeatCount();
         emitStartElementSignal(this);
     }
     else
@@ -55,6 +56,11 @@ void TBrush::setAttributes()
 {
     parseBaseMediaAttributes();
     color = getAttributeFromRootElement("color", "");
+}
+
+void TBrush::prepareDurationTimersForRepeat()
+{
+    startDurTimer();
 }
 
 // ====================  private methods =================================

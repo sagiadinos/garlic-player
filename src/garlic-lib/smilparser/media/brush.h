@@ -31,6 +31,7 @@ class TBrush : public BaseMedia
     protected:
         QString  color = "inherit";
         void     setAttributes();
+        void     prepareDurationTimersForRepeat();
 };
 
 #endif // TBRUSH_H
