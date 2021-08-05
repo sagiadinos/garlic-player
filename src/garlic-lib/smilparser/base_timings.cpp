@@ -107,7 +107,7 @@ void BaseTimings::resumeAllTimers()
 
 }
 
-void BaseTimings::selectWhichTimerShouldStop(bool is_forced)
+void BaseTimings::selectWhichTimerShouldStop()
 {
     if (isBeginTimerActive())
     {

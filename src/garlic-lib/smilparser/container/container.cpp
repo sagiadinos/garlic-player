@@ -150,7 +150,7 @@ void TContainer::emitfinishedElement() // slot called from EndTimer
 void TContainer::handleTriggerStops(bool is_forced)
 {
     // if a repeated timer trigger like begin-end wallclock or a begin-end list perform a check
-    selectWhichTimerShouldStop(is_forced);
+    selectWhichTimerShouldStop();
     stopAllActivatedChilds(is_forced); // must be after emit stop
     removeAllActiveChilds();
 }

@@ -85,7 +85,8 @@ void BaseMedia::repeat()
 
 void BaseMedia::stop(bool is_forced)
 {
-    selectWhichTimerShouldStop(is_forced);
+    Q_UNUSED(is_forced);
+    selectWhichTimerShouldStop();
 }
 
 void BaseMedia::pause()

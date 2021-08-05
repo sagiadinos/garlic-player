@@ -57,7 +57,7 @@ class BaseTimings : public TBase
 
                 void           activateTriggerTimers();
                 void           pauseAllTimers();
-                void           selectWhichTimerShouldStop(bool is_forced);
+                void           selectWhichTimerShouldStop();
                 void           stopAllTimers();
                 void           stopSimpleTimers();
                 void           startTrigger(QString source_id);
