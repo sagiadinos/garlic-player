@@ -57,12 +57,10 @@ void TRegion::startShowMedia(BaseMedia *media)
 
 void TRegion::stopShowMedia(BaseMedia *media)
 {
-
-
     //  2021-07-21
     // defer should never send stopShowMedia, but we can have an overlay e.g. brush over image
     // so we need  to set new media if differs
-    if (MyMedia->getSmilMedia() != media)
+    if (MyMedia == Q_NULLPTR || MyMedia->getSmilMedia() != media)
     {
         secureStopDisplayingMedia(MyMediaFactory.initMedia(media));
     }

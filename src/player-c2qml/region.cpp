@@ -108,7 +108,7 @@ void TRegion::startShowMedia(BaseMedia *media)
 
 void TRegion::stopShowMedia(BaseMedia *media)
 {
-    if (MyMedia->getSmilMedia() != media)
+    if (MyMedia == Q_NULLPTR || MyMedia->getSmilMedia() != media)
     {
         secureStopDisplayingMedia(MyMediaFactory.data()->initMedia(media));
     }
