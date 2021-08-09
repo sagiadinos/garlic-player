@@ -11,7 +11,7 @@ class CurrentPlayingMedia : public QObject
 public:
     explicit CurrentPlayingMedia(Files::MediaManager *mm, QObject *parent = nullptr);
     void         insert(BaseMedia *SmilMedia);
-    void         remove(BaseMedia *SmilMedia);
+    bool         remove(BaseMedia *SmilMedia);
     int          count();
     BaseMedia   *getFirstPlayingObject();
 protected:

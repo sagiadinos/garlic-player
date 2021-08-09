@@ -46,7 +46,7 @@ namespace Files
         QString               requestLoadablePath(QString src);
         int                   checkCacheStatus(QString src);
         void                  insertCurrentlyPlaying(QString path);
-        void                  removeCurrentlyPlaying(QString path);
+        bool                  removeCurrentlyPlaying(QString path);
         bool                  isCurrentlyPlaying(QString path);
 
     protected:

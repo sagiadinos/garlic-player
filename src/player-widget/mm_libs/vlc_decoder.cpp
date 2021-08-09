@@ -4,7 +4,7 @@
 
 void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
-    Q_UNUSED(ctx); Q_UNUSED(data);
+   Q_UNUSED(ctx);
 
     char *result;
     if (vasprintf(&result, fmt, args) < 0)
@@ -37,8 +37,15 @@ void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt
 VlcDecoder::VlcDecoder(QObject *parent) : QObject(parent)
 {
     vlcInstance = libvlc_new(0, Q_NULLPTR);
-    libvlc_log_set(vlcInstance, logCallback, NULL);
-    vlcPlayer    = libvlc_media_player_new(vlcInstance);
+    if (vlcInstance)
+    {
+#ifdef QT_DEBUG
+        libvlc_log_set(vlcInstance, logCallback, NULL);
+#endif
+        vlcPlayer    = libvlc_media_player_new(vlcInstance);
+    }
+    else
+        qCritical() << "VLC-Qt Error: libvlc failed to load!";
 }
 
 VlcDecoder::~VlcDecoder()
@@ -120,29 +127,22 @@ void VlcDecoder::updatePosition()
     if (vlcPlayer == NULL)
         return;
 
-
     libvlc_state_t status = libvlc_media_player_get_state(vlcPlayer);
 
     switch (status)
     {
         case libvlc_Opening:
-            qDebug() << "Loaded media " << current_media_path;
             break;
         case libvlc_Buffering:
-            qDebug() << "Buffered media " << current_media_path;
             break;
         case libvlc_Playing:
-         //   qDebug() << "Playing media " << current_media_path;
             break;
         case libvlc_Paused:
-            qDebug() << "paused media " << current_media_path;
             break;
         case libvlc_Stopped:
-            qWarning(Develop) << "stopped media " << current_media_path;
             PositionTimer.data()->stop();
             break;
         case libvlc_Ended:
-            qDebug() << "End of media " << current_media_path;
             PositionTimer.data()->stop();
             emit finished();
             break;

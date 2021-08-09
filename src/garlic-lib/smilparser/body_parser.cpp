@@ -259,6 +259,6 @@ void BodyParser::emitStartShowMedia(BaseMedia *media)
 
 void BodyParser::emitStopShowMedia(BaseMedia *media)
 {
-    MyCurrentPlayingMedia->remove(media);
-    emit stopShowMedia(media);
+   if (MyCurrentPlayingMedia->remove(media)) // not sending stops if skipElement
+        emit stopShowMedia(media);
 }

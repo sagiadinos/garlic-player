@@ -110,9 +110,9 @@ void Files::MediaManager::insertCurrentlyPlaying(QString path)
     currently_playing.insert(path);
 }
 
-void Files::MediaManager::removeCurrentlyPlaying(QString path)
+bool Files::MediaManager::removeCurrentlyPlaying(QString path)
 {
-    currently_playing.remove(path);
+   return currently_playing.remove(path);
 }
 
 bool Files::MediaManager::isCurrentlyPlaying(QString path)

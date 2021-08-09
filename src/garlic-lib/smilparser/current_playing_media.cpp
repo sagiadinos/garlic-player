@@ -28,10 +28,11 @@ void CurrentPlayingMedia::insert(BaseMedia *SmilMedia)
     MyMediaManager->insertCurrentlyPlaying(SmilMedia->getSrc());
 }
 
-void CurrentPlayingMedia::remove(BaseMedia *SmilMedia)
+bool CurrentPlayingMedia::remove(BaseMedia *SmilMedia)
 {
-    currently_playing_smilobjects.remove(SmilMedia);
+    bool ret = currently_playing_smilobjects.remove(SmilMedia);
     MyMediaManager->removeCurrentlyPlaying(SmilMedia->getSrc());
+    return ret;
 }
 
 int CurrentPlayingMedia::count()
