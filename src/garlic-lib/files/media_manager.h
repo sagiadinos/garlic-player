@@ -37,7 +37,7 @@ namespace Files
     {
         Q_OBJECT
     public:
-        explicit MediaManager(MediaModel *mm, DownloadQueue *dq, MainConfiguration *config, QObject *parent=Q_NULLPTR);
+        explicit MediaManager(MediaModel *mm, DownloadQueue *dq, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent=Q_NULLPTR);
         ~MediaManager();
         void                  clearQueues();
         void                  registerFile(QString src);
@@ -53,7 +53,9 @@ namespace Files
         QSet<QString>         currently_playing;
         int                   timer_id;
         DownloadQueue        *MyDownloadQueue;
+        FreeDiscSpace        *MyFreeDiscSpace;
         MediaModel           *MyMediaModel;
+
         void                  handleUpdated(QString local_path, QString src);
         void                  handleRemoteFile(QString src);
     protected slots:

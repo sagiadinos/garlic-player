@@ -18,8 +18,10 @@
 
 #include "download_queue.h"
 
-DownloadQueue::DownloadQueue(MainConfiguration *config, QObject *parent) : QObject(parent)
+DownloadQueue::DownloadQueue(MainConfiguration *config, FreeDiscSpace *fds, DB::InventoryTable *it, QObject *parent) : QObject(parent)
 {
+    MyInventoryTable= it;
+    MyFreeDiscSpace = fds;
     MyConfiguration = config;
 }
 
@@ -39,11 +41,6 @@ void DownloadQueue::clearQueues()
     download_slots.clear();
 }
 
-void DownloadQueue::setInventoryTable(DB::InventoryTable *value)
-{
-    MyInventoryTable = value;
-}
-
 void DownloadQueue::insertQueue(QString src, QString local)
 {
     media_queue.enqueue(qMakePair(src, local));
@@ -61,13 +58,13 @@ void DownloadQueue::processQueue()
         // or the same file more than one time in playlist
         if (download_slots.find(paths.second) == download_slots.end())
         {
-            Downloader *MyDownloader = new Downloader(MyConfiguration, this);
+            Downloader *MyDownloader = new Downloader(MyFreeDiscSpace, MyInventoryTable, MyConfiguration, this);
+
             connect(MyDownloader, SIGNAL(succeed(TNetworkAccess*)), SLOT(doSucceed(TNetworkAccess*)));
             connect(MyDownloader, SIGNAL(notcacheable(TNetworkAccess*)), SLOT(doNotCacheable(TNetworkAccess*)));
             connect(MyDownloader, SIGNAL(notmodified(TNetworkAccess*)), SLOT(doNotModified(TNetworkAccess*)));
             connect(MyDownloader, SIGNAL(failed(TNetworkAccess*)), SLOT(doFailed(TNetworkAccess*)));
-            if (MyInventoryTable != Q_NULLPTR)
-                MyDownloader->setInventoryTable(MyInventoryTable);
+
             download_slots.insert(paths.second, MyDownloader);
             MyDownloader->processFile(QUrl(paths.first), QFileInfo(paths.second));
         }

@@ -48,6 +48,7 @@ class LibFacade : public QObject
         void               init(MainConfiguration *config);
         MainConfiguration *getConfiguration() const {return MyConfiguration.data();}
         HeadParser        *getHead() const {return MyHeadParser.data();}
+        ResourceMonitor   *getResourceMonitor();
         void               setConfigFromExternal(QString config_path, bool restart_smil_parsing = true);
         void               toggleLauncher(bool value){has_launcher = value;}
 
@@ -59,23 +60,26 @@ class LibFacade : public QObject
     public slots:
         void               initParser();
     protected:
-        int                                     resource_monitor_timer_id;
-        bool                                    has_launcher = false;
-        QScopedPointer<DB::InventoryTable>      MyInventoryTable;
-        QScopedPointer<ElementsContainer>       MyElementsContainer;
-        QScopedPointer<ElementFactory>          MyElementFactory;
-        QScopedPointer<CurrentPlayingMedia>     MyCurrentPlayingMedia;
-        QScopedPointer<MainConfiguration>       MyConfiguration;
-        QScopedPointer<MediaModel>              MyMediaModel;
-        QScopedPointer<DownloadQueue>           MyDownloadQueue;
-        QScopedPointer<Files::IndexManager>     MyIndexManager ;
-        QScopedPointer<Files::MediaManager>     MyMediaManager;
-        QScopedPointer<HeadParser>              MyHeadParser;
-        QScopedPointer<SmilHead::TaskScheduler> MyTaskScheduler;
-        QScopedPointer<SmilHead::PlaceHolder>   MyPlaceHolder;
+        int               resource_monitor_timer_id;
+        bool              has_launcher = false;
+        QScopedPointer<DB::InventoryTable>         MyInventoryTable;
+        QScopedPointer<ElementsContainer>          MyElementsContainer;
+        QScopedPointer<ElementFactory>             MyElementFactory;
+        QScopedPointer<CurrentPlayingMedia>        MyCurrentPlayingMedia;
+        QScopedPointer<MainConfiguration>          MyConfiguration;
+        QScopedPointer<MediaModel>                 MyMediaModel;
+        QScopedPointer<DownloadQueue>              MyDownloadQueue;
+        QScopedPointer<Files::IndexManager>        MyIndexManager ;
+        QScopedPointer<Files::MediaManager>        MyMediaManager;
+        QScopedPointer<HeadParser>                 MyHeadParser;
+        QScopedPointer<SmilHead::TaskScheduler>    MyTaskScheduler;
+        QScopedPointer<SmilHead::PlaceHolder>      MyPlaceHolder;
         QScopedPointer<SmilHead::XMLConfiguration> MyXMLConfiguration;
-        QScopedPointer<BodyParser>              MyBodyParser;
-        ResourceMonitor                         MyResourceMonitor;
+        QScopedPointer<BodyParser>                 MyBodyParser;
+        QScopedPointer<SystemInfos::DiscSpace>     MyDiscSpace;
+        QScopedPointer<FreeDiscSpace>              MyFreeDiscSpace;
+        QStorageInfo                               MyStorage;
+        ResourceMonitor            MyResourceMonitor;
         void               initFileManager();
         void               processHeadParsing();
         void               timerEvent(QTimerEvent *event);

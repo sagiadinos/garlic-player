@@ -18,9 +18,10 @@
 
 #include "head_parser.h"
 
-HeadParser::HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, SmilHead::PlaceHolder *ph, QObject *parent) : QObject(parent)
+HeadParser::HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, SmilHead::PlaceHolder *ph, SystemInfos::DiscSpace *ds, QObject *parent) : QObject(parent)
 {
     MyConfiguration  = config;
+    MyDiscSpace      = ds;
     MyMediaManager   = mm;
     MyInventoryTable = it;
     MyPlaceHolder    = ph;
@@ -130,22 +131,22 @@ void HeadParser::parseMetaData(QDomElement element, SmilHead::TaskScheduler *MyT
         subscription->parse(node_list.at(i).toElement());
         if (subscription->getType() == "SystemReport")
         {
-            MySystemReportManager.reset(new Reporting::SystemReportManager(MyConfiguration));
+            MySystemReportManager.reset(new Reporting::SystemReportManager(MyConfiguration, MyDiscSpace));
             MySystemReportManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
         else if (subscription->getType() == "InventoryReport" && MyInventoryTable != Q_NULLPTR)
         {
-            MyInventoryReportManager.reset(new Reporting::InventoryReportManager(MyConfiguration, MyInventoryTable));
+            MyInventoryReportManager.reset(new Reporting::InventoryReportManager(MyConfiguration, MyInventoryTable, MyDiscSpace));
             MyInventoryReportManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
         else if (subscription->getType() == "PlaylogCollection")
         {
-            MyPlayLogsManager.reset(new Reporting::PlayLogsManager(MyConfiguration));
+            MyPlayLogsManager.reset(new Reporting::PlayLogsManager(MyConfiguration, MyDiscSpace));
             MyPlayLogsManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
         else if (subscription->getType() == "EventlogCollection")
         {
-            MyEventLogsManager.reset(new Reporting::EventLogsManager(MyConfiguration));
+            MyEventLogsManager.reset(new Reporting::EventLogsManager(MyConfiguration, MyDiscSpace));
             MyEventLogsManager.data()->init(subscription->getAction(), subscription->getRefreshInterval());
         }
         else if (subscription->getType() == "TaskSchedule")

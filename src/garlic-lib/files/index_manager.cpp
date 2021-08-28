@@ -17,9 +17,9 @@
 *************************************************************************************/
 #include "index_manager.h"
 
-Files::IndexManager::IndexManager(MainConfiguration *config, QObject *parent) : BaseManager(config, parent)
+Files::IndexManager::IndexManager(DB::InventoryTable *it, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent) : BaseManager(config, fds, parent)
 {
-    MyDownloader    = new Downloader(MyConfiguration, this);
+    MyDownloader    = new Downloader(fds, it, MyConfiguration, this);
     MyIndexModel    = new IndexModel(this);
     connect(MyDownloader, SIGNAL(succeed(TNetworkAccess*)), SLOT(doSucceed(TNetworkAccess*)));
 }

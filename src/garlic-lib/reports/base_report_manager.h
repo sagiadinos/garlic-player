@@ -5,6 +5,7 @@
 #include <QTimer>
 #include "files/webdav.h"
 #include "smilparser/head/subscription.h"
+#include "system_infos/disc_space.h"
 
 namespace Reporting
 {
@@ -12,17 +13,17 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            explicit BaseReportManager(MainConfiguration *config, QObject *parent = nullptr);
+            explicit BaseReportManager(MainConfiguration *config, SystemInfos::DiscSpace *ds, QObject *parent = nullptr);
             ~BaseReportManager();
             void                 init(QString action, int refresh);
             virtual void         handleSend() = 0;
         protected:
             QScopedPointer<WebDav, QScopedPointerDeleteLater>  MyWebDav;
-
-            int                  timer_id = 0;
-            QString              action_url = "";
-            QString              current_send_file_path = "";
-            SubScription        *MySubscription;
+            SystemInfos::DiscSpace *MyDiscSpace;
+            int                     timer_id = 0;
+            QString                 action_url = "";
+            QString                 current_send_file_path = "";
+            SubScription           *MySubscription;
             MainConfiguration      *MyConfiguration;
             void                 timerEvent(QTimerEvent *event);
          protected slots:

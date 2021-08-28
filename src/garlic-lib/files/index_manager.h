@@ -29,7 +29,7 @@ namespace Files
     {
             Q_OBJECT
         public:
-            explicit IndexManager(MainConfiguration *config, QObject *parent=Q_NULLPTR);
+            explicit IndexManager(DB::InventoryTable *it, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent=Q_NULLPTR);
             void            init(QString src);
             bool            load();
             void            activateRefresh(int value);

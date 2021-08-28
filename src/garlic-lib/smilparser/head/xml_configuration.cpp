@@ -17,10 +17,10 @@
 *************************************************************************************/
 #include "xml_configuration.h"
 
-SmilHead::XMLConfiguration::XMLConfiguration(MainConfiguration *config, QObject *parent) : BaseManager(config, parent)
+SmilHead::XMLConfiguration::XMLConfiguration(DB::InventoryTable *it, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent) : BaseManager(config, fds, parent)
 {
-    XMLDownloader        = new Downloader(MyConfiguration, this);
-    connect(XMLDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
+    XMLDownloader        = new Downloader(fds, it, MyConfiguration, this);
+    connect(XMLDownloader, SIGNAL(succeed(TNetworkAccess*)), SLOT(doSucceed(TNetworkAccess*)));
 }
 
 void SmilHead::XMLConfiguration::processFromUrl(QUrl config_url)

@@ -22,7 +22,6 @@
 #include <QQueue>
 #include <QSet>
 #include "downloader.h"
-#include "disc_space.h"
 
 /**
  * @brief The DownloadQueue class
@@ -37,7 +36,7 @@ class DownloadQueue : public QObject
 #else
     const int _max_download_slots   = 4;
 #endif
-        explicit DownloadQueue(MainConfiguration *config, QObject *parent=Q_NULLPTR);
+        explicit DownloadQueue(MainConfiguration *config, FreeDiscSpace *fds, DB::InventoryTable *it, QObject *parent=Q_NULLPTR);
         ~DownloadQueue();
         void     insertQueue(QString src, QString local);
         void     clearQueues();
@@ -46,12 +45,12 @@ class DownloadQueue : public QObject
         //Getter/Setter
         QQueue<QPair<QString, QString>>     getMediaQueue() {return media_queue;}
         QHash<QString, Downloader *>        getDownloadSlots(){return download_slots;}
-        void                                setInventoryTable(DB::InventoryTable *value);
 
     protected:
         MainConfiguration                  *MyConfiguration;
         DB::InventoryTable                 *MyInventoryTable = Q_NULLPTR;
         QByteArray                          user_agent;
+        FreeDiscSpace                      *MyFreeDiscSpace  = Q_NULLPTR;
         QQueue<QPair<QString, QString>>     media_queue;
         QHash<QString, Downloader *>        download_slots;
         void               processQueue();

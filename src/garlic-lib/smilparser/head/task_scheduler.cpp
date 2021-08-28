@@ -17,10 +17,13 @@
 *************************************************************************************/
 #include "task_scheduler.h"
 
-SmilHead::TaskScheduler::TaskScheduler(MainConfiguration *config, QObject *parent) : BaseManager(config, parent)
+SmilHead::TaskScheduler::TaskScheduler(DB::InventoryTable *it, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent) : BaseManager(config, fds, parent)
 {
-    TaskFileDownloader        = new Downloader(MyConfiguration, this);
+    MyInventoryTable = it;
+    MyFreeDiscSpace  = fds;
+    TaskFileDownloader        = new Downloader(fds, it, MyConfiguration, this);
     connect(TaskFileDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
+
 }
 
 
@@ -29,7 +32,6 @@ void SmilHead::TaskScheduler::processFromUrl(QUrl url)
     QFile::remove(MyConfiguration->getPaths("cache")+"task_scheduler.xml"); // remove old file
     TaskFileDownloader->processFile(url, MyConfiguration->getPaths("cache")+"task_scheduler.xml");
 }
-
 
 bool SmilHead::TaskScheduler::loadDocument(QString file_path)
 {
@@ -137,7 +139,7 @@ void SmilHead::TaskScheduler::parseFirmwareUpdate(QDomElement element)
         }
     }
 
-    MyFirmwareDownloader.reset(new SmilHead::FirmwareDownloader(MyConfiguration, this));
+    MyFirmwareDownloader.reset(new SmilHead::FirmwareDownloader(MyInventoryTable, MyConfiguration, MyFreeDiscSpace, this));
     connect(MyFirmwareDownloader.data(), SIGNAL(finishedSoftwareDownload(QString)), SLOT(emitInstallSoftware(QString)));
 
     MyFirmwareDownloader.data()->processFromUrl(MyFirmwareUpdate.source_uri);
@@ -186,7 +188,7 @@ void SmilHead::TaskScheduler::parseUpdateSetting(QDomElement element)
             MyUpdateSetting.checksum_method = el.text();
         }
     }
-    MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyConfiguration, this));
+    MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyInventoryTable, MyConfiguration, MyFreeDiscSpace, this));
     connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), SLOT(emitApplyConfiguration()));
 
     MyXMLConfiguration.data()->processFromUrl(MyUpdateSetting.source_uri);

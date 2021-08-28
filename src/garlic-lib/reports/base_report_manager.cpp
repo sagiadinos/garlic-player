@@ -1,8 +1,9 @@
 #include "base_report_manager.h"
 
-Reporting::BaseReportManager::BaseReportManager(MainConfiguration *config, QObject *parent) : QObject(parent)
+Reporting::BaseReportManager::BaseReportManager(MainConfiguration *config, SystemInfos::DiscSpace *ds, QObject *parent) : QObject(parent)
 {
     MyConfiguration      = config;
+    MyDiscSpace          = ds;
     MyWebDav.reset(new WebDav(MyConfiguration));
     connect(MyWebDav.data(), SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
     connect(MyWebDav.data(), SIGNAL(failed(TNetworkAccess *)), SLOT(doFailed(TNetworkAccess *)));

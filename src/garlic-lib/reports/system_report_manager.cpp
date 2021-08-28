@@ -1,10 +1,10 @@
 #include "system_report_manager.h"
 
-Reporting::SystemReportManager::SystemReportManager(MainConfiguration *config, QObject *parent) : Reporting::BaseReportManager(config, parent)
+Reporting::SystemReportManager::SystemReportManager(MainConfiguration *config, SystemInfos::DiscSpace *ds, QObject *parent) : Reporting::BaseReportManager(config, ds, parent)
 {
     MyCreateSystemReport.reset(new Reporting::CreateSystemReport(MyConfiguration, this));
+    MyCreateSystemReport.data()->setDiscSpace(ds);
 }
-
 
 void Reporting::SystemReportManager::handleSend()
 {

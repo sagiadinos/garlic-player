@@ -17,8 +17,10 @@
 *************************************************************************************/
 #include "downloader.h"
 
-Downloader::Downloader(MainConfiguration *config, QObject *parent) : TNetworkAccess(config, parent)
+Downloader::Downloader(FreeDiscSpace *fds, DB::InventoryTable *it, MainConfiguration *config, QObject *parent) : TNetworkAccess(config, parent)
 {
+    MyInventoryTable = it;
+    MyFreeDiscSpace = fds;
     manager_head.reset(new QNetworkAccessManager(this));
     manager_head.data()->thread()->setPriority(QThread::LowestPriority);
     connect(manager_head.data(), SIGNAL(finished(QNetworkReply*)), SLOT(finishedHeadRequest(QNetworkReply*)));
@@ -28,11 +30,6 @@ Downloader::~Downloader()
 {
     if (!MyFileDownloader.isNull())
          MyFileDownloader.data()->cancelDownload();
-}
-
-void Downloader::setInventoryTable(DB::InventoryTable *value)
-{
-    MyInventoryTable = value;
 }
 
 void Downloader::processFile(QUrl url, QFileInfo fi)
@@ -162,11 +159,8 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         return;
     }
 
-    DiscSpace MyDiscSpace(local_file_info.absolutePath());
-    MyDiscSpace.setInventoryTable(MyInventoryTable);
-
-    qint64 calc = MyDiscSpace.calculateNeededDiscSpaceToFree(remote_size);
-    if (calc > 0 && !MyDiscSpace.freeDiscSpace(calc))
+    qint64 calc = MyFreeDiscSpace->calculateNeededDiscSpaceToFree(remote_size);
+    if (calc > 0 && !MyFreeDiscSpace->freeDiscSpace(calc))
     {
         handleNetworkError(reply);
         emit failed(this);

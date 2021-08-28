@@ -43,7 +43,7 @@ class MediaModel : public QObject
     Q_OBJECT
     public:
 
-        explicit MediaModel(QObject *parent=Q_NULLPTR);
+        explicit MediaModel(FreeDiscSpace *fds, QObject *parent=Q_NULLPTR);
         ~MediaModel();
 
         void                                          clearQueue();
@@ -53,12 +53,13 @@ class MediaModel : public QObject
         void                                          insertAsUncachable(QString src_file_path);
         void                                          insertAsLocalFile(QString src_file_path);
         void                                          insertCacheableFile(QString src_file_path, QString local_file_path);
-        QString                                       handleWgt(QString wgt_file_path);
+        QString                                       handleWgt(QString wgt_file_path, FreeDiscSpace *MyDiscSpace);
         //Getter/Setter
         QMap<QString, QPair<QString, int> >           getAvailableMediaList() const {return available_media_list;}
         int                                           countAvailableMedia(){return available_media_list.size();}
         void                                          setAvailableMediaList(const QMap<QString, QPair<QString, int> > &value) {available_media_list = value;}
         QString                                       determineHashedFilePath(QString src_file_path);
+        FreeDiscSpace                                *MyFreeDiscSpace;
 
     protected:
         QMap<QString, QPair<QString, int>>            available_media_list;

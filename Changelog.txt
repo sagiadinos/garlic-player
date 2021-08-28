@@ -5,6 +5,8 @@ Changelog
 ---------------------
 1. New Features
 	* resumable downloads
+	* logs and debug box includes disco space values
+	* reorganized debug box
 	* support endsync for excl and par (first|last|id-value)
  	* support negative values for offset
 	* support restart-attribute (always|never|whenNotActive|default)	
@@ -17,9 +19,12 @@ Changelog
 
 2. Improvements
 	* additional SMIL-Indexes for testing
+	* debugbox in human readable byyte sizes
+	* improved handling of cache handling when disc space gets full
 	* improved compatibility to SMIL standard
 	* improved compatibility to IAdea player
 	* various bugfixes
+	* add gmock support in test.pri (use linux distribution repository for gmock)
 
 0.3.0 -> 0.4.0
 ---------------------

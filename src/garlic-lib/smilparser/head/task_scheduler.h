@@ -61,17 +61,19 @@ namespace SmilHead
     {
             Q_OBJECT
         public:
-            explicit TaskScheduler(MainConfiguration *config, QObject *parent = nullptr);
+            explicit TaskScheduler(DB::InventoryTable *it, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent = nullptr);
             void processFromUrl(QUrl url);
 
     protected:
-            Downloader     *TaskFileDownloader;
-            QDomDocument    document;
             QScopedPointer<SmilHead::XMLConfiguration> MyXMLConfiguration;
             QScopedPointer<SmilHead::FirmwareDownloader> MyFirmwareDownloader;
-            UpdateSettings  MyUpdateSetting;
-            FirmwareUpdate  MyFirmwareUpdate;
-            ShutdownPlayer  MyShutdownPlayer;
+            Downloader         *TaskFileDownloader;
+            DB::InventoryTable *MyInventoryTable;
+            FreeDiscSpace      *MyFreeDiscSpace;
+            QDomDocument        document;
+            UpdateSettings      MyUpdateSetting;
+            FirmwareUpdate      MyFirmwareUpdate;
+            ShutdownPlayer      MyShutdownPlayer;
             void            parseFirmwareUpdate(QDomElement element);
             void            parseUpdateSetting(QDomElement element);
             void            parseShutdownPlayer(QDomElement element);

@@ -30,7 +30,7 @@ namespace SmilHead
     {
         Q_OBJECT
     public:
-        explicit XMLConfiguration(MainConfiguration *config, QObject *parent = nullptr);
+        explicit XMLConfiguration(DB::InventoryTable *it, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent = nullptr);
 
         void processFromUrl(QUrl configuration_url);
         void processFromLocalFile(QString file_path);

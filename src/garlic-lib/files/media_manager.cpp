@@ -18,7 +18,7 @@
 #include "media_manager.h"
 #include "media_manager.h"
 
-Files::MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, MainConfiguration *config, QObject *parent) : BaseManager(config, parent)
+Files::MediaManager::MediaManager(MediaModel *mm, DownloadQueue *dq, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent) : BaseManager(config, fds, parent)
 {
     MyDownloadQueue  = dq;
     MyMediaModel     = mm;
@@ -58,7 +58,7 @@ void Files::MediaManager::registerFile(QString src)
     // ToDo: Think about a more elegant implementation
     if (src.contains(".wgt"))
     {
-        QString wgt_path = MyMediaModel->handleWgt(src); // also extract when necessary.
+        QString wgt_path = MyMediaModel->handleWgt(src, MyFreeDiscSpace); // also extract when necessary.
         MyMediaModel->insertCacheableFile(src, wgt_path);
         return;
     }
@@ -120,7 +120,6 @@ bool Files::MediaManager::isCurrentlyPlaying(QString path)
     return (currently_playing.find(path) != currently_playing.end());
 }
 
-
 QString Files::MediaManager::requestLoadablePath(QString src)
 {
     // check if it is in cache
@@ -141,7 +140,7 @@ void Files::MediaManager::handleUpdated(QString local_path, QString src)
         renameDownloadedFile(local_path);
         if (src.contains(".wgt"))
         {
-            MyMediaModel->handleWgt(local_path); // extract etc...
+            MyMediaModel->handleWgt(local_path, MyFreeDiscSpace); // extract etc...
         }
         MyMediaModel->setStatusBySrcPath(src, MEDIA_CACHED);
     }

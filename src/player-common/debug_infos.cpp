@@ -5,11 +5,12 @@ DebugInfos::DebugInfos(LibFacade *lib_facade, QWidget *parent) :  QDialog(parent
 {
     setLibFacade(lib_facade);
     ui->setupUi(this);
-    timer_id = startTimer(500);
+    timer_id = startTimer(1000);
     setWindowOpacity(0.9);
+    MyResourceMonitor = MyLibFacade->getResourceMonitor();
 #if !defined  Q_OS_ANDROID
     // cause in Android it shows fullscreen and not as dialog
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::Popup	);
+    setWindowFlags(Qt::WindowStaysOnTopHint);
 #endif
 }
 
@@ -61,39 +62,26 @@ QString DebugInfos::preparePlayedMediaText(BaseMedia *media)
 
 void DebugInfos::outputResourcesUsage()
 {
-    MyMemoryInfos.refresh();
+    MyResourceMonitor->refresh();
 
-    qint64  total_mem = MyMemoryInfos.getTotal();
-    qint64  free_mem = MyMemoryInfos.getFree();
-    double d_total = (double)total_mem / (double)1048576;
-    double d_free = (double)free_mem / (double)1048576;
-    ui->TotalSystemMemory->setText(QString("Total Memory System:: %1" ).arg(d_total, 0, 'f', 2) + " MiB");
-    ui->FreeSystemMemory->setText(QString("Free Memory System:: %1" ).arg(d_free, 0, 'f', 2) + " MiB");
+    ui->FreeSpace->setText(MyResourceMonitor->getTotalDiscSpace());
+    ui->TotalSpace->setText(MyResourceMonitor->getFreeDiscSpace());
 
-    qint64  current_rss = MyMemoryInfos.getRSS();
-    double d_current = (double)current_rss / (double)1048576;
-    ui->OutputMemoryUse->setText(QString("App Memory use: <b>%1" ).arg(d_current, 0, 'f', 2) + " MiB</b>");
-    if (current_rss > max_memory_used)
-    {
-        max_memory_used = current_rss;
-        double d_max = (double)max_memory_used / (double)1048576;
-        ui->MaxMemoryUsed->setText(QString("Max Memory App used: %1" ).arg(d_max, 0, 'f', 2) + " MiB (" + QTime::currentTime().toString() +")");
-    }
+    ui->TotalSystemMemory->setText(MyResourceMonitor->getTotalMemorySystem());
+    ui->FreeSystemMemory->setText(MyResourceMonitor->getFreeMemorySystem());
 
-    qint64  current_threads = MyGeneralInfos.countThreads();
-    ui->ThreadsNumber->setText("Threads: " + QString::number(current_threads));
-    if (current_threads > max_threads_used)
-    {
-        max_threads_used = current_threads;
-        ui->MaxThreadsNumber->setText("Max Threads: " + QString::number(max_threads_used));
-    }
+    ui->OutputMemoryUse->setText(MyResourceMonitor->getMemoryAppUse());
+    ui->MaxMemoryUsed->setText(MyResourceMonitor->getMaxMemoryAppUsed());
+
+    ui->ThreadsNumber->setText(MyResourceMonitor->getThreadsNumber());
+    ui->MaxThreadsNumber->setText(MyResourceMonitor->getMaxThreadsNumber());
+
     QString title = "";
     if (MyLibFacade->getHead() != Q_NULLPTR)
     {
         title = MyLibFacade->getHead()->getTitle();
     }
     ui->PlaylistTitle->setText(title);
-
     ui->UserAgent->setText(MyLibFacade->getConfiguration()->getUserAgent());
 }
 

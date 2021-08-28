@@ -1,8 +1,9 @@
 #include "inventory_report_manager.h"
 
-Reporting::InventoryReportManager::InventoryReportManager(MainConfiguration *config, DB::InventoryTable *inv_table, QObject *parent) : Reporting::BaseReportManager(config, parent)
+Reporting::InventoryReportManager::InventoryReportManager(MainConfiguration *config, DB::InventoryTable *inv_table, SystemInfos::DiscSpace *ds, QObject *parent) : Reporting::BaseReportManager(config, ds, parent)
 {
     MyCreateInventoryReport.reset(new Reporting::CreateInventoryReport(MyConfiguration, this));
+    MyCreateInventoryReport.data()->setDiscSpace(ds);
     MyInventoryTable = inv_table;
 
 }

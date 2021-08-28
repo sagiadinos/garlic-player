@@ -24,10 +24,20 @@ ResourceMonitor::ResourceMonitor(QObject *parent) : QObject(parent)
 
 void ResourceMonitor::refresh()
 {
-    MyMemoryInfos.refresh();
+    determineDiscSpace();
     determineMemorySystem();
     determineMemoryApp();
     determineThreads();
+}
+
+QString ResourceMonitor::getTotalDiscSpace() const
+{
+    return total_disc_space;
+}
+
+QString ResourceMonitor::getFreeDiscSpace() const
+{
+    return free_disc_space;
 }
 
 QString ResourceMonitor::getTotalMemorySystem() const
@@ -60,14 +70,24 @@ QString ResourceMonitor::getMaxThreadsNumber() const
     return max_threads_number;
 }
 
+void ResourceMonitor::setDiscSpace(SystemInfos::DiscSpace *ds)
+{
+    MyDiscSpace = ds;
+}
+
+void ResourceMonitor::determineDiscSpace()
+{
+    MyDiscSpace->recalculate();
+
+    total_disc_space = "Total Disc: " + determineNumberUnit(MyDiscSpace->getBytesTotal());
+    free_disc_space = "Free Disc: " + determineNumberUnit(MyDiscSpace->getBytesFree() + MyDiscSpace->getBytesLocked());
+}
+
 void ResourceMonitor::determineMemorySystem()
 {
-    qint64  total_mem = MyMemoryInfos.getTotal();
-    qint64  free_mem = MyMemoryInfos.getFree();
-    double d_total = (double)total_mem / (double)1048576;
-    double d_free = (double)free_mem / (double)1048576;
-    total_memory_system = QString("Total Memory System: %1" ).arg(d_total, 0, 'f', 2) + " MiB";
-    free_memory_system  = QString("Free Memory System: %1" ).arg(d_free, 0, 'f', 2) + " MiB";
+    MyMemoryInfos.refresh();
+    total_memory_system = "Total Memory System: " + determineNumberUnit(MyMemoryInfos.getTotal());
+    free_memory_system  = "Free Memory System: " + determineNumberUnit(MyMemoryInfos.getFree());
 }
 
 void ResourceMonitor::determineMemoryApp()
@@ -76,12 +96,10 @@ void ResourceMonitor::determineMemoryApp()
     if (current_rss > max_memory_used)
     {
         max_memory_used = current_rss;
-        max_memory_time = QDateTime::currentDateTime().toString();
+        max_memory_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:s");
     }
-    double d_current = (double)current_rss / (double)1048576;
-    double d_max = (double)max_memory_used / (double)1048576;
-    memory_apps_use     = QString("App Memory use: %1" ).arg(d_current, 0, 'f', 2) + " MiB";
-    max_memory_app_used = QString("Max Memory App used: %1" ).arg(d_max, 0, 'f', 2) + " MiB at " + max_memory_time;
+    memory_apps_use     = "App Memory use: " + determineNumberUnit(current_rss);
+    max_memory_app_used = "Max Memory App used: "  + determineNumberUnit(max_memory_used) + " at " + max_memory_time;
 }
 
 void ResourceMonitor::determineThreads()
@@ -91,4 +109,10 @@ void ResourceMonitor::determineThreads()
         max_threads_used = current_threads;
     threads_number     = "Threads: " + QString::number(current_threads);
     max_threads_number = "Max Threads: " + QString::number(max_threads_used);
+}
+
+QString ResourceMonitor::determineNumberUnit(qint64 number)
+{
+    QLocale locale(QLocale::English);
+    return locale.formattedDataSize(number);
 }

@@ -22,8 +22,8 @@
 #include <QDomDocument>
 #include <QDomElement>
 #include "tools/main_configuration.h"
-#include "files/disc_space.h"
 #include "system_infos/memory.h"
+#include "system_infos/disc_space.h"
 
 namespace Reporting
 {
@@ -34,11 +34,12 @@ namespace Reporting
             explicit CreateBase(MainConfiguration *config, QObject *parent = nullptr);
             void     init();
             QString  asXMLString();
+            void     setDiscSpace(SystemInfos::DiscSpace *value);
 
         protected:
-            QScopedPointer<DiscSpace>            MyDiscSpace;
+            SystemInfos::DiscSpace              *MyDiscSpace;
             QScopedPointer<SystemInfos::Memory>  MyMemory;
-            MainConfiguration       *MyConfiguration;
+            MainConfiguration                   *MyConfiguration;
             QDomDocument          document;
             QDomElement           root, player, system_info;
             void                  createSystemInfo();

@@ -10,7 +10,7 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            explicit EventLogsManager(MainConfiguration *config, QObject *parent = nullptr);
+            explicit EventLogsManager(MainConfiguration *config, SystemInfos::DiscSpace *ds, QObject *parent = nullptr);
 
        protected:
            QStringList                     send_list;

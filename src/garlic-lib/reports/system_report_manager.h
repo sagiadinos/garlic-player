@@ -10,7 +10,7 @@ namespace Reporting
     {
             Q_OBJECT
         public:
-            explicit SystemReportManager(MainConfiguration *config, QObject *parent = nullptr);
+            explicit SystemReportManager(MainConfiguration *config, SystemInfos::DiscSpace *ds, QObject *parent = nullptr);
         protected:
 
             QScopedPointer<Reporting::CreateSystemReport> MyCreateSystemReport;

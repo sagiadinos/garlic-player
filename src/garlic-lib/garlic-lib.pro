@@ -45,10 +45,10 @@ INCLUDEPATH+=../ext/quazip/includes
 
 SOURCES += \
     files/base_manager.cpp \
-    files/disc_space.cpp \
     files/download_factory.cpp \
     files/downloader.cpp \
     files/download_queue.cpp \
+    files/free_disc_space.cpp \
     files/index_manager.cpp \
     files/index_model.cpp \
     files/media_manager.cpp \
@@ -102,6 +102,7 @@ SOURCES += \
     smilparser/container/par.cpp \
     smilparser/container/priorityclass.cpp \
     smilparser/container/seq.cpp \
+    system_infos/disc_space.cpp \
     tools/logging_categories.cpp \
     smilparser/head/subscription.cpp \
     system_infos/memory.cpp \
@@ -128,11 +129,11 @@ SOURCES += \
 
 HEADERS += \
     files/base_manager.h \
-    files/disc_space.h \
     files/download_factory.h \
     files/downloader.h \
     files/download_queue.h \
     files/file_downloader.h \
+    files/free_disc_space.h \
     files/index_manager.h \
     files/index_model.h \
     files/media_manager.h \
@@ -187,6 +188,7 @@ HEADERS += \
     smilparser/base_timings.h \
     smilparser/base.h \
     smilparser/head/subscription.h \
+    system_infos/disc_space.h \
     system_infos/memory.h \
     system_infos/network.h \
     system_infos/cpu.h \

@@ -43,9 +43,9 @@ bool Wgt::isOpen()
     return zip.isOpen();
 }
 
-QString Wgt::handleRealPath()
+QString Wgt::handleRealPath(FreeDiscSpace *MyDiscSpace)
 {
-    if (!extract())
+    if (!extract(MyDiscSpace))
         return "";
     return local_file_path.mid(0, local_file_path.length()-4)+"/index.html";
 }
@@ -72,7 +72,7 @@ qint64 Wgt::calculateUncompressedSize()
  * which can be the cache directory or the local directory on usb, hardisc etc
  * @return
  */
-bool Wgt::extract()
+bool Wgt::extract(FreeDiscSpace *MyDiscSpace)
 {
     if (!isOpen())
         return false;
@@ -82,9 +82,8 @@ bool Wgt::extract()
         return true;
 
     QFileInfo wgt_file(local_file_path);
-    DiscSpace MyDiscSpace(wgt_file.absolutePath());
-    qint64 calc = MyDiscSpace.calculateNeededDiscSpaceToFree(calculateUncompressedSize());
-    if (calc > 0 && !MyDiscSpace.freeDiscSpace(calc))
+    qint64 calc = MyDiscSpace->calculateNeededDiscSpaceToFree(calculateUncompressedSize());
+    if (calc > 0 && !MyDiscSpace->freeDiscSpace(calc))
     {
         qCritical(ContentManager) << local_file_path << " Widget was not extracted. Not enough space could be freeed";
         return "";

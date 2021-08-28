@@ -17,10 +17,10 @@
 *************************************************************************************/
 #include "firmware_downloader.h"
 
-SmilHead::FirmwareDownloader::FirmwareDownloader(MainConfiguration *config, QObject *parent) : BaseManager(config, parent)
+SmilHead::FirmwareDownloader::FirmwareDownloader(DB::InventoryTable *it, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent) : BaseManager(config, fds, parent)
 {
     MyConfiguration           = config;
-    MyDownloader        = new Downloader(MyConfiguration, this);
+    MyDownloader        = new Downloader(fds, it, MyConfiguration, this);
     connect(MyDownloader, SIGNAL(succeed(TNetworkAccess *)), SLOT(doSucceed(TNetworkAccess *)));
 }
 

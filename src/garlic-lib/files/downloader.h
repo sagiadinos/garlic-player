@@ -21,7 +21,7 @@
 #include <QObject>
 #include "file_downloader.h"
 #include "tools/logger.h"
-#include "disc_space.h"
+#include "files/free_disc_space.h"
 
 /**
  * @brief The Downloader class capsulates Download accesses
@@ -34,7 +34,7 @@ class Downloader : public TNetworkAccess
     Q_OBJECT
     public:
 
-        explicit Downloader(MainConfiguration *config, QObject *parent=Q_NULLPTR);
+        explicit Downloader(FreeDiscSpace *fds, DB::InventoryTable *it, MainConfiguration *config, QObject *parent);
         ~Downloader();
 
         void       processFile(QUrl url, QFileInfo fi);
@@ -42,11 +42,11 @@ class Downloader : public TNetworkAccess
         //Getter/Setter
         QFileInfo  getLocalFileInfo();
         void       setLocalFileInfo(const QFileInfo &value) {local_file_info = value;}
-        void       setInventoryTable(DB::InventoryTable *value);
 
     protected:
         QFileInfo               local_file_info;
         DB::InventoryTable      *MyInventoryTable = Q_NULLPTR;
+        FreeDiscSpace           *MyFreeDiscSpace = Q_NULLPTR;
         QScopedPointer <QNetworkAccessManager>  manager_head, manager_head_redirect, manager_get;
         QScopedPointer <FileDownloader>         MyFileDownloader;
         void                    checkStatusCode(QNetworkReply *reply, int status_code);

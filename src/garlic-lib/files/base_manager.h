@@ -21,6 +21,7 @@
 #include <QFile>
 #include "download_queue.h"
 #include "tools/main_configuration.h"
+#include "files/free_disc_space.h"
 
 namespace Files
 {
@@ -28,10 +29,11 @@ namespace Files
     {
             Q_OBJECT
         public:
-            BaseManager(MainConfiguration *config, QObject *parent = Q_NULLPTR);
+            BaseManager(MainConfiguration *config, FreeDiscSpace *fds, QObject *parent = Q_NULLPTR);
 
         protected:
             MainConfiguration *MyConfiguration;
+            FreeDiscSpace     *MyFreeDiscSpace;
             bool               isRemote(QString src);
             bool               isRelative(QString src);
             void               renameDownloadedFile(QString file_path);

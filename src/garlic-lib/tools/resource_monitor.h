@@ -22,6 +22,7 @@
 #include <QDateTime>
 #include "system_infos/memory.h"
 #include "system_infos/general.h"
+#include "system_infos/disc_space.h"
 
 class ResourceMonitor : public QObject
 {
@@ -29,6 +30,8 @@ class ResourceMonitor : public QObject
     public:
         explicit ResourceMonitor(QObject *parent = nullptr);
         Q_INVOKABLE void refresh();
+        Q_INVOKABLE QString getTotalDiscSpace() const;
+        Q_INVOKABLE QString getFreeDiscSpace() const;
         Q_INVOKABLE QString getTotalMemorySystem() const;
         Q_INVOKABLE QString getFreeMemorySystem() const;
         Q_INVOKABLE QString getMemoryAppUse() const;
@@ -36,7 +39,10 @@ class ResourceMonitor : public QObject
         Q_INVOKABLE QString getThreadsNumber() const;
         Q_INVOKABLE QString getMaxThreadsNumber() const;
 
-    protected:
+        void setDiscSpace(SystemInfos::DiscSpace *ds);
+protected:
+        QString              total_disc_space = "";
+        QString              free_disc_space = "";
         QString              total_memory_system = "";
         QString              free_memory_system = "";
         QString              memory_apps_use = "";
@@ -46,11 +52,14 @@ class ResourceMonitor : public QObject
         qint64               max_memory_used = 0;
         QString              max_memory_time = "";
         qint64               max_threads_used = 0;
-        SystemInfos::Memory  MyMemoryInfos;
-        SystemInfos::General MyGeneralInfos;
+        SystemInfos::DiscSpace *MyDiscSpace;
+        SystemInfos::Memory     MyMemoryInfos;
+        SystemInfos::General    MyGeneralInfos;
+        void determineDiscSpace();
         void determineMemorySystem();
         void determineMemoryApp();
         void determineThreads();
+        QString determineNumberUnit(qint64 number);
 
 };
 

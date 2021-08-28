@@ -25,7 +25,6 @@
 Reporting::CreateBase::CreateBase(MainConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyConfiguration = config;
-    MyDiscSpace.reset(new DiscSpace(MyConfiguration->getPaths("cache")));
     MyMemory.reset(new SystemInfos::Memory(this));
 }
 
@@ -35,6 +34,10 @@ QString Reporting::CreateBase::asXMLString()
     return document.toString(0);
 }
 
+void Reporting::CreateBase::setDiscSpace(SystemInfos::DiscSpace *value)
+{
+    MyDiscSpace = value;
+}
 
 /**
  * @brief Reporting::Base::init
@@ -63,9 +66,9 @@ void Reporting::CreateBase::createSystemInfo()
     system_info.appendChild(createTagWithTextValue("systemStartTime", MyConfiguration->getStartTime()));
     system_info.appendChild(createTagWithTextValue("systemTimeZone", MyConfiguration->getTimeZone()));
 
-    MyDiscSpace->init(MyConfiguration->getPaths("cache"));
-    system_info.appendChild(createTagWithTextValue("totalCapacity", QString::number(MyDiscSpace->getStorageBytesTotal())));
-    system_info.appendChild(createTagWithTextValue("totalFreeSpace", QString::number(MyDiscSpace->getStorageBytesAvailable())));
+    MyDiscSpace->recalculate();
+    system_info.appendChild(createTagWithTextValue("totalCapacity", QString::number(MyDiscSpace->getBytesTotal())));
+    system_info.appendChild(createTagWithTextValue("totalFreeSpace", QString::number(MyDiscSpace->getBytesFree())));
 
     system_info.appendChild(createTagWithTextValue("cpuUsage", ""));
 

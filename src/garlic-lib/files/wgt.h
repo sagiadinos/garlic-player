@@ -21,7 +21,7 @@
 #include <QObject>
 #include "../ext/quazip/JlCompress.h"
 #include "tools/logging_categories.h"
-#include "disc_space.h"
+#include "free_disc_space.h"
 
 class Wgt : public QObject
 {
@@ -30,12 +30,13 @@ class Wgt : public QObject
         explicit Wgt(QString file_path = "", QObject *parent=Q_NULLPTR);
         ~Wgt();
 
-        QString      handleRealPath();
+        QString      handleRealPath(FreeDiscSpace *MyDiscSpace);
     private:
         void         setFilePath(QString file_path);
         bool         isOpen();
-        bool         extract();
+        bool         extract(FreeDiscSpace *MyDiscSpace);
         bool         mustExtract();
+
         qint64       calculateUncompressedSize();
         QuaZip zip;
         QString local_file_path;

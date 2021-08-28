@@ -119,9 +119,11 @@ bool MainWindow::event(QEvent *event)
 
 void MainWindow::openDebugInfos()
 {
-    DebugInfos MyDebugInfos(MyLibFacade);
-    MyDebugInfos.exec();
-}
+    DebugInfos MyDebugInfos(MyLibFacade, Q_NULLPTR);
+    if (MyDebugInfos.exec() == QDialog::Accepted)
+    {
+        QApplication::quit();
+    }}
 
 void MainWindow::openCommandline()
 {

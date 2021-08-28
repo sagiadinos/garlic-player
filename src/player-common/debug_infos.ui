@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DebugInfos</class>
- <widget class="QWidget" name="DebugInfos">
+ <widget class="QDialog" name="DebugInfos">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Information</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -55,64 +58,94 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="TotalSystemMemory">
-         <property name="styleSheet">
-          <string notr="true">background-color: transparent;</string>
-         </property>
-         <property name="text">
-          <string>Total Memory System:</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="FreeSystemMemory">
+           <property name="styleSheet">
+            <string notr="true">background-color: transparent;</string>
+           </property>
+           <property name="text">
+            <string>Free System Memory:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="TotalSystemMemory">
+           <property name="styleSheet">
+            <string notr="true">background-color: transparent;</string>
+           </property>
+           <property name="text">
+            <string>Total System Memory:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QLabel" name="FreeSystemMemory">
-         <property name="styleSheet">
-          <string notr="true">background-color: transparent;</string>
-         </property>
-         <property name="text">
-          <string>Free Memory System:</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="OutputMemoryUse">
+           <property name="styleSheet">
+            <string notr="true">background-color: transparent;</string>
+           </property>
+           <property name="text">
+            <string>Memory App use:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="MaxMemoryUsed">
+           <property name="styleSheet">
+            <string notr="true">background-color: transparent;</string>
+           </property>
+           <property name="text">
+            <string>Max Memory App used:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QLabel" name="OutputMemoryUse">
-         <property name="styleSheet">
-          <string notr="true">background-color: transparent;</string>
-         </property>
-         <property name="text">
-          <string>Memory App use:</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="TotalSpace">
+           <property name="text">
+            <string>Free Space:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="FreeSpace">
+           <property name="text">
+            <string>Total Space</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QLabel" name="MaxMemoryUsed">
-         <property name="styleSheet">
-          <string notr="true">background-color: transparent;</string>
-         </property>
-         <property name="text">
-          <string>Max Memory App used:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="ThreadsNumber">
-         <property name="styleSheet">
-          <string notr="true">background-color: transparent;</string>
-         </property>
-         <property name="text">
-          <string>Threads:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="MaxThreadsNumber">
-         <property name="styleSheet">
-          <string notr="true">background-color: transparent;</string>
-         </property>
-         <property name="text">
-          <string>Max Threads:</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="ThreadsNumber">
+           <property name="styleSheet">
+            <string notr="true">background-color: transparent;</string>
+           </property>
+           <property name="text">
+            <string>Threads:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="MaxThreadsNumber">
+           <property name="styleSheet">
+            <string notr="true">background-color: transparent;</string>
+           </property>
+           <property name="text">
+            <string>Max Threads:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">

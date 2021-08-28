@@ -16,39 +16,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#include "disc_space.h"
+#include "free_disc_space.h"
 
-DiscSpace::DiscSpace(QString path, QObject *parent) : QObject(parent)
+FreeDiscSpace::FreeDiscSpace(SystemInfos::DiscSpace *ds, QObject *parent) : QObject(parent)
 {
-    init(path);
+    MyDiscSpace = ds;
 }
 
-void DiscSpace::init(QString path)
+void FreeDiscSpace::init(QString cp)
 {
-    cache_path = path;
-    storage.setPath(cache_path);
-    setBytesDeleted(0);
-    qint64 i = getStorageBytesAvailable();
-    if (i == getStorageBytesFree()) // when root or user without quota let some percent of the available storage free
-        setBytesAvailable(getStorageBytesAvailable() - (getStorageBytesTotal()/100*_percent_free));
-    else
-        setBytesAvailable(getStorageBytesAvailable());
+    cache_path = cp;
+    MyDiscSpace->recalculate();
 }
 
-void DiscSpace::setInventoryTable(DB::InventoryTable *value)
+void FreeDiscSpace::setInventoryTable(DB::InventoryTable *value)
 {
     MyInventoryTable = value;
 }
 
-void DiscSpace::freedSpace(qint64 size_deleted)
+void FreeDiscSpace::freedSpace(qint64 size_deleted)
 {
-    setBytesDeleted(getBytesDeleted() + size_deleted);
-    setBytesAvailable(getBytesAvailable() - size_deleted);
+    bytes_deleted += size_deleted;
 }
 
-qint64 DiscSpace::calculateNeededDiscSpaceToFree(qint64 size_new_file)
+qint64 FreeDiscSpace::calculateNeededDiscSpaceToFree(qint64 size_new_file)
 {
-    qint64 ret = getBytesAvailable() - size_new_file - 10;
+    MyDiscSpace->recalculate();
+    qint64 ret = MyDiscSpace->getBytesFree() - size_new_file - 10;
 
     if (ret >= 0)
         return 0;
@@ -56,7 +50,7 @@ qint64 DiscSpace::calculateNeededDiscSpaceToFree(qint64 size_new_file)
     return ret * -1; // when there is need to delete some files is negative so change the sign
 }
 
-bool DiscSpace::freeDiscSpace(qint64 size_to_free)
+bool FreeDiscSpace::freeDiscSpace(qint64 size_to_free)
 {
     QMap<qint64, QFileInfo> dir_list = sortCacheContentsByLastRead();
     QMapIterator<qint64, QFileInfo> i(dir_list);
@@ -81,20 +75,20 @@ bool DiscSpace::freeDiscSpace(qint64 size_to_free)
         if (MyInventoryTable != Q_NULLPTR)
             MyInventoryTable->deleteByCacheName(i.value().fileName());
 
-        if (size_to_free < getBytesDeleted())
+        if (size_to_free < bytes_deleted)
             break;
     }
 
-    if (size_to_free > getBytesDeleted()) // if it is not possible to delete target bytes
+    if (size_to_free > bytes_deleted) // if it is not possible to delete target bytes
     {
-        qCritical(ContentManager) << "FAILED_FREEING_SPACE - Only " << getBytesDeleted() << "bytes from needed" << size_to_free << "bytes could be deleted";
+        qCritical(ContentManager) << "FAILED_FREEING_SPACE - Only " << bytes_deleted << "bytes from needed" << size_to_free << "bytes could be deleted";
         return false;
     }
-    qInfo(ContentManager) << "OBJECTS_REMOVED "<< getBytesDeleted() << " Bytes of old content were deleted";
+    qInfo(ContentManager) << "OBJECTS_REMOVED "<< bytes_deleted << " Bytes of old content were deleted";
     return true;
 }
 
-bool DiscSpace::deleteFile(QString file_path)
+bool FreeDiscSpace::deleteFile(QString file_path)
 {
     QFile del_file(file_path);
 
@@ -111,7 +105,7 @@ bool DiscSpace::deleteFile(QString file_path)
     return true;
 }
 
-bool DiscSpace::deleteDirectory(QString dir_path)
+bool FreeDiscSpace::deleteDirectory(QString dir_path)
 {
     QDir del_dir(dir_path);
 
@@ -128,7 +122,7 @@ bool DiscSpace::deleteDirectory(QString dir_path)
     return true;
 }
 
-qint64 DiscSpace::calculateDirectorySize(QString dir_path)
+qint64 FreeDiscSpace::calculateDirectorySize(QString dir_path)
 {
     QDirIterator it(dir_path, QDir::Files, QDirIterator::Subdirectories);
     QFileInfo fi;
@@ -141,7 +135,7 @@ qint64 DiscSpace::calculateDirectorySize(QString dir_path)
     return dir_size;
 }
 
-QMap<qint64, QFileInfo> DiscSpace::sortCacheContentsByLastRead()
+QMap<qint64, QFileInfo> FreeDiscSpace::sortCacheContentsByLastRead()
 {
     QDir dir(cache_path);
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot); // do not work, when used in entryInfoList overloaded params directly so set here first

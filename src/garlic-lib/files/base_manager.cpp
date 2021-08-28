@@ -18,8 +18,9 @@
 
 #include "base_manager.h"
 
-Files::BaseManager::BaseManager(MainConfiguration *config, QObject *parent) : QObject(parent)
+Files::BaseManager::BaseManager(MainConfiguration *config, FreeDiscSpace *fds, QObject *parent) : QObject(parent)
 {
+    MyFreeDiscSpace = fds;
     MyConfiguration = config;
     setParent(parent);
 }

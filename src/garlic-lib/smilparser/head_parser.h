@@ -60,7 +60,7 @@ class HeadParser: public QObject
 {
         Q_OBJECT
     public:
-        explicit HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+        explicit HeadParser(MainConfiguration *config, Files::MediaManager *mm, DB::InventoryTable *it, SmilHead::PlaceHolder *ph, SystemInfos::DiscSpace *ds, QObject *parent = Q_NULLPTR);
          ~HeadParser();
         void                   setDefaultValues();
         void                   parse(QDomElement head, SmilHead::TaskScheduler *MyTasks);
@@ -72,7 +72,8 @@ class HeadParser: public QObject
     protected:
         const     int        MAX_SECONDS_WAIT  = 10;
 
-        DB::InventoryTable                            *MyInventoryTable = Q_NULLPTR;
+        SystemInfos::DiscSpace              *MyDiscSpace;
+        DB::InventoryTable                  *MyInventoryTable = Q_NULLPTR;
         QScopedPointer<Reporting::SystemReportManager> MySystemReportManager;
         QScopedPointer<Reporting::InventoryReportManager> MyInventoryReportManager;
         QScopedPointer<Reporting::EventLogsManager>    MyEventLogsManager;

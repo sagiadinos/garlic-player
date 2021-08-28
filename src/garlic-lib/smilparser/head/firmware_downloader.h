@@ -26,7 +26,7 @@ namespace SmilHead
     {
         Q_OBJECT
     public:
-        explicit FirmwareDownloader(MainConfiguration *config, QObject *parent = nullptr);
+        explicit FirmwareDownloader(DB::InventoryTable *it, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent = nullptr);
         void processFromUrl(QUrl firmware_url);
 
     protected:

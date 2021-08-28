@@ -12,7 +12,7 @@ CONFIG   += console testcase c++11
 CONFIG   -= app_bundle
 TEMPLATE = app
 
-TARGET = tst_disco_space
+TARGET = tst_disc_space
 SOURCES += \
     tst_disc_space.cpp
 

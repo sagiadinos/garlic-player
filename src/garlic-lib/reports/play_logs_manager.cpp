@@ -1,8 +1,9 @@
 #include "play_logs_manager.h"
 
-Reporting::PlayLogsManager::PlayLogsManager(MainConfiguration *config, QObject *parent) : Reporting::BaseReportManager(config, parent)
+Reporting::PlayLogsManager::PlayLogsManager(MainConfiguration *config, SystemInfos::DiscSpace *ds, QObject *parent) : Reporting::BaseReportManager(config, ds, parent)
 {
     MyCreatePlayLogs.reset(new Reporting::CreatePlayLogs(MyConfiguration, this));
+    MyCreatePlayLogs.data()->setDiscSpace(ds);
     log_dir.setPath(MyConfiguration->getPaths("logs"));
 }
 

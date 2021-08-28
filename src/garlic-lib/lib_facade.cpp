@@ -19,10 +19,10 @@
 
 LibFacade::LibFacade(QObject *parent) : QObject(parent)
 {
-
+    MyDiscSpace.reset(new SystemInfos::DiscSpace(&MyStorage));
+    MyResourceMonitor.setDiscSpace(MyDiscSpace.data());
+    MyFreeDiscSpace.reset(new FreeDiscSpace(MyDiscSpace.data()));
 }
-
-
 
 LibFacade::~LibFacade()
 {
@@ -40,19 +40,26 @@ LibFacade::~LibFacade()
 void LibFacade::init(MainConfiguration *config)
 {
     MyConfiguration.reset(config);
+    MyInventoryTable.reset(new DB::InventoryTable(this));
+    MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
+    MyFreeDiscSpace.data()->setInventoryTable(MyInventoryTable.data());
 
-    MyIndexManager.reset(new Files::IndexManager(MyConfiguration.data(), this));
+    MyDiscSpace.data()->init(MyConfiguration.data()->getPaths("cache"));
+    MyIndexManager.reset(new Files::IndexManager(MyInventoryTable.data(), MyConfiguration.data(), MyFreeDiscSpace.data(), this));
     connect(MyIndexManager.data(), SIGNAL(readyForLoading()), this, SLOT(loadIndex()));
 
     resource_monitor_timer_id = startTimer(300000); // every 300s for ressource monitor
 
-    MyTaskScheduler.reset(new SmilHead::TaskScheduler(MyConfiguration.data(), this));
+    MyTaskScheduler.reset(new SmilHead::TaskScheduler(MyInventoryTable.data(), MyConfiguration.data(), MyFreeDiscSpace.data(), this));
     connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(changeConfig()));
     connect(MyTaskScheduler.data(), SIGNAL(installSoftware(QString)), this, SLOT(emitInstallSoftware(QString)));
     connect(MyTaskScheduler.data(), SIGNAL(reboot(QString)), this, SLOT(reboot(QString)));
 
-    MyInventoryTable.reset(new DB::InventoryTable(this));
-    MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
+}
+
+ResourceMonitor *LibFacade::getResourceMonitor()
+{
+    return &MyResourceMonitor;
 }
 
 void LibFacade::shutDownParsing()
@@ -60,7 +67,6 @@ void LibFacade::shutDownParsing()
     MyBodyParser.data()->endPlayingBody();
     MyIndexManager.data()->deactivateRefresh();
 }
-
 
 void LibFacade::initParser()
 {
@@ -72,7 +78,7 @@ void LibFacade::initParser()
 
 void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_parsing)
 {
-    MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyConfiguration.data(), this));
+    MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyInventoryTable.data(), MyConfiguration.data(), MyFreeDiscSpace.data(), this));
     if (restart_smil_parsing)
         connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), this, SLOT(reboot()));
     MyXMLConfiguration.data()->processFromLocalFile(config_path);
@@ -139,16 +145,15 @@ void LibFacade::changeConfig()
 
 void LibFacade::initFileManager()
 {
-    MyMediaModel.reset(new MediaModel(this));
-    MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data(), this));
-    MyDownloadQueue.data()->setInventoryTable(MyInventoryTable.data());
-    MyMediaManager.reset(new Files::MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), this));
+    MyMediaModel.reset(new MediaModel(MyFreeDiscSpace.data(), this));
+    MyDownloadQueue.reset(new DownloadQueue(MyConfiguration.data(), MyFreeDiscSpace.data(), MyInventoryTable.data(), this));
+    MyMediaManager.reset(new Files::MediaManager(MyMediaModel.data(), MyDownloadQueue.data(), MyConfiguration.data(), MyFreeDiscSpace.data(), this));
     qDebug() <<  " end initFileManager" ;
 }
 
 void LibFacade::processHeadParsing()
 {
-    MyHeadParser.reset(new HeadParser(MyConfiguration.data(), MyMediaManager.data(), MyInventoryTable.data(), MyPlaceHolder.data(), this));
+    MyHeadParser.reset(new HeadParser(MyConfiguration.data(), MyMediaManager.data(), MyInventoryTable.data(), MyPlaceHolder.data(), MyDiscSpace.data(), this));
     connect(MyHeadParser.data(), SIGNAL(parsingCompleted()), this, SLOT(processBodyParsing()));
 
     qDebug() <<  " begin head parsing" ;
@@ -182,6 +187,7 @@ void LibFacade::timerEvent(QTimerEvent *event)
     Q_UNUSED(event);
     MyResourceMonitor.refresh();
 
+    qInfo(Develop) << MyResourceMonitor.getTotalDiscSpace() << MyResourceMonitor.getFreeDiscSpace();
     qInfo(Develop) << MyResourceMonitor.getTotalMemorySystem() << MyResourceMonitor.getFreeMemorySystem();
     qInfo(Develop) << MyResourceMonitor.getMemoryAppUse() << MyResourceMonitor.getMaxMemoryAppUsed();
     qInfo(Develop) << MyResourceMonitor.getThreadsNumber() << MyResourceMonitor.getMaxThreadsNumber();
