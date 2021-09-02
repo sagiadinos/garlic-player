@@ -71,7 +71,10 @@ int main(int argc, char *argv[])
     {
         MyLibFacade->toggleLauncher(MyAndroidManager->hasLauncher());
         MyPlayerConfiguration->setHasLauncher(MyAndroidManager->hasLauncher());
-        MyPlayerConfiguration->setUuidFromLauncher(MyAndroidManager->getUUIDFromLauncher());
+
+        if (MyAndroidManager->getLauncherName() == "garlic")
+            MyPlayerConfiguration->setUuidFromLauncher(MyAndroidManager->getUUIDFromLauncher());
+
         MyPlayerConfiguration->setSmilIndexUriFromLauncher(MyAndroidManager->getSmilIndexFromLauncher());
         MyPlayerConfiguration->setVersionFromLauncher(MyAndroidManager->getLauncherVersion());
     }

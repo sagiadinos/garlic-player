@@ -26,6 +26,11 @@ AndroidManager::AndroidManager()
 bool AndroidManager::hasLauncher()
 {
     bool is = MyActivity.callMethod<jboolean>("isLauncherInstalled");
+    if (is)
+    {
+        QAndroidJniObject s = MyActivity.callObjectMethod<jstring>("getLauncherName");
+        launcher_name       =  s.toString();
+    }
     return is;
 }
 
@@ -73,6 +78,11 @@ QString AndroidManager::getLauncherVersion()
 {
     QAndroidJniObject s = MyActivity.callObjectMethod<jstring>("getLauncherVersion");
     return s.toString();
+}
+
+QString AndroidManager::getLauncherName()
+{
+    return launcher_name;
 }
 
 QString AndroidManager::getSmilIndexFromLauncher()

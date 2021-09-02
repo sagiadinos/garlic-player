@@ -104,4 +104,8 @@ RESOURCES += qml.qrc
 
 DISTFILES += \
     android/src/com/sagiadinos/garlic/player/java/ConfigReceiver.java \
+    android/src/com/sagiadinos/garlic/player/java/GarlicActivity.java \
+    android/src/com/sagiadinos/garlic/player/java/GarlicLauncher.java \
+    android/src/com/sagiadinos/garlic/player/java/LauncherInterface.java \
+    android/src/com/sagiadinos/garlic/player/java/PhilipsLauncher.java \
     android/src/com/sagiadinos/garlic/player/java/SmilIndexReceiver.java

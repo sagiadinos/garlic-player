@@ -30,10 +30,12 @@ class AndroidManager
         void disableScreenSaver();
         void sendCloseCorrect();
         QString getLauncherVersion();
+        QString getLauncherName();
         QString getSmilIndexFromLauncher();
         QString getUUIDFromLauncher();
     protected:
         QAndroidJniObject MyActivity;
+        QString launcher_name;
 };
 
 #endif // LAUNCHERMANAGER_H

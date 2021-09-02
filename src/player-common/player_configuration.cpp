@@ -61,9 +61,17 @@ void PlayerConfiguration::setSmilIndexUriFromLauncher(QString value)
 
 void PlayerConfiguration::determineUuid()
 {
-    if (has_launcher && launcher_uuid != MyMainConfiguration->getUuid())
+    // if launcher has an uuid use it
+    if (has_launcher && !launcher_uuid.isEmpty() && launcher_uuid != MyMainConfiguration->getUuid())
     {
         MyMainConfiguration->setUuid(launcher_uuid);
+        return;
+    }
+
+    // if launcher has not an uuid use from pla
+    if (!MyMainConfiguration->getUuid().isEmpty())
+    {
+        MyMainConfiguration->setUuid(MyMainConfiguration->getUuid());
         return;
     }
 

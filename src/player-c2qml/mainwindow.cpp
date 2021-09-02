@@ -51,11 +51,16 @@ void MainWindow::init()
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
-    if (ke->modifiers().testFlag(Qt::NoModifier))
+//    if (ke->modifiers().testFlag(Qt::NoModifier))
+    if (QGuiApplication::queryKeyboardModifiers() == Qt::NoModifier)
     {
         MyLibFacade->transferAccessKey(ke->text().toLower().at(0));
         return;
     }
+
+    if (QGuiApplication::queryKeyboardModifiers() != Qt::ControlModifier)
+        return;
+
     switch (ke->key())
     {
         case Qt::Key_F:
@@ -91,6 +96,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
 
 bool MainWindow::event(QEvent *event)
 {
+    event->accept();
     if(event->type() == QEvent::TouchBegin || event->type() == QEvent::MouseButtonPress)
     {
         qint64 delay = QDateTime::currentMSecsSinceEpoch() - last_touch;

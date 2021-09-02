@@ -35,13 +35,9 @@ import java.util.concurrent.ExecutionException;
 
 public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivity
 {
-    private static  GarlicActivity m_instance;
-    private AsyncTask<Void, Void, String> runningTaskSmilIndex;
-    private AsyncTask<Void, Void, String> runningTaskUUID;
-    private AsyncTask<Void, Void, String> runningTaskLauncherVersion;
-    private String content_url      = null;
-    private String uuid             = null;
-    private String launcher_version = null;
+    private static GarlicActivity m_instance;
+    private boolean is_launcher     = false;
+    private static LauncherInterface MyLauncherInterface = null;
 
     public GarlicActivity()
     {
@@ -52,17 +48,20 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        if (isLauncherInstalled())
+        if (isGarlicLauncherInstalled())
         {
-            retrieveSmilIndex();
-            retrieveUUID();
-            retrieveLauncherVersion();
+            is_launcher = true;
+            MyLauncherInterface = new GarlicLauncher(this);
+        }
+        else if (isPhilipsLauncherInstalled())
+        {
+            is_launcher = true;
+            MyLauncherInterface = new PhilipsLauncher(this);
         }
     }
 
     public void registerBroadcastReceiver()
     {
-
         IntentFilter filter = new IntentFilter("com.sagiadinos.garlic.player.java.ConfigReceiver");
         ConfigReceiver MyConfigReceiver = new ConfigReceiver();
         registerReceiver(MyConfigReceiver, filter);
@@ -75,34 +74,81 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
 
     public boolean isLauncherInstalled()
     {
-        PackageManager pm = getPackageManager();
-        try
-        {
-            pm.getPackageInfo("com.sagiadinos.garlic.launcher", PackageManager.GET_META_DATA);
-        }
-        catch (PackageManager.NameNotFoundException e)
-        {
-            return false;
-        }
-        return true;
+        return is_launcher;
     }
 
     public String getContentUrlFromLauncher()
     {
-        return content_url;
+        return MyLauncherInterface.getContentUrlFromLauncher();
     }
 
     public String getUUIDFromLauncher()
     {
-        return uuid;
+        return MyLauncherInterface.getUUIDFromLauncher();
     }
 
     public String getLauncherVersion()
     {
-        return launcher_version;
+        return MyLauncherInterface.getLauncherVersion();
     }
 
-    public static boolean isPackageInstalled(Context c, String targetPackage)
+    public String getLauncherName()
+    {
+        return MyLauncherInterface.getLauncherName();
+    }
+
+    public static void setScreenOff()
+    {
+        MyLauncherInterface.setScreenOff();
+    }
+
+    public static void setScreenOn()
+    {
+        MyLauncherInterface.setScreenOn();
+    }
+
+    public static void rebootOS(String task_id)
+    {
+        MyLauncherInterface.rebootOS(task_id);
+    }
+
+    public static void installSoftware(String apk_path)
+    {
+        MyLauncherInterface.installSoftware(apk_path);
+    }
+
+    public static void closePlayerCorrect()
+    {
+         Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.PlayerClosedReceiver");
+         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+         m_instance.sendBroadcast(intent);
+    }
+
+    public static void applyConfig(String config_path)
+    {
+        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.ConfigXMLReceiver");
+        intent.putExtra("config_path", config_path);
+        m_instance.sendBroadcast(intent);
+    }
+
+    public static void startSecondApp(String package_name)
+    {
+         Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.SecondAppReceiver");
+         intent.putExtra("package_name", package_name);
+         m_instance.sendBroadcast(intent);
+    }
+
+    private boolean isGarlicLauncherInstalled()
+    {
+        return isPackageInstalled("com.sagiadinos.garlic.launcher");
+    }
+
+    private boolean isPhilipsLauncherInstalled()
+    {
+        return isPackageInstalled("com.tpv.app.tpvlauncher");
+    }
+
+    private boolean isPackageInstalled(String targetPackage)
     {
         PackageManager pm = m_instance.getPackageManager();
         try
@@ -116,166 +162,4 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         return true;
     }
 
-    public static void setScreenOff()
-    {
-        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");
-        intent.putExtra("command", "screen_off");
-        m_instance.sendBroadcast(intent);
-    }
-
-    public static void setScreenOn()
-    {
-        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");
-        intent.putExtra("command", "screen_on");
-        m_instance.sendBroadcast(intent);
-    }
-
-    public static void rebootOS(String task_id)
-    {
-        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");
-        intent.putExtra("command", "reboot");
-        intent.putExtra("task_id", task_id);
-        m_instance.sendBroadcast(intent);
-    }
-
-    public static void applyConfig(String config_path)
-    {
-        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.ConfigXMLReceiver");
-        intent.putExtra("config_path", config_path);
-        m_instance.sendBroadcast(intent);
-    }
-
-    public static void installSoftware(String apk_path)
-    {
-        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.InstallAppReceiver");
-        intent.putExtra("apk_path", apk_path);
-        m_instance.sendBroadcast(intent);
-    }
-
-    public static void closePlayerCorrect()
-    {
-         Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.PlayerClosedReceiver");
-         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-         m_instance.sendBroadcast(intent);
-    }
-
-    public static void startSecondApp(String package_name)
-    {
-         Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.SecondAppReceiver");
-         intent.putExtra("package_name", package_name);
-         m_instance.sendBroadcast(intent);
-    }
-
-    private void retrieveSmilIndex()
-    {
-        try
-        {
-            if (runningTaskSmilIndex != null)
-                runningTaskSmilIndex.cancel(true);
-
-            runningTaskSmilIndex = new LongOperation(this, "smil_content_url");
-            content_url = runningTaskSmilIndex.execute().get();
-        }
-        catch (ExecutionException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private void retrieveUUID()
-    {
-        try
-        {
-            if (runningTaskUUID != null)
-                runningTaskUUID.cancel(true);
-
-            runningTaskUUID = new LongOperation(this, "uuid");
-            uuid = runningTaskUUID.execute().get();
-        }
-        catch (ExecutionException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private void retrieveLauncherVersion()
-    {
-        try
-        {
-            if (runningTaskLauncherVersion != null)
-                runningTaskLauncherVersion.cancel(true);
-            runningTaskLauncherVersion = new LongOperation(this, "launcher_version");
-            launcher_version = runningTaskLauncherVersion.execute().get();
-        }
-        catch (ExecutionException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private class LongOperation extends AsyncTask<Void, Void, String>
-    {
-        private String  appendable_path;
-        private Context ctx;
-        public LongOperation (Context context, String ap)
-        {
-            ctx = context;
-            appendable_path = ap;
-        }
-
-        @Override
-        protected String doInBackground(Void... params)
-        {
-            final String PROVIDER_NAME = "com.sagiadinos.garlic.launcher.SettingsProvider";
-            ContentResolver contentResolver = ctx.getContentResolver();
-            Uri BASE_URI = Uri.parse("content://" + PROVIDER_NAME);
-            String value = "";
-
-            Uri uri = BASE_URI.buildUpon().appendPath(appendable_path).build();
-
-            Cursor cursor = contentResolver.query(uri, null, null, null, null);
-
-            if (cursor.moveToFirst())
-            {
-                value = cursor.getString(0);
-            }
-            cursor.close();
-
-            return value;
-        }
-
-  /*
-       Maybe it is better to block the ui thread until the task are completed
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            switch (appendable_path)
-            {
-                case "smil_content_url":
-                    content_url = result;
-                    break;
-
-                case "uuid":
-                    uuid = result;
-                    break;
-                case "launcher_version":
-                    launcher_version = result;
-                    break;
-            }
-        }
-*/
-    }
 }
