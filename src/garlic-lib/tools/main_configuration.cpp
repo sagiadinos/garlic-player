@@ -30,12 +30,15 @@ QString MainConfiguration::log_directory = "";
  * @brief TConfiguration::TConfiguration
  * @param UserConfig
  */
-MainConfiguration::MainConfiguration(QSettings *uc, QObject *parent) : QObject(parent)
+MainConfiguration::MainConfiguration(QSettings *uc, QString dun, QString dcu, QObject *parent) : QObject(parent)
 {
     UserConfig = uc;
     uuid        = getUserConfigByKey("uuid");
     player_name = getUserConfigByKey("player_name");
     time_zone   = QTimeZone::systemTimeZoneId();
+    default_content_url_name = dun;
+    default_content_url = dcu;
+
     determineOS();
 
     // ugly workaround from https://stackoverflow.com/questions/21976264/qt-isodate-formatted-date-time-including-timezone

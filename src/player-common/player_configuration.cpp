@@ -49,6 +49,42 @@ void PlayerConfiguration::printVersionInformation()
     qInfo() << MyMainConfiguration->getAppName()+ ": " + MyMainConfiguration->getVersion() << " Operating System:" << MyMainConfiguration->getOS();
 }
 
+QString PlayerConfiguration::determineDefaultContentUrlName()
+{
+    QString ret = "SmilControl";
+    QString tmp = "";
+
+#ifdef DEFAULT_CONTENT_URL_NAME
+    tmp = STRINGIFY(DEFAULT_CONTENT_URL_NAME);
+    if (tmp != "")
+        ret = tmp;
+#endif
+
+    return ret;
+}
+
+QString PlayerConfiguration::determineDefaultContentUrl()
+{
+    QString protocol = "http";
+    QString url      = "indexes.smil-control.com";
+    QString tmp      = "";
+
+#ifdef DEFAULT_CONTENT_URL_NAME
+    tmp =  STRINGIFY(DEFAULT_CONTENT_URL_PROTOCOL);
+    if (tmp != "")
+        protocol = tmp;
+#endif
+
+#ifdef DEFAULT_CONTENT_URL_NAME
+    tmp = "";
+    tmp =  STRINGIFY(DEFAULT_CONTENT_URL);
+    if (tmp != "")
+        url = tmp;
+#endif
+
+    return protocol + "://" + url;
+}
+
 
 void PlayerConfiguration::setSmilIndexUriFromLauncher(QString value)
 {

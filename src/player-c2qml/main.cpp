@@ -57,7 +57,13 @@ int main(int argc, char *argv[])
 #endif
 
 
-    MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
+    MainConfiguration    *MyMainConfiguration   = new MainConfiguration(
+                                                        new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"),
+                                                        PlayerConfiguration::determineDefaultContentUrlName(),
+                                                        PlayerConfiguration::determineDefaultContentUrl()
+
+    );
+
     MyMainConfiguration->createDirectories();
     qInstallMessageHandler(handleMessages); // must set after createDiretories
 

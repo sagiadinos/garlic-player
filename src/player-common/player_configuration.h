@@ -1,11 +1,13 @@
 #ifndef PLAYERCONFIGURATION_H
 #define PLAYERCONFIGURATION_H
 
-
 #include <QApplication>
 #include <QObject>
 #include "tools/main_configuration.h"
 #include "tools/logging_categories.h"
+
+#define _STR(x) #x
+#define STRINGIFY(x)  _STR(x)
 
 class PlayerConfiguration : public QObject
 {
@@ -20,6 +22,8 @@ public:
     void setSmilIndexUriFromLauncher(QString value);
     void setVersionFromLauncher(QString value);
     void printVersionInformation();
+    static QString determineDefaultContentUrlName();
+    static QString determineDefaultContentUrl();
 private:
 
     bool       has_launcher            = false;;

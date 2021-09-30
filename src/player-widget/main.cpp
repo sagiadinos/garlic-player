@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
+#include <QString>
 #include "tools/logger.h"
 #include "mainwindow.h"
 #include "../player-common/cmdparser.h"
@@ -33,10 +34,17 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_X11InitThreads);
 
+
     QApplication app(argc, argv);
-    MainConfiguration    *MyMainConfiguration   = new MainConfiguration(new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"));
+    MainConfiguration    *MyMainConfiguration   = new MainConfiguration(
+                                                        new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"),
+                                                        PlayerConfiguration::determineDefaultContentUrlName(),
+                                                        PlayerConfiguration::determineDefaultContentUrl()
+
+    );
+
     MyMainConfiguration->createDirectories();
-    qInstallMessageHandler(handleMessages); // must be after create Diretories
+    qInstallMessageHandler(handleMessages); // must be after create Directories
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
     MyPlayerConfiguration->determineInitConfigValues();
 

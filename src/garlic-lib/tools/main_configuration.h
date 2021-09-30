@@ -46,7 +46,7 @@ class MainConfiguration  : public QObject
         const     QString        OS_WINDOWS  = "windows";
         const     QString        OS_UNKNOWN  = "unknown";
 
-        explicit        MainConfiguration(QSettings *uc, QObject *parent = Q_NULLPTR);
+        explicit        MainConfiguration(QSettings *uc, QString dun, QString dcu, QObject *parent = Q_NULLPTR);
         QString         getVersion(){return version;}
         void            setAdditionalVersion(QString value);
         void            setAppName(QString value){app_name = value;}
@@ -110,6 +110,8 @@ protected:
         QString         cache_dir = "";
         QString         log_dir = "";
         QString         app_name = "garlic-player";
+        QString         default_content_url_name = "";
+        QString         default_content_url = "";
         QString         error_text = "";
         void            createDirectoryIfNotExist(QString path);
         void            determineIndexPath();
