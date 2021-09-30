@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<smil>
+	<head>
+		<meta name="title" content="Testing wallclock" />
+		<layout>
+			<root-layout id="display:0" width="1920" height="1080" />
+			<region regionName="screen1" top="0" left="0" width="100%" height="100%" z-index="1" backgroundColor="#f00" />
+			
+		</layout>
+	</head>
+	<body>
+		<par xml:id="par1" repeatCount="indefinite">
+			<seq xml:id="seq1" begin="wallclock(R/2021-04-01T00:00:00/PT1M)" repeatCount="indefinite">
+                <img region="screen1" xml:id="img1" src="../../images/0001.jpg" dur="10s"/>
+				<img region="screen1" xml:id="img2" src="../../images/0002.jpg" dur="10s"/>
+				<img region="screen1" xml:id="img3" src="../../images/0003.jpg" dur="10s"/>
+				<img region="screen1" xml:id="img4" src="../../images/0004.jpg" dur="10s"/>
+				<img region="screen1" xml:id="img5" src="../../images/0005.jpg" dur="10s"/>
+				<img region="screen1" xml:id="img6" src="../../images/0006.jpg" dur="10s"/>
+			</seq>
+		</par>   
+	</body>
+</smil>

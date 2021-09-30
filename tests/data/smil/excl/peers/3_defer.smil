@@ -11,7 +11,7 @@
 		<!--
 	
 			sequence should be:
-			begin, 1, 5, 4, 3, 2, | 6, 7, 8, 9, 10, | 1,|  6, 7, 8, 9, 10, | 1, 2, 3, 4, 5, | 6, 7, 8, 9, 10, end
+			begin, 1, 5, 4, 3, 2, 5 | 6, 7, 8, 9, 10, | 1,|  6, 7, 8, 9, 10, | 1, 2, 3, 4, 5, | 6, 7, 8, 9, 10, end
 		
 		-->
 		<img xml:id="img begin" src="../../../images/begin.jpg" fit="meet" dur="1s" />
