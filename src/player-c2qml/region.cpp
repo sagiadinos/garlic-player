@@ -108,14 +108,21 @@ void TRegion::startShowMedia(BaseMedia *media)
 
 void TRegion::stopShowMedia(BaseMedia *media)
 {
-    if (MyMedia == Q_NULLPTR || MyMedia->getSmilMedia() != media)
-    {
+    if (MyMedia == Q_NULLPTR)
         return;
-      //  secureStopDisplayingMedia(MyMediaFactory.data()->initMedia(media));
+
+    // 2021-07-21 see tests/data/smil/par/3_changes.smil brush over image
+    // we need to stop the media in parameter if differs
+    // 2021-10-01 enhancemend cause of syn-bug see tests/data/smil/par/bugs/2_pseudo_sync.smil
+
+    if (MyMedia->getSmilMedia() != media)
+    {
+        if (MyMedia->getSmilMedia()->objectName() != media->objectName())
+            secureStopDisplayingMedia(MyMediaFactory.data()->initMedia(media));
+        return;
     }
-    else
-        secureStopDisplayingMedia(MyMedia);
-}
+
+    secureStopDisplayingMedia(MyMedia);}
 
 void TRegion::secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia)
 {

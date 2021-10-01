@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>root_qtm.qml</file>
+        <file>blank.html</file>
     </qresource>
 </RCC>

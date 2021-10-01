@@ -57,18 +57,21 @@ void TRegion::startShowMedia(BaseMedia *media)
 
 void TRegion::stopShowMedia(BaseMedia *media)
 {
-    //  2021-07-21
-    // defer should never send stopShowMedia, but we can have an overlay e.g. brush over image
-    // so we need  to set new media if differs
-    // 2021-09-30 checking if above is obsolete because bug with sinc
-
-    if (MyMedia == Q_NULLPTR || MyMedia->getSmilMedia() != media )
-    {
+    if (MyMedia == Q_NULLPTR)
         return;
-//        secureStopDisplayingMedia(MyMediaFactory.initMedia(media));
+
+    // 2021-07-21 see tests/data/smil/par/3_changes.smil brush over image
+    // we need to stop the media in parameter if differs
+    // 2021-10-01 enhancemend cause of syn-bug see tests/data/smil/par/bugs/2_pseudo_sync.smil
+
+    if (MyMedia->getSmilMedia() != media)
+    {
+        if (MyMedia->getSmilMedia()->objectName() != media->objectName())
+            secureStopDisplayingMedia(MyMediaFactory.initMedia(media));
+        return;
     }
-    else
-        secureStopDisplayingMedia(MyMedia);
+
+    secureStopDisplayingMedia(MyMedia);
 }
 
 bool TRegion::event(QEvent *event)

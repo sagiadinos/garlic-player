@@ -21,7 +21,7 @@ class PlayerWeb : public PlayerBaseMedia
         void            changeSize(int w, int h);
         QWidget        *getView();
     protected:
-        QWebEngineView  *browser;
+        QWebEngineView *browser;
     protected slots:
         void             doLoadFinished(bool has_succeeded);
     private:
