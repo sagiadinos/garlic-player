@@ -93,10 +93,10 @@ QString MediaModel::determineHashedFilePath(QString src_file_path)
     return QString(QCryptographicHash::hash((src_file_path.toUtf8()), QCryptographicHash::Md5).toHex())+ "."+fi.suffix();
 }
 
-QString MediaModel::handleWgt(QString wgt_file_path, FreeDiscSpace *MyDiscSpace)
+QString MediaModel::handleWgt(QString wgt_file_path)
 {
     Wgt MyWgt(wgt_file_path);
-    return MyWgt.handleRealPath(MyDiscSpace);
+    return MyWgt.handleRealPath(MyFreeDiscSpace);
 }
 
 // =========================== protected methods ============================
@@ -110,7 +110,7 @@ QString MediaModel::determinePathByMedia(QString src_file_path, QString local_fi
     // Todo Maybe later a factory when ahref will be implemented
     if (fi.suffix() == "wgt")
     {
-        real_file_path = handleWgt(local_file_path, MyFreeDiscSpace);
+        real_file_path = handleWgt(local_file_path);
         if (real_file_path == "")
         {
             qCritical(Develop) << "UNZIP_FAILED resourceURI: " << src_file_path << " caused an error during processing";

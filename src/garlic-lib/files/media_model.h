@@ -53,7 +53,7 @@ class MediaModel : public QObject
         void                                          insertAsUncachable(QString src_file_path);
         void                                          insertAsLocalFile(QString src_file_path);
         void                                          insertCacheableFile(QString src_file_path, QString local_file_path);
-        QString                                       handleWgt(QString wgt_file_path, FreeDiscSpace *MyDiscSpace);
+        QString                                       handleWgt(QString wgt_file_path);
         //Getter/Setter
         QMap<QString, QPair<QString, int> >           getAvailableMediaList() const {return available_media_list;}
         int                                           countAvailableMedia(){return available_media_list.size();}

@@ -58,7 +58,7 @@ void Files::MediaManager::registerFile(QString src)
     // ToDo: Think about a more elegant implementation
     if (src.contains(".wgt"))
     {
-        QString wgt_path = MyMediaModel->handleWgt(src, MyFreeDiscSpace); // also extract when necessary.
+        QString wgt_path = MyMediaModel->handleWgt(src); // also extract when necessary.
         MyMediaModel->insertCacheableFile(src, wgt_path);
         return;
     }
@@ -140,7 +140,7 @@ void Files::MediaManager::handleUpdated(QString local_path, QString src)
         renameDownloadedFile(local_path);
         if (src.contains(".wgt"))
         {
-            MyMediaModel->handleWgt(local_path, MyFreeDiscSpace); // extract etc...
+            MyMediaModel->handleWgt(local_path); // extract etc...
         }
         MyMediaModel->setStatusBySrcPath(src, MEDIA_CACHED);
     }
