@@ -118,10 +118,10 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
     }
 
     QStringList list;
-    if (!validContentType(content_type))
+    if (!validContentType(content_type) && !validFileExtension())
     {
         list << "resourceURI" << remote_file_url.toString()
-             << "errorMessage" << "has an unknown content-type: " + content_type
+             << "errorMessage" << "has an unknown content-type or file type: " + content_type + " extension: " + local_file_info.suffix()
              << "lastCachedLength" << QString::number(local_file_info.size())
              << "lastCachedModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
 
@@ -226,9 +226,20 @@ bool Downloader::validContentType(QString content_type)
             !content_type.contains("application/vnd.android.package-archive") &&
             !content_type.contains("application/widget"))
     {
-        return false; // Todo only for Test change it!
+        return false;
     }
     return true;
+}
+
+bool Downloader::validFileExtension()
+{
+    if (local_file_info.suffix() != "wgt")
+    {
+        return false;
+    }
+
+    return true;
+
 }
 
 void Downloader::handleNetworkError(QNetworkReply *reply)

@@ -53,6 +53,7 @@ class Downloader : public TNetworkAccess
         void                    checkHttpHeaders(QNetworkReply *reply);
         void                    startDownload(QNetworkReply *reply);
         bool                    validContentType(QString content_type);
+        bool                    validFileExtension();
         void                    handleNetworkError(QNetworkReply *reply);
         QUrl                    examineRedirectUrl(QUrl redirect_url);
         quint64                 determineBytesTransfered();

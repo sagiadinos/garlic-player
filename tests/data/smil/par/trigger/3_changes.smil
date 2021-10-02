@@ -34,7 +34,7 @@
 		-->
 		<par>
 			<brush region="screen1" id="interupt1" color="red" begin="wallclock(R/2021-07-23T13:00:02/PT10S)" dur="1s"/>
-			<brush region="screen2" id="interupt2" color="yellow" begin="wallclock(R/2021-07-23T13:00:05/PT10S)" dur="1s"/>
+			<brush region="screen2" id="interupt2" color="yellow" begin="wallclock(R/2021-07-23T13:00:05/PT10S)" dur="1s"/> 
 			<seq id="monitor" begin="wallclock(R/2021-07-22T00:00:00/P1D)" end="wallclock(R/2021-07-22T23:59:59/P1D)">
 				<seq repeatCount="indefinite">
 					<img region="screen2" id="Image1" src="../../../images/0001.jpg" dur="1s" fit="meet" />
