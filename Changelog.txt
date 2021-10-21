@@ -1,7 +1,7 @@
 Changelog
 ===========
 
-0.4.0 -> 0.5.0 (in development see ci-build)
+0.4.0 -> 0.5.0
 ---------------------
 1. New Features
 	* resumable downloads
@@ -11,18 +11,18 @@ Changelog
  	* support negative values for offset
 	* support restart-attribute (always|never|whenNotActive|default)	
 	* support for media-element brush and attribute color
-	* support for syncbase values in combination with positive clock values for begin/end
-	* support for event values and interactivity (beginEvent, endEvent) in combination with positive clock values for begin/end
+	* support for syncbase values with positive clock values for begin/end
+	* support for event values and interactivity (beginEvent, endEvent) with positive clock values for begin/end
 	* support for interactive events activeEvent and click (mouseclick and touch)
-	* support for accessskey
+	* support for accesskey
 	* support for repeatCount in media tags (brush, img, audio, video, ref, text) 
 
 2. Improvements
 	* additional SMIL-Indexes for testing
-	* debugbox in human readable byyte sizes
-	* improved handling of cache handling when disc space gets full
-	* improved compatibility to SMIL standard
-	* improved compatibility to IAdea player
+	* debugbox in human-readable byte sizes
+	* improve handling of cache handling when disc space gets full
+	* improve compatibility to SMIL standard
+	* improve compatibility to IAdea player
 	* various bugfixes
 	* add gmock support in test.pri (use linux distribution repository for gmock)
 
