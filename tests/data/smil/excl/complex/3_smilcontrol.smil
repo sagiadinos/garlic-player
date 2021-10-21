@@ -36,7 +36,7 @@
 				</seq>
 			</priorityClass>
 			<priorityClass higher="pause">
-				<seq id="monitor" begin="wallclock(R/2001-01-01T13:00:30/P1M)" end="wallclock(R/2001-01-01T13:00:00/P1M)">
+				<seq id="monitor" begin="wallclock(R/2001-01-01T13:00:30/PT1M)" end="wallclock(R/2001-01-01T13:00:00/PT1M)">
 					<par>
 						<seq repeatCount="indefinite">
 							<img src="../../../images/0001.jpg" dur="1s" fit="meet" />

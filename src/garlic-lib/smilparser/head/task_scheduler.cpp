@@ -117,7 +117,7 @@ void SmilHead::TaskScheduler::parseFirmwareUpdate(QDomElement element)
         {
             MyFirmwareUpdate.source_uri = QUrl(el.text());
         }
-        else if (el.tagName() == "contentType")
+        else if (el.tagName() == "version")
         {
             MyFirmwareUpdate.version = el.text();
         }

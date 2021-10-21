@@ -26,9 +26,9 @@
 		<!--
 
 			Sequence:
-			upper left: red every 10s at 2, 12s, 22, 32, 42, 52s of a minute
+			upper left: red for 1s every 10 seconds, beginning at the 5th second of a minute
 			upper right Counting 1 to 10
-			overlapped every 2s 12, 22, 32, 42, 52s of minute by red
+				th e 2 is overlapped every 10 seconds beginning at the 2nd second of minute by yellow
 
 			down left standby indefinite
 		-->
