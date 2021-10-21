@@ -31,7 +31,7 @@
 	-->
 ´			<excl repeatCount="indefinite">
 				<priorityClass>
-					<seq begin="standby.activateEvent" repeatCount="indefinite">
+					<seq begin="standby.activateEvent+2s" repeatCount="indefinite">
 						<img dur="1" src="{__url001}" region="screen4" fit="fill" />
 						<img dur="1" src="{__url002}" region="screen4" fit="fill" />
 						<img dur="1" src="{__url003}" region="screen4" fit="fill" />

@@ -22,7 +22,7 @@
 
 		<!--
 
-			Sequence: Start count at 00s of a minute
+			Sequence: Start count at every 10s beginmnnig with 0th second of a minute
 			1, 2, video, 4, 5 standby for 5 s
 			repeat indefinite
 		-->
