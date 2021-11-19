@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.sagiadinos.garlic.player" android:versionName="v0.4.0.510" android:versionCode="510" android:installLocation="auto">
-  <application  android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="garlic-player" android:icon="@drawable/icon">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.sagiadinos.garlic.player" android:versionName="v0.5.0.567" android:versionCode="567" android:installLocation="auto">
+  <application android:usesCleartextTraffic="true" android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="garlic-player" android:icon="@drawable/icon">
         <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation" android:name="com.sagiadinos.garlic.player.java.GarlicActivity" android:label="-- %%INSERT_APP_NAME%% --" android:screenOrientation="unspecified" android:launchMode="singleTop">
             <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -65,4 +65,5 @@
          Remove the comment if you do not require these default features. -->
   <!-- %%INSERT_FEATURES -->
   <uses-permission android:name="android.permission.WAKE_LOCK"/>
+<uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

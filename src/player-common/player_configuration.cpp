@@ -11,7 +11,7 @@ void PlayerConfiguration::determineInitConfigValues()
     MyMainConfiguration->determinePlayerName();
     if (!launcher_version.isEmpty())
     {
-        MyMainConfiguration->setAdditionalVersion("L" + launcher_version);
+        MyMainConfiguration->setAdditionalVersion("-" + launcher_version);
         qInfo(System) << "Launcher version: " << launcher_version;
     }
     determineSmilIndexUri();
@@ -65,7 +65,7 @@ QString PlayerConfiguration::determineDefaultContentUrlName()
 
 QString PlayerConfiguration::determineDefaultContentUrl()
 {
-    QString protocol = "http";
+    QString protocol = "https";
     QString url      = "indexes.smil-control.com";
     QString tmp      = "";
 

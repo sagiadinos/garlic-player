@@ -56,6 +56,10 @@ int main(int argc, char *argv[])
     MyAndroidManager->disableScreenSaver();
 #endif
 
+    // needed for launcher especially philips to init things like sockets
+    QTime dieTime= QTime::currentTime().addSecs(1);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 
     MainConfiguration    *MyMainConfiguration   = new MainConfiguration(
                                                         new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"),
@@ -78,8 +82,7 @@ int main(int argc, char *argv[])
         MyLibFacade->toggleLauncher(MyAndroidManager->hasLauncher());
         MyPlayerConfiguration->setHasLauncher(MyAndroidManager->hasLauncher());
 
-        if (MyAndroidManager->getLauncherName() == "garlic")
-            MyPlayerConfiguration->setUuidFromLauncher(MyAndroidManager->getUUIDFromLauncher());
+        MyPlayerConfiguration->setUuidFromLauncher(MyAndroidManager->getUUIDFromLauncher());
 
         MyPlayerConfiguration->setSmilIndexUriFromLauncher(MyAndroidManager->getSmilIndexFromLauncher());
         MyPlayerConfiguration->setVersionFromLauncher(MyAndroidManager->getLauncherVersion());

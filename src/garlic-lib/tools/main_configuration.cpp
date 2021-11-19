@@ -93,7 +93,14 @@ void MainConfiguration::determinePlayerName()
     setPlayerName(getUserConfigByKey("player_name"));
     if (getPlayerName() == "")
     {
-        setPlayerName(getUuid().mid(24,12));
+        QString s = getUuid();
+        int     i = s.lastIndexOf("-");
+        if ( i != -1)
+        {
+            setPlayerName(s.right(s.length() - i - 1));
+        }
+        else
+            setPlayerName(s);
     }
 }
 

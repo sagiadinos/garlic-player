@@ -65,7 +65,6 @@ android {
         android_manager.h
     SOURCES += android_manager.cpp
 
-
 }
 win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
@@ -108,4 +107,6 @@ DISTFILES += \
     android/src/com/sagiadinos/garlic/player/java/GarlicLauncher.java \
     android/src/com/sagiadinos/garlic/player/java/LauncherInterface.java \
     android/src/com/sagiadinos/garlic/player/java/PhilipsLauncher.java \
-    android/src/com/sagiadinos/garlic/player/java/SmilIndexReceiver.java
+    android/src/com/sagiadinos/garlic/player/java/SICPDef.java \
+    android/src/com/sagiadinos/garlic/player/java/SmilIndexReceiver.java \
+    android/src/com/sagiadinos/garlic/player/java/SocketClient.java
