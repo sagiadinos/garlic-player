@@ -26,6 +26,7 @@ class AndroidManager
     public:
         AndroidManager();
         bool hasLauncher();
+        void fetchDeviceInformation();
         bool checkPermissiones();
         void disableScreenSaver();
         void sendCloseCorrect();

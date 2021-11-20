@@ -72,6 +72,12 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         registerReceiver(MySmilIndexReceiver, filter2);
     }
 
+
+    public void fetchDeviceInformation()
+    {
+        MyLauncherInterface.fetchDeviceInformation();
+    }
+
     public boolean isLauncherInstalled()
     {
         return is_launcher;

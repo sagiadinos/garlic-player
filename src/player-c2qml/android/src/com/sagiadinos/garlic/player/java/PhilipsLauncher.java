@@ -32,7 +32,6 @@ public class PhilipsLauncher implements LauncherInterface
     private static final String TAG = "PhilipsLauncher";
     private SocketClient mSocketClient;
     private String content_url      = "https://indexes.smil-control.com";
-    private String uuid             = "";
     private String serial_number    = "";
     private String launcher_version = "";
     private String model_number     = "";
@@ -51,7 +50,6 @@ public class PhilipsLauncher implements LauncherInterface
                 {
                     serial_number = SICPDef.convertBytesToString(ret);
                     Log.d(TAG, "Serial Number:" + serial_number);
-                    uuid = model_number + "-" + serial_number;
                 }
                 else if (ret[3] == -95) // HEX = A1 for serial)
                 {
@@ -64,7 +62,6 @@ public class PhilipsLauncher implements LauncherInterface
                     {
                         model_number = SICPDef.convertBytesToString(ret);
                         Log.d(TAG, "Model number:" + model_number);
-                        uuid = model_number + "-" + serial_number;
                     }
                     else
                         Log.d(TAG, "Unknown info:" + SICPDef.convertBytesToString(ret));
@@ -80,18 +77,13 @@ public class PhilipsLauncher implements LauncherInterface
         MyContext = c;
         mSocketClient = new SocketClient(mSocketResponse);
         mSocketClient.start();
-        try
-        {
-            Thread.sleep(10000);
-            retrieveUUID();
-            retrieveLauncherVersion();
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-
      }
+
+    public void fetchDeviceInformation()
+    {
+        retrieveUUID();
+        retrieveLauncherVersion();
+    }
 
     public String getContentUrlFromLauncher()
     {
@@ -100,7 +92,10 @@ public class PhilipsLauncher implements LauncherInterface
 
     public String getUUIDFromLauncher()
     {
-        return uuid;
+        if (model_number.isEmpty() || serial_number.isEmpty())
+            return "";
+
+        return model_number + "-" + serial_number;
     }
 
     public String getLauncherVersion()
@@ -115,14 +110,12 @@ public class PhilipsLauncher implements LauncherInterface
 
     public void setScreenOff()
     {
-        byte[] sicpCmd = SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_SET_BACKLIGHT_DISABLE);
-        sendSICPCommand(sicpCmd);
+        sendSICPCommand(SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_SET_BACKLIGHT_DISABLE));
     }
 
     public void setScreenOn()
     {
-        byte[] sicpCmd = SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_SET_BACKLIGHT_ENABLE);
-        sendSICPCommand(sicpCmd);
+        sendSICPCommand(SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_SET_BACKLIGHT_ENABLE));
     }
 
     public void rebootOS(String task_id)
@@ -148,23 +141,17 @@ public class PhilipsLauncher implements LauncherInterface
         MyContext.sendBroadcast(intent);
     }
 
-    private void retrieveSmilIndex()
-    {
-    }
 
     private void retrieveUUID()
     {
-        byte[] sicpCmd = SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_GET_SERIAL_CODE);
-        sendSICPCommand(sicpCmd);
+        sendSICPCommand(SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_GET_SERIAL_CODE));
 
-        sicpCmd = SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_GET_MODEL_NUMBER);
-        sendSICPCommand(sicpCmd);
+        sendSICPCommand(SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_GET_MODEL_NUMBER));
     }
 
     private void retrieveLauncherVersion()
     {
-        byte[] sicpCmd = SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_GET_FIRMWARE_BUILD);
-        sendSICPCommand(sicpCmd);
+        sendSICPCommand(SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_GET_FIRMWARE_BUILD));
     }
 
     private void sendSICPCommand(byte[] sicpData)

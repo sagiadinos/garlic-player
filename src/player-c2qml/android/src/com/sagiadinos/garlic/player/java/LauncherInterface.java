@@ -19,6 +19,7 @@ package com.sagiadinos.garlic.player.java;
 
 public interface LauncherInterface
 {
+    public void fetchDeviceInformation();
 
     public String getContentUrlFromLauncher();
 
@@ -35,6 +36,4 @@ public interface LauncherInterface
     public void rebootOS(String task_id);
 
     public void installSoftware(String apk_path);
-
-
 }

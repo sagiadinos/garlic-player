@@ -106,18 +106,15 @@ void PlayerConfiguration::determineUuid()
         return;
     }
 
-    // if launcher has not an uuid use from pla
-    if (!MyMainConfiguration->getUuid().isEmpty())
+    // if launcher has not an uuid and player has one use from player
+    if (!MyMainConfiguration->getUuid().isEmpty() && !MyMainConfiguration->getUuid().isEmpty())
     {
         MyMainConfiguration->setUuid(MyMainConfiguration->getUuid());
         return;
     }
 
-    if(MyMainConfiguration->getUuid().isEmpty())
-    {
-        MyMainConfiguration->setUuid(MyMainConfiguration->createUuid());
-
-    }
+    // create UUID in Player
+    MyMainConfiguration->setUuid(MyMainConfiguration->createUuid());
 }
 
 void PlayerConfiguration::determineSmilIndexUri()

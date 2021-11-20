@@ -34,6 +34,11 @@ bool AndroidManager::hasLauncher()
     return is;
 }
 
+void AndroidManager::fetchDeviceInformation()
+{
+    MyActivity.callMethod<void>("fetchDeviceInformation");
+}
+
 bool AndroidManager::checkPermissiones()
 {
     auto  result = QtAndroid::checkPermission(QString("android.permission.WRITE_EXTERNAL_STORAGE"));

@@ -43,6 +43,10 @@ public class GarlicLauncher implements LauncherInterface
     public GarlicLauncher(Context c)
     {
         MyContext = c;
+    }
+
+    public void fetchDeviceInformation()
+    {
         retrieveSmilIndex();
         retrieveUUID();
         retrieveLauncherVersion();

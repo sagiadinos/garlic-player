@@ -74,9 +74,10 @@ int main(int argc, char *argv[])
 #if defined Q_OS_ANDROID
     if (MyAndroidManager->hasLauncher())
     {
-        // needed for launcher especially philips to init things like sockets
-        QTime dieTime= QTime::currentTime().addSecs(10);
-        while (MyAndroidManager->getUUIDFromLauncher() == "" && QTime::currentTime() < dieTime)
+        MyAndroidManager->fetchDeviceInformation();
+        // needed for launcher stuff to init or fetch
+        QTime dieTime= QTime::currentTime().addSecs(5);
+        while (MyAndroidManager->getUUIDFromLauncher().isEmpty() && QTime::currentTime() < dieTime)
         {
             QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
         }
