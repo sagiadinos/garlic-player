@@ -11,7 +11,9 @@ void PlayerConfiguration::determineInitConfigValues()
     MyMainConfiguration->determinePlayerName();
     if (!launcher_version.isEmpty())
     {
-        MyMainConfiguration->setAdditionalVersion("-" + launcher_version);
+        // L is needed temporary by SmilControl-CMS to determine correct build number for
+        // releasing screen time functionality Nov 2021
+        MyMainConfiguration->setAdditionalVersion("L" + launcher_version);
         qInfo(System) << "Launcher version: " << launcher_version;
     }
     determineSmilIndexUri();
