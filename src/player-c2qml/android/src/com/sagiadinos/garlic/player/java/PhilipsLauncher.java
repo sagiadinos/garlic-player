@@ -82,7 +82,7 @@ public class PhilipsLauncher implements LauncherInterface
         mSocketClient.start();
         try
         {
-            Thread.sleep(1000);
+            Thread.sleep(10000);
             retrieveUUID();
             retrieveLauncherVersion();
         }
