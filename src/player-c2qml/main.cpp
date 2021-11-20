@@ -56,11 +56,6 @@ int main(int argc, char *argv[])
     MyAndroidManager->disableScreenSaver();
 #endif
 
-    // needed for launcher especially philips to init things like sockets
-    QTime dieTime= QTime::currentTime().addSecs(1);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-
     MainConfiguration    *MyMainConfiguration   = new MainConfiguration(
                                                         new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"),
                                                         PlayerConfiguration::determineDefaultContentUrlName(),
@@ -79,6 +74,12 @@ int main(int argc, char *argv[])
 #if defined Q_OS_ANDROID
     if (MyAndroidManager->hasLauncher())
     {
+        // needed for launcher especially philips to init things like sockets
+        QTime dieTime= QTime::currentTime().addSecs(2);
+        while (MyAndroidManager->getUUIDFromLauncher() == "" && QTime::currentTime() < dieTime)
+        {
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        }
         MyLibFacade->toggleLauncher(MyAndroidManager->hasLauncher());
         MyPlayerConfiguration->setHasLauncher(MyAndroidManager->hasLauncher());
 
@@ -91,7 +92,7 @@ int main(int argc, char *argv[])
     setGlobalLibFaceForJava(MyLibFacade);
 #endif
 
-    // This inits must be after Launcher inits
+    // This must can only be be done after Launcher inits
     MyPlayerConfiguration->determineInitConfigValues();
 
     MyLibFacade->init(MyMainConfiguration);
