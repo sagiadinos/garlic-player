@@ -42,6 +42,7 @@ void LibFacade::init(MainConfiguration *config)
     MyConfiguration.reset(config);
     MyInventoryTable.reset(new DB::InventoryTable(this));
     MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
+    MyFreeDiscSpace.data()->init(MyConfiguration.data()->getPaths("cache"));
     MyFreeDiscSpace.data()->setInventoryTable(MyInventoryTable.data());
 
     MyDiscSpace.data()->init(MyConfiguration.data()->getPaths("cache"));

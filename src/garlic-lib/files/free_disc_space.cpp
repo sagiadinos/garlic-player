@@ -54,11 +54,10 @@ bool FreeDiscSpace::freeDiscSpace(qint64 size_to_free)
 {
     QMap<qint64, QFileInfo> dir_list = sortCacheContentsByLastRead();
     QMapIterator<qint64, QFileInfo> i(dir_list);
-    i.toBack(); // Map ist sorted ASC, but we need DESC so iterate from back
-    while (i.hasPrevious())
+    bytes_deleted = 0;
+    while (i.hasNext())
     {
-        i.previous();
-
+        i.next();
         if (i.value().isDir())
         {
             deleteDirectory(i.value().absoluteFilePath());
@@ -69,7 +68,9 @@ bool FreeDiscSpace::freeDiscSpace(qint64 size_to_free)
             deleteFile(i.value().absoluteFilePath());
         }
 
-        qInfo(ContentManager) << "OBJECT_REMOVED resourceUri: " << i.value().absoluteFilePath() << " removed.";
+        QStringList list;
+        list  << "resourceURI" << i.value().absoluteFilePath() + " removed";
+        qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECT_REMOVED", list);
 
         // delete entry from db
         if (MyInventoryTable != Q_NULLPTR)
@@ -77,14 +78,22 @@ bool FreeDiscSpace::freeDiscSpace(qint64 size_to_free)
 
         if (size_to_free < bytes_deleted)
             break;
+
+        i.next();
     }
 
     if (size_to_free > bytes_deleted) // if it is not possible to delete target bytes
     {
-        qCritical(ContentManager) << "FAILED_FREEING_SPACE - Only " << bytes_deleted << "bytes from needed" << size_to_free << "bytes could be deleted";
+        QStringList list1;
+        list1  << "errorMessage" << " - Only " + QString::number(bytes_deleted) + "bytes from needed" + QString::number(size_to_free) + "bytes could deleted";
+        qCritical(ContentManager) << Logger::getInstance().createEventLogMetaData("FAILED_FREEING_SPACE", list1);
         return false;
     }
-    qInfo(ContentManager) << "OBJECTS_REMOVED "<< bytes_deleted << " Bytes of old content were deleted";
+
+    QStringList list2;
+    list2  << "information" <<  QString::number(bytes_deleted) + " Bytes of old content were deleted";
+    qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECTS_REMOVED", list2);
+
     return true;
 }
 
@@ -144,7 +153,8 @@ QMap<qint64, QFileInfo> FreeDiscSpace::sortCacheContentsByLastRead()
     QMap<qint64, QFileInfo> map;
     for(int i = 0; i < dir_list.size(); i++)
     {
-        map.insert(dir_list.at(i).lastRead().toMSecsSinceEpoch(), dir_list.at(i));
+        if (dir_list.at(i).fileName() != "index.smil")
+            map.insert(dir_list.at(i).lastRead().toMSecsSinceEpoch(), dir_list.at(i));
     }
 
     return map;

@@ -14,6 +14,8 @@ void SystemInfos::DiscSpace::init(QString path)
     // Remark: We get screwed, when a disc quota < storage.bytesAvailable()
     // but a disc quota should be untypical use case for digital signage player
     bytes_locked = MyStorage->bytesTotal() - bytes_total;
+
+
     bytes_free   = calculateFreeBytes();
 }
 
@@ -36,6 +38,11 @@ quint64 SystemInfos::DiscSpace::getBytesFree()
 quint64 SystemInfos::DiscSpace::getBytesLocked()
 {
     return bytes_locked;
+}
+
+quint64 SystemInfos::DiscSpace::getBytesAvailable()
+{
+    return MyStorage->bytesAvailable();
 }
 
 quint64 SystemInfos::DiscSpace::calculateFreeBytes()

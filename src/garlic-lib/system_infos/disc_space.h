@@ -8,6 +8,7 @@
 #endif
 
 #include <QStorageInfo>
+#include "tools/logger.h"
 
 namespace SystemInfos
 {
@@ -21,8 +22,9 @@ namespace SystemInfos
             TESTABLE quint64 getBytesTotal();
             TESTABLE quint64 getBytesFree();
             TESTABLE quint64 getBytesLocked();
+            TESTABLE quint64 getBytesAvailable();
     protected:
-            const float    _max_fill    = 0.9; // let some % of total disc space free for Operating System logs, tmp etc
+            const float    _max_fill    = 0.96; // let 4% of total disc space free for Operating System logs, tmp etc
             TESTABLE quint64        calculateFreeBytes();
                      quint64        bytes_locked = 0;
                      quint64        bytes_total  = 0;
