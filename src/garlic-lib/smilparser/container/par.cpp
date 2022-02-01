@@ -43,6 +43,12 @@ void TPar::preloadParse(QDomElement element)
 
 void TPar::prepareDurationTimers()
 {
+    if (!MyExpr.executeQuery())
+    {
+        skipElement();
+        return;
+    }
+
     // when a durtimer exists use it!
     if (hasDurTimer() && !startDurTimer() && !hasEndTimer())
     {

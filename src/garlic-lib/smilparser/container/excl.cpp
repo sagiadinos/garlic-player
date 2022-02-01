@@ -59,6 +59,12 @@ void TExcl::preloadParse(QDomElement element)
 
 void TExcl::prepareDurationTimers()
 {
+    if (!MyExpr.executeQuery())
+    {
+        skipElement();
+        return;
+    }
+
     // when a durtimer exists use it!
     if (hasDurTimer() && !startDurTimer() && !hasEndTimer())
     {

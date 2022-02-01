@@ -46,6 +46,12 @@ void TSeq::preloadParse(QDomElement element)
 
 void TSeq::prepareDurationTimers()
 {
+    if (!MyExpr.executeQuery())
+    {
+        skipElement();
+        return;
+    }
+
     // when a durtimer exists use it!
     if (hasDurTimer() && !startDurTimer() && !hasEndTimer())
     {

@@ -20,7 +20,6 @@
 
 #include "files/media_manager.h"
 #include "container.h"
-#include "conditional/expr.h"
 #include "tools/main_configuration.h"
 #include "head/placeholder.h"
 #include "head_parser.h"
@@ -71,7 +70,6 @@ class BaseMedia : public BaseTimings
         MainConfiguration     *MyMainConfiguration;
         TContainer            *MyParentContainer;
         QStringList            params_as_query;
-        Expr                   MyExpr;
         QString                region_name     = "";
         QString                src             = "";
         QString                type            = "";

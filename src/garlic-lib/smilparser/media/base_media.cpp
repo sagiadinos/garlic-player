@@ -146,7 +146,6 @@ void BaseMedia::parseBaseMediaAttributes()
     fit    = getAttributeFromRootElement("fit", "");
     // maybe obsolete 2021-04-21
    //  type   = getAttributeFromRootElement("type");
-    MyExpr.setExpression(getAttributeFromRootElement("expr", ""));
 }
 
 void BaseMedia::emitfinishedElement() // called from finishedActiveDuration() BaseTimings
