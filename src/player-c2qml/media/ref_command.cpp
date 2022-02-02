@@ -19,9 +19,10 @@ RefCommand::~RefCommand()
 {
 }
 
-void RefCommand::init(BaseMedia *media)
+void RefCommand::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
+    region    = reg;
     QString source = SmilMedia->getLoadablePath();
     if (source.toLower() == "adapi:blankscreen")
     {
@@ -38,6 +39,10 @@ void RefCommand::deinit()
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
+void RefCommand::changeSize(int w, int h)
+{
+    Q_UNUSED(w);Q_UNUSED(h)
+}
 void RefCommand::setParentItem(QQuickItem *parent)
 {
     Q_UNUSED(parent);

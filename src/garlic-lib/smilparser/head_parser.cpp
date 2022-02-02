@@ -234,6 +234,8 @@ void HeadParser::parseRegions(QDomNodeList childs)
             region.z_index         = element.attribute("z-index").toInt();
         if (element.hasAttribute("fit"))
             region.fit         = element.attribute("fit");
+        if (element.hasAttribute("mediaAlign"))
+            region.mediaAlign         = element.attribute("mediaAlign");
         if (element.hasAttribute("soundLevel"))
             region.soundLevel         = element.attribute("soundLevel");
         if (element.hasAttribute("backgroundColor"))

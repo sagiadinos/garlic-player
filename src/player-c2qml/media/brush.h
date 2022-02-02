@@ -11,9 +11,10 @@ class Brush : public PlayerBaseMedia
     public:
         Brush(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Brush();
-        void          init(BaseMedia *media);
+        void          init(BaseMedia *media, Region *reg);
         void          deinit();
         void          setParentItem(QQuickItem *parent);
+        void          changeSize(int w, int h);
     protected:
         TBrush        *MyBrush;
         QScopedPointer<QQuickItem>  brush_item;

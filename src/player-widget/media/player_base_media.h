@@ -11,7 +11,7 @@
             Q_OBJECT
         public:
             explicit PlayerBaseMedia(QObject *parent = nullptr);
-            virtual void          init(BaseMedia *media)   = 0;
+            virtual void          init(BaseMedia *media, Region *reg)   = 0;
             BaseMedia            *getSmilMedia();
             virtual void          deinit() = 0;
             virtual QWidget      *getView()= 0;
@@ -20,6 +20,7 @@
             Logger&      MyLogger = Logger::getInstance();
             BaseMedia   *SmilMedia = Q_NULLPTR;
             QString      start_time = "";
+            Region       *region;
             bool         exists = false;
             void         setStartTime();
             bool         isFileExists(QString path);

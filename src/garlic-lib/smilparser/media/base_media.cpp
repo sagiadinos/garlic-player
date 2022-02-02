@@ -144,6 +144,7 @@ void BaseMedia::parseBaseMediaAttributes()
 
     region_name = getAttributeFromRootElement("region", "");
     fit    = getAttributeFromRootElement("fit", "");
+    media_align    = getAttributeFromRootElement("mediaAlign", "");
     // maybe obsolete 2021-04-21
    //  type   = getAttributeFromRootElement("type");
 }
@@ -202,4 +203,40 @@ int BaseMedia::determineCacheControl(QString value)
     }
     return CACHE_CONTROL_USE_CACHE;
 }
+
+void BaseMedia::decodePageExtraSettings(QString pageExtraSettings){
+    try
+    {
+        if(!pageExtraSettings.trimmed().isEmpty()){
+            QByteArray text = QByteArray::fromBase64(pageExtraSettings.toUtf8());
+            auto json_doc=QJsonDocument::fromJson(text);
+
+            if(json_doc.isNull()){
+                qDebug()<< src + " - Failed to create JSON doc.";
+                return;
+
+            }
+            if(!json_doc.isObject()){
+                qDebug()<< src+" - JSON is not an object.";
+                return;
+            }
+
+            QJsonObject json_obj=json_doc.object();
+
+            if(json_obj.isEmpty()){
+                qDebug()<<src+" - JSON object is empty.";
+                return;
+            }
+
+            QVariantMap root_map = json_obj.toVariantMap();
+            extra_js = root_map["extra_js"].toList();
+            zoom_factor = QString::number(json_obj.value("scale_factor").toDouble(), 'f', 2).toDouble();
+
+          }
+        } catch (...) {
+            qDebug() << "extraParams decoding failed for "+src;
+        }
+
+}
+
 

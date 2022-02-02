@@ -46,7 +46,7 @@ void TRegion::paintEvent(QPaintEvent *)
 
 void TRegion::startShowMedia(BaseMedia *media)
 {
-    MyMedia = MyMediaFactory.initMedia(media);
+    MyMedia = MyMediaFactory.initMedia(media, &region);
 
     QWidget *widget = MyMedia->getView();
     if (widget != Q_NULLPTR)
@@ -67,7 +67,7 @@ void TRegion::stopShowMedia(BaseMedia *media)
     if (MyMedia->getSmilMedia() != media)
     {
         if (MyMedia->getSmilMedia()->objectName() != media->objectName())
-            secureStopDisplayingMedia(MyMediaFactory.initMedia(media));
+            secureStopDisplayingMedia(MyMediaFactory.initMedia(media, &region));
         return;
     }
 

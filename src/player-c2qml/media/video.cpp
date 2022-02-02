@@ -29,9 +29,10 @@ Video::~Video()
     video_item.reset();
 }
 
-void Video::init(BaseMedia *media)
+void Video::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
+    region    = reg;
     if (load(video_item.data()))
     {
         // cannot be connected once in constructor due to again Android/QMultimedia problems
@@ -42,7 +43,6 @@ void Video::init(BaseMedia *media)
         TVideo *MyVideo = qobject_cast<TVideo *> (media);
         float vol = determineVolume(MyVideo->getSoundLevel());
         video_item.data()->setProperty("volume", vol);
-        video_item.data()->setProperty("fillMode", determineFillMode(SmilMedia->getFit().toLower()));
         if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
@@ -61,18 +61,25 @@ void Video::setParentItem(QQuickItem *parent)
     video_item.data()->setParentItem(parent);
 }
 
-int Video::determineFillMode(QString smil_fit)
+void Video::changeSize(int w, int h)
 {
+    QString smil_fit = SmilMedia->getFit().toLower();
+    int fill_mode = 6; // for do nothing
     if (smil_fit == "fill")
-        return STRETCH;
+        fill_mode = Qt::IgnoreAspectRatio;
     else if (smil_fit == "meet")
-        return PRESERVEASPECTFIT;
+        fill_mode = Qt::KeepAspectRatio;
     else if (smil_fit == "meetbest")
-        return PRESERVEASPECTFIT;
+    {
+//        if (loaded_image.width() >= w || loaded_image.height() > h)
+//            fill_mode = Qt::KeepAspectRatio;
+//       else
+            fill_mode = NONE;
+    }
     else if (smil_fit == "slice")
-        return PRESERVEASPECTCROP;
-    else
-        return NONE;
+        fill_mode =  Qt::KeepAspectRatioByExpanding;
+
+    video_item.data()->setProperty("fillMode",  fill_mode);
 }
 
 qreal Video::determineVolume(QString percent)
@@ -83,7 +90,6 @@ qreal Video::determineVolume(QString percent)
 
     return vol / (float) 100;
 }
-
 
 void Video::doStopped()
 {

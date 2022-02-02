@@ -27,9 +27,10 @@ PlayerAudio::~PlayerAudio()
 {
 }
 
-void PlayerAudio::init(BaseMedia *media)
+void PlayerAudio::init(BaseMedia *media, Region *reg)
 {
-    SmilMedia  = media;
+    SmilMedia    = media;
+    region       = reg;
     QString path = SmilMedia->getLoadablePath();
     if (isFileExists(path))
     {

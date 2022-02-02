@@ -45,6 +45,9 @@ class BaseMedia : public BaseTimings
         void                   setRegion(Region r);
         QString                getRegionName();
         QString                getFit()          {return fit;}
+        QString                getMediaAlign()   {return media_align;}
+        double                 getZoomFactor()   {return zoom_factor;}
+        QVariantList           getExtraJSList()  {return extra_js;}
         QString                getSrc()          {return src;}
         QString                getLogContentId() {return log_content_id;}
         QString                getFileName()     {return filename;}
@@ -74,6 +77,9 @@ class BaseMedia : public BaseTimings
         QString                src             = "";
         QString                type            = "";
         QString                fit             = "";
+        QString                media_align     = ""; // default will defined by region see head_parser.cpp/h
+        double                 zoom_factor     = 1.00;
+        QVariantList           extra_js;
         QString                filename        = "";
         int                    cache_control   = 0;
         QString                log_content_id  = "";
@@ -86,6 +92,7 @@ class BaseMedia : public BaseTimings
     private:
         void                   setAdditionalParameters(QDomElement param);
         int                    determineCacheControl(QString value);
+        void                   decodePageExtraSettings(QString pageExtraSettings);
     signals:
         void                   repeat(BaseMedia *media);
 

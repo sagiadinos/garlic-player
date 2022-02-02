@@ -28,9 +28,10 @@ Audio::~Audio()
 {
 }
 
-void Audio::init(BaseMedia *media)
+void Audio::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
+    region    = reg;
     QString source = SmilMedia->getLoadablePath();
     if (isFileExists(source))
     {
@@ -45,6 +46,11 @@ void Audio::deinit()
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
     audio_item.data()->setProperty("source", "");
+}
+
+void Audio::changeSize(int w, int h)
+{
+    Q_UNUSED(w);Q_UNUSED(h)
 }
 
 void Audio::setParentItem(QQuickItem *parent)

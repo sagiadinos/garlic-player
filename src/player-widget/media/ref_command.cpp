@@ -10,9 +10,10 @@ PlayerRefCommand::~PlayerRefCommand()
 
 }
 
-void PlayerRefCommand::init(BaseMedia *media)
+void PlayerRefCommand::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
+    region    = reg;
     QString path = SmilMedia->getLoadablePath();
     if (path.toLower() == "adapi:blankscreen")
     {

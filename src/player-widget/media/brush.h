@@ -11,7 +11,7 @@ class PlayerBrush : public PlayerBaseMedia
     public:
         PlayerBrush(QObject *parent);
         ~PlayerBrush();
-        void          init(BaseMedia *media);
+        void          init(BaseMedia *media, Region *reg);
         void          deinit();
         void          changeSize(int w, int h);
         QWidget      *getView();

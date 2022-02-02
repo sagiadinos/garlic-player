@@ -10,7 +10,7 @@ class PlayerRefCommand : public PlayerBaseMedia
 public:
     explicit PlayerRefCommand(QObject *parent = nullptr);
     ~PlayerRefCommand();
-    void          init(BaseMedia *media);
+    void          init(BaseMedia *media, Region *reg);
     void          deinit();
     void          changeSize(int w, int h);
     QWidget      *getView();

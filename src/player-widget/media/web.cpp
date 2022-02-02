@@ -35,9 +35,10 @@ PlayerWeb::~PlayerWeb()
     qDebug() << "delete browser";
 }
 
-void PlayerWeb::init(BaseMedia *media)
+void PlayerWeb::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
+    region    = reg;
     browser   = new QWebEngineView;
     connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
 
@@ -103,6 +104,15 @@ void PlayerWeb::doLoadFinished(bool has_succeeded)
     {
         QString code = QStringLiteral("document.body.style.overflow = 'hidden';");
         browser->page()->runJavaScript(code);
+        //apply zoom_factor
+        browser->setZoomFactor(SmilMedia->getZoomFactor());
+        //run extra js on page
+        QVariantList jsList = SmilMedia->getExtraJSList();
+        for (QVariantList::iterator j = jsList.begin(); j != jsList.end(); j++)
+        {
+            QString jsCode =(*j).toString();
+            browser->page()->runJavaScript(jsCode+";");
+        }
     }
 }
 

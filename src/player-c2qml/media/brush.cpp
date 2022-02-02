@@ -19,9 +19,10 @@ Brush::~Brush()
     brush_item.reset();
 }
 
-void Brush::init(BaseMedia *media)
+void Brush::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
+    region    = reg;
     MyBrush = qobject_cast<TBrush *> (media);
     brush_item.data()->setProperty("color", MyBrush->getColor());
     if (SmilMedia->getLogContentId() != "")
@@ -33,6 +34,11 @@ void Brush::deinit()
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
     brush_item.data()->setProperty("source","");
+}
+
+void Brush::changeSize(int w, int h)
+{
+    Q_UNUSED(w);Q_UNUSED(h)
 }
 
 void Brush::setParentItem(QQuickItem *parent)
