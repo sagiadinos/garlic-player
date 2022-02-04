@@ -25,6 +25,7 @@
 #include <QUrl>
 #include <QUuid>
 #include <QString>
+#include <QCryptographicHash>
 #include "logger.h"
 #include "version.h"
 
@@ -57,12 +58,16 @@ class MainConfiguration  : public QObject
         static QString  getLogDir();
 
         void            setLastPlayedIndexPath(const QString &value);
+        QSettings      *getUserConfig() {return UserConfig;}
         QString         getUserConfigByKey(QString key);
         void            setUserConfigByKey(QString key, QString value);
         QString         createUuid();
         void            setUuid(const QString &value);
         void            setPlayerName(const QString &value);
         void            determinePlayerName();
+        QString         determineApiAccessToken(QString username, QString password);
+        QString         getApiAccessToken();
+        QString         getApiAccessTokenExpire();
 
         // easy getter
         QString         getUuid() const {return uuid;}

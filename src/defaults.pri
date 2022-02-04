@@ -2,6 +2,7 @@ INCLUDEPATH += $$PWD/garlic-lib
 INCLUDEPATH += $$PWD/garlic-lib/db
 INCLUDEPATH += $$PWD/garlic-lib/files
 INCLUDEPATH += $$PWD/garlic-lib/reports
+INCLUDEPATH += $$PWD/garlic-lib/rest_api
 INCLUDEPATH += $$PWD/garlic-lib/reports/create
 INCLUDEPATH += $$PWD/garlic-lib/smilparser
 INCLUDEPATH += $$PWD/garlic-lib/smilparser/conditional

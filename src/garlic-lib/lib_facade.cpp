@@ -38,7 +38,7 @@ LibFacade::~LibFacade()
  * @param config
  */
 void LibFacade::init(MainConfiguration *config)
-{
+{    
     MyConfiguration.reset(config);
     MyInventoryTable.reset(new DB::InventoryTable(this));
     MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
@@ -56,6 +56,13 @@ void LibFacade::init(MainConfiguration *config)
     connect(MyTaskScheduler.data(), SIGNAL(installSoftware(QString)), this, SLOT(emitInstallSoftware(QString)));
     connect(MyTaskScheduler.data(), SIGNAL(reboot(QString)), this, SLOT(reboot(QString)));
 
+}
+
+void LibFacade::initWebserver(QCoreApplication *app)
+{
+    // ToDo if init webserver
+    MyHttp.reset(new Httpd(MyConfiguration.data(), this));
+    MyHttp.data()->init(app);
 }
 
 ResourceMonitor *LibFacade::getResourceMonitor()

@@ -6,6 +6,7 @@ TARGET       = garlic-player
 TEMPLATE     = app
 DESTDIR      = ../bin
 INCLUDEPATH +=../ext/zlib/includes
+INCLUDEPATH += ../ext/QtWebApp/httpserver
 INCLUDEPATH +=../ext/quazip/includes
 INCLUDEPATH += ../garlic-lib/
 DEFINES     += QT_DEPRECATED_WARNINGS

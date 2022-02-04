@@ -1,4 +1,5 @@
 include(../defaults.pri)
+include(../ext/QtWebApp/httpserver/httpserver.pri)
 
 QT       += core sql network xml xmlpatterns widgets
 TEMPLATE  = lib
@@ -6,6 +7,7 @@ CONFIG   += warn_on c++11 stl
 DEFINES  += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
 TARGET    = garlic
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
+
 
 linux:!android {
     DESTDIR = ../lib/
@@ -56,6 +58,12 @@ SOURCES += \
     files/network_access.cpp \
     files/webdav.cpp \
     files/wgt.cpp \
+    rest_api/v2/auth_controller.cpp \
+    rest_api/httpd.cpp \
+    rest_api/json_model.cpp \
+    rest_api/request_mapper.cpp \
+    rest_api/v2/base_controller.cpp \
+    rest_api/v2/systeminformation_controller.cpp \
     smilparser/base_timings.cpp \
     smilparser/body_parser.cpp \
     smilparser/conditional/adapi_wrapper.cpp \
@@ -141,6 +149,12 @@ HEADERS += \
     files/network_access.h \
     files/webdav.h \
     files/wgt.h \
+    rest_api/httpd.h \
+    rest_api/json_model.h \
+    rest_api/request_mapper.h \
+    rest_api/v2/auth_controller.h \
+    rest_api/v2/base_controller.h \
+    rest_api/v2/systeminformation_controller.h \
     smilparser/body_parser.h \
     smilparser/conditional/adapi_wrapper.h \
     smilparser/conditional/expr.h \

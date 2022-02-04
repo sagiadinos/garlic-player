@@ -50,12 +50,12 @@ PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media, Region *reg)
         MyAudio.data()->init(media, reg);
         return MyAudio.data();
     }
-    else if (type == "TWeb", reg)
+    else if (type == "TWeb")
     {
         MyWeb.data()->init(media, reg);
         return MyWeb.data();
     }
-    else if (type == "TWidget", reg)
+    else if (type == "TWidget")
     {
         MyWeb.data()->init(media, reg);
         return MyWeb.data();

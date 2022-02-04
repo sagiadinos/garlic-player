@@ -104,6 +104,31 @@ void MainConfiguration::determinePlayerName()
     }
 }
 
+QString MainConfiguration::determineApiAccessToken(QString username, QString password)
+{
+
+    QDateTime utc(QDateTime::currentDateTime());
+    utc.setTimeSpec(Qt::UTC);
+    QString expire       = utc.addDays(1).toString(Qt::ISODate);
+    QString hash_source  = username + password + expire;
+    QString access_token = QString::fromUtf8(QCryptographicHash::hash(hash_source.toLocal8Bit(),QCryptographicHash::Md5).toHex());
+
+    setUserConfigByKey("api_access_token_expire", expire);
+    setUserConfigByKey("api_access_token", access_token.toUpper());
+
+    return getApiAccessToken();
+}
+
+QString MainConfiguration::getApiAccessToken()
+{
+    return getUserConfigByKey("api_access_token");
+}
+
+QString MainConfiguration::getApiAccessTokenExpire()
+{
+    return getUserConfigByKey("api_access_token_expire");
+}
+
 QString MainConfiguration::createUuid()
 {
     QString id = QUuid::createUuid().toString();

@@ -114,6 +114,8 @@ int main(int argc, char *argv[])
 
     TScreen    MyScreen(Q_NULLPTR);
     MyScreen.selectCurrentScreen(MyParser.getScreenSelect());
+    MyLibFacade->initWebserver(&app);
+
     MainWindow w(&MyScreen, MyLibFacade, MyPlayerConfiguration);
 
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);

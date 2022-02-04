@@ -25,6 +25,7 @@
 #include "body_parser.h"
 #include "tools/resource_monitor.h"
 #include "head/placeholder.h"
+#include "rest_api/httpd.h"
 
 /**
  * @brief The LibFacade class is the interface for a player component to the garlic parser
@@ -46,6 +47,7 @@ class LibFacade : public QObject
         explicit LibFacade(QObject *parent = nullptr);
         ~LibFacade();
         void               init(MainConfiguration *config);
+        void               initWebserver(QCoreApplication *app);
         MainConfiguration *getConfiguration() const {return MyConfiguration.data();}
         HeadParser        *getHead() const {return MyHeadParser.data();}
         ResourceMonitor   *getResourceMonitor();
@@ -78,6 +80,7 @@ class LibFacade : public QObject
         QScopedPointer<BodyParser>                 MyBodyParser;
         QScopedPointer<SystemInfos::DiscSpace>     MyDiscSpace;
         QScopedPointer<FreeDiscSpace>              MyFreeDiscSpace;
+        QScopedPointer<Httpd>                      MyHttp;
         QStorageInfo                               MyStorage;
         ResourceMonitor            MyResourceMonitor;
         void               initFileManager();

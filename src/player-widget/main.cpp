@@ -61,12 +61,11 @@ int main(int argc, char *argv[])
 
     TCmdParser MyParser(MyMainConfiguration);
     MyParser.addOptions();
-
     MyParser.parse(MyLibFacade);
 
     TScreen    MyScreen(Q_NULLPTR);
-
     MyScreen.selectCurrentScreen(MyParser.getScreenSelect());
+    MyLibFacade->initWebserver(&app);
 
     MainWindow w(&MyScreen, MyLibFacade);
 

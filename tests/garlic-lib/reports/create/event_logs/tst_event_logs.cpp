@@ -43,7 +43,7 @@ void TestCreateEventLogs::testProcess()
 
     QDomDocument test;
     test.setContent(result);
-    QCOMPARE(test.elementsByTagName("event").length(), 8);
+    xxq(test.elementsByTagName("event").length(), 8);
     QCOMPARE(test.elementsByTagName("eventType").length(), 8);
     QCOMPARE(test.elementsByTagName("eventTime").length(), 8);
     QCOMPARE(test.elementsByTagName("report").length(), 1);
@@ -55,3 +55,4 @@ void TestCreateEventLogs::testProcess()
 QTEST_APPLESS_MAIN(TestCreateEventLogs)
 
 #include "tst_event_logs.moc"
+x
