@@ -14,7 +14,7 @@ QString SystemInformationController::responseFirmwareInfo()
     return JsonResponse.asString(false).toUtf8();
 }
 
-QString SystemInformationController::responsemodelInfo()
+QString SystemInformationController::responseModelInfo()
 {
     JsonResponse.reset();
     JsonResponse.insertStringValuePair("modelDescription", "");

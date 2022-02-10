@@ -5,7 +5,7 @@ BaseController::BaseController(QObject *parent) : QObject(parent)
 
 }
 
-void BaseController::setMyConfiguration(MainConfiguration *mc)
+void BaseController::setMainConfiguration(MainConfiguration *mc)
 {
     MyConfiguration = mc;
 }

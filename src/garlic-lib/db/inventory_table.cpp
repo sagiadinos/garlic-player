@@ -74,7 +74,7 @@ void DB::InventoryTable::deleteByCacheName(QString cache_name)
         qCritical(Database) << "delete failed" << query.lastError().text();
 }
 
-QList<DB::InventoryDataset> DB::InventoryTable::getAll()
+QList<DB::InventoryDataset> DB::InventoryTable::findAll()
 {
     QSqlQuery query(db);
     QList<InventoryDataset> result;
@@ -88,8 +88,25 @@ QList<DB::InventoryDataset> DB::InventoryTable::getAll()
     while (query.next());
 
     return result;
+}
+
+QList<DB::InventoryDataset> DB::InventoryTable::findPaginated(int max_results, int begin)
+{
+    QSqlQuery query(db);
+    QList<InventoryDataset> result;
+    query.exec("SELECT * FROM inventory ORDER BY UPPER(last_update) DESC LIMIT " + QString::number(begin) + ", " +  QString::number(max_results));
+    if (!query.first())
+        return result;
+    do
+    {
+        result.append(collectResult(&query));
+    }
+    while (query.next());
+
+    return result;
 
 }
+
 
 void DB::InventoryTable::setDbPath(QString path)
 {

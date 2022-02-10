@@ -61,7 +61,7 @@ void LibFacade::init(MainConfiguration *config)
 void LibFacade::initWebserver(QCoreApplication *app)
 {
     // ToDo if init webserver
-    MyHttp.reset(new Httpd(MyConfiguration.data(), this));
+    MyHttp.reset(new Httpd(MyConfiguration.data(), MyInventoryTable.data(), this));
     MyHttp.data()->init(app);
 }
 

@@ -21,6 +21,7 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QDebug>
 
 class JsonModel : public QObject
@@ -30,6 +31,9 @@ class JsonModel : public QObject
         explicit JsonModel(QObject *parent = nullptr);
         void reset();
         void insertStringValuePair(QString key, QString value);
+        void insertIntegerValuePair(QString key, int value);
+        void insertObjectValuePair(QString key, QJsonObject value);
+        void insertArrayValuePair(QString key, QJsonArray value);
         QString getStringValueByKey(QString key);
         bool readFromString(QString json_string);
         QString asString(bool compact = true);

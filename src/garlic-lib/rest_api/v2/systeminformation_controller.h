@@ -10,7 +10,7 @@ class SystemInformationController : public BaseController
     public:
         explicit SystemInformationController(QObject *parent = nullptr);
         QString responseFirmwareInfo();
-        QString responsemodelInfo();
+        QString responseModelInfo();
 };
 
 #endif // SYSTEMINFORMATIONCONTROLLER_H

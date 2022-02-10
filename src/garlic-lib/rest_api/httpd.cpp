@@ -1,8 +1,9 @@
 #include "httpd.h"
 
-Httpd::Httpd(MainConfiguration *mc, QObject *parent) : QObject(parent)
+Httpd::Httpd(MainConfiguration *mc, DB::InventoryTable *it, QObject *parent) : QObject(parent)
 {
     MyConfiguration = mc;
+    MyInventoryTable = it;
 }
 
 void Httpd::init(QCoreApplication *app)
@@ -16,6 +17,6 @@ void Httpd::init(QCoreApplication *app)
     MyConfiguration->setUserConfigByKey("maxRequestSize","16000");
     MyConfiguration->setUserConfigByKey("maxMultiPartSize","10000000");
 
-    new HttpListener(MyConfiguration->getUserConfig(), new RequestMapper(MyConfiguration, app), app);
+    new HttpListener(MyConfiguration->getUserConfig(), new RequestMapper(MyConfiguration, MyInventoryTable, app), app);
 
 }

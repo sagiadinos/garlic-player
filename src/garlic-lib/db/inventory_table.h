@@ -42,7 +42,8 @@ namespace DB
             void updateFileStatus(QString resource_uri, int state);
             void deleteByResourceURI(QString resource_uri);
             void deleteByCacheName(QString cache_name);
-            QList<InventoryDataset> getAll();
+            QList<DB::InventoryDataset> findPaginated(int max_results, int begin = 0);
+            QList<InventoryDataset> findAll();
             void setDbPath(QString path);
 
         protected:

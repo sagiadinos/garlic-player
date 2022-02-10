@@ -33,7 +33,22 @@ void JsonModel::reset()
     }
 }
 
+void JsonModel::insertIntegerValuePair(QString key, int value)
+{
+    json_obj.insert(key, value);
+}
+
 void JsonModel::insertStringValuePair(QString key, QString value)
+{
+    json_obj.insert(key, value);
+}
+
+void JsonModel::insertArrayValuePair(QString key, QJsonArray value)
+{
+    json_obj[key] = value;
+}
+
+void JsonModel::insertObjectValuePair(QString key, QJsonObject value)
 {
     json_obj.insert(key, value);
 }

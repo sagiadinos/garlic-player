@@ -11,10 +11,11 @@ class Httpd : public QObject
 {
         Q_OBJECT
     public:
-        explicit Httpd(MainConfiguration *mc, QObject *parent = nullptr);
+        explicit Httpd(MainConfiguration *mc, DB::InventoryTable *it, QObject *parent = nullptr);
         void init(QCoreApplication *app);
     private:
-        MainConfiguration *MyConfiguration;
+        MainConfiguration  *MyConfiguration;
+        DB::InventoryTable *MyInventoryTable;
 };
 
 #endif // HTTPD_H

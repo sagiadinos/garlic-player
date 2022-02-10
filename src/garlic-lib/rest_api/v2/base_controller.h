@@ -10,7 +10,7 @@ class BaseController : public QObject
         Q_OBJECT
     public:
         explicit BaseController(QObject *parent = nullptr);
-        void     setMyConfiguration(MainConfiguration *mc);
+        void     setMainConfiguration(MainConfiguration *mc);
         bool     validateToken(QString access_token);
 
     protected:
