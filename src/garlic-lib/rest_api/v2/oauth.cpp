@@ -1,12 +1,12 @@
-#include "auth_controller.h"
+#include "oauth.h"
 
-AuthController::AuthController(QObject *parent): BaseController(parent)
+RestApi::V2::OAuth::OAuth(QObject *parent): BaseController(parent)
 {
 
 }
 
 
-QString AuthController::determineJsonResponse(QString body)
+QString RestApi::V2::OAuth::determineJsonResponse(QString body)
 {
     if (checkJsonRequest(body))
     {
@@ -16,14 +16,14 @@ QString AuthController::determineJsonResponse(QString body)
     return JsonResponse.asString(false).toUtf8();
 }
 
-void AuthController::createJsonResponse()
+void RestApi::V2::OAuth::createJsonResponse()
 {
     JsonResponse.insertStringValuePair("access_token", MyConfiguration->determineApiAccessToken(username, password));
     JsonResponse.insertStringValuePair("token_type","Bearer");
     JsonResponse.insertStringValuePair("expires_in", MyConfiguration->getApiAccessTokenExpire());
 }
 
-bool AuthController::checkJsonRequest(QString json_string)
+bool RestApi::V2::OAuth::checkJsonRequest(QString json_string)
 {
     if (!JsonRequest.readFromString(json_string))
         return false;

@@ -1,16 +1,16 @@
 #include "base_controller.h"
 
-BaseController::BaseController(QObject *parent) : QObject(parent)
+RestApi::V2::BaseController::BaseController(QObject *parent) : QObject(parent)
 {
 
 }
 
-void BaseController::setMainConfiguration(MainConfiguration *mc)
+void RestApi::V2::BaseController::setMainConfiguration(MainConfiguration *mc)
 {
     MyConfiguration = mc;
 }
 
-bool BaseController::validateToken(QString access_token)
+bool RestApi::V2::BaseController::validateToken(QString access_token)
 {
     QString debug = MyConfiguration->getUserConfigByKey("api_access_token");
 

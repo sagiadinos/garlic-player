@@ -1,16 +1,16 @@
-#include "files_controller.h"
+#include "files.h"
 
-FilesController::FilesController(QObject *parent) : BaseController{parent}
+RestApi::V2::Files::Files(QObject *parent) : BaseController{parent}
 {
 
 }
 
-void FilesController::setInventoryTable(DB::InventoryTable *it)
+void RestApi::V2::Files::setInventoryTable(DB::InventoryTable *it)
 {
     MyInventoryTable = it;
 }
 
-QString FilesController::responseFind(int max_results, int begin)
+QString RestApi::V2::Files::responseFind(int max_results, int begin)
 {
     QList<DB::InventoryDataset> results;
 
@@ -25,7 +25,7 @@ QString FilesController::responseFind(int max_results, int begin)
     return JsonResponse.asString(false).toUtf8();
 }
 
-void FilesController::createJsonFromList(QList<DB::InventoryDataset> results)
+void RestApi::V2::Files::createJsonFromList(QList<DB::InventoryDataset> results)
 {
     QJsonArray json_array;
     for (QList<DB::InventoryDataset>::iterator i = results.begin(); i != results.end(); i++)
@@ -36,7 +36,7 @@ void FilesController::createJsonFromList(QList<DB::InventoryDataset> results)
 
 }
 
-QJsonObject FilesController::createObject(DB::InventoryDataset dataset)
+QJsonObject RestApi::V2::Files::createObject(DB::InventoryDataset dataset)
 {
     QJsonObject json;
     json.insert("id", getObjectId(dataset.cache_name));
@@ -51,13 +51,13 @@ QJsonObject FilesController::createObject(DB::InventoryDataset dataset)
     return json;
 }
 
-QString FilesController::getObjectId(QString file_name)
+QString RestApi::V2::Files::getObjectId(QString file_name)
 {
     QFileInfo fi(file_name);
     return fi.baseName();
 }
 
-QString FilesController::getState(int state)
+QString RestApi::V2::Files::getState(int state)
 {
     switch (state)
     {
@@ -75,7 +75,7 @@ QString FilesController::getState(int state)
             return "ERROR";
      }
 }
-qint64 FilesController::determineTransferLength(QString file_name, int state)
+qint64 RestApi::V2::Files::determineTransferLength(QString file_name, int state)
 {
     QFileInfo fi(MyConfiguration->getPaths("cache") + file_name);
     switch (state)

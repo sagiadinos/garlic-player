@@ -1,12 +1,12 @@
-#include "systeminformation_controller.h"
+#include "system_info.h"
 
-SystemInformationController::SystemInformationController(QObject *parent)
+RestApi::V2::SystemInfo::SystemInfo(QObject *parent)
     : BaseController{parent}
 {
 
 }
 
-QString SystemInformationController::responseFirmwareInfo()
+QString RestApi::V2::SystemInfo::responseFirmwareInfo()
 {
     JsonResponse.reset();
     JsonResponse.insertStringValuePair("firmwareVersion", MyConfiguration->getVersion());
@@ -14,7 +14,7 @@ QString SystemInformationController::responseFirmwareInfo()
     return JsonResponse.asString(false).toUtf8();
 }
 
-QString SystemInformationController::responseModelInfo()
+QString RestApi::V2::SystemInfo::responseModelInfo()
 {
     JsonResponse.reset();
     JsonResponse.insertStringValuePair("modelDescription", "");

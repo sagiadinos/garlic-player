@@ -17,12 +17,12 @@
 *************************************************************************************/
 #include "json_model.h"
 
-JsonModel::JsonModel(QObject *parent) : QObject(parent)
+RestApi::JsonModel::JsonModel(QObject *parent) : QObject(parent)
 {
 
 }
 
-void JsonModel::reset()
+void RestApi::JsonModel::reset()
 {
     if (json_obj.size() == 0)
         return;
@@ -33,27 +33,27 @@ void JsonModel::reset()
     }
 }
 
-void JsonModel::insertIntegerValuePair(QString key, int value)
+void RestApi::JsonModel::insertIntegerValuePair(QString key, int value)
 {
     json_obj.insert(key, value);
 }
 
-void JsonModel::insertStringValuePair(QString key, QString value)
+void RestApi::JsonModel::insertStringValuePair(QString key, QString value)
 {
     json_obj.insert(key, value);
 }
 
-void JsonModel::insertArrayValuePair(QString key, QJsonArray value)
+void RestApi::JsonModel::insertArrayValuePair(QString key, QJsonArray value)
 {
     json_obj[key] = value;
 }
 
-void JsonModel::insertObjectValuePair(QString key, QJsonObject value)
+void RestApi::JsonModel::insertObjectValuePair(QString key, QJsonObject value)
 {
     json_obj.insert(key, value);
 }
 
-QString JsonModel::getStringValueByKey(QString key)
+QString RestApi::JsonModel::getStringValueByKey(QString key)
 {
     if (json_obj.size() == 0)
         return "error";
@@ -62,7 +62,7 @@ QString JsonModel::getStringValueByKey(QString key)
     return i.value().toString();
 }
 
-bool JsonModel::readFromString(QString json_string)
+bool RestApi::JsonModel::readFromString(QString json_string)
 {
     QByteArray json_bytes = json_string.toUtf8();
 
@@ -89,7 +89,7 @@ bool JsonModel::readFromString(QString json_string)
     return true;
 }
 
-QString JsonModel::asString(bool compact)
+QString RestApi::JsonModel::asString(bool compact)
 {
     QJsonDocument json_doc(json_obj);
     if (compact)
@@ -98,7 +98,7 @@ QString JsonModel::asString(bool compact)
         return json_doc.toJson(QJsonDocument::Indented);
 }
 
-const QJsonObject &JsonModel::getJsonObj() const
+const QJsonObject &RestApi::JsonModel::getJsonObj() const
 {
     return json_obj;
 }

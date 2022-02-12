@@ -58,13 +58,13 @@ SOURCES += \
     files/network_access.cpp \
     files/webdav.cpp \
     files/wgt.cpp \
-    rest_api/v2/auth_controller.cpp \
     rest_api/httpd.cpp \
     rest_api/json_model.cpp \
     rest_api/request_mapper.cpp \
     rest_api/v2/base_controller.cpp \
-    rest_api/v2/files_controller.cpp \
-    rest_api/v2/systeminformation_controller.cpp \
+    rest_api/v2/files.cpp \
+    rest_api/v2/oauth.cpp \
+    rest_api/v2/system_info.cpp \
     smilparser/base_timings.cpp \
     smilparser/body_parser.cpp \
     smilparser/conditional/adapi_wrapper.cpp \
@@ -153,10 +153,10 @@ HEADERS += \
     rest_api/httpd.h \
     rest_api/json_model.h \
     rest_api/request_mapper.h \
-    rest_api/v2/auth_controller.h \
     rest_api/v2/base_controller.h \
-    rest_api/v2/files_controller.h \
-    rest_api/v2/systeminformation_controller.h \
+    rest_api/v2/files.h \
+    rest_api/v2/oauth.h \
+    rest_api/v2/system_info.h \
     smilparser/body_parser.h \
     smilparser/conditional/adapi_wrapper.h \
     smilparser/conditional/expr.h \

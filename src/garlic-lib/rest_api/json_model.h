@@ -24,27 +24,29 @@
 #include <QJsonArray>
 #include <QDebug>
 
-class JsonModel : public QObject
+namespace RestApi
 {
-        Q_OBJECT
-    public:
-        explicit JsonModel(QObject *parent = nullptr);
-        void reset();
-        void insertStringValuePair(QString key, QString value);
-        void insertIntegerValuePair(QString key, int value);
-        void insertObjectValuePair(QString key, QJsonObject value);
-        void insertArrayValuePair(QString key, QJsonArray value);
-        QString getStringValueByKey(QString key);
-        bool readFromString(QString json_string);
-        QString asString(bool compact = true);
-        const QJsonObject &getJsonObj() const;
+    class JsonModel : public QObject
+    {
+            Q_OBJECT
+        public:
+            explicit JsonModel(QObject *parent = nullptr);
+            void reset();
+            void insertStringValuePair(QString key, QString value);
+            void insertIntegerValuePair(QString key, int value);
+            void insertObjectValuePair(QString key, QJsonObject value);
+            void insertArrayValuePair(QString key, QJsonArray value);
+            QString getStringValueByKey(QString key);
+            bool readFromString(QString json_string);
+            QString asString(bool compact = true);
+            const QJsonObject &getJsonObj() const;
 
-    private:
-        QJsonObject json_obj;
-        QJsonParseError *error;
+        private:
+            QJsonObject json_obj;
+            QJsonParseError *error;
 
-    signals:
+        signals:
 
-};
-
+    };
+}
 #endif // JSON_MODEL_H

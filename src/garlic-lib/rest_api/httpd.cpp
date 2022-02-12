@@ -1,12 +1,12 @@
 #include "httpd.h"
 
-Httpd::Httpd(MainConfiguration *mc, DB::InventoryTable *it, QObject *parent) : QObject(parent)
+RestApi::Httpd::Httpd(MainConfiguration *mc, DB::InventoryTable *it, QObject *parent) : QObject(parent)
 {
     MyConfiguration = mc;
     MyInventoryTable = it;
 }
 
-void Httpd::init(QCoreApplication *app)
+void RestApi::Httpd::init(QCoreApplication *app)
 {
     // MyConfiguration->setUserConfigByKey("host","192.168.0.100");
     MyConfiguration->setUserConfigByKey("port","8080");

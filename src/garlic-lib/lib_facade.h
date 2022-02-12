@@ -80,7 +80,7 @@ class LibFacade : public QObject
         QScopedPointer<BodyParser>                 MyBodyParser;
         QScopedPointer<SystemInfos::DiscSpace>     MyDiscSpace;
         QScopedPointer<FreeDiscSpace>              MyFreeDiscSpace;
-        QScopedPointer<Httpd>                      MyHttp;
+        QScopedPointer<RestApi::Httpd>             MyHttp;
         QStorageInfo                               MyStorage;
         ResourceMonitor            MyResourceMonitor;
         void               initFileManager();

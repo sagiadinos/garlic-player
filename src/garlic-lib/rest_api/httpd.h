@@ -7,15 +7,17 @@
 
 using namespace stefanfrings;
 
-class Httpd : public QObject
+namespace RestApi
 {
-        Q_OBJECT
-    public:
-        explicit Httpd(MainConfiguration *mc, DB::InventoryTable *it, QObject *parent = nullptr);
-        void init(QCoreApplication *app);
-    private:
-        MainConfiguration  *MyConfiguration;
-        DB::InventoryTable *MyInventoryTable;
-};
-
+    class Httpd : public QObject
+    {
+            Q_OBJECT
+        public:
+            explicit Httpd(MainConfiguration *mc, DB::InventoryTable *it, QObject *parent = nullptr);
+            void init(QCoreApplication *app);
+        private:
+            MainConfiguration  *MyConfiguration;
+            DB::InventoryTable *MyInventoryTable;
+    };
+}
 #endif // HTTPD_H

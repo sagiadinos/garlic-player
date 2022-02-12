@@ -1,12 +1,12 @@
 #include "request_mapper.h"
 
-RequestMapper::RequestMapper(MainConfiguration *mc, DB::InventoryTable *it,QObject* parent) : HttpRequestHandler(parent)
+RestApi::RequestMapper::RequestMapper(MainConfiguration *mc, DB::InventoryTable *it,QObject* parent) : HttpRequestHandler(parent)
 {
     MyConfiguration  = mc;
     MyInventoryTable = it;
 }
 
-void RequestMapper::service(HttpRequest& request, HttpResponse& response)
+void RestApi::RequestMapper::service(HttpRequest& request, HttpResponse& response)
 {
     QStringList sl  = QString(request.getPath()).split('/');
     qDebug() << sl;
@@ -30,7 +30,7 @@ void RequestMapper::service(HttpRequest& request, HttpResponse& response)
     }
 }
 
-void RequestMapper::queryOauth(HttpRequest &request, HttpResponse &response)
+void RestApi::RequestMapper::queryOauth(HttpRequest &request, HttpResponse &response)
 {
     QByteArray path = request.getPath();
     if (path ==  "/v2/oauth2/token")
@@ -43,7 +43,7 @@ void RequestMapper::queryOauth(HttpRequest &request, HttpResponse &response)
         responseNotFound(response);
 }
 
-void RequestMapper::querySystem(HttpRequest& request, HttpResponse &response)
+void RestApi::RequestMapper::querySystem(HttpRequest& request, HttpResponse &response)
 {
     QByteArray path = request.getPath();
     if (path ==  "/v2/system/firmwareInfo")
@@ -73,7 +73,7 @@ void RequestMapper::querySystem(HttpRequest& request, HttpResponse &response)
 
 }
 
-void RequestMapper::queryFiles(HttpRequest &request, HttpResponse &response)
+void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &response)
 {
     QByteArray path = request.getPath();
     if (path ==  "/v2/files/new")
@@ -102,7 +102,7 @@ void RequestMapper::queryFiles(HttpRequest &request, HttpResponse &response)
         responseNotFound(response);
 }
 
-void RequestMapper::respond(HttpResponse& response, QString json)
+void RestApi::RequestMapper::respond(HttpResponse& response, QString json)
 {
     response.setHeader("Cache-Control", "no-cache,no-store");
     response.setHeader("Pragma", "no-cache");
@@ -110,13 +110,13 @@ void RequestMapper::respond(HttpResponse& response, QString json)
     response.write(json.toUtf8(), true);
 }
 
-void RequestMapper::responseNotFound(HttpResponse& response)
+void RestApi::RequestMapper::responseNotFound(HttpResponse& response)
 {
     response.setStatus(404,"Not found");
     response.write("The URL is wrong, no such document.",true);
 }
 
-void RequestMapper::responseAccessViolation(HttpResponse& response)
+void RestApi::RequestMapper::responseAccessViolation(HttpResponse& response)
 {
     response.setStatus(403,"Access violation");
     response.write("{'error':'ACCESSVIOLATION'}",true);

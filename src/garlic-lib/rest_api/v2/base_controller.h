@@ -5,18 +5,24 @@
 #include "tools/main_configuration.h"
 #include "json_model.h"
 
-class BaseController : public QObject
+namespace RestApi
 {
-        Q_OBJECT
-    public:
-        explicit BaseController(QObject *parent = nullptr);
-        void     setMainConfiguration(MainConfiguration *mc);
-        bool     validateToken(QString access_token);
+    namespace V2
+    {
+        class BaseController : public QObject
+        {
+                Q_OBJECT
+            public:
+                explicit BaseController(QObject *parent = nullptr);
+                void     setMainConfiguration(MainConfiguration *mc);
+                bool     validateToken(QString access_token);
 
-    protected:
-        MainConfiguration *MyConfiguration;
-        JsonModel JsonRequest, JsonResponse;
+            protected:
+                MainConfiguration *MyConfiguration;
+                JsonModel JsonRequest, JsonResponse;
 
-};
+        };
+    }
+}
 
 #endif // BASECONTROLLER_H
