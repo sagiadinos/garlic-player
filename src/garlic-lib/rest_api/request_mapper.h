@@ -16,17 +16,18 @@ namespace RestApi
     {
             Q_OBJECT
         public:
-            RequestMapper(MainConfiguration *mc, DB::InventoryTable *it, QObject* parent = Q_NULLPTR);
+            RequestMapper(MainConfiguration *mc, DB::InventoryTable *it, FreeDiscSpace *fds, QObject* parent = Q_NULLPTR);
             void service(HttpRequest& request, HttpResponse& response);
         private:
             MainConfiguration       *MyConfiguration;
             DB::InventoryTable      *MyInventoryTable;
+            FreeDiscSpace           *MyFreeDiscSpace;
             RestApi::V2::OAuth       MyAuthController;
             RestApi::V2::SystemInfo  MySIController;
             RestApi::V2::Files       MyFilesController;
             void queryOauth(HttpRequest &request, HttpResponse &response);
             void querySystem(HttpRequest &request, HttpResponse &response);
-            void queryFiles(HttpRequest &request, HttpResponse &response);
+            void queryFiles(HttpRequest &request, HttpResponse &response, QStringList path);
 
             void respond(HttpResponse& response, QString json);
             void responseNotFound(HttpResponse& response);

@@ -32,6 +32,7 @@ namespace RestApi
         public:
             explicit JsonModel(QObject *parent = nullptr);
             void reset();
+            void setJsonObject(QJsonObject jo);
             void insertStringValuePair(QString key, QString value);
             void insertIntegerValuePair(QString key, int value);
             void insertObjectValuePair(QString key, QJsonObject value);

@@ -44,6 +44,7 @@ namespace DB
             void deleteByCacheName(QString cache_name);
             QList<DB::InventoryDataset> findPaginated(int max_results, int begin = 0);
             QList<InventoryDataset> findAll();
+            DB::InventoryDataset findByCacheBaseName(QString base_name);
             void setDbPath(QString path);
 
         protected:

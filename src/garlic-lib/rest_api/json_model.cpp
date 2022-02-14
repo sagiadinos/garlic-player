@@ -27,10 +27,15 @@ void RestApi::JsonModel::reset()
     if (json_obj.size() == 0)
         return;
 
-    for (QJsonObject::iterator i = json_obj.begin(); i != json_obj.end(); i++)
+    foreach(const QString& key, json_obj.keys())
     {
-        json_obj.erase(i);
+        json_obj.remove(key);
     }
+}
+
+void RestApi::JsonModel::setJsonObject(QJsonObject jo)
+{
+    json_obj = jo;
 }
 
 void RestApi::JsonModel::insertIntegerValuePair(QString key, int value)

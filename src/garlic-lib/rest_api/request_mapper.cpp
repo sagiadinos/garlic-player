@@ -1,16 +1,17 @@
 #include "request_mapper.h"
 
-RestApi::RequestMapper::RequestMapper(MainConfiguration *mc, DB::InventoryTable *it,QObject* parent) : HttpRequestHandler(parent)
+RestApi::RequestMapper::RequestMapper(MainConfiguration *mc, DB::InventoryTable *it, FreeDiscSpace *fds, QObject* parent) : HttpRequestHandler(parent)
 {
     MyConfiguration  = mc;
     MyInventoryTable = it;
+    MyFreeDiscSpace  = fds;
 }
 
 void RestApi::RequestMapper::service(HttpRequest& request, HttpResponse& response)
 {
     QStringList sl  = QString(request.getPath()).split('/');
     qDebug() << sl;
-    if (sl.size() < 2 || sl.at(1) != "v2")
+    if (sl.size() < 4 || sl.at(1) != "v2")
     {
         responseNotFound(response);
         return;
@@ -26,8 +27,11 @@ void RestApi::RequestMapper::service(HttpRequest& request, HttpResponse& respons
     }
     else if (sl.at(2) == "files")
     {
-        queryFiles(request, response);
+        queryFiles(request, response, sl);
     }
+    else
+        responseNotFound(response);
+
 }
 
 void RestApi::RequestMapper::queryOauth(HttpRequest &request, HttpResponse &response)
@@ -46,60 +50,55 @@ void RestApi::RequestMapper::queryOauth(HttpRequest &request, HttpResponse &resp
 void RestApi::RequestMapper::querySystem(HttpRequest& request, HttpResponse &response)
 {
     QByteArray path = request.getPath();
+    MySIController.setMainConfiguration(MyConfiguration);
+    if (!MySIController.validateToken(request.getParameter("access_token")))
+    {
+        responseAccessViolation(response);
+        return;
+    }
     if (path ==  "/v2/system/firmwareInfo")
     {
-        MySIController.setMainConfiguration(MyConfiguration);
-        if (!MySIController.validateToken(request.getParameter("access_token")))
-        {
-            responseAccessViolation(response);
-            return;
-        }
         QString res = MySIController.responseFirmwareInfo();
         respond(response, res);
     }
     else if (path ==  "/v2/system/modelInfo")
     {
-        MySIController.setMainConfiguration(MyConfiguration);
-        if (!MySIController.validateToken(request.getParameter("access_token")))
-        {
-            responseAccessViolation(response);
-            return;
-        }
         QString res = MySIController.responseModelInfo();
         respond(response, res);
     }
     else
         responseNotFound(response);
-
 }
 
-void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &response)
+void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &response, QStringList path)
 {
-    QByteArray path = request.getPath();
-    if (path ==  "/v2/files/new")
+    MyFilesController.setMainConfiguration(MyConfiguration);
+    MyFilesController.setInventoryTable(MyInventoryTable);
+    if (!MyFilesController.validateToken(request.getParameter("access_token")))
+    {
+        responseAccessViolation(response);
+        return;
+    }
+
+    if (path.at(3)  ==  "new")
     {
     }
-    else if (path ==  "/v2/files/id")
+    else if (path.at(3)  ==  "find")
     {
-        // GET / POST
-    }
-    else if (path ==  "/v2/files/find")
-    {
-        MyFilesController.setMainConfiguration(MyConfiguration);
-        MyFilesController.setInventoryTable(MyInventoryTable);
-        if (!MyFilesController.validateToken(request.getParameter("access_token")))
-        {
-            responseAccessViolation(response);
-            return;
-        }
         QString res = MyFilesController.responseFind(request.getParameter("maxResults").toInt(), request.getParameter("pageToken").toInt());
         respond(response, res);
     }
-    else if (path ==  "/v2/files/delete")
+    else if (path.at(3)  ==  "delete")
     {
+        QString res = MyFilesController.remove(request.getBody(), MyFreeDiscSpace);
+        respond(response, res);
     }
     else
-        responseNotFound(response);
+    {
+        QString res = MyFilesController.determineID(path.at(3));
+        respond(response, res);
+    }
+
 }
 
 void RestApi::RequestMapper::respond(HttpResponse& response, QString json)

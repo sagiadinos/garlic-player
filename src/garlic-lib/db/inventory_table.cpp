@@ -74,6 +74,17 @@ void DB::InventoryTable::deleteByCacheName(QString cache_name)
         qCritical(Database) << "delete failed" << query.lastError().text();
 }
 
+DB::InventoryDataset DB::InventoryTable::findByCacheBaseName(QString base_name)
+{
+    QSqlQuery query(db);
+    InventoryDataset result;
+    query.exec("SELECT * FROM inventory WHERE cache_name LIKE '" + base_name +".%' LIMIT 1");
+    if (!query.first())
+        return result;
+
+    return collectResult(&query);
+}
+
 QList<DB::InventoryDataset> DB::InventoryTable::findAll()
 {
     QSqlQuery query(db);
