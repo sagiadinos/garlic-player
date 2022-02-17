@@ -74,29 +74,49 @@ void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &resp
 {
     MyFilesController.setMainConfiguration(MyConfiguration);
     MyFilesController.setInventoryTable(MyInventoryTable);
+    MyFilesController.setFreeDiscSpace(MyFreeDiscSpace);
     if (!MyFilesController.validateToken(request.getParameter("access_token")))
     {
         responseAccessViolation(response);
         return;
     }
 
+    QString json_response;
     if (path.at(3)  ==  "new")
     {
+        json_response = MyFilesController.createNew(request.getUploadedFile("data"),
+                                                    request.getParameter("fileSize").toLong(),
+                                                    request.getParameter("downloadPath"),
+                                                    request.getParameter("etag"),
+                                                    request.getParameter("mimeType"),
+                                                    request.getParameter("modifiedDate")
+                                                    );
+        respond(response, json_response);
     }
     else if (path.at(3)  ==  "find")
     {
-        QString res = MyFilesController.responseFind(request.getParameter("maxResults").toInt(), request.getParameter("pageToken").toInt());
-        respond(response, res);
+        json_response = MyFilesController.findPaginated(request.getParameter("maxResults").toInt(), request.getParameter("pageToken").toInt());
+        respond(response, json_response);
     }
     else if (path.at(3)  ==  "delete")
     {
-        QString res = MyFilesController.remove(request.getBody(), MyFreeDiscSpace);
-        respond(response, res);
+        json_response = MyFilesController.remove(request.getBody());
+        respond(response, json_response);
     }
     else
     {
-        QString res = MyFilesController.determineID(path.at(3));
-        respond(response, res);
+        if (request.getMethod() == "GET")
+            json_response = MyFilesController.findInfoByID(path.at(3));
+        else if (request.getMethod() == "POST")
+            json_response = MyFilesController.modifyByID(path.at(3),
+                                                       request.getParameter("seek").toLong(),
+                                                       request.getUploadedFile("data"),
+                                                       request.getParameter("fileSize").toLong(),
+                                                       request.getParameter("downloadPath"),
+                                                       request.getParameter("etag"),
+                                                       request.getParameter("mimeType"),
+                                                       request.getParameter("modifiedDate"));
+        respond(response, json_response);
     }
 
 }

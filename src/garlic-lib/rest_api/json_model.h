@@ -35,6 +35,7 @@ namespace RestApi
             void setJsonObject(QJsonObject jo);
             void insertStringValuePair(QString key, QString value);
             void insertIntegerValuePair(QString key, int value);
+            void insertBoolValuePair(QString key, bool value);
             void insertObjectValuePair(QString key, QJsonObject value);
             void insertArrayValuePair(QString key, QJsonArray value);
             QString getStringValueByKey(QString key);

@@ -25,7 +25,7 @@ bool DB::InventoryTable::init(QString path)
         return openDbFile();
 }
 
-void DB::InventoryTable::replace(DB::InventoryDataset dataset)
+bool DB::InventoryTable::replace(DB::InventoryDataset dataset)
 {
     QSqlQuery query(db);
     QString   sql = "REPLACE INTO inventory (resource_uri, cache_name, content_type, content_length, last_update, expires, state ) \
@@ -38,8 +38,13 @@ void DB::InventoryTable::replace(DB::InventoryDataset dataset)
                    '" + dataset.expires.toString() + "', \
                    " + QString::number(dataset.state) + " \
                 )";
-   if (!query.exec(sql))
-       qCritical(Database) << "replace/insert failed" << sql << query.lastError().text();
+    if (!query.exec(sql))
+    {
+        qCritical(Database) << "replace/insert failed" << sql << query.lastError().text();
+        return false;
+    }
+    return true;
+
 }
 
 DB::InventoryDataset DB::InventoryTable::getByResourceURI(QString resource_uri)

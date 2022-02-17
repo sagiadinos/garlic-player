@@ -43,6 +43,11 @@ void RestApi::JsonModel::insertIntegerValuePair(QString key, int value)
     json_obj.insert(key, value);
 }
 
+void RestApi::JsonModel::insertBoolValuePair(QString key, bool value)
+{
+    json_obj.insert(key, value);
+}
+
 void RestApi::JsonModel::insertStringValuePair(QString key, QString value)
 {
     json_obj.insert(key, value);

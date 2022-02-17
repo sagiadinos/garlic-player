@@ -12,7 +12,7 @@ namespace DB
 {
     struct InventoryDataset
     {
-            QString  resource_uri  = "";
+            QString resource_uri  = "";
             QString cache_name     = "";
             QString content_type   = "";
             qint64  content_length = 0;
@@ -37,7 +37,7 @@ namespace DB
             explicit InventoryTable(QObject *parent = nullptr);
             ~InventoryTable();
             bool init(QString path);
-            void replace(InventoryDataset dataset);
+            bool replace(InventoryDataset dataset);
             InventoryDataset getByResourceURI(QString resource_uri);
             void updateFileStatus(QString resource_uri, int state);
             void deleteByResourceURI(QString resource_uri);
