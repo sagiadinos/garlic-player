@@ -87,6 +87,10 @@ int main(int argc, char *argv[])
         MyPlayerConfiguration->setUuidFromLauncher(MyAndroidManager->getUUIDFromLauncher());
 
         MyPlayerConfiguration->setSmilIndexUriFromLauncher(MyAndroidManager->getSmilIndexFromLauncher());
+        while (MyAndroidManager->getLauncherVersion().isEmpty() && QTime::currentTime() < dieTime)
+        {
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        }
         MyPlayerConfiguration->setVersionFromLauncher(MyAndroidManager->getLauncherVersion());
     }
 
