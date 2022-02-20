@@ -42,7 +42,7 @@ void PlayerImage::init(BaseMedia *media, Region *reg)
             return;
         }
 
-        if (loaded_image.loadFromData(CurrentFile.readAll()))
+        if (!loaded_image.loadFromData(CurrentFile.readAll()))
         {
             SmilMedia->finishedNotFound();
             return;
