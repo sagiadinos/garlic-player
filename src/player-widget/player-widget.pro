@@ -26,7 +26,12 @@ Release:DEFINES += QT_NO_DEBUG_OUTPUT
 #DEFINES += DEFAULT_CONTENT_URL=indexes.smil-control.com/index.php?site=get_index\&owner_id=12
 
 # which media backend should be used: support_qtav support_qtmm support_libvlc
-CONFIG   += support_qtav
+# on Raspberry Pi only libvlc supports 4k video
+SUPPORT_RPI {
+    CONFIG   += support_libvlc
+} else {
+    CONFIG   += support_qtav
+}
 
 support_qtav {
     DEFINES += SUPPORT_QTAV
