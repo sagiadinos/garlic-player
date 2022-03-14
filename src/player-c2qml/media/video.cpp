@@ -21,7 +21,6 @@ Video::Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : P
 
     media_component = mc;
     video_item.reset(createMediaItem(media_component, qml));
-    connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
 }
 
 Video::~Video()
@@ -35,9 +34,9 @@ void Video::init(BaseMedia *media, Region *reg)
     region    = reg;
     if (load(video_item.data()))
     {
-        // cannot be connected once in constructor due to again Android/QMultimedia problems
+        // cannot be connected once in constructor due to Android/QMultimedia problems
         // see @ method finished
-        // connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
+        connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
 
         // to set Volume we need to cast
         TVideo *MyVideo = qobject_cast<TVideo *> (media);
@@ -96,7 +95,9 @@ void Video::doStopped()
     // deprecated? 17.01.2021
     // must be disconected otherwise QMultimedia/Android will stop immediately when new video will be load
     // so only first Video will shown
-    // disconnect(video_item.data(), SIGNAL(qmlSignal(QString)), this, SLOT(doStopped(QString)));
+
+    // test if Android 10 Machine from Kamo operates better with this 14.03.2022
+    disconnect(video_item.data(), SIGNAL(qmlSignal(QString)), this, SLOT(doStopped(QString)));
 
     if (video_item.data()->property("error").toInt() != 0)
     {
@@ -107,7 +108,7 @@ void Video::doStopped()
         qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_PLAYBACK_ERROR", list);
     }
 
-    if (video_item.data()->property("status").toString() == "7") // 7 means EndOfFile Shitty QML has no signal for finish
+    if (video_item.data()->property("status").toString() == "7") // 7 means EndOfFile as shitty QML has no signal for finish media
     {
         SmilMedia->finishIntrinsicDuration();
     }
