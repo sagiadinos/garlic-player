@@ -107,7 +107,7 @@ void Video::doStopped()
         qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_PLAYBACK_ERROR", list);
     }
 
- //   if (video_item.data()->property("status").toString() == "7") // 7 means EndOfFile Shitty QML has no signal for finish
+    if (video_item.data()->property("status").toString() == "7") // 7 means EndOfFile Shitty QML has no signal for finish
     {
         SmilMedia->finishIntrinsicDuration();
     }
