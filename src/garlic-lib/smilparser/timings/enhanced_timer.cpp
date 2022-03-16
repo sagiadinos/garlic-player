@@ -414,7 +414,7 @@ bool Timings::EnhancedTimer::parseOneValue(QString value)
     }
     else if (value.at(0).isLetter() && value.contains("."))
     {
-        QString symbol = determineSymbol(value);
+        QString symbol =  value.split(".").at(0);
 
         if (symbol.endsWith("begin") || symbol.endsWith("end"))
             is_parsable = initTimer(TYPE_SYNCBASE, value);
@@ -426,28 +426,6 @@ bool Timings::EnhancedTimer::parseOneValue(QString value)
     }
 
    return is_parsable;
-}
-
-QString Timings::EnhancedTimer::determineSymbol(QString value)
-{
-    QStringList sl = {};
-    QStringList sl2 = {};
-    if (value.contains("+"))
-    {
-        sl = value.split("+");
-        sl2 = sl.at(0).split(".");
-    }
-    else if (value.contains("-"))
-    {
-        sl = value.split("-");
-        sl2 = sl.at(0).split(".");
-    }
-    else
-    {
-        sl2 = value.split(".");
-    }
-
-    return sl2.at(1);
 }
 
 void Timings::EnhancedTimer::activateOffset(Timings::EnhancedTimer::TriggerStruct *ts)

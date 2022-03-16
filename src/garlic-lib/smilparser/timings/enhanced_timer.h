@@ -82,7 +82,6 @@ namespace Timings
             qint64      negative_trigger = 0;
             qint64      positive_trigger = 0;
             bool        parseOneValue(QString value);
-            QString     determineSymbol(QString value);
             void        activateOffset(TriggerStruct *ts);
             void        activateWallClock(TriggerStruct *ts);
             void        calculateNegativeTrigger(qint64 negative_time);

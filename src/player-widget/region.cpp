@@ -76,7 +76,6 @@ void TRegion::stopShowMedia(BaseMedia *media)
 
 bool TRegion::event(QEvent *event)
 {
-
     if(event->type() == QEvent::TouchBegin || event->type() == QEvent::MouseButtonPress)
     {
         qint64 delay = QDateTime::currentMSecsSinceEpoch() - last_touch;
