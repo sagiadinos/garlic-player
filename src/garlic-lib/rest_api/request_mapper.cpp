@@ -1,10 +1,8 @@
 #include "request_mapper.h"
 
-RestApi::RequestMapper::RequestMapper(MainConfiguration *mc, DB::InventoryTable *it, FreeDiscSpace *fds, QObject* parent) : HttpRequestHandler(parent)
+RestApi::RequestMapper::RequestMapper(LibFacade *lf, QObject* parent) : HttpRequestHandler(parent)
 {
-    MyConfiguration  = mc;
-    MyInventoryTable = it;
-    MyFreeDiscSpace  = fds;
+    MyLibFacade      = lf;
 }
 
 void RestApi::RequestMapper::service(HttpRequest& request, HttpResponse& response)
@@ -16,8 +14,7 @@ void RestApi::RequestMapper::service(HttpRequest& request, HttpResponse& respons
         responseNotFound(response);
         return;
     }
-
-    if (sl.at(2) == "oauth")
+    if (sl.at(2) == "oauth2")
     {
         queryOauth(request, response);
     }
@@ -29,6 +26,14 @@ void RestApi::RequestMapper::service(HttpRequest& request, HttpResponse& respons
     {
         queryFiles(request, response, sl);
     }
+    else if (sl.at(2) == "app")
+    {
+        queryApp(request, response, sl);
+    }
+    else if (sl.at(2) == "task")
+    {
+        queryTask(request, response, sl);
+    }
     else
         responseNotFound(response);
 
@@ -39,7 +44,7 @@ void RestApi::RequestMapper::queryOauth(HttpRequest &request, HttpResponse &resp
     QByteArray path = request.getPath();
     if (path ==  "/v2/oauth2/token")
     {
-        MyAuthController.setMainConfiguration(MyConfiguration);
+        MyAuthController.setLibFacade(MyLibFacade);
         QString res = MyAuthController.determineJsonResponse(request.getBody());
         respond(response, res);
     }
@@ -50,7 +55,7 @@ void RestApi::RequestMapper::queryOauth(HttpRequest &request, HttpResponse &resp
 void RestApi::RequestMapper::querySystem(HttpRequest& request, HttpResponse &response)
 {
     QByteArray path = request.getPath();
-    MySIController.setMainConfiguration(MyConfiguration);
+    MySIController.setLibFacade(MyLibFacade);
     if (!MySIController.validateToken(request.getParameter("access_token")))
     {
         responseAccessViolation(response);
@@ -72,9 +77,7 @@ void RestApi::RequestMapper::querySystem(HttpRequest& request, HttpResponse &res
 
 void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &response, QStringList path)
 {
-    MyFilesController.setMainConfiguration(MyConfiguration);
-    MyFilesController.setInventoryTable(MyInventoryTable);
-    MyFilesController.setFreeDiscSpace(MyFreeDiscSpace);
+    MyFilesController.setLibFacade(MyLibFacade);
     if (!MyFilesController.validateToken(request.getParameter("access_token")))
     {
         responseAccessViolation(response);
@@ -91,17 +94,14 @@ void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &resp
                                                     request.getParameter("mimeType"),
                                                     request.getParameter("modifiedDate")
                                                     );
-        respond(response, json_response);
     }
     else if (path.at(3)  ==  "find")
     {
         json_response = MyFilesController.findPaginated(request.getParameter("maxResults").toInt(), request.getParameter("pageToken").toInt());
-        respond(response, json_response);
     }
     else if (path.at(3)  ==  "delete")
     {
         json_response = MyFilesController.remove(request.getBody());
-        respond(response, json_response);
     }
     else
     {
@@ -116,9 +116,61 @@ void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &resp
                                                        request.getParameter("etag"),
                                                        request.getParameter("mimeType"),
                                                        request.getParameter("modifiedDate"));
+    }
+    respond(response, json_response);
+}
+
+void RestApi::RequestMapper::queryApp(HttpRequest &request, HttpResponse &response, QStringList path)
+{
+/*    if (path.at(3)  ==  "exec")
+    {
+
+    }
+    else if (path.at(3)  ==  "start")
+    {
+
+    }
+    else if (path.at(3)  ==  "switch")
+    {
+
+    }
+    else
+*/        responseNotFound(response);
+
+}
+
+void RestApi::RequestMapper::queryTask(HttpRequest &request, HttpResponse &response,  QStringList path)
+{
+    MyTaskController.setLibFacade(MyLibFacade);
+    QString json_response;
+    if (path.at(3)  ==  "notify")
+    {
+        if (request.getHeader("content-type") == "application/json")
+          json_response = MyTaskController.fireNotifyViaJson(request.getBody());
+        else
+          json_response = MyTaskController.fireNotify(request.getParameter("smilEvent"));
+
         respond(response, json_response);
     }
+    else if (path.at(3)  ==  "reboot")
+    {
+        MyTaskController.reboot();
+        respond(response, "");
+    }
+ /*   else if (path.at(3)  ==  "commitConfiguration")
+    {
 
+    }
+    else if (path.at(3)  ==  "exportConfiguration")
+    {
+
+    }
+    else if (path.at(3)  ==  "screenshot")
+    {
+
+    }
+*/    else
+        responseNotFound(response);
 }
 
 void RestApi::RequestMapper::respond(HttpResponse& response, QString json)

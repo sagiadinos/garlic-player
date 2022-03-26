@@ -5,19 +5,10 @@ RestApi::V2::Files::Files(QObject *parent) : BaseController{parent}
 
 }
 
-void RestApi::V2::Files::setInventoryTable(DB::InventoryTable *it)
-{
-    MyInventoryTable = it;
-}
-
-void RestApi::V2::Files::setFreeDiscSpace(FreeDiscSpace *fds)
-{
-    MyFreeDiscSpace = fds;
-}
 
 QString RestApi::V2::Files::findInfoByID(QString id)
 {
-   DB::InventoryDataset result = MyInventoryTable->findByCacheBaseName(id);
+   DB::InventoryDataset result = MyLibfacade->getInventoryTable()->findByCacheBaseName(id);
 
    JsonResponse.reset();
    if (!result.resource_uri.isEmpty())
@@ -44,7 +35,7 @@ QString RestApi::V2::Files::modifyByID(QString id,  qint64 seek, QTemporaryFile 
         return JsonResponse.asString(false).toUtf8();
     }
 
-    DB::InventoryDataset result = MyInventoryTable->findByCacheBaseName(id);
+    DB::InventoryDataset result = MyLibfacade->getInventoryTable()->findByCacheBaseName(id);
     if (result.resource_uri.isEmpty())
     {
         JsonResponse.insertStringValuePair("error", "Record not found: " + id);
@@ -58,7 +49,7 @@ QString RestApi::V2::Files::modifyByID(QString id,  qint64 seek, QTemporaryFile 
     }
 
     QFileInfo fi_tmp(download_path);
-    QString cache_path = MyConfiguration->getPaths("cache") + result.cache_name;
+    QString cache_path = MyLibfacade->getConfiguration()->getPaths("cache") + result.cache_name;
     if (tfile->exists()) // and seek == 0;
     {
         if (QFile::exists(cache_path))
@@ -74,7 +65,7 @@ QString RestApi::V2::Files::modifyByID(QString id,  qint64 seek, QTemporaryFile 
     if (mime_type.isEmpty())
     {
         QMimeDatabase db;
-        QMimeType type   = db.mimeTypeForFile(MyConfiguration->getPaths("cache") + fi.fileName());
+        QMimeType type   = db.mimeTypeForFile(MyLibfacade->getConfiguration()->getPaths("cache") + fi.fileName());
         dataset.content_type   = type.name();
     }
     else
@@ -97,7 +88,7 @@ QString RestApi::V2::Files::modifyByID(QString id,  qint64 seek, QTemporaryFile 
         dataset.state          = 0;
         completed = false;
     }
-    MyInventoryTable->replace(dataset);
+    MyLibfacade->getInventoryTable()->replace(dataset);
 
     JsonResponse.insertStringValuePair("downloadPath", dataset.resource_uri);
     JsonResponse.insertIntegerValuePair("fileSize", file_size);
@@ -120,7 +111,7 @@ QString RestApi::V2::Files::createNew(QTemporaryFile *tfile, qint64 file_size, Q
 
     QString md5_hash = QString(QCryptographicHash::hash((download_path.toUtf8()), QCryptographicHash::Md5).toHex());
     QFileInfo fi_tmp(download_path);
-    QString cache_path = MyConfiguration->getPaths("cache") + md5_hash + "." + fi_tmp.suffix();
+    QString cache_path = MyLibfacade->getConfiguration()->getPaths("cache") + md5_hash + "." + fi_tmp.suffix();
     tfile->copy(cache_path);
     tfile->close();
 
@@ -130,7 +121,7 @@ QString RestApi::V2::Files::createNew(QTemporaryFile *tfile, qint64 file_size, Q
     if (mime_type.isEmpty())
     {
         QMimeDatabase db;
-        QMimeType type   = db.mimeTypeForFile(MyConfiguration->getPaths("cache") + fi.fileName());
+        QMimeType type   = db.mimeTypeForFile(MyLibfacade->getConfiguration()->getPaths("cache") + fi.fileName());
         dataset.content_type   = type.name();
     }
     else
@@ -153,7 +144,7 @@ QString RestApi::V2::Files::createNew(QTemporaryFile *tfile, qint64 file_size, Q
         dataset.state          = 0;
         completed = false;
     }
-    MyInventoryTable->replace(dataset);
+    MyLibfacade->getInventoryTable()->replace(dataset);
 
     JsonResponse.insertStringValuePair("downloadPath", dataset.resource_uri);
     JsonResponse.insertIntegerValuePair("fileSize", file_size);
@@ -171,9 +162,9 @@ QString RestApi::V2::Files::findPaginated(int max_results, int begin)
 
     JsonResponse.reset();
     if (max_results > 0)
-        results = MyInventoryTable->findPaginated(max_results, begin);
+        results = MyLibfacade->getInventoryTable()->findPaginated(max_results, begin);
     else
-       results = MyInventoryTable->findAll();
+       results = MyLibfacade->getInventoryTable()->findAll();
 
     createJsonFromList(results);
     JsonResponse.insertIntegerValuePair("nextPageToken", (max_results + begin));
@@ -184,15 +175,15 @@ QString RestApi::V2::Files::findPaginated(int max_results, int begin)
 QString RestApi::V2::Files::remove(QString body)
 {
     QString id                  = determineIDFromJson(body);
-    DB::InventoryDataset result = MyInventoryTable->findByCacheBaseName(id);
+    DB::InventoryDataset result = MyLibfacade->getInventoryTable()->findByCacheBaseName(id);
     JsonResponse.reset();
 
    if (!result.resource_uri.isEmpty())
    {
-       QString cache_path = MyConfiguration->getPaths("cache") + result.cache_name;
-       if (MyFreeDiscSpace->deleteFile(cache_path))
+       QString cache_path = MyLibfacade->getConfiguration()->getPaths("cache") + result.cache_name;
+       if (MyLibfacade->getFreeDiscSpace()->deleteFile(cache_path))
        {
-           MyInventoryTable->deleteByCacheName(result.cache_name);
+           MyLibfacade->getInventoryTable()->deleteByCacheName(result.cache_name);
            JsonResponse.insertStringValuePair("success", id + " deleted");
        }
        else
@@ -226,8 +217,8 @@ bool RestApi::V2::Files::canCreateNewProceed(QTemporaryFile *tfile, quint64 file
         return false;
     }
 
-    qint64 calc = MyFreeDiscSpace->calculateNeededDiscSpaceToFree(file_size);
-    if (calc > 0 && !MyFreeDiscSpace->freeDiscSpace(calc))
+    qint64 calc = MyLibfacade->getFreeDiscSpace()->calculateNeededDiscSpaceToFree(file_size);
+    if (calc > 0 && !MyLibfacade->getFreeDiscSpace()->freeDiscSpace(calc))
     {
         JsonResponse.insertStringValuePair("error", "Neccessary "+ QString::number(calc) +" byte cannot be relesed from disc space");
         return false;
@@ -249,7 +240,7 @@ void RestApi::V2::Files::createJsonFromList(QList<DB::InventoryDataset> results)
 
 QJsonObject RestApi::V2::Files::createObject(DB::InventoryDataset dataset)
 {
-    QFileInfo fi(MyConfiguration->getPaths("cache") + dataset.cache_name);
+    QFileInfo fi(MyLibfacade->getConfiguration()->getPaths("cache") + dataset.cache_name);
     QJsonObject json;
 
     json.insert("id", fi.baseName());

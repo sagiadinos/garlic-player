@@ -2,11 +2,11 @@
 #define REQUEST_MAPPER_H
 
 #include <httprequesthandler.h>
-#include "tools/main_configuration.h"
-#include "db/inventory_table.h"
+#include "lib_facade.h"
 #include "v2/oauth.h"
 #include "v2/system_info.h"
 #include "v2/files.h"
+#include "v2/task.h"
 
 using namespace stefanfrings;
 
@@ -16,24 +16,29 @@ namespace RestApi
     {
             Q_OBJECT
         public:
-            RequestMapper(MainConfiguration *mc, DB::InventoryTable *it, FreeDiscSpace *fds, QObject* parent = Q_NULLPTR);
+            RequestMapper(LibFacade *lf, QObject* parent = Q_NULLPTR);
             void service(HttpRequest& request, HttpResponse& response);
         private:
-            MainConfiguration       *MyConfiguration;
-            DB::InventoryTable      *MyInventoryTable;
-            FreeDiscSpace           *MyFreeDiscSpace;
+            LibFacade               *MyLibFacade;
             RestApi::V2::OAuth       MyAuthController;
             RestApi::V2::SystemInfo  MySIController;
             RestApi::V2::Files       MyFilesController;
+            RestApi::V2::Task        MyTaskController;
             void queryOauth(HttpRequest &request, HttpResponse &response);
             void querySystem(HttpRequest &request, HttpResponse &response);
             void queryFiles(HttpRequest &request, HttpResponse &response, QStringList path);
+            void queryApp(HttpRequest &request, HttpResponse &response, QStringList path);
+            void queryTask(HttpRequest &request, HttpResponse &response, QStringList path);
 
             void respond(HttpResponse& response, QString json);
             void responseNotFound(HttpResponse& response);
             void responseAccessViolation(HttpResponse& response);
-
-
+        signals:
+            void               notify(QString notify);
+            void               playIndex(QString *path);
+            void               changeIndex(QString *path);
+            void               reboot();
+            void               changeConfig();
     };
 }
 

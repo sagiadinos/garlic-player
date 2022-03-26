@@ -1,23 +1,21 @@
 #include "httpd.h"
 
-RestApi::Httpd::Httpd(MainConfiguration *mc, DB::InventoryTable *it, FreeDiscSpace *fds, QObject *parent) : QObject(parent)
+RestApi::Httpd::Httpd(LibFacade *lf, QObject *parent) : QObject(parent)
 {
-    MyConfiguration = mc;
-    MyInventoryTable = it;
-    MyFreeDiscSpace  = fds;
+    MyLibFacade      = lf;
 }
 
 void RestApi::Httpd::init(QCoreApplication *app)
 {
     // MyConfiguration->setUserConfigByKey("host","192.168.0.100");
-    MyConfiguration->setUserConfigByKey("port","8080");
-    MyConfiguration->setUserConfigByKey("minThreads","1");
-    MyConfiguration->setUserConfigByKey("maxThreads","4");
-    MyConfiguration->setUserConfigByKey("cleanupInterval","60000");
-    MyConfiguration->setUserConfigByKey("readTimeout","60000");
-    MyConfiguration->setUserConfigByKey("maxRequestSize","16000");
-    MyConfiguration->setUserConfigByKey("maxMultiPartSize","10000000");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("port","8080");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("minThreads","1");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("maxThreads","4");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("cleanupInterval","60000");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("readTimeout","60000");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("maxRequestSize","16000");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("maxMultiPartSize","10000000");
 
-    new HttpListener(MyConfiguration->getUserConfig(), new RequestMapper(MyConfiguration, MyInventoryTable, MyFreeDiscSpace, app), app);
+    new HttpListener(MyLibFacade->getConfiguration()->getUserConfig(), new RequestMapper(MyLibFacade, app), app);
 
 }

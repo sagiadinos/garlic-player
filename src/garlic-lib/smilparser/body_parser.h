@@ -43,6 +43,7 @@ public:
     void                               startPresentationAfterPreload();
     void                               endPlayingBody();
     void                               triggerAccessKey(QChar key);
+    void                               triggerNotify(QString key);
 
 protected:
     QDomElement                        parser;

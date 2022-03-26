@@ -179,6 +179,21 @@ void BodyParser::triggerAccessKey(QChar key)
         fireTrigger("end", element, "accesskey");
 }
 
+void BodyParser::triggerNotify(QString key)
+{
+    BaseTimings *element = MyElementsContainer->findNotifyForBegin(key);
+
+    if (element != Q_NULLPTR)
+    {
+        fireTrigger("begin", element, "notify");
+        return;
+    }
+
+    element = MyElementsContainer->findNotifyForEnd(key);
+    if (element != Q_NULLPTR)
+        fireTrigger("end", element, "notify");
+}
+
 void BodyParser::prepareFireTrigger(QString trigger, QString target_id, QString source_id)
 {
     BaseTimings  *element = MyElementsContainer->findSmilElementById(target_id);

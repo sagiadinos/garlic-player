@@ -58,16 +58,6 @@ void LibFacade::init(MainConfiguration *config)
 
 }
 
-void LibFacade::initWebserver(QCoreApplication *app)
-{
-    // ToDo if init webserver
-    MyHttp.reset(new RestApi::Httpd(MyConfiguration.data(),
-                                    MyInventoryTable.data(),
-                                    MyFreeDiscSpace.data(),
-                                    this));
-    MyHttp.data()->init(app);
-}
-
 ResourceMonitor *LibFacade::getResourceMonitor()
 {
     return &MyResourceMonitor;
@@ -93,6 +83,11 @@ void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_par
     if (restart_smil_parsing)
         connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), this, SLOT(reboot()));
     MyXMLConfiguration.data()->processFromLocalFile(config_path);
+}
+
+void LibFacade::transferNotify(QString key)
+{
+    MyBodyParser.data()->triggerNotify(key);
 }
 
 void LibFacade::transferAccessKey(QChar key)
@@ -139,7 +134,6 @@ void LibFacade::loadIndex()
 
     initFileManager();
     processHeadParsing();
-
 }
 
 void LibFacade::changeConfig()

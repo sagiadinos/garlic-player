@@ -18,9 +18,9 @@ QString RestApi::V2::OAuth::determineJsonResponse(QString body)
 
 void RestApi::V2::OAuth::createJsonResponse()
 {
-    JsonResponse.insertStringValuePair("access_token", MyConfiguration->determineApiAccessToken(username, password));
+    JsonResponse.insertStringValuePair("access_token", MyLibfacade->getConfiguration()->determineApiAccessToken(username, password));
     JsonResponse.insertStringValuePair("token_type","Bearer");
-    JsonResponse.insertStringValuePair("expires_in", MyConfiguration->getApiAccessTokenExpire());
+    JsonResponse.insertStringValuePair("expires_in", MyLibfacade->getConfiguration()->getApiAccessTokenExpire());
 }
 
 bool RestApi::V2::OAuth::checkJsonRequest(QString json_string)

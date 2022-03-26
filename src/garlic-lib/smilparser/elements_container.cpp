@@ -90,6 +90,27 @@ BaseTimings *ElementsContainer::findAccessKeysForEnd(QChar key)
     return Q_NULLPTR;
 }
 
+BaseTimings *ElementsContainer::findNotifyForBegin(QString key)
+{
+    QMap<QString, BaseTimings *>::Iterator i = begin_notify_list.find(key);
+    if(i != begin_notify_list.end())
+    {
+        return  i.value();
+    }
+    return Q_NULLPTR;
+}
+
+BaseTimings *ElementsContainer::findNotifyForEnd(QString key)
+{
+    QMap<QString, BaseTimings *>::Iterator i = end_notify_list.find(key);
+    if(i != end_notify_list.end())
+    {
+        return i.value();
+    }
+
+    return Q_NULLPTR;
+}
+
 void ElementsContainer::distributeBeginTrigger(BaseTimings *bt_listener)
 {
     QHash<QString, QString>  listener_trigger_list = bt_listener->fetchExternalBegins();
@@ -106,6 +127,10 @@ void ElementsContainer::distributeBeginTrigger(BaseTimings *bt_listener)
         if (j.key() == "accesskey")
         {
             begin_accesskey_list.insert(j.value().at(0), bt_listener);
+        }
+        else if (j.key() == "notify")
+        {
+            begin_notify_list.insert(j.value(), bt_listener);
         }
         else
         {
@@ -135,6 +160,10 @@ void ElementsContainer::distributeEndTrigger(BaseTimings *bt_listener)
         if (j.key() == "accesskey")
         {
             end_accesskey_list.insert(j.value().at(0), bt_listener);
+        }
+        else if (j.key() == "notify")
+        {
+            end_notify_list.insert(j.value(), bt_listener);
         }
         else
         {

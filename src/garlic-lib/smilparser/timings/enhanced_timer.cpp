@@ -64,6 +64,17 @@ bool Timings::EnhancedTimer::initTimer(int type, QString value)
             if (ret && ts->MyAccessKey->hasExternTrigger())
                 has_external_trigger = true;
         break;
+        case TYPE_NOTIFY:
+            ts->MyNotify = new Notify(this);
+            ret = ts->MyNotify->parse(value);
+            if (!ret)
+            {
+                delete ts->MyNotify;
+                ts->MyNotify = Q_NULLPTR;
+            }
+            if (ret && ts->MyNotify->hasExternTrigger())
+                has_external_trigger = true;
+        break;
         case TYPE_SYNCBASE:
             ts->MySyncBase = new SyncBase(this);
             ret = ts->MySyncBase->parse(value);
@@ -119,6 +130,10 @@ void Timings::EnhancedTimer::deleteTimer()
                 if (ts->MyAccessKey != Q_NULLPTR)
                     delete ts->MyAccessKey;
             break;
+            case TYPE_NOTIFY:
+                if (ts->MyNotify != Q_NULLPTR)
+                    delete ts->MyNotify;
+            break;
             case TYPE_SYNCBASE:
                 if (ts->MySyncBase != Q_NULLPTR)
                     delete ts->MySyncBase;
@@ -154,7 +169,6 @@ bool Timings::EnhancedTimer::parse(QString attr_value, QString p_tag)
             continue;
 
         is_parsable = parseOneValue(value);
-
     }
 
     if (value_list.size() > 1) // in a value an indefinite can be ignored
@@ -180,6 +194,9 @@ void Timings::EnhancedTimer::activate()
             case TYPE_ACCESSKEY:
                 ts->MyAccessKey->setActive(true);
             break;
+            case TYPE_NOTIFY:
+                ts->MyNotify->setActive(true);
+            break;
             case TYPE_SYNCBASE:
                 ts->MySyncBase->setActive(true); // rest is done by Timings::EnhancedTimer::startFromExternalTrigger
             break;
@@ -203,6 +220,16 @@ void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
                 if (ts->MyAccessKey->getSourceId() == source_id)
                 {
                     next_trigger = ts->MyAccessKey->getTimeTrigger();
+                    if (next_trigger == 0)
+                        emitTimeout();
+                    else
+                       ts->MyTimer->start(next_trigger);
+                 }
+            break;
+            case TYPE_NOTIFY: // source_id == notify
+                if (ts->MyNotify->getSourceId() == source_id)
+                {
+                    next_trigger = ts->MyNotify->getTimeTrigger();
                     if (next_trigger == 0)
                         emitTimeout();
                     else
@@ -250,6 +277,9 @@ void Timings::EnhancedTimer::stop()
             break;
             case TYPE_ACCESSKEY:
                 ts->MyAccessKey->setActive(false);
+            break;
+            case TYPE_NOTIFY:
+                ts->MyNotify->setActive(false);
             break;
             case TYPE_SYNCBASE:
                 ts->MySyncBase->setActive(false);
@@ -376,6 +406,10 @@ QHash<QString, QString> Timings::EnhancedTimer::fetchTriggerList()
                 if (ts->MyAccessKey->hasExternTrigger())
                     ret.insert("accesskey", ts->MyAccessKey->getCharSymbol());
             break;
+            case TYPE_NOTIFY:
+                if (ts->MyNotify->hasExternTrigger())
+                    ret.insert("notify", ts->MyNotify->getSymbol());
+            break;
             case TYPE_EVENT:
                 if (ts->MyEvent->hasExternTrigger())
                     ret.insert(ts->MyEvent->getSourceId(), ts->MyEvent->getNmToken());
@@ -411,6 +445,10 @@ bool Timings::EnhancedTimer::parseOneValue(QString value)
     else if (value.mid(0, 9) == "accesskey" )
     {
         is_parsable = initTimer(TYPE_ACCESSKEY, value);
+    }
+    else if (value.mid(0, 6) == "notify" )
+    {
+        is_parsable = initTimer(TYPE_NOTIFY, value);
     }
     else if (value.at(0).isLetter() && value.contains("."))
     {

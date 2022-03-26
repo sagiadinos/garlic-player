@@ -25,7 +25,6 @@
 #include "body_parser.h"
 #include "tools/resource_monitor.h"
 #include "head/placeholder.h"
-#include "rest_api/httpd.h"
 
 /**
  * @brief The LibFacade class is the interface for a player component to the garlic parser
@@ -47,13 +46,14 @@ class LibFacade : public QObject
         explicit LibFacade(QObject *parent = nullptr);
         ~LibFacade();
         void               init(MainConfiguration *config);
-        void               initWebserver(QCoreApplication *app);
-        MainConfiguration *getConfiguration() const {return MyConfiguration.data();}
+        MainConfiguration  *getConfiguration() const {return MyConfiguration.data();}
+        DB::InventoryTable *getInventoryTable() const {return MyInventoryTable.data();}
+        FreeDiscSpace      *getFreeDiscSpace() const {return MyFreeDiscSpace.data();}
         HeadParser        *getHead() const {return MyHeadParser.data();}
         ResourceMonitor   *getResourceMonitor();
         void               setConfigFromExternal(QString config_path, bool restart_smil_parsing = true);
         void               toggleLauncher(bool value){has_launcher = value;}
-
+        void               transferNotify(QString key);
         void               transferAccessKey(QChar key);
         void               reloadWithNewIndex(QString index_path);
         void               beginSmilPlaying();
@@ -61,6 +61,7 @@ class LibFacade : public QObject
         void               shutDownParsing();
     public slots:
         void               initParser();
+        void               reboot(QString task_id);
     protected:
         int               resource_monitor_timer_id;
         bool              has_launcher = false;
@@ -80,7 +81,6 @@ class LibFacade : public QObject
         QScopedPointer<BodyParser>                 MyBodyParser;
         QScopedPointer<SystemInfos::DiscSpace>     MyDiscSpace;
         QScopedPointer<FreeDiscSpace>              MyFreeDiscSpace;
-        QScopedPointer<RestApi::Httpd>             MyHttp;
         QStorageInfo                               MyStorage;
         ResourceMonitor            MyResourceMonitor;
         void               initFileManager();
@@ -91,7 +91,6 @@ class LibFacade : public QObject
         void               loadIndex();
         void               changeConfig();
         void               emitInstallSoftware(QString file_path);
-        void               reboot(QString task_id);
         void               emitStartShowMedia(BaseMedia *media);
         void               emitStopShowMedia(BaseMedia *media);
         void               processBodyParsing();

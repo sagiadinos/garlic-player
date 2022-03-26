@@ -14,12 +14,10 @@ namespace RestApi
     {
             Q_OBJECT
         public:
-            explicit Httpd(MainConfiguration *mc, DB::InventoryTable *it, FreeDiscSpace *fds, QObject *parent = nullptr);
+            explicit Httpd(LibFacade *lf, QObject *parent = nullptr);
             void init(QCoreApplication *app);
         private:
-            MainConfiguration  *MyConfiguration;
-            DB::InventoryTable *MyInventoryTable;
-            FreeDiscSpace      *MyFreeDiscSpace;
+            LibFacade          *MyLibFacade;
     };
 }
 #endif // HTTPD_H

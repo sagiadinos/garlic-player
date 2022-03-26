@@ -61,10 +61,12 @@ SOURCES += \
     rest_api/httpd.cpp \
     rest_api/json_model.cpp \
     rest_api/request_mapper.cpp \
+    rest_api/v2/app.cpp \
     rest_api/v2/base_controller.cpp \
     rest_api/v2/files.cpp \
     rest_api/v2/oauth.cpp \
     rest_api/v2/system_info.cpp \
+    rest_api/v2/task.cpp \
     smilparser/base_timings.cpp \
     smilparser/body_parser.cpp \
     smilparser/conditional/adapi_wrapper.cpp \
@@ -100,6 +102,7 @@ SOURCES += \
     smilparser/timings/simple_timer.cpp \
     smilparser/trigger/event.cpp \
     smilparser/trigger/iso_date.cpp \
+    smilparser/trigger/notify.cpp \
     smilparser/trigger/syncbase.cpp \
     smilparser/trigger/target_trigger.cpp \
     smilparser/trigger/wallclock.cpp \
@@ -153,10 +156,12 @@ HEADERS += \
     rest_api/httpd.h \
     rest_api/json_model.h \
     rest_api/request_mapper.h \
+    rest_api/v2/app.h \
     rest_api/v2/base_controller.h \
     rest_api/v2/files.h \
     rest_api/v2/oauth.h \
     rest_api/v2/system_info.h \
+    rest_api/v2/task.h \
     smilparser/body_parser.h \
     smilparser/conditional/adapi_wrapper.h \
     smilparser/conditional/expr.h \
@@ -191,6 +196,7 @@ HEADERS += \
     smilparser/timings/simple_timer.h \
     smilparser/trigger/event.h \
     smilparser/trigger/iso_date.h \
+    smilparser/trigger/notify.h \
     smilparser/trigger/syncbase.h \
     smilparser/trigger/target_trigger.h \
     smilparser/trigger/wallclock.h \

@@ -5,14 +5,14 @@ RestApi::V2::BaseController::BaseController(QObject *parent) : QObject(parent)
 
 }
 
-void RestApi::V2::BaseController::setMainConfiguration(MainConfiguration *mc)
+void RestApi::V2::BaseController::setLibFacade(LibFacade *lf)
 {
-    MyConfiguration = mc;
+    MyLibfacade = lf;
 }
 
 bool RestApi::V2::BaseController::validateToken(QString access_token)
 {
-    QString debug = MyConfiguration->getUserConfigByKey("api_access_token");
+    QString debug = MyLibfacade->getConfiguration()->getUserConfigByKey("api_access_token");
 
     if (debug != access_token)
         return false;
