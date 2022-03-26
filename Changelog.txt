@@ -4,14 +4,17 @@ Changelog
 0.5.0 -> 0.6.0
 ---------------------
 1. New Features
-	* On Philips DS-devices UUID created from serial and model codes 
-	* Philips SICP funktion for disable/enable backlightserial codes 
+   	* add httpd server from Stefan Frings (http://stefanfrings.de/qtwebapp/)
+	* add Restful API (files, oauth2, tasks, app , hardware) 
+	* add screenshot method
+	* add support for network trigger (notify)
 
 2. Improvements
+	* On Philips DS-devices UUID created from serial and model codes 
+	* support Philips SICP function for disable/enable backlight
 	* exec-attribute for every element possible 
 	* fix delete bug
-
-
+	* various minor bugfixes
 
 0.4.0 -> 0.5.0
 ---------------------

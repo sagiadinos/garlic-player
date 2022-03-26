@@ -39,7 +39,6 @@ MainWindow::~MainWindow()
     delete centralWidget;
 }
 
-
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
     if (ke->modifiers().testFlag(Qt::NoModifier))

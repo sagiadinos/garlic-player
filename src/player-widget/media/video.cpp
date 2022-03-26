@@ -77,7 +77,6 @@ void PlayerVideo::changeSize(int w, int h)
         VideoWidget.data()->keepAspectRatio();
     else if (fit == "slice")
         VideoWidget.data()->keepAspectRatioByExpanding();
-
 }
 
 QWidget *PlayerVideo::getView()
