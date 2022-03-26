@@ -62,6 +62,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com). Yo
  - media cache
  - SMIL3 subset, HTML5, HTML5-Widgets and (depending on device) WebGL support
  - WebWidgets with also support parameters
+ - Webserver on port 8080 for Restful Api
 
 ## Currently supported SMIL-Features
 
@@ -142,6 +143,7 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com). Yo
  - **automatic refresh** via metatags in SMIL header
  - **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav like described in [a-smil.org Reporting](http://www.a-smil.org/index.php/Reporting)
  - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
+ - notify network trigger for begin and end attributes
  - placeholer in head with status and data tags
  - http downloads and caching
  - caching of remote SMIL index file

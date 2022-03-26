@@ -64,6 +64,7 @@ class MainWindow : public QMainWindow
         bool                      event(QEvent *event);
     protected slots:
         void                      prepareParsing();
+        void                      takeScreenshot();
         void                      startShowMedia(BaseMedia *media);
         void                      stopShowMedia(BaseMedia *media);
 

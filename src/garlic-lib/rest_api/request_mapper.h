@@ -34,10 +34,8 @@ namespace RestApi
             void responseNotFound(HttpResponse& response);
             void responseAccessViolation(HttpResponse& response);
         signals:
-            void               notify(QString notify);
             void               playIndex(QString *path);
             void               changeIndex(QString *path);
-            void               reboot();
             void               changeConfig();
     };
 }
