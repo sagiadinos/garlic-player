@@ -6,6 +6,7 @@
 #include <QDesktopWidget>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QDateTime>
 #include "tools/logging_categories.h"
 
 class TScreen : public QObject
@@ -15,6 +16,7 @@ public:
     explicit TScreen(QObject *parent = Q_NULLPTR);
     QPoint   getWholeStartPoint();
     QSize    getWholeSize();
+    void     takeScreenshot(QString path);
     void     selectCurrentScreen(int screen_id);
     QPoint   getStartPointFromCurrentScreen();
     QSize    getSizeFromCurrentScreen();
