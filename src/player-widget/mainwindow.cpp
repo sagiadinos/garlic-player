@@ -25,7 +25,7 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     MyLibFacade            = lib_facade;
     connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia*)), this, SLOT(startShowMedia(BaseMedia*)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia*)), this, SLOT(stopShowMedia(BaseMedia*)));
-    connect(MyLibFacade, SIGNAL(screenshot()), this, SLOT(takeScreenshot()));
+    connect(MyLibFacade, SIGNAL(screenshot(QString)), this, SLOT(takeScreenshot(QString)));
     connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
@@ -203,9 +203,9 @@ void MainWindow::prepareParsing()
     MyLibFacade->beginSmilPlaying(); // begin playing not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
 
-void MainWindow::takeScreenshot()
+void MainWindow::takeScreenshot(QString file_path)
 {
-    MyScreen->takeScreenshot(MyLibFacade->getConfiguration()->getPaths("logs"));
+    MyScreen->takeScreenshot(file_path);
 }
 
 void MainWindow::startShowMedia(BaseMedia *media)

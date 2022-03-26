@@ -31,6 +31,7 @@ namespace RestApi
             void queryTask(HttpRequest &request, HttpResponse &response, QStringList path);
 
             void respond(HttpResponse& response, QString json);
+            void respondImage(HttpResponse& response, QString file_path);
             void responseNotFound(HttpResponse& response);
             void responseAccessViolation(HttpResponse& response);
         signals:

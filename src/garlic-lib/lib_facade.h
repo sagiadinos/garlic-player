@@ -62,7 +62,7 @@ class LibFacade : public QObject
     public slots:
         void               initParser();
         void               reboot(QString task_id);
-        void               takeScreenshot();
+        void               takeScreenshot(QString file_path);
     protected:
         int               resource_monitor_timer_id;
         bool              has_launcher = false;
@@ -102,7 +102,7 @@ class LibFacade : public QObject
         void               stopShowMedia(BaseMedia *media);
         void               readyForPlaying();
         void               newConfig();
-        void               screenshot();
+        void               screenshot(QString file_path);
         void               rebootOS(QString task_id);
         void               installSoftware(QString file_path);
 };

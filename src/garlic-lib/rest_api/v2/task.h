@@ -15,6 +15,7 @@ namespace RestApi
                 QString fireNotifyViaJson(QString json_string);
                 QString fireNotify(QString smil_event);
                 void   reboot();
+                void   takeScreenShot(QString file_path);
             private:
 
          };

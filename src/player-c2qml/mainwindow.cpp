@@ -42,7 +42,7 @@ void MainWindow::init()
     connect(MyLibFacade, SIGNAL(newConfig()), this, SLOT(sendConfig()));
     connect(MyLibFacade, SIGNAL(rebootOS(QString)), this, SLOT(rebootOS(QString)));
     connect(MyLibFacade, SIGNAL(installSoftware(QString)), this, SLOT(installSoftware(QString)));
-    connect(MyLibFacade, SIGNAL(screenshot()), this, SLOT(takeScreenShot()));
+    connect(MyLibFacade, SIGNAL(screenshot(QString)), this, SLOT(takeScreenShot(QString)));
     connect(engine(), SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit())); // to connect quit signal from QML
 
     setSource(QUrl(QStringLiteral("qrc:/root_qtm.qml")));
@@ -258,9 +258,9 @@ void MainWindow::installSoftware(QString file_path)
     MyLauncher.data()->installSoftware(file_path);
 }
 
-void MainWindow::takeScreenshot()
+void MainWindow::takeScreenshot(QString file_path)
 {
-    MyScreen->takeScreenshot(MyLibFacade->getConfiguration()->getPaths("logs"));
+    MyScreen->takeScreenshot(file_path);
 }
 
 void MainWindow::sendClosePlayerCorrect()

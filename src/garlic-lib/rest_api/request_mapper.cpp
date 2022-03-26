@@ -157,15 +157,17 @@ void RestApi::RequestMapper::queryTask(HttpRequest &request, HttpResponse &respo
         MyTaskController.reboot();
         respond(response, "");
     }
+    else if (path.at(3)  ==  "screenshot")
+    {
+        QString file_path = MyLibFacade->getConfiguration()->getPaths("logs") + QDateTime::currentDateTime().toString("yyyyMMddhhmmss") +".jpg";
+        MyTaskController.takeScreenShot(file_path);
+        respondImage(response, file_path);
+    }
  /*   else if (path.at(3)  ==  "commitConfiguration")
     {
 
     }
     else if (path.at(3)  ==  "exportConfiguration")
-    {
-
-    }
-    else if (path.at(3)  ==  "screenshot")
     {
 
     }
@@ -180,6 +182,34 @@ void RestApi::RequestMapper::respond(HttpResponse& response, QString json)
     response.setHeader("Content-Type", "application/json; charset=utf-8");
     response.write(json.toUtf8(), true);
 }
+
+void RestApi::RequestMapper::respondImage(HttpResponse& response, QString file_path)
+{
+    // the quick and Dirty solution as Image is saved in another thread and we have to wait.
+    // Alternative send Signals.
+    QTime dieTime = QTime::currentTime().addSecs(1);
+    while (QTime::currentTime() < dieTime)
+    {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    }
+
+    QFile f(file_path);
+    if (!f.exists())
+    {
+        response.write("file not created.",true);
+        return;
+    }
+    if (!f.open(QFile::ReadOnly))
+    {
+        response.write("file not readable.",true);
+        return;
+    }
+    response.setHeader("Content-Type", "image/jpeg");
+    response.setHeader("Content-Length", f.size());
+    response.write(f.readAll(), true);
+    f.close();
+}
+
 
 void RestApi::RequestMapper::responseNotFound(HttpResponse& response)
 {

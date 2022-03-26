@@ -17,7 +17,7 @@ QString RestApi::V2::Task::fireNotifyViaJson(QString json_string)
    return fireNotify(JsonRequest.getStringValueByKey("smilEvent"));
 }
 
-QString  RestApi::V2::Task::fireNotify(QString smil_event)
+QString RestApi::V2::Task::fireNotify(QString smil_event)
 {
     JsonResponse.reset();
     if (!smil_event.isEmpty())
@@ -26,6 +26,12 @@ QString  RestApi::V2::Task::fireNotify(QString smil_event)
         JsonResponse.insertStringValuePair("error", " No SmilEvent exists");
 
     return JsonResponse.asString(false).toUtf8();
+}
+
+void RestApi::V2::Task::takeScreenShot(QString file_path)
+{
+    JsonResponse.reset();
+    MyLibfacade->takeScreenshot(file_path);
 }
 
 void RestApi::V2::Task::reboot()

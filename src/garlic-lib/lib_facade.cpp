@@ -208,9 +208,9 @@ void LibFacade::reboot(QString task_id)
     emit rebootOS(task_id);
 }
 
-void LibFacade::takeScreenshot()
+void LibFacade::takeScreenshot(QString file_path)
 {
-    emit screenshot();
+    emit screenshot(file_path);
 }
 
 void LibFacade::emitStartShowMedia(BaseMedia *media)
