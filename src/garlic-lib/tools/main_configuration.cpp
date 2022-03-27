@@ -106,10 +106,11 @@ void MainConfiguration::determinePlayerName()
 
 QString MainConfiguration::determineApiAccessToken(QString username, QString password)
 {
+    if (QDateTime::currentDateTime() < QDateTime::fromString(getApiAccessTokenExpire(), Qt::ISODate))
+        return getApiAccessToken();
 
-    QDateTime utc(QDateTime::currentDateTime());
-    utc.setTimeSpec(Qt::UTC);
-    QString expire       = utc.addDays(1).toString(Qt::ISODate);
+    QDateTime dt(QDateTime::currentDateTime());
+    QString expire       = dt.addDays(1).toString(Qt::ISODate);
     QString hash_source  = username + password + expire;
     QString access_token = QString::fromUtf8(QCryptographicHash::hash(hash_source.toLocal8Bit(),QCryptographicHash::Md5).toHex());
 

@@ -136,7 +136,11 @@ void RestApi::RequestMapper::queryApp(HttpRequest &request, HttpResponse &respon
 {
     QString json_response;
     MyAppController.setLibFacade(MyLibFacade);
-
+    if (!MyAppController.validateToken(request.getParameter("access_token")))
+    {
+        responseAccessViolation(response);
+        return;
+    }
     if (path.at(3)  ==  "exec") // start uri but do not change Content-Url
     {
         if (request.getHeader("content-type") == "application/json")
@@ -183,6 +187,11 @@ void RestApi::RequestMapper::queryTask(HttpRequest &request, HttpResponse &respo
 {
     MyTaskController.setLibFacade(MyLibFacade);
     QString json_response;
+    if (!MyTaskController.validateToken(request.getParameter("access_token")))
+    {
+        responseAccessViolation(response);
+        return;
+    }
     if (path.at(3)  ==  "notify")
     {
         if (request.getHeader("content-type") == "application/json")

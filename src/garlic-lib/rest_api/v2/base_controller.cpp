@@ -12,9 +12,10 @@ void RestApi::V2::BaseController::setLibFacade(LibFacade *lf)
 
 bool RestApi::V2::BaseController::validateToken(QString access_token)
 {
-    QString debug = MyLibfacade->getConfiguration()->getUserConfigByKey("api_access_token");
+    QString debug = MyLibfacade->getConfiguration()->getApiAccessToken();
+    QDateTime expired = QDateTime::fromString(MyLibfacade->getConfiguration()->getApiAccessTokenExpire(), Qt::ISODate);
 
-    if (debug != access_token)
+    if (debug != access_token || QDateTime::currentDateTime() > expired)
         return false;
 
     return true;
