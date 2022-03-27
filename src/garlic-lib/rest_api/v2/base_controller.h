@@ -19,6 +19,7 @@ namespace RestApi
             protected:
                 LibFacade         *MyLibfacade;
                 JsonModel JsonRequest, JsonResponse;
+                QString  respondJSONError(QString error_text);
         };
     }
 }

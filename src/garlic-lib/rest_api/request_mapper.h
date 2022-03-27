@@ -6,6 +6,7 @@
 #include "v2/oauth.h"
 #include "v2/system_info.h"
 #include "v2/files.h"
+#include "v2/app.h"
 #include "v2/task.h"
 
 using namespace stefanfrings;
@@ -23,9 +24,10 @@ namespace RestApi
             RestApi::V2::OAuth       MyAuthController;
             RestApi::V2::SystemInfo  MySIController;
             RestApi::V2::Files       MyFilesController;
+            RestApi::V2::App         MyAppController;
             RestApi::V2::Task        MyTaskController;
             void queryOauth(HttpRequest &request, HttpResponse &response);
-            void querySystem(HttpRequest &request, HttpResponse &response);
+            void querySystem(HttpRequest &request, HttpResponse &response, QStringList path);
             void queryFiles(HttpRequest &request, HttpResponse &response, QStringList path);
             void queryApp(HttpRequest &request, HttpResponse &response, QStringList path);
             void queryTask(HttpRequest &request, HttpResponse &response, QStringList path);

@@ -19,14 +19,15 @@ namespace RestApi
                 QString  findInfoByID(QString id);
                 QString  modifyByID(QString id,  qint64 seek, QTemporaryFile *tfile, qint64 file_size, QString download_path, QString etag, QString mime_type, QString modified_date);
                 QString  createNew(QTemporaryFile *tfile, qint64 file_size, QString download_path, QString etag, QString mime_type, QString modified_date);
+                QString findPaginatedJson(QString json_string);
                 QString  findPaginated(int max_results, int begin);
-                QString  remove(QString body);
+                QString  removeByIdJson(QString json_string);
+                QString  removeById(QString id);
             private:
                 bool        canCreateNewProceed(QTemporaryFile *tfile, quint64 file_size, QString download_path);
                 void        createJsonFromList(QList<DB::InventoryDataset> results);
                 QJsonObject createObject(DB::InventoryDataset dataset);
                 QString     getState(int state);
-                QString     determineIDFromJson(QString json_string);
         };
     }
 }

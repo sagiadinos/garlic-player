@@ -9,10 +9,8 @@ QString RestApi::V2::Task::fireNotifyViaJson(QString json_string)
 {
     if (!JsonRequest.readFromString(json_string))
     {
-        JsonResponse.reset();
-        JsonResponse.insertStringValuePair("error", " No JSON found");
-        return JsonResponse.asString(false).toUtf8();
-    }
+        return respondJSONError("No JSON found");
+     }
 
    return fireNotify(JsonRequest.getStringValueByKey("smilEvent"));
 }

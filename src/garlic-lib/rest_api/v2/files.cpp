@@ -5,7 +5,6 @@ RestApi::V2::Files::Files(QObject *parent) : BaseController{parent}
 
 }
 
-
 QString RestApi::V2::Files::findInfoByID(QString id)
 {
    DB::InventoryDataset result = MyLibfacade->getInventoryTable()->findByCacheBaseName(id);
@@ -156,6 +155,14 @@ QString RestApi::V2::Files::createNew(QTemporaryFile *tfile, qint64 file_size, Q
     return JsonResponse.asString(false).toUtf8();
 }
 
+QString RestApi::V2::Files::findPaginatedJson(QString json_string)
+{
+    if (!JsonRequest.readFromString(json_string))
+        return respondJSONError("No JSON found");
+
+    return findPaginated(JsonRequest.getStringValueByKey("maxResults").toInt(), JsonRequest.getStringValueByKey("pageToken").toInt());
+}
+
 QString RestApi::V2::Files::findPaginated(int max_results, int begin)
 {
     QList<DB::InventoryDataset> results;
@@ -172,28 +179,28 @@ QString RestApi::V2::Files::findPaginated(int max_results, int begin)
     return JsonResponse.asString(false).toUtf8();
 }
 
-QString RestApi::V2::Files::remove(QString body)
+QString RestApi::V2::Files::removeByIdJson(QString json_string)
 {
-    QString id                  = determineIDFromJson(body);
+    if (!JsonRequest.readFromString(json_string))
+        return respondJSONError("No JSON found");
+
+    return removeById(JsonRequest.getStringValueByKey("id"));
+}
+
+QString RestApi::V2::Files::removeById(QString id)
+{
     DB::InventoryDataset result = MyLibfacade->getInventoryTable()->findByCacheBaseName(id);
-    JsonResponse.reset();
+    if (result.resource_uri.isEmpty())
+        return respondJSONError("Record not found: " + id);
 
-   if (!result.resource_uri.isEmpty())
-   {
-       QString cache_path = MyLibfacade->getConfiguration()->getPaths("cache") + result.cache_name;
-       if (MyLibfacade->getFreeDiscSpace()->deleteFile(cache_path))
-       {
-           MyLibfacade->getInventoryTable()->deleteByCacheName(result.cache_name);
-           JsonResponse.insertStringValuePair("success", id + " deleted");
-       }
-       else
-           JsonResponse.insertStringValuePair("error", "delete failed: " + id);
-   }
-   else
-   {
-       JsonResponse.insertStringValuePair("error", "Record not found: " + id);
-   }
+   QString cache_path = MyLibfacade->getConfiguration()->getPaths("cache") + result.cache_name;
+   if (!MyLibfacade->getFreeDiscSpace()->deleteFile(cache_path))
+       return respondJSONError("delete failed: " + id);
 
+   MyLibfacade->getInventoryTable()->deleteByCacheName(result.cache_name);
+
+   JsonResponse.reset();
+   JsonResponse.insertStringValuePair("success", id + " deleted");
    return JsonResponse.asString(false).toUtf8();
 }
 
@@ -272,17 +279,4 @@ QString RestApi::V2::Files::getState(int state)
         default:
             return "ERROR";
      }
-}
-
-QString RestApi::V2::Files::determineIDFromJson(QString json_string)
-{
-    if (!JsonRequest.readFromString(json_string))
-        return "";
-
-    // Todo implement real username password
-    QString id = JsonRequest.getStringValueByKey("id");
-    if (id == "error")
-        return "";
-
-    return id;
 }

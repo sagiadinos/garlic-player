@@ -19,3 +19,10 @@ bool RestApi::V2::BaseController::validateToken(QString access_token)
 
     return true;
 }
+
+QString RestApi::V2::BaseController::respondJSONError(QString error_text)
+{
+    JsonResponse.reset();
+    JsonResponse.insertStringValuePair("error", error_text);
+    return JsonResponse.asString(false).toUtf8();
+}

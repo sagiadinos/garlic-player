@@ -54,7 +54,6 @@ void HeadParser::setDefaultValues()
     default_region.backgroundImage = "none";
     default_region.backgroundRepeat= "repeat";
     region_list.append(default_region);            void process();
-
 }
 
 QString HeadParser::getTitle()

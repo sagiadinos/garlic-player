@@ -20,7 +20,7 @@ void RestApi::RequestMapper::service(HttpRequest& request, HttpResponse& respons
     }
     else if (sl.at(2) == "system")
     {
-        querySystem(request, response);
+        querySystem(request, response, sl);
     }
     else if (sl.at(2) == "files")
     {
@@ -42,31 +42,37 @@ void RestApi::RequestMapper::service(HttpRequest& request, HttpResponse& respons
 void RestApi::RequestMapper::queryOauth(HttpRequest &request, HttpResponse &response)
 {
     QByteArray path = request.getPath();
+    QString json_response;
     if (path ==  "/v2/oauth2/token")
     {
         MyAuthController.setLibFacade(MyLibFacade);
-        QString res = MyAuthController.determineJsonResponse(request.getBody());
-        respond(response, res);
+        if (request.getHeader("content-type") == "application/json")
+            json_response = MyAuthController.determineJsonResponse(request.getBody());
+        else
+            json_response = MyAuthController.determineResponse(request.getParameter("grant_type"),
+                                                               request.getParameter("username"),
+                                                               request.getParameter("password"));
+        respond(response, json_response);
     }
     else
         responseNotFound(response);
 }
 
-void RestApi::RequestMapper::querySystem(HttpRequest& request, HttpResponse &response)
+void RestApi::RequestMapper::querySystem(HttpRequest& request, HttpResponse &response, QStringList path)
 {
-    QByteArray path = request.getPath();
     MySIController.setLibFacade(MyLibFacade);
     if (!MySIController.validateToken(request.getParameter("access_token")))
     {
         responseAccessViolation(response);
         return;
     }
-    if (path ==  "/v2/system/firmwareInfo")
+
+    if (path.at(3)  ==  "firmwareInfo")
     {
         QString res = MySIController.responseFirmwareInfo();
         respond(response, res);
     }
-    else if (path ==  "/v2/system/modelInfo")
+    else if (path.at(3) ==  "modelInfo")
     {
         QString res = MySIController.responseModelInfo();
         respond(response, res);
@@ -87,7 +93,7 @@ void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &resp
     QString json_response;
     if (path.at(3)  ==  "new")
     {
-        json_response = MyFilesController.createNew(request.getUploadedFile("data"),
+       json_response = MyFilesController.createNew(request.getUploadedFile("data"),
                                                     request.getParameter("fileSize").toLong(),
                                                     request.getParameter("downloadPath"),
                                                     request.getParameter("etag"),
@@ -97,11 +103,17 @@ void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &resp
     }
     else if (path.at(3)  ==  "find")
     {
-        json_response = MyFilesController.findPaginated(request.getParameter("maxResults").toInt(), request.getParameter("pageToken").toInt());
+        if (request.getHeader("content-type") == "application/json")
+            json_response = MyFilesController.findPaginatedJson(request.getBody());
+        else
+            json_response = MyFilesController.findPaginated(request.getParameter("maxResults").toInt(), request.getParameter("pageToken").toInt());
     }
     else if (path.at(3)  ==  "delete")
     {
-        json_response = MyFilesController.remove(request.getBody());
+        if (request.getHeader("content-type") == "application/json")
+            json_response = MyFilesController.removeByIdJson(request.getBody());
+        else
+            json_response = MyFilesController.removeById(request.getParameter("id"));
     }
     else
     {
@@ -122,20 +134,48 @@ void RestApi::RequestMapper::queryFiles(HttpRequest &request, HttpResponse &resp
 
 void RestApi::RequestMapper::queryApp(HttpRequest &request, HttpResponse &response, QStringList path)
 {
-/*    if (path.at(3)  ==  "exec")
-    {
+    QString json_response;
+    MyAppController.setLibFacade(MyLibFacade);
 
+    if (path.at(3)  ==  "exec") // start uri but do not change Content-Url
+    {
+        if (request.getHeader("content-type") == "application/json")
+            json_response = MyAppController.execJson(request.getBody());
+        else
+            json_response = MyAppController.exec(request.getParameter("uri"),
+                                                request.getParameter("packageName"),
+                                                request.getParameter("className"),
+                                                request.getParameter("Action"),
+                                                request.getParameter("Type")
+                                                );
+
+        respond(response, json_response);
     }
-    else if (path.at(3)  ==  "start")
+    else if (path.at(3)  ==  "start") // change Content-Url and switch to it
     {
+        if (request.getHeader("content-type") == "application/json")
+            json_response = MyAppController.startJson(request.getBody());
+        else
+            json_response = MyAppController.start(request.getParameter("uri"),
+                                                request.getParameter("packageName"),
+                                                request.getParameter("className"),
+                                                request.getParameter("Action"),
+                                                request.getParameter("Type")
+                                                );
 
+        respond(response, json_response);
     }
-    else if (path.at(3)  ==  "switch")
+    else if (path.at(3)  ==  "switch") // switch and play current Content-Url
     {
+        if (request.getHeader("content-type") == "application/json")
+            json_response = MyAppController.switchJson(request.getBody());
+        else
+            json_response = MyAppController.switchByMode(request.getParameter("mode"));
 
+        respond(response, json_response);
     }
     else
-*/        responseNotFound(response);
+        responseNotFound(response);
 
 }
 
@@ -209,7 +249,6 @@ void RestApi::RequestMapper::respondImage(HttpResponse& response, QString file_p
     response.write(f.readAll(), true);
     f.close();
 }
-
 
 void RestApi::RequestMapper::responseNotFound(HttpResponse& response)
 {

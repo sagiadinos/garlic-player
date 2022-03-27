@@ -12,10 +12,10 @@ namespace RestApi
                 Q_OBJECT
             public:
                 OAuth(QObject* parent = Q_NULLPTR);
-                QString determineJsonResponse(QString body);
+                QString determineJsonResponse(QString json_string);
+                QString determineResponse(QString grant_type, QString username, QString password);
             private:
-                bool checkJsonRequest(QString json_string);
-                void createJsonResponse();
+                QString createJsonResponse();
                 QString username, password;
         };
     }

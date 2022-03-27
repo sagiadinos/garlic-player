@@ -59,6 +59,7 @@ class LibFacade : public QObject
         void               beginSmilPlaying();
         QString            requestLoaddableMediaPath(QString path);
         void               shutDownParsing();
+        void               initParserWithTemporaryFile(QString uri);
     public slots:
         void               initParser();
         void               reboot(QString task_id);
