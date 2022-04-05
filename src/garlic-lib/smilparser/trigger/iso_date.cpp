@@ -116,6 +116,14 @@ int IsoDate::determineDayDiffByOperator(QChar op, int day_diff)
         return calculateDiffAfter(day_diff);
 }
 
+bool IsoDate::hasPeriod(IsoPeriod period)
+{
+    if (period.days == 0 && period.hours == 0 && period.minutes == 0 && period.months == 0 && period.seconds == 0 && period.years == 0)
+        return false;
+
+    return true;
+}
+
 QDate IsoDate::calculateDateWithWeekDayDifference(QString the_date, int w_position)
 {
     QChar op    = the_date.at(w_position-1);

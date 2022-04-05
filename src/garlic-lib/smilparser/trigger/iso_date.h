@@ -24,7 +24,8 @@ class IsoDate
         QDateTime analyseDate(QString date);
         bool hasWeekDay(){return has_weekday;}
         int  getWeekDay(){return weekday;}
-        int   determineDayDiffByOperator(QChar op, int day_diff);
+        int  determineDayDiffByOperator(QChar op, int day_diff);
+        bool hasPeriod(IsoPeriod period);
     private:
         bool  has_weekday = false;
         int   weekday;

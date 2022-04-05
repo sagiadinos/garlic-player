@@ -19,7 +19,6 @@
 
 WallClock::WallClock(QObject *parent) : QObject(parent)
 {
-
 }
 
 void WallClock::parse(QString iso_date)
@@ -48,9 +47,10 @@ void WallClock::parse(QString iso_date)
     else
         trigger_datetime = MyIsoDate.analyseDate(iso_date);
 
-//    necessary? 2021.05-05
-//    if (repeats > 0)
-//        calculateWithRemainingRepeats(QDateTime::currentDateTime());
+    // GitHub issue #31
+    if (!MyIsoDate.hasPeriod(period))
+       repeats = 0;
+
     return;
 }
 
