@@ -15,7 +15,7 @@ class MediaFactory : public QObject
         Q_OBJECT
     public:
         explicit MediaFactory(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
-        PlayerBaseMedia *initMedia(BaseMedia *media);
+        PlayerBaseMedia *initMedia(BaseMedia *media, Region *reg);
 
     protected:
         QScopedPointer<PlayerBaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyBrush, MyAudio, MyWeb, MyRefCommand;

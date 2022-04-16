@@ -27,42 +27,42 @@ MediaFactory::MediaFactory(QObject *parent) : QObject(parent)
     MyRefCommand.reset(new PlayerRefCommand(this));
 }
 
-PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media)
+PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media, Region *reg)
 {
     QString type   = media->objectName();
     if (type == "TImage")
     {
-        MyImage.data()->init(media);
+        MyImage.data()->init(media, reg);
         return MyImage.data();
     }
     else if (type == "TBrush")
     {
-        MyBrush.data()->init(media);
+        MyBrush.data()->init(media, reg);
         return MyBrush.data();
     }
     else if (type == "TVideo")
     {
-        MyVideo.data()->init(media);
+        MyVideo.data()->init(media, reg);
         return MyVideo.data();
     }
     else if (type == "TAudio")
     {
-        MyAudio.data()->init(media);
+        MyAudio.data()->init(media, reg);
         return MyAudio.data();
     }
     else if (type == "TWeb")
     {
-        MyWeb.data()->init(media);
+        MyWeb.data()->init(media, reg);
         return MyWeb.data();
     }
     else if (type == "TWidget")
     {
-        MyWeb.data()->init(media);
+        MyWeb.data()->init(media, reg);
         return MyWeb.data();
     }
     else if (type == "TRefCommand")
     {
-        MyRefCommand.data()->init(media);
+        MyRefCommand.data()->init(media, reg);
         return MyRefCommand.data();
     }
     else

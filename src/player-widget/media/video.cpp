@@ -32,9 +32,10 @@ PlayerVideo::~PlayerVideo()
     VideoWidget.reset();
 }
 
-void PlayerVideo::init(BaseMedia *media)
+void PlayerVideo::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
+    region    = reg;
 
    QString path = SmilMedia->getLoadablePath();
    if (isFileExists(path))
@@ -73,7 +74,7 @@ void PlayerVideo::changeSize(int w, int h)
     else if (fit == "meet")
         VideoWidget.data()->keepAspectRatio();
     else if (fit == "meetBest")
-        VideoWidget.data()->keepAspectRatioByExpanding();
+        VideoWidget.data()->keepAspectRatio();
     else if (fit == "slice")
         VideoWidget.data()->keepAspectRatioByExpanding();
 }

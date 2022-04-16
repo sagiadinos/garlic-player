@@ -10,9 +10,10 @@ class Web : public PlayerBaseMedia
 public:
         Web(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Web();
-        void          init(BaseMedia *media);
+        void          init(BaseMedia *media, Region *reg);
         void          deinit();
         void          setParentItem(QQuickItem *parent);
+        void          changeSize(int w, int h);
     protected:
         QScopedPointer<QQuickItem>   web_item;
         QQmlComponent                *media_component;

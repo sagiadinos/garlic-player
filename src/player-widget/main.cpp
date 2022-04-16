@@ -22,6 +22,7 @@
 #include "../player-common/cmdparser.h"
 #include "../player-common/screen.h"
 #include "../player-common/player_configuration.h"
+#include "rest_api/httpd.h"
 
 void handleMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -33,7 +34,6 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_X11InitThreads);
-
 
     QApplication app(argc, argv);
     MainConfiguration    *MyMainConfiguration   = new MainConfiguration(
@@ -61,13 +61,14 @@ int main(int argc, char *argv[])
 
     TCmdParser MyParser(MyMainConfiguration);
     MyParser.addOptions();
-
     MyParser.parse(MyLibFacade);
 
     TScreen    MyScreen(Q_NULLPTR);
-
     MyScreen.selectCurrentScreen(MyParser.getScreenSelect());
-
+    // ToDo if init webserver
+    QScopedPointer<RestApi::Httpd>             MyHttp;
+    MyHttp.reset(new RestApi::Httpd(MyLibFacade));
+    MyHttp.data()->init(&app);
     MainWindow w(&MyScreen, MyLibFacade);
 
     // do not start without an index uri

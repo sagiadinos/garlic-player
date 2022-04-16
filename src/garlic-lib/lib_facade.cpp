@@ -38,7 +38,7 @@ LibFacade::~LibFacade()
  * @param config
  */
 void LibFacade::init(MainConfiguration *config)
-{
+{    
     MyConfiguration.reset(config);
     MyInventoryTable.reset(new DB::InventoryTable(this));
     MyInventoryTable.data()->init(MyConfiguration.data()->getPaths("logs"));
@@ -76,13 +76,23 @@ void LibFacade::initParser()
     loadIndex();
 }
 
-
+void LibFacade::initParserWithTemporaryFile(QString uri)
+{
+    MyIndexManager.data()->init(uri);
+    MyIndexManager.data()->lookUpForUpdatedIndex();
+    loadIndex();
+}
 void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_parsing)
 {
     MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyInventoryTable.data(), MyConfiguration.data(), MyFreeDiscSpace.data(), this));
     if (restart_smil_parsing)
         connect(MyXMLConfiguration.data(), SIGNAL(finishedConfiguration()), this, SLOT(reboot()));
     MyXMLConfiguration.data()->processFromLocalFile(config_path);
+}
+
+void LibFacade::transferNotify(QString key)
+{
+    MyBodyParser.data()->triggerNotify(key);
 }
 
 void LibFacade::transferAccessKey(QChar key)
@@ -129,7 +139,6 @@ void LibFacade::loadIndex()
 
     initFileManager();
     processHeadParsing();
-
 }
 
 void LibFacade::changeConfig()
@@ -202,6 +211,11 @@ void LibFacade::emitInstallSoftware(QString file_path)
 void LibFacade::reboot(QString task_id)
 {
     emit rebootOS(task_id);
+}
+
+void LibFacade::takeScreenshot(QString file_path)
+{
+    emit screenshot(file_path);
 }
 
 void LibFacade::emitStartShowMedia(BaseMedia *media)

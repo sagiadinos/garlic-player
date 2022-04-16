@@ -16,6 +16,13 @@ QSize TScreen::getWholeSize()
     return QSize(whole_display_geometry.width(), whole_display_geometry.height());
 }
 
+void TScreen::takeScreenshot(QString file_path)
+{
+    QRect geom         = current_screen->geometry();
+    QPixmap screenshot = current_screen->grabWindow(0, geom.x(), geom.y(), geom.width(), geom.height());
+    screenshot.save(file_path, "JPG", 60);
+}
+
 void TScreen::selectCurrentScreen(int screen_id)
 {
     if (screen_id < 0)

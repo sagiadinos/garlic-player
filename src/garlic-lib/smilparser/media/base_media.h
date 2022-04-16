@@ -20,7 +20,6 @@
 
 #include "files/media_manager.h"
 #include "container.h"
-#include "conditional/expr.h"
 #include "tools/main_configuration.h"
 #include "head/placeholder.h"
 #include "head_parser.h"
@@ -46,6 +45,9 @@ class BaseMedia : public BaseTimings
         void                   setRegion(Region r);
         QString                getRegionName();
         QString                getFit()          {return fit;}
+        QString                getMediaAlign()   {return media_align;}
+        double                 getZoomFactor()   {return zoom_factor;}
+        QVariantList           getExtraJSList()  {return extra_js;}
         QString                getSrc()          {return src;}
         QString                getLogContentId() {return log_content_id;}
         QString                getFileName()     {return filename;}
@@ -71,11 +73,13 @@ class BaseMedia : public BaseTimings
         MainConfiguration     *MyMainConfiguration;
         TContainer            *MyParentContainer;
         QStringList            params_as_query;
-        Expr                   MyExpr;
         QString                region_name     = "";
         QString                src             = "";
         QString                type            = "";
         QString                fit             = "";
+        QString                media_align     = ""; // default will defined by region see head_parser.cpp/h
+        double                 zoom_factor     = 1.00;
+        QVariantList           extra_js;
         QString                filename        = "";
         int                    cache_control   = 0;
         QString                log_content_id  = "";
@@ -88,6 +92,7 @@ class BaseMedia : public BaseTimings
     private:
         void                   setAdditionalParameters(QDomElement param);
         int                    determineCacheControl(QString value);
+        void                   decodePageExtraSettings(QString pageExtraSettings);
     signals:
         void                   repeat(BaseMedia *media);
 

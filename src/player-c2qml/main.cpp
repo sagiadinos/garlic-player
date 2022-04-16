@@ -30,6 +30,7 @@
 
 #include <QtWebView>
 #include "mainwindow.h"
+#include "rest_api/httpd.h"
 
 void handleMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -87,6 +88,12 @@ int main(int argc, char *argv[])
         MyPlayerConfiguration->setUuidFromLauncher(MyAndroidManager->getUUIDFromLauncher());
 
         MyPlayerConfiguration->setSmilIndexUriFromLauncher(MyAndroidManager->getSmilIndexFromLauncher());
+
+        dieTime = QTime::currentTime().addSecs(5);
+        while (MyAndroidManager->getLauncherVersion().isEmpty() && QTime::currentTime() < dieTime)
+        {
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        }
         MyPlayerConfiguration->setVersionFromLauncher(MyAndroidManager->getLauncherVersion());
     }
 
@@ -114,6 +121,11 @@ int main(int argc, char *argv[])
 
     TScreen    MyScreen(Q_NULLPTR);
     MyScreen.selectCurrentScreen(MyParser.getScreenSelect());
+    // ToDo if init webserver
+    QScopedPointer<RestApi::Httpd>             MyHttp;
+    MyHttp.reset(new RestApi::Httpd(MyLibFacade));
+    MyHttp.data()->init(&app);
+
     MainWindow w(&MyScreen, MyLibFacade, MyPlayerConfiguration);
 
     QQmlEngine::setObjectOwnership(&w, QQmlEngine::CppOwnership);

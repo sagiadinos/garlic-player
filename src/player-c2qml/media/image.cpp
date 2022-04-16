@@ -19,12 +19,16 @@ Image::~Image()
     image_item.reset();
 }
 
-void Image::init(BaseMedia *media)
+void Image::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
+    region    = reg;
     if (load(image_item.data()))
     {
-        image_item.data()->setProperty("fillMode", determineFillMode(SmilMedia->getFit().toLower()));
+        QFile CurrentFile(SmilMedia->getLoadablePath());
+        if(!CurrentFile.open(QIODevice::ReadOnly))
+              loaded_image.loadFromData(CurrentFile.readAll());
+
         if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
@@ -37,24 +41,87 @@ void Image::deinit()
     image_item.data()->setProperty("source","");
 }
 
+void Image::changeSize(int w, int h)
+{
+    QString smil_fit = SmilMedia->getFit().toLower();
+    int fill_mode = 6; // for do nothing
+    if (smil_fit == "fill")
+        fill_mode = Qt::IgnoreAspectRatio;
+    else if (smil_fit == "meet")
+        fill_mode = Qt::KeepAspectRatio;
+    else if (smil_fit == "meetbest")
+    {
+        if (loaded_image.width() >= w || loaded_image.height() > h)
+            fill_mode = Qt::KeepAspectRatio;
+       else
+            fill_mode = NONE;
+    }
+    else if (smil_fit == "slice")
+        fill_mode =  Qt::KeepAspectRatioByExpanding;
+
+    image_item.data()->setProperty("fillMode",  fill_mode);
+    setAlignment();
+}
+
 void Image::setParentItem(QQuickItem *parent)
 {
     image_item.data()->setParentItem(parent);
 }
 
-// Image.Stretch - the image is scaled to fit
-// Image.PreserveAspectFit - the image is scaled uniformly to fit without cropping
-// Image.PreserveAspectCrop - the image is scaled uniformly to fill, cropping if necessary
-int Image::determineFillMode(QString smil_fit)
+void Image::setAlignment()
 {
-    if (smil_fit == "fill")
-        return STRETCH;
-    else if (smil_fit == "meet")
-        return PRESERVEASPECTFIT;
-    else if (smil_fit == "meetbest")
-        return PRESERVEASPECTFIT;
-    else if (smil_fit == "slice")
-        return PRESERVEASPECTCROP;
-    else
-        return NONE;
+    QString media_align = SmilMedia->getMediaAlign().toLower();
+    if (media_align.isEmpty())
+        media_align = region->mediaAlign;
+
+     if(media_align == "center")
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignHCenter);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignVCenter);
+     }
+     else if(media_align == "topleft")
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignLeft);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignTop);
+     }
+     else if(media_align == "topmid")
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignHCenter);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignTop);
+     }
+     else if(media_align == "topright")
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignRight);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignTop);
+     }
+     else if(media_align == "midleft")
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignLeft);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignVCenter);
+     }
+     else if(media_align == "midright")
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignRight);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignVCenter);
+     }
+     else if(media_align == "bottomleft")
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignLeft);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignBottom);
+     }
+     else if(media_align == "bottommid")
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignHCenter);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignBottom);
+     }
+     else if(media_align == "bottomright")
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignRight);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignBottom);
+     }
+     else
+     {
+         image_item.data()->setProperty("horizontalAlignment", Qt::AlignLeft);
+         image_item.data()->setProperty("verticalAlignment", Qt::AlignTop);
+     }
 }

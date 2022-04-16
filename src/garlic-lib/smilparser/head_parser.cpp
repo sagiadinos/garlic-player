@@ -54,7 +54,6 @@ void HeadParser::setDefaultValues()
     default_region.backgroundImage = "none";
     default_region.backgroundRepeat= "repeat";
     region_list.append(default_region);            void process();
-
 }
 
 QString HeadParser::getTitle()
@@ -234,6 +233,8 @@ void HeadParser::parseRegions(QDomNodeList childs)
             region.z_index         = element.attribute("z-index").toInt();
         if (element.hasAttribute("fit"))
             region.fit         = element.attribute("fit");
+        if (element.hasAttribute("mediaAlign"))
+            region.mediaAlign         = element.attribute("mediaAlign");
         if (element.hasAttribute("soundLevel"))
             region.soundLevel         = element.attribute("soundLevel");
         if (element.hasAttribute("backgroundColor"))

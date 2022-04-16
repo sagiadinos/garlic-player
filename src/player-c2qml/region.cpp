@@ -99,7 +99,7 @@ void TRegion::clickSlot()
 
 void TRegion::startShowMedia(BaseMedia *media)
 {
-    MyMedia = MyMediaFactory.data()->initMedia(media);
+    MyMedia = MyMediaFactory.data()->initMedia(media, &region);
     if (MyMedia != Q_NULLPTR)
     {
         MyMedia->setParentItem(rectangle_item.data());
@@ -118,7 +118,7 @@ void TRegion::stopShowMedia(BaseMedia *media)
     if (MyMedia->getSmilMedia() != media)
     {
         if (MyMedia->getSmilMedia()->objectName() != media->objectName())
-            secureStopDisplayingMedia(MyMediaFactory.data()->initMedia(media));
+            secureStopDisplayingMedia(MyMediaFactory.data()->initMedia(media, &region));
         return;
     }
 
@@ -146,6 +146,8 @@ void TRegion::resizeGeometry()
     rectangle_item.data()->setY(yr);
     rectangle_item.data()->setWidth(wr);
     rectangle_item.data()->setHeight(hr);
+    if (MyMedia != Q_NULLPTR)
+        MyMedia->changeSize(qRound(wr), qRound(hr));
 }
 
 void TRegion::registerEventStarts()

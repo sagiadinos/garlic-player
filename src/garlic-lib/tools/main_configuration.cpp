@@ -104,6 +104,32 @@ void MainConfiguration::determinePlayerName()
     }
 }
 
+QString MainConfiguration::determineApiAccessToken(QString username, QString password)
+{
+    if (QDateTime::currentDateTime() < QDateTime::fromString(getApiAccessTokenExpire(), Qt::ISODate))
+        return getApiAccessToken();
+
+    QDateTime dt(QDateTime::currentDateTime());
+    QString expire       = dt.addDays(1).toString(Qt::ISODate);
+    QString hash_source  = username + password + expire;
+    QString access_token = QString::fromUtf8(QCryptographicHash::hash(hash_source.toLocal8Bit(),QCryptographicHash::Md5).toHex());
+
+    setUserConfigByKey("api_access_token_expire", expire);
+    setUserConfigByKey("api_access_token", access_token.toUpper());
+
+    return getApiAccessToken();
+}
+
+QString MainConfiguration::getApiAccessToken()
+{
+    return getUserConfigByKey("api_access_token");
+}
+
+QString MainConfiguration::getApiAccessTokenExpire()
+{
+    return getUserConfigByKey("api_access_token_expire");
+}
+
 QString MainConfiguration::createUuid()
 {
     QString id = QUuid::createUuid().toString();
@@ -127,7 +153,7 @@ bool MainConfiguration::validateContentUrl(QString url_string)
         error = true;
     }
 
-    if (url.scheme() != "") // prevent thingsq like HtTp or httP
+    if (url.scheme() != "") // prevent thingsq like Http or httP
     {
         if (url.toString(QUrl::RemoveScheme).mid(0, 2) != "//")
         {

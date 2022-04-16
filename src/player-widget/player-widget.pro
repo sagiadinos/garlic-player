@@ -13,6 +13,7 @@ TARGET       = garlic-player
 TEMPLATE     = app
 DESTDIR      = ../bin
 INCLUDEPATH += ../ext/zlib/includes
+INCLUDEPATH += ../ext/QtWebApp/httpserver
 INCLUDEPATH += ../garlic-lib/
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
@@ -25,7 +26,12 @@ Release:DEFINES += QT_NO_DEBUG_OUTPUT
 #DEFINES += DEFAULT_CONTENT_URL=indexes.smil-control.com
 
 # which media backend should be used: support_qtav support_qtmm support_libvlc
-CONFIG   += support_qtav
+# on Raspberry Pi only libvlc supports 4k video
+SUPPORT_RPI {
+    CONFIG   += support_libvlc
+} else {
+    CONFIG   += support_qtav
+}
 
 support_qtav {
     DEFINES += SUPPORT_QTAV

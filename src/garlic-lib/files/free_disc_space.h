@@ -47,9 +47,9 @@ class FreeDiscSpace : public QObject
         qint64   calculateNeededDiscSpaceToFree(qint64 size);
 
         void setInventoryTable(DB::InventoryTable *value);
+        bool            deleteFile(QString file_path);
 
     protected:
-        bool            deleteFile(QString file_path);
         bool            deleteDirectory(QString dir_path);
         qint64          calculateDirectorySize(QString dir_path);
         void            setBytesTotal(const quint64 &value);

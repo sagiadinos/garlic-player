@@ -46,19 +46,24 @@ class LibFacade : public QObject
         explicit LibFacade(QObject *parent = nullptr);
         ~LibFacade();
         void               init(MainConfiguration *config);
-        MainConfiguration *getConfiguration() const {return MyConfiguration.data();}
+        MainConfiguration  *getConfiguration() const {return MyConfiguration.data();}
+        DB::InventoryTable *getInventoryTable() const {return MyInventoryTable.data();}
+        FreeDiscSpace      *getFreeDiscSpace() const {return MyFreeDiscSpace.data();}
         HeadParser        *getHead() const {return MyHeadParser.data();}
         ResourceMonitor   *getResourceMonitor();
         void               setConfigFromExternal(QString config_path, bool restart_smil_parsing = true);
         void               toggleLauncher(bool value){has_launcher = value;}
-
+        void               transferNotify(QString key);
         void               transferAccessKey(QChar key);
         void               reloadWithNewIndex(QString index_path);
         void               beginSmilPlaying();
         QString            requestLoaddableMediaPath(QString path);
         void               shutDownParsing();
+        void               initParserWithTemporaryFile(QString uri);
     public slots:
         void               initParser();
+        void               reboot(QString task_id);
+        void               takeScreenshot(QString file_path);
     protected:
         int               resource_monitor_timer_id;
         bool              has_launcher = false;
@@ -88,7 +93,6 @@ class LibFacade : public QObject
         void               loadIndex();
         void               changeConfig();
         void               emitInstallSoftware(QString file_path);
-        void               reboot(QString task_id);
         void               emitStartShowMedia(BaseMedia *media);
         void               emitStopShowMedia(BaseMedia *media);
         void               processBodyParsing();
@@ -99,6 +103,7 @@ class LibFacade : public QObject
         void               stopShowMedia(BaseMedia *media);
         void               readyForPlaying();
         void               newConfig();
+        void               screenshot(QString file_path);
         void               rebootOS(QString task_id);
         void               installSoftware(QString file_path);
 };

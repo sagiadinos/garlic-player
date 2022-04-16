@@ -19,9 +19,10 @@ Web::~Web()
     web_item.reset();
 }
 
-void Web::init(BaseMedia *media)
+void Web::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
+    region    = reg;
     web_item.data()->setVisible(true);
     QString uri = sanitizeUri(media->getLoadablePath()) + media->getParamsAsQuery();
     web_item.data()->setProperty("url", uri);
@@ -36,6 +37,11 @@ void Web::deinit()
 
     web_item.data()->setProperty("url", "");
     web_item.data()->setVisible(false);
+}
+
+void Web::changeSize(int w, int h)
+{
+    Q_UNUSED(w);Q_UNUSED(h)
 }
 
 void Web::setParentItem(QQuickItem *parent)

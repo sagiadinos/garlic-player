@@ -61,11 +61,11 @@ void Reporting::CreateSystemReport::createModelInfo()
 {
     QDomElement model_info = document.createElement("modelInfo");
     configuration.appendChild(model_info);
-    model_info.appendChild(createPropTag("PCB", ""));
+    model_info.appendChild(createPropTag("PCB", MyConfiguration->getAppName()));
     model_info.appendChild(createPropTag("PCBRevision", ""));
     model_info.appendChild(createPropTag("operatingSystem", MyConfiguration->getOS()));
-    model_info.appendChild(createPropTag("manufacturer", ""));
-    model_info.appendChild(createPropTag("manufacturerURL", ""));
+    model_info.appendChild(createPropTag("manufacturer", "Sagiadinos"));
+    model_info.appendChild(createPropTag("manufacturerURL", "https://garlic-player.com"));
     model_info.appendChild(createPropTag("modelDescription", ""));
     model_info.appendChild(createPropTag("modelName", ""));
     model_info.appendChild(createPropTag("modelURL", ""));

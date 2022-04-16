@@ -10,10 +10,11 @@ PlayerBrush::~PlayerBrush()
 
 }
 
-void PlayerBrush::init(BaseMedia *media)
+void PlayerBrush::init(BaseMedia *media, Region *reg)
 {
     SmilMedia = media; // other wise it cannote stopped in  TRegion::stopShowMedia
-    MyBrush = qobject_cast<TBrush *> (media);
+    region    = reg;
+    MyBrush   = qobject_cast<TBrush *> (media);
     BrushWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     BrushWidget.data()->setAutoFillBackground(true);
     BrushWidget.data()->setStyleSheet("background-color:" + MyBrush->getColor());

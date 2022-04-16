@@ -37,7 +37,7 @@ bool Trigger::BaseTrigger::isActive() const
 QString Trigger::BaseTrigger::handlePossibleClockValue(QString value)
 {
     if (value.contains("+") || value.contains("-"))
-          return splitClockValue(value);
+       return splitClockValue(value);
     else
         return value;
 }
@@ -57,6 +57,7 @@ QString Trigger::BaseTrigger::splitClockValue(QString value)
         operant = '-';
         sl = value.split("-");
     }
+
     MyClockValue->parse(sl.at(1));
 
     return sl.at(0);

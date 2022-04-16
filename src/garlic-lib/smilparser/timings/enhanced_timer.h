@@ -25,6 +25,7 @@
 #include "trigger/syncbase.h"
 #include "trigger/event.h"
 #include "trigger/accesskey.h"
+#include "trigger/notify.h"
 #include "tools/logger.h"
 namespace Timings
 {
@@ -42,7 +43,8 @@ namespace Timings
                 TYPE_ACCESSKEY      = 5,
                 TYPE_MEDIAMARKER    = 6,
                 TYPE_WALLCLOCK      = 7,
-                TYPE_INDEFINITE     = 8
+                TYPE_INDEFINITE     = 8,
+                TYPE_NOTIFY         = 9
             };
 
 
@@ -67,6 +69,7 @@ namespace Timings
                 SyncBase   *MySyncBase   = Q_NULLPTR;
                 Event      *MyEvent      = Q_NULLPTR;
                 AccessKey  *MyAccessKey  = Q_NULLPTR;
+                Notify     *MyNotify     = Q_NULLPTR;
                 QString     id           = "";
                 QString     event        = "";
                 int         type         = TYPE_NOT_SET;
@@ -82,7 +85,6 @@ namespace Timings
             qint64      negative_trigger = 0;
             qint64      positive_trigger = 0;
             bool        parseOneValue(QString value);
-            QString     determineSymbol(QString value);
             void        activateOffset(TriggerStruct *ts);
             void        activateWallClock(TriggerStruct *ts);
             void        calculateNegativeTrigger(qint64 negative_time);

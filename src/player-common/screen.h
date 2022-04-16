@@ -15,6 +15,7 @@ public:
     explicit TScreen(QObject *parent = Q_NULLPTR);
     QPoint   getWholeStartPoint();
     QSize    getWholeSize();
+    void     takeScreenshot(QString file_path);
     void     selectCurrentScreen(int screen_id);
     QPoint   getStartPointFromCurrentScreen();
     QSize    getSizeFromCurrentScreen();

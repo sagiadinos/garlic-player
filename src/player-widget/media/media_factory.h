@@ -13,7 +13,7 @@ class MediaFactory : public QObject
         Q_OBJECT
     public:
         explicit MediaFactory(QObject *parent = nullptr);
-        PlayerBaseMedia *initMedia(BaseMedia *media);
+        PlayerBaseMedia *initMedia(BaseMedia *media, Region *reg);
 
     signals:
 

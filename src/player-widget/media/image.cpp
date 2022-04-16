@@ -26,9 +26,10 @@ PlayerImage::~PlayerImage()
 {
 }
 
-void PlayerImage::init(BaseMedia *media)
+void PlayerImage::init(BaseMedia *media, Region *reg)
 {
-    SmilMedia = media;
+    SmilMedia    = media;
+    region       = reg;
     QString path = SmilMedia->getLoadablePath();
     if (isFileExists(path))
     {
@@ -41,7 +42,7 @@ void PlayerImage::init(BaseMedia *media)
             return;
         }
 
-        if (loaded_image.loadFromData(CurrentFile.readAll()))
+        if (!loaded_image.loadFromData(CurrentFile.readAll()))
         {
             SmilMedia->finishedNotFound();
             return;
@@ -88,6 +89,8 @@ void PlayerImage::changeSize(int w, int h)
         ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
     else
         ImageWidget.data()->setPixmap(loaded_image);
+
+    setAlignment();
 }
 
 QWidget *PlayerImage::getView()
@@ -96,4 +99,32 @@ QWidget *PlayerImage::getView()
         return Q_NULLPTR;
 
     return ImageWidget.data();
+}
+
+void PlayerImage::setAlignment()
+{
+    QString media_align = SmilMedia->getMediaAlign().toLower();
+    if (media_align.isEmpty())
+        media_align = region->mediaAlign;
+
+     if(media_align == "center")
+         ImageWidget.data()->setAlignment(Qt::AlignCenter | Qt::AlignCenter);
+     else if(media_align == "topleft")
+         ImageWidget.data()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+     else if(media_align == "topmid")
+         ImageWidget.data()->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+     else if(media_align == "topright")
+         ImageWidget.data()->setAlignment(Qt::AlignTop | Qt::AlignRight);
+     else if(media_align == "midleft")
+         ImageWidget.data()->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+     else if(media_align == "midright")
+         ImageWidget.data()->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+     else if(media_align == "bottomleft")
+         ImageWidget.data()->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
+     else if(media_align == "bottommid")
+         ImageWidget.data()->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+     else if(media_align == "bottomright")
+         ImageWidget.data()->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+     else
+         ImageWidget.data()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 }

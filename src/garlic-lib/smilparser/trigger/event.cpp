@@ -8,20 +8,25 @@ Event::Event(QObject *parent) : Trigger::BaseTrigger(parent)
 bool Event::parse(QString sync_value)
 {
     has_extern_trigger = false;
-    QStringList sl = handlePossibleClockValue(sync_value).split(".");
+
+    QStringList sl = sync_value.split(".");
+
     if (sl.length() < 2)
         return false;
 
     source_id = sl.at(0);
-    bool ret = true;;
+
+    QString test_token = handlePossibleClockValue(sl.at(1));
+
+    bool ret = true;
     // make sure that there are no hacking jokes
-    if (sl.at(1) == "beginEvent")
+    if (test_token == "beginEvent")
         nm_token = "beginEvent";
-    else if (sl.at(1) == "endEvent")
+    else if (test_token == "endEvent")
         nm_token = "endEvent";
-    else if (sl.at(1) == "activateEvent")
+    else if (test_token == "activateEvent")
         nm_token = "activateEvent";
-    else if (sl.at(1) == "click")
+    else if (test_token == "click")
         nm_token = "click";
     else
         ret = false;

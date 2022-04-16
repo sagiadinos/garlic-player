@@ -25,7 +25,7 @@ bool DB::InventoryTable::init(QString path)
         return openDbFile();
 }
 
-void DB::InventoryTable::replace(DB::InventoryDataset dataset)
+bool DB::InventoryTable::replace(DB::InventoryDataset dataset)
 {
     QSqlQuery query(db);
     QString   sql = "REPLACE INTO inventory (resource_uri, cache_name, content_type, content_length, last_update, expires, state ) \
@@ -38,8 +38,13 @@ void DB::InventoryTable::replace(DB::InventoryDataset dataset)
                    '" + dataset.expires.toString() + "', \
                    " + QString::number(dataset.state) + " \
                 )";
-   if (!query.exec(sql))
-       qCritical(Database) << "replace/insert failed" << sql << query.lastError().text();
+    if (!query.exec(sql))
+    {
+        qCritical(Database) << "replace/insert failed" << sql << query.lastError().text();
+        return false;
+    }
+    return true;
+
 }
 
 DB::InventoryDataset DB::InventoryTable::getByResourceURI(QString resource_uri)
@@ -74,7 +79,18 @@ void DB::InventoryTable::deleteByCacheName(QString cache_name)
         qCritical(Database) << "delete failed" << query.lastError().text();
 }
 
-QList<DB::InventoryDataset> DB::InventoryTable::getAll()
+DB::InventoryDataset DB::InventoryTable::findByCacheBaseName(QString base_name)
+{
+    QSqlQuery query(db);
+    InventoryDataset result;
+    query.exec("SELECT * FROM inventory WHERE cache_name LIKE '" + base_name +".%' LIMIT 1");
+    if (!query.first())
+        return result;
+
+    return collectResult(&query);
+}
+
+QList<DB::InventoryDataset> DB::InventoryTable::findAll()
 {
     QSqlQuery query(db);
     QList<InventoryDataset> result;
@@ -88,8 +104,25 @@ QList<DB::InventoryDataset> DB::InventoryTable::getAll()
     while (query.next());
 
     return result;
+}
+
+QList<DB::InventoryDataset> DB::InventoryTable::findPaginated(int max_results, int begin)
+{
+    QSqlQuery query(db);
+    QList<InventoryDataset> result;
+    query.exec("SELECT * FROM inventory ORDER BY UPPER(last_update) DESC LIMIT " + QString::number(begin) + ", " +  QString::number(max_results));
+    if (!query.first())
+        return result;
+    do
+    {
+        result.append(collectResult(&query));
+    }
+    while (query.next());
+
+    return result;
 
 }
+
 
 void DB::InventoryTable::setDbPath(QString path)
 {

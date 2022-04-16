@@ -54,7 +54,7 @@ void TWeb::prepareDurationTimers()
 void TWeb::setAttributes()
 {
     parseBaseMediaAttributes();
-    src        = getAttributeFromRootElement("src", "");
+    src = getAttributeFromRootElement("src", "");
 }
 
 void TWeb::prepareDurationTimersForRepeat()

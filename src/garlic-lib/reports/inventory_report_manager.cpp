@@ -11,7 +11,7 @@ Reporting::InventoryReportManager::InventoryReportManager(MainConfiguration *con
 
 void Reporting::InventoryReportManager::handleSend()
 {
-    MyCreateInventoryReport.data()->process(MyInventoryTable->getAll());
+    MyCreateInventoryReport.data()->process(MyInventoryTable->findAll());
     MyWebDav.data()->processPutData(action_url, MyCreateInventoryReport.data()->asXMLString().toUtf8());
 }
 

@@ -25,6 +25,7 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     MyLibFacade            = lib_facade;
     connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia*)), this, SLOT(startShowMedia(BaseMedia*)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia*)), this, SLOT(stopShowMedia(BaseMedia*)));
+    connect(MyLibFacade, SIGNAL(screenshot(QString)), this, SLOT(takeScreenshot(QString)));
     connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
@@ -38,7 +39,6 @@ MainWindow::~MainWindow()
     delete MyRegionsList;
     delete centralWidget;
 }
-
 
 void MainWindow::keyPressEvent(QKeyEvent *ke)
 {
@@ -201,6 +201,11 @@ void MainWindow::prepareParsing()
     setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
     MyRegionsList->create(MyLibFacade, QSize(width(), height()));
     MyLibFacade->beginSmilPlaying(); // begin playing not before Layout ist build to prevent crash in MainWindow::startShowMedia
+}
+
+void MainWindow::takeScreenshot(QString file_path)
+{
+    MyScreen->takeScreenshot(file_path);
 }
 
 void MainWindow::startShowMedia(BaseMedia *media)

@@ -2,6 +2,7 @@
 #define MEDIAVIEWWRAPPER_H
 
 #include <QWidget>
+#include <QLabel>
 
 #if defined SUPPORT_QTAV
     #include "mm_libs/qtav_widget.h"
@@ -24,7 +25,7 @@ public:
 #else
     QVideoWidget         *getVideoRenderer(){return VideoWidget.getVideoRenderer();}
 #endif
-    QWidget              *getVideoWidget();
+    QWidget               *getVideoWidget();
     void                  ignoreAspectRatio();
     void                  keepAspectRatio();
     void                  keepAspectRatioByExpanding();
