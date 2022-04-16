@@ -21,8 +21,8 @@ Release:DEFINES += QT_NO_DEBUG_OUTPUT
 # protocol must be seperate from url cause the double slash // cut string and no escape sequence helped
 # & and must be escaped => \&
 #DEFINES += DEFAULT_CONTENT_URL_NAME=SmilControl
-#DEFINES += DEFAULT_CONTENT_URL_PROTOCOL=http
-#DEFINES += DEFAULT_CONTENT_URL=indexes.smil-control.com/index.php?site=get_index\&owner_id=12
+#DEFINES += DEFAULT_CONTENT_URL_PROTOCOL=https
+#DEFINES += DEFAULT_CONTENT_URL=indexes.smil-control.com
 
 # which media backend should be used: support_qtav support_qtmm support_libvlc
 CONFIG   += support_qtav
