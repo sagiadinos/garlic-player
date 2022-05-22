@@ -12,6 +12,8 @@ Based on [SMIL standard](https://www.w3.org/TR/SMIL3/) it works together with ev
 
 You are able to play local and remote (via http) SMIL files with the features described below.
 
+[Download compiled binaries](https://garlic-player.com/garlic-player/)
+
 ## Libraries used
  - [Qt5](https://www.qt.io) >= 5.10 (5.12.x LTS recommended)
  - [QtAV](http://www.qtav.org) >= 1.13.0 as alternative to QtMultimedia
