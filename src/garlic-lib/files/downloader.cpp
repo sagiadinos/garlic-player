@@ -233,7 +233,7 @@ bool Downloader::validContentType(QString content_type)
 
 bool Downloader::validFileExtension()
 {
-    if (local_file_info.suffix() != "wgt")
+    if (local_file_info.suffix() != "wgt" && local_file_info.suffix() != "smil")
     {
         return false;
     }
