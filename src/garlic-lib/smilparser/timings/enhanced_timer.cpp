@@ -538,7 +538,8 @@ void Timings::EnhancedTimer::determineNextTrigger()
         {
             ts->MyWallClock->calculateNextTrigger(QDateTime::currentDateTime());
             qint64 next_trigger     = ts->MyWallClock->getNextTimerTrigger();
-            ts->MyTimer->start(next_trigger);
+            if (next_trigger > 0)
+                ts->MyTimer->start(next_trigger);
         }
     }
 }

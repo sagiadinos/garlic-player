@@ -20,7 +20,7 @@ export SHADOW_BUILD_DIR=build-$QT_VERSION-$CONFIG_DEBUG_RELEASE
 
 # check if called from jenkins to set correct paths
 if [ -z "$BUILD_NUMBER" ]; then
-	export GARLIC_DIR=/home/niko/garlic-player/
+	export GARLIC_DIR=/home/niko/github/garlic-player/
 	source $SCRIPTDIR/writeVersionFromGithub.sh 
 else
 	export GARLIC_DIR=$PWD
