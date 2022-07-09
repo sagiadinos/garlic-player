@@ -127,7 +127,7 @@ bool TExcl::interruptByEndSync(QString id)
     {
         status = _stopped;
         stopAllActivatedChilds(false);
-        removeQueuedElements();
+        MyPriorityQueue.removeQueuedElements();
         removeAllActiveChilds();
         finishedSimpleDuration();
         return true;
@@ -160,7 +160,7 @@ void TExcl::repeat()
 
 void TExcl::stop(bool is_forced)
 {
-    removeQueuedElements();
+    MyPriorityQueue.removeQueuedElements();
     handleTriggerStops(is_forced);
 }
 
@@ -250,13 +250,13 @@ bool TExcl::determineContinue(BaseTimings *new_element)
     }
     else if (attribute_value == "pause")  // pause current active element
     {
-        priorityPause(NewPriority);
+        priorityPause();
         setCurrentActivedElement(new_element);
         ret = true;
     }
     else if (attribute_value == "defer")  // delay new element and enqueue it
     {
-        priorityDefer(NewPriority, new_element);
+        priorityDefer(new_element);
         ret = false;
     }
     else if (attribute_value == "never")  // ignore new element when there is another element played
@@ -321,7 +321,32 @@ BaseTimings *TExcl::getCurrentActiveElement()
 
 bool TExcl::areQueuesToProceed()
 {
+    // get highest priorizited element from queue
+
+    if (MyPriorityQueue.countQueue() == 0)
+        return false;
+
+    secureRemoveActivated(current_activated_element);
+    current_activated_element = MyPriorityQueue.getHighestPriorityFromQueue();
+    current_activated_element->resumeAllTimers();
+
+    // sometimes after resumeAll Timer we discover that a element is ended
+    if (current_activated_element == Q_NULLPTR)
+        return true;
+
+    if (current_activated_element->getStatus() == _paused)
+    {
+        emitResumeElementSignal(current_activated_element);
+    }
+    else // if defered
+    {
+        current_activated_element->prepareDurationTimers();
+    }
+    return true; // make sure do not move, until queue is not empty
+
+
     // if elements are in queues starts resume or starts them
+ /*
     QMap<int, TPriorityClass *>::iterator      it;
     TPriorityClass                             *MyPriorityClass;
     for (it =  PriorityClassList.begin(); it != PriorityClassList.end(); it++ )
@@ -347,8 +372,8 @@ bool TExcl::areQueuesToProceed()
             return true; // make sure do not move, until queue is not empty
         }
     }
-
     return false;
+*/
 }
 
 void TExcl::secureRemoveActivated(BaseTimings *element)
@@ -358,7 +383,6 @@ void TExcl::secureRemoveActivated(BaseTimings *element)
         removeActiveChild(element);
     }
 }
-
 
 TPriorityClass *TExcl::findPriorityClass(QDomElement dom_element)
 {
@@ -372,14 +396,6 @@ TPriorityClass *TExcl::findPriorityClass(QDomElement dom_element)
             break;
     }
     return MyPriorityClass;
-}
-
-void TExcl::removeQueuedElements()
-{
-    for (TPriorityClass *prio : qAsConst(PriorityClassList))
-    {
-       prio->removeQueuedElements();
-    }
 }
 
 void TExcl::parsePriorityClass(QDomElement element)
@@ -401,19 +417,23 @@ void TExcl::priorityStop()
        emitStopElementSignal(current_activated_element, true); // set true not to jump to next
 }
 
-void TExcl::priorityPause(TPriorityClass  *NewPriority)
+void TExcl::priorityPause()
 {
     // pause old element and queue it
     // emit because there can be a displayed media on screen
     emitPauseElementSignal(current_activated_element);
-    NewPriority->insertQueue(current_activated_element);
+    TPriorityClass  *Priority = findPriorityClass(current_activated_element->getRootElement());
+    int prio_id               = PriorityClassList.key(Priority);
+    MyPriorityQueue.insertQueue(prio_id, current_activated_element);
 }
 
-void TExcl::priorityDefer(TPriorityClass  *NewPriority, BaseTimings *new_element)
+void TExcl::priorityDefer(BaseTimings *new_element)
 {
     new_element->pause();
     new_element->setDefered();
-    NewPriority->insertQueue(new_element);
+    TPriorityClass  *Priority = findPriorityClass(new_element->getRootElement());
+    int prio_id               = PriorityClassList.key(Priority);
+    MyPriorityQueue.insertQueue(prio_id, new_element);
 }
 
 void TExcl::priorityNever(BaseTimings *new_element)
@@ -423,4 +443,5 @@ void TExcl::priorityNever(BaseTimings *new_element)
     // do not stop or remove element, because it can be played later
     secureRemoveActivated(new_element);
 }
+
 

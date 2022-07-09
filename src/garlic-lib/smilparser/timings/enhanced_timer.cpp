@@ -538,7 +538,7 @@ void Timings::EnhancedTimer::determineNextTrigger()
         {
             ts->MyWallClock->calculateNextTrigger(QDateTime::currentDateTime());
             qint64 next_trigger     = ts->MyWallClock->getNextTimerTrigger();
-            if (next_trigger > 0)
+            if (next_trigger > 0) // not sure if this has sie effects, but it prevents an endless loop when next_trigger ==  0
                 ts->MyTimer->start(next_trigger);
         }
     }

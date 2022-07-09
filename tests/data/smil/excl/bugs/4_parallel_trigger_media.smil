@@ -9,14 +9,22 @@
 	</head>
 	<body>
 	<!--
-        Trigger should played and ended after 2s.
+        Trigger should played every 10s
+
+        First time image.jpg for 4s
+        Second time image.jpg for 2s and then video for 2s
     -->
+
 		<excl repeatCount="indefinite">
-            <priorityClass>
-                <img xml:id="m7488" begin="wallclock(R/2022-07-07T22:00:00/PT30S);wallclock(2022-07-08T00:45:15);wallclock(2022-07-08T00:45:20)" src="../../../images/image.jpg" dur="2s" fit="meet" />
+			<priorityClass id="first">
+                <img id="video_trigger" begin="wallclock(R/2022-07-08T23:24:00/PT10S)" src="../../../images/video.jpg" dur="2s" fit="meet" />
 			</priorityClass>
 
-			<priorityClass higher="pause">
+			<priorityClass id="second" higher="pause">
+                <brush id="image_trigger" begin="wallclock(R/2022-07-08T23:24:00/PT10S)" color="blue" dur="4s" />
+			</priorityClass>
+
+			<priorityClass id="playlist">
 				<seq repeatCount="indefinite" begin="0">
 					<img xml:id="imgA0001" src="../../../images/0001.jpg" dur="1s" fit="meet" />
                     <img xml:id="imgA0002" src="../../../images/0002.jpg" dur="1s" fit="meet" />

@@ -22,6 +22,7 @@
 #include <QMap>
 #include <QList>
 #include "priorityclass.h"
+#include "excl/priority_queue.h"
 
 class TExcl : public TContainer
 {
@@ -45,25 +46,26 @@ class TExcl : public TContainer
         void    prepareDurationTimers();
 
     private:
-        QString endsync = "last";
-
-        QMap<int, TPriorityClass *>   PriorityClassList;
-        TPriorityClass               *findPriorityClass(QDomElement dom_element);
-        BaseTimings                  *current_activated_element = Q_NULLPTR;
+        QString                        endsync = "last";
+        PriorityQueue                  MyPriorityQueue;
+        QMap<int, TPriorityClass *>    PriorityClassList;
+        TPriorityClass                *findPriorityClass(QDomElement dom_element);
+        BaseTimings                   *current_activated_element = Q_NULLPTR;
 
         void         setCurrentActivedElement(BaseTimings *element);
         BaseTimings *getCurrentActiveElement();
 
         bool         areQueuesToProceed();
         void         secureRemoveActivated(BaseTimings *element);
-        void         removeQueuedElements();
         void         traverseChilds();
         void         traversePriorityClasses(QList<QDomElement> priority_class_childs);
         void         parsePriorityClass(QDomElement element);
         void         priorityStop();
-        void         priorityPause(TPriorityClass *NewPriority);
+        void         priorityPause();
         void         priorityNever(BaseTimings *new_element);
-        void         priorityDefer(TPriorityClass *NewPriority, BaseTimings *new_element);
+        void         priorityDefer(BaseTimings *new_element);
+
+
 };
 
 #endif // TEXCL_H

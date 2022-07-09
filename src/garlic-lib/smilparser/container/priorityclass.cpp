@@ -58,35 +58,6 @@ bool TPriorityClass::findElement(QDomElement dom_element)
     return false;
 }
 
-void TPriorityClass::insertQueue(BaseTimings *element)
-{
-    queue_stack.push(element);
-}
-
-void TPriorityClass::removeQueuedElements()
-{
-    for (BaseTimings *bt : qAsConst(queue_stack))
-    {
-       bt->stopAllTimers();
-    }
-}
-
-int TPriorityClass::countQueue()
-{
-    if (queue_stack.size() > 0)
-        return queue_stack.size();
-    return 0;
-}
-
-BaseTimings *TPriorityClass::getFromQueue()
-{
-    if (queue_stack.size() > 0)
-        return queue_stack.pop();
-
-    return Q_NULLPTR;
-}
-
-
 QList<QDomElement> TPriorityClass::getChildList()
 {
     return childs_list;

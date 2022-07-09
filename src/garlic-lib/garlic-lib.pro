@@ -71,6 +71,7 @@ SOURCES += \
     smilparser/body_parser.cpp \
     smilparser/conditional/adapi_wrapper.cpp \
     smilparser/conditional/expr.cpp \
+    smilparser/container/excl/priority_queue.cpp \
     smilparser/container/tools/childs.cpp \
     smilparser/current_playing_media.cpp \
     smilparser/element_factory.cpp \
@@ -165,6 +166,7 @@ HEADERS += \
     smilparser/body_parser.h \
     smilparser/conditional/adapi_wrapper.h \
     smilparser/conditional/expr.h \
+    smilparser/container/excl/priority_queue.h \
     smilparser/container/tools/childs.h \
     smilparser/current_playing_media.h \
     smilparser/element_factory.h \

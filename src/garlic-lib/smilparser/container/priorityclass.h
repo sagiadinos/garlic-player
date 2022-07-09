@@ -40,15 +40,10 @@ public:
     QString                       getHigher();
     QString                       getLower();
     bool                          findElement(QDomElement dom_element);
-    void                          insertQueue(BaseTimings *element);
-    void                          removeQueuedElements();
-    int                           countQueue();
-    BaseTimings                  *getFromQueue();
     QList<QDomElement>            getChildList();
 protected:
     QList<QDomElement>            childs_list;
     QList<QDomElement>::iterator  iterator;
-    QStack<BaseTimings *>         queue_stack;
 private:
     QString                       peers  = "stop";   // how elements inside a group interrupts each other stop|pause|defer|never
     QString                       higher = "pause";  // how a group with higher priority interrupts this group pause|stop
