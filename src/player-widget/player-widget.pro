@@ -30,7 +30,7 @@ Release:DEFINES += QT_NO_DEBUG_OUTPUT
 SUPPORT_RPI {
     CONFIG   += support_libvlc
 } else {
-    CONFIG   += support_libvlc
+    CONFIG   += support_qtav
 }
 
 support_qtav {
