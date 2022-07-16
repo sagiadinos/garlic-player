@@ -13,7 +13,7 @@
     -->
 		<excl repeatCount="indefinite">
             <priorityClass>
-                <img xml:id="m7488" begin="wallclock(R/2022-07-07T22:00:00/PT30S);wallclock(2022-07-08T00:45:15);wallclock(2022-07-08T00:45:20)" src="../../../images/image.jpg" dur="2s" fit="meet" />
+                <img xml:id="m7488" begin="wallclock(R/2022-07-07T22:00:00/PT30S);wallclock(2022-07-08T00:45:15)" src="../../../images/image.jpg" dur="2s" fit="meet" />
 			</priorityClass>
 
 			<priorityClass higher="pause">

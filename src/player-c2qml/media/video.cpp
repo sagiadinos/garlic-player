@@ -4,11 +4,7 @@ Video::Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : P
 {
     setRegionId(r_id);
 
-#ifdef SUPPORT_QTAV
-    QString module = "import QtAV 1.7\n";
-#else
     QString module = "import QtMultimedia 5.12\n";
-#endif
     qml = "import QtQuick 2.12\n " +
                     module +
                     "Video {                                 \

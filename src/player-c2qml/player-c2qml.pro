@@ -13,13 +13,6 @@ DEFINES     += QT_DEPRECATED_WARNINGS
 
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
-#comment out the next line when you want to use QTMultimedia instead of QtAV
-#CONFIG  += support_qtav
-support_qtav {
-    DEFINES += SUPPORT_QTAV
-    QT      += av
-}
-
 macx {
     QT += webview
     #libgarlic is static compiled in osx

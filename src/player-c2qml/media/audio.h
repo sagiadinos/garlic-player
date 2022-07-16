@@ -16,8 +16,11 @@ class Audio : public PlayerBaseMedia
         void                        changeSize(int w, int h);
     protected:
         QScopedPointer<QQuickItem>  audio_item;
+        qreal                       determineVolume(QString percent);
+        QString                     qml;
+        QQmlComponent              *media_component;
     protected slots:
-        void                        finished();
+        void                        doStopped();
 };
 
 #endif // AUDIO_H

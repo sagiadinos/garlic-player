@@ -22,15 +22,15 @@ Release:DEFINES += QT_NO_DEBUG_OUTPUT
 # protocol must be seperate from url cause the double slash // cut string and no escape sequence helped
 # & and must be escaped => \&
 #DEFINES += DEFAULT_CONTENT_URL_NAME=SmilControl
-#DEFINES += DEFAULT_CONTENT_URL_PROTOCOL=https
-#DEFINES += DEFAULT_CONTENT_URL=indexes.smil-control.com
+#DEFINES += DEFAULT_CONTENT_URL_PROTOCOL=http
+#DEFINES += DEFAULT_CONTENT_URL=indexes.smil-control.com/index.php?site=get_index\&owner_id=12
 
 # which media backend should be used: support_qtav support_qtmm support_libvlc
 # on Raspberry Pi only libvlc supports 4k video
 SUPPORT_RPI {
     CONFIG   += support_libvlc
 } else {
-    CONFIG   += support_qtav
+    CONFIG   += support_libvlc
 }
 
 support_qtav {
