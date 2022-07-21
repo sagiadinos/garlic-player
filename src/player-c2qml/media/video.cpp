@@ -4,52 +4,73 @@ Video::Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : P
 {
     setRegionId(r_id);
 
-    QString module = "import QtMultimedia 5.12\n";
-    qml = "import QtQuick 2.12\n " +
-                    module +
-                    "Video {                                 \
+    // create signal as shitty QML has no signal for finished (EndOfFile)
+
+    qml = "import QtQuick 2.12\n                             \
+           import QtMultimedia 5.12\n                        \
+                    Video {                                  \
                         id: "+getRegionId()+"_video;         \
                         orientation: 0;                      \
                         autoLoad: true;                      \
-                        autoPlay: true;                      \
+                        autoPlay: false;                      \
                         anchors.fill: parent;                \
-                    }\n";
+                        signal qmlEndOfFile()\n \
+                        onStopped: { if (status == MediaPlayer.EndOfMedia) {qmlEndOfFile()}\n} \
+                     }\n";
+
 
     media_component = mc;
     video_item.reset(createMediaItem(media_component, qml));
-    connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
+    connect(video_item.data(), SIGNAL(qmlEndOfFile()), this, SLOT(doStopped()));
 }
 
 Video::~Video()
 {
-    video_item.reset();
 }
 
-void Video::init(BaseMedia *media, Region *reg)
+void Video::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
     if (load(video_item.data()))
     {
-        // cannot be connected once in constructor due to again Android/QMultimedia problems
-        // see @ method finished
-        // connect(video_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
-
         // to set Volume we need to cast
         TVideo *MyVideo = qobject_cast<TVideo *> (media);
         float vol = determineVolume(MyVideo->getSoundLevel());
         video_item.data()->setProperty("volume", vol);
-        if (SmilMedia->getLogContentId() != "")
-            setStartTime();
     }
 }
 
-void Video::deinit()
+void Video::play()
+{
+     // todo add support for pauseDisplay
+    video_item.data()->setVisible(true);
+    QMetaObject::invokeMethod(video_item.data(), "play");
+    if (SmilMedia->getLogContentId() != "")
+        setStartTime();
+}
+
+
+void Video::stop()
 {
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
 
-    video_item.data()->setProperty("source", "");
+    QMetaObject::invokeMethod(video_item.data(), "stop");
+   video_item.data()->setVisible(false);
+}
+
+void Video::resume()
+{
+    video_item.data()->setVisible(true);
+    QMetaObject::invokeMethod(video_item.data(), "play");
+}
+
+void Video::pause()
+{
+    QMetaObject::invokeMethod(video_item.data(), "pause");
+    // todo add support for pauseDisplay
+    video_item.data()->setVisible(true);
 }
 
 void Video::setParentItem(QQuickItem *parent)
@@ -60,7 +81,7 @@ void Video::setParentItem(QQuickItem *parent)
 void Video::changeSize(int w, int h)
 {
     QString smil_fit = SmilMedia->getFit().toLower();
-    int fill_mode = 6; // for do nothing
+    int fill_mode = NONE; // for do nothing
     if (smil_fit == "fill")
         fill_mode = Qt::IgnoreAspectRatio;
     else if (smil_fit == "meet")
@@ -89,11 +110,6 @@ qreal Video::determineVolume(QString percent)
 
 void Video::doStopped()
 {
-    // deprecated? 17.01.2021
-    // must be disconected otherwise QMultimedia/Android will stop immediately when new video will be load
-    // so only first Video will shown
-    // disconnect(video_item.data(), SIGNAL(qmlSignal(QString)), this, SLOT(doStopped(QString)));
-
     if (video_item.data()->property("error").toInt() != 0)
     {
         QStringList list;
@@ -103,8 +119,5 @@ void Video::doStopped()
         qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_PLAYBACK_ERROR", list);
     }
 
-    if (video_item.data()->property("status").toString() == "7") // 7 means EndOfFile Shitty QML has no signal for finish
-    {
-        SmilMedia->finishIntrinsicDuration();
-    }
+    SmilMedia->finishIntrinsicDuration();
 }

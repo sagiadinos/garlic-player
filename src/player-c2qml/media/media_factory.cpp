@@ -1,58 +1,57 @@
 #include "media_factory.h"
 
-MediaFactory::MediaFactory(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : QObject(parent)
+MediaFactory::MediaFactory(QQmlComponent *m, QString id, Launcher *l, QObject *parent) : QObject(parent)
 {
-    MyImage.reset(new Image(mc, r_id, lc, this));
-    QQmlEngine::setObjectOwnership(MyImage.data(), QQmlEngine::CppOwnership);
-    MyBrush.reset(new Brush(mc, r_id, lc, this));
-    QQmlEngine::setObjectOwnership(MyBrush.data(), QQmlEngine::CppOwnership);
-    MyVideo.reset(new Video(mc, r_id, lc, this));
-    QQmlEngine::setObjectOwnership(MyVideo.data(), QQmlEngine::CppOwnership);
-    MyAudio.reset(new Audio(mc, r_id, lc, this));
-    QQmlEngine::setObjectOwnership(MyAudio.data(), QQmlEngine::CppOwnership);
-    MyWeb.reset(new Web(mc, r_id, lc, this));
-    QQmlEngine::setObjectOwnership(MyWeb.data(), QQmlEngine::CppOwnership);
-    MyRefCommand.reset(new RefCommand(mc, r_id, lc, this));
-    QQmlEngine::setObjectOwnership(MyRefCommand.data(), QQmlEngine::CppOwnership);
+    media_component   = m;
+    region_name = id;
+    MyLauncher   = l;
+
 }
 
-PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media, Region *reg)
+PlayerBaseMedia *MediaFactory::create(BaseMedia *media)
 {
     QString type   = media->objectName();
     if (type == "TImage")
     {
-        MyImage.data()->init(media, reg);
-        return MyImage.data();
+        MyImage = new Image(media_component, region_name, MyLauncher, this);
+        QQmlEngine::setObjectOwnership(MyImage, QQmlEngine::CppOwnership);
+        return MyImage;
     }
     else if (type == "TBrush")
     {
-        MyBrush.data()->init(media, reg);
-        return MyBrush.data();
+        MyBrush = new Brush(media_component, region_name, MyLauncher, this);
+        QQmlEngine::setObjectOwnership(MyBrush, QQmlEngine::CppOwnership);
+        return MyBrush;
     }
     else if (type == "TVideo")
     {
-        MyVideo.data()->init(media, reg);
-        return MyVideo.data();
+        MyVideo = new Video(media_component, region_name, MyLauncher, this);
+        QQmlEngine::setObjectOwnership(MyVideo, QQmlEngine::CppOwnership);
+        return MyVideo;
     }
     else if (type == "TAudio")
     {
-        MyAudio.data()->init(media, reg);
-        return MyAudio.data();
+        MyAudio = new Audio(media_component, region_name, MyLauncher, this);
+        QQmlEngine::setObjectOwnership(MyAudio, QQmlEngine::CppOwnership);
+        return MyAudio;
     }
     else if (type == "TWeb")
     {
-        MyWeb.data()->init(media, reg);
-        return MyWeb.data();
+        MyWeb = new Web(media_component, region_name, MyLauncher, this);
+        QQmlEngine::setObjectOwnership(MyWeb, QQmlEngine::CppOwnership);
+        return MyWeb;
     }
     else if (type == "TWidget")
     {
-        MyWeb.data()->init(media, reg);
-        return MyWeb.data();
+        MyWeb = new Web(media_component, region_name, MyLauncher, this);
+        QQmlEngine::setObjectOwnership(MyWeb, QQmlEngine::CppOwnership);
+        return MyWeb;
     }
     else if (type == "TRefCommand")
     {
-        MyRefCommand.data()->init(media, reg);
-        return MyRefCommand.data();
+        MyRefCommand = new RefCommand(media_component, region_name, MyLauncher, this);
+        QQmlEngine::setObjectOwnership(MyRefCommand, QQmlEngine::CppOwnership);
+        return MyRefCommand;
     }
     else
         return Q_NULLPTR;

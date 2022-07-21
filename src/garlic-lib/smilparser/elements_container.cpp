@@ -24,7 +24,8 @@ ElementsContainer::ElementsContainer(QObject *parent) : QObject(parent)
 
 ElementsContainer::~ElementsContainer()
 {
-    // qDeleteAll crashes always lets trust Qt garbage collection
+    // qDeleteAll crashes always althought elements_list contains pointer
+    // lets trust Qt garbage collection
 
     elements_list.clear();
 }

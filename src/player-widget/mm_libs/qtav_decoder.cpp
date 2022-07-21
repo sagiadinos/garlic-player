@@ -64,6 +64,17 @@ void QtAVDecoder::stop()
     MediaDecoder.data()->stop();
 }
 
+void QtAVDecoder::resume()
+{
+    play();
+}
+
+void QtAVDecoder::pause()
+{
+    MediaDecoder.data()->pause();
+}
+
+
 void QtAVDecoder::onMediaStatusChanged(QtAV::MediaStatus status)
 {
     switch (status)

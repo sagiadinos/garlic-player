@@ -10,7 +10,7 @@ PlayerBrush::~PlayerBrush()
 
 }
 
-void PlayerBrush::init(BaseMedia *media, Region *reg)
+void PlayerBrush::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media; // other wise it cannote stopped in  TRegion::stopShowMedia
     region    = reg;
@@ -18,15 +18,27 @@ void PlayerBrush::init(BaseMedia *media, Region *reg)
     BrushWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     BrushWidget.data()->setAutoFillBackground(true);
     BrushWidget.data()->setStyleSheet("background-color:" + MyBrush->getColor());
+}
+
+void PlayerBrush::play()
+{
     if (MyBrush->getLogContentId() != "")
         setStartTime();
 }
 
-void PlayerBrush::deinit()
+void PlayerBrush::stop()
 {
-    BrushWidget.data()->setStyleSheet("background-color:green");
     if (MyBrush->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
+}
+
+void PlayerBrush::resume()
+{
+    // todo add support for pauseDisplay
+}
+
+void PlayerBrush::pause()
+{
 }
 
 void PlayerBrush::changeSize(int w, int h)

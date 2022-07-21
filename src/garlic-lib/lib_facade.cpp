@@ -180,6 +180,8 @@ void LibFacade::processBodyParsing()
 
     connect(MyBodyParser.data(), SIGNAL(startShowMedia(BaseMedia*)), this, SLOT(emitStartShowMedia(BaseMedia*)));
     connect(MyBodyParser.data(), SIGNAL(stopShowMedia(BaseMedia*)), this, SLOT(emitStopShowMedia(BaseMedia*)));
+    connect(MyBodyParser.data(), SIGNAL(resumeShowMedia(BaseMedia*)), this, SLOT(emitResumeShowMedia(BaseMedia*)));
+    connect(MyBodyParser.data(), SIGNAL(pauseShowMedia(BaseMedia*)), this, SLOT(emitPauseShowMedia(BaseMedia*)));
 
     qDebug() <<  " begin preloading" ;
     MySmil.reset(new Smil(this));
@@ -230,3 +232,14 @@ void LibFacade::emitStopShowMedia(BaseMedia *media)
     qDebug() << "emitStopShowMedia " << media->getID();
 }
 
+void LibFacade::emitResumeShowMedia(BaseMedia *media)
+{
+    emit resumeShowMedia(media);
+    qDebug() << "emitResumeShowMedia " << media->getID();
+}
+
+void LibFacade::emitPauseShowMedia(BaseMedia *media)
+{
+    emit pauseShowMedia(media);
+    qDebug() << "emitPauseShowMedia " << media->getID();
+}

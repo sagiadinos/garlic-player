@@ -30,6 +30,8 @@ signals:
 public slots:
     void                play();
     void                stop();
+    void                resume();
+    void                pause();
     void                ended();
 
 protected:

@@ -28,6 +28,8 @@ TRegion::TRegion(LibFacade *lf, QObject *parent)
 
 TRegion::~TRegion()
 {
+    qDeleteAll(MyMediaList);
+    //MyMediaList.clear();
 }
 
 /**
@@ -93,23 +95,37 @@ void TRegion::clickSlot()
     last_touch = QDateTime::currentMSecsSinceEpoch();
     if (count_touch < 2 && MyMedia != Q_NULLPTR)
     {
-        MyMedia->getSmilMedia()->emitActivated();
+        BaseMedia *smil = MyMedia->getSmilMedia();
+        if (smil != Q_NULLPTR)
+            smil->emitActivated();
     }
 }
 
 void TRegion::startShowMedia(BaseMedia *media)
 {
-    MyMedia = MyMediaFactory.data()->initMedia(media, &region);
-    if (MyMedia != Q_NULLPTR)
-    {
-        MyMedia->setParentItem(rectangle_item.data());
-    }
+    MyMedia = MyMediaFactory.data()->create(media);
+    if (MyMedia == Q_NULLPTR)
+        return;
+    MyMedia->loadMedia(media, &region);
+    MyMedia->setParentItem(rectangle_item.data());
+    MyMediaList.insert(media->getID(), MyMedia);
+
+    MyMedia->play();
 }
 
 void TRegion::stopShowMedia(BaseMedia *media)
 {
+    MyMedia = findMediaById(media->getID());
     if (MyMedia == Q_NULLPTR)
         return;
+
+    MyMediaList.remove(media->getID());
+    MyMedia->setParentItem(NULL);
+
+    MyMedia->stop();
+    delete MyMedia;
+
+/*
 
     // 2021-07-21 see tests/data/smil/par/3_changes.smil brush over image
     // we need to stop the media in parameter if differs
@@ -118,11 +134,35 @@ void TRegion::stopShowMedia(BaseMedia *media)
     if (MyMedia->getSmilMedia() != media)
     {
         if (MyMedia->getSmilMedia()->objectName() != media->objectName())
-            secureStopDisplayingMedia(MyMediaFactory.data()->initMedia(media, &region));
+             secureStopDisplayingMedia(MyMediaFactory.data()->initMedia(media, &region));
         return;
     }
 
-    secureStopDisplayingMedia(MyMedia);}
+    secureStopDisplayingMedia(MyMedia);
+*/
+}
+
+void TRegion::resumeShowMedia(BaseMedia *media)
+{
+    MyMedia = findMediaById(media->getID());
+    if (MyMedia == Q_NULLPTR)
+    {
+        startShowMedia(media); // could be a resume by defer
+        return;
+    }
+
+    MyMedia->resume();
+}
+
+void TRegion::pauseShowMedia(BaseMedia *media)
+{
+    MyMedia = findMediaById(media->getID());
+    if (MyMedia == Q_NULLPTR)
+        return;
+
+    MyMedia->pause();
+}
+
 
 void TRegion::secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia)
 {
@@ -132,7 +172,7 @@ void TRegion::secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia)
     }
 
     TmpMedia->setParentItem(NULL);
-    TmpMedia->deinit();
+    TmpMedia->stop();
 }
 
 void TRegion::resizeGeometry()
@@ -176,3 +216,15 @@ void TRegion::registerEventEnds()
         MyMedia->getSmilMedia()->emitActivated();
     }
 }
+
+PlayerBaseMedia *TRegion::findMediaById(QString id)
+{
+    PlayerBaseMedia                   *MyTmpMedia  = Q_NULLPTR;
+    QMap<QString, PlayerBaseMedia *>::iterator  it = MyMediaList.find(id);
+    if (it != MyMediaList.end())
+    {
+        MyTmpMedia = *it;
+    }
+    return MyTmpMedia;
+}
+

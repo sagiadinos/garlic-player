@@ -16,27 +16,42 @@ Web::Web(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : Playe
 
 Web::~Web()
 {
-    web_item.reset();
 }
 
-void Web::init(BaseMedia *media, Region *reg)
+void Web::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
     web_item.data()->setVisible(true);
-    QString uri = sanitizeUri(media->getLoadablePath()) + media->getParamsAsQuery();
+}
+
+void Web::play()
+{
+    QString uri = sanitizeUri(SmilMedia->getLoadablePath()) + SmilMedia->getParamsAsQuery();
     web_item.data()->setProperty("url", uri);
+    web_item.data()->setVisible(true);
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
 
-void Web::deinit()
+void Web::stop()
 {
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
 
     web_item.data()->setProperty("url", "");
     web_item.data()->setVisible(false);
+}
+
+void Web::resume()
+{
+    web_item.data()->setVisible(true);
+}
+
+void Web::pause()
+{
+     // todo add support for pauseDisplay
+    web_item.data()->setVisible(true);
 }
 
 void Web::changeSize(int w, int h)

@@ -16,29 +16,44 @@ Image::Image(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : P
 
 Image::~Image()
 {
-    image_item.reset();
 }
 
-void Image::init(BaseMedia *media, Region *reg)
+void Image::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
     if (load(image_item.data()))
     {
         QFile CurrentFile(SmilMedia->getLoadablePath());
-        if(!CurrentFile.open(QIODevice::ReadOnly))
+        if(CurrentFile.open(QIODevice::ReadOnly))
               loaded_image.loadFromData(CurrentFile.readAll());
-
-        if (SmilMedia->getLogContentId() != "")
-            setStartTime();
     }
 }
 
-void Image::deinit()
+void Image::play()
+{
+    image_item.data()->setVisible(true);
+    if (SmilMedia->getLogContentId() != "")
+        setStartTime();
+}
+
+
+void Image::stop()
 {
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
-    image_item.data()->setProperty("source","");
+    image_item.data()->setVisible(false);
+}
+
+void Image::resume()
+{
+     // todo add support for pauseDisplay
+   image_item.data()->setVisible(true);
+}
+
+void Image::pause()
+{
+    image_item.data()->setVisible(true);
 }
 
 void Image::changeSize(int w, int h)

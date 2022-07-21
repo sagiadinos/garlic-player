@@ -3,22 +3,23 @@
 Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : PlayerBaseMedia(mc, r_id, lc, parent)
 {
     setRegionId(r_id);
-    QString module = "import QtMultimedia 5.12\n";
 
-    // FIXIT! Audio QML cannot be created
-    // Qt Bug is reported https://bugreports.qt.io/browse/QTBUG-64763
-    qml = "import QtQuick 2.7\n"+
-                    module +
-                    "Video {                                 \
-                        id: "+getRegionId()+"_video;         \
-                        autoPlay: true;                      \
-                    }\n";
+    // Audio QML cannot be created
+    // Bug was reported at 26 Nov 2017 https://bugreports.qt.io/browse/QTBUG-64763
+    // and updated on 2022-07-16
 
-    audio_item.reset(createMediaItem(mc, qml));
-    if (!audio_item.isNull())
-        connect(audio_item.data(), SIGNAL(stopped()), this, SLOT(doStopped()));
-    else
-        qCritical() << "audio item is Null";
+    qml = "import QtQuick 2.12\n                             \
+           import QtMultimedia 5.12\n                        \
+                   Video {                                   \
+                        id: "+getRegionId()+"_audio;         \
+                        autoLoad: true;                      \
+                        autoPlay: false;                      \
+            signal qmlEndOfFile()\n \
+            onStopped: { if (status == MediaPlayer.EndOfMedia) {qmlEndOfFile()}\n} \
+                     }\n";
+
+   audio_item.reset(createMediaItem(mc, qml));
+   connect(audio_item.data(), SIGNAL(qmlEndOfFile()), this, SLOT(doStopped()));
 }
 
 Audio::~Audio()
@@ -26,13 +27,12 @@ Audio::~Audio()
     audio_item.reset();
 }
 
-void Audio::init(BaseMedia *media, Region *reg)
+void Audio::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
     if (load(audio_item.data()))
     {
-
         // to set Volume we need to cast
          TAudio *MyAudio = qobject_cast<TAudio *> (media);
          float vol = determineVolume(MyAudio->getSoundLevel());
@@ -42,12 +42,30 @@ void Audio::init(BaseMedia *media, Region *reg)
     }
 }
 
-void Audio::deinit()
+void Audio::play()
+{
+     if (SmilMedia->getLogContentId() != "")
+         setStartTime();
+
+     QMetaObject::invokeMethod(audio_item.data(), "play");
+}
+
+void Audio::stop()
 {
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
 
-    audio_item.data()->setProperty("source", "");
+    QMetaObject::invokeMethod(audio_item.data(), "stop");
+}
+
+void Audio::resume()
+{
+    QMetaObject::invokeMethod(audio_item.data(), "play");
+}
+
+void Audio::pause()
+{
+    QMetaObject::invokeMethod(audio_item.data(), "pause");
 }
 
 void Audio::setParentItem(QQuickItem *parent)
@@ -60,6 +78,11 @@ void Audio::changeSize(int w, int h)
     Q_UNUSED(w);Q_UNUSED(h)
 }
 
+void Audio::stopDaShit()
+{
+    SmilMedia->finishIntrinsicDuration();
+}
+
 qreal Audio::determineVolume(QString percent)
 {
     qreal vol = 0;
@@ -68,7 +91,6 @@ qreal Audio::determineVolume(QString percent)
 
     return vol / (float) 100;
 }
-
 
 void Audio::doStopped()
 {
@@ -81,8 +103,5 @@ void Audio::doStopped()
         qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_PLAYBACK_ERROR", list);
     }
 
-    if (audio_item.data()->property("status").toString() == "7") // 7 means EndOfFile Shitty QML has no signal for finish
-    {
-       SmilMedia->finishIntrinsicDuration();
-    }
+   SmilMedia->finishIntrinsicDuration();
 }

@@ -15,13 +15,16 @@ class Image : public PlayerBaseMedia
 
         explicit      Image(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Image();
-        void          init(BaseMedia *media, Region *reg);
-        void          deinit();
+        void          loadMedia(BaseMedia *media, Region *reg);
+        void          play();
+        void          stop();
+        void          resume();
+        void          pause();
         void          setParentItem(QQuickItem *parent);
         void          changeSize(int w, int h);
     protected:
         QPixmap       loaded_image;
-        QScopedPointer<QQuickItem>  image_item;
+        QScopedPointer<QQuickItem, QScopedPointerDeleteLater>  image_item;
         void                        setAlignment();
 
 };

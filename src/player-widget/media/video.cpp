@@ -28,11 +28,9 @@ PlayerVideo::PlayerVideo(QObject *parent) : PlayerBaseMedia(parent)
 
 PlayerVideo::~PlayerVideo()
 {
-    MediaDecoder.reset();
-    VideoWidget.reset();
-}
+ }
 
-void PlayerVideo::init(BaseMedia *media, Region *reg)
+void PlayerVideo::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
@@ -41,11 +39,8 @@ void PlayerVideo::init(BaseMedia *media, Region *reg)
    if (isFileExists(path))
    {
        MediaDecoder.data()->load(path);
-       MediaDecoder.data()->play();
        TVideo  *MyParser = qobject_cast<TVideo *>(media);
        MediaDecoder.data()->setVolume(MyParser->getSoundLevel());
-       if (SmilMedia->getLogContentId() != "")
-           setStartTime();
    }
    else
    {
@@ -53,12 +48,30 @@ void PlayerVideo::init(BaseMedia *media, Region *reg)
    }
 }
 
-void PlayerVideo::deinit()
+void PlayerVideo::play()
+{
+    MediaDecoder.data()->play();
+    if (SmilMedia->getLogContentId() != "")
+        setStartTime();
+}
+
+void PlayerVideo::stop()
 {
     MediaDecoder.data()->stop();
     MediaDecoder.data()->unload();
     if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
+}
+
+void PlayerVideo::resume()
+{
+    MediaDecoder.data()->resume();
+}
+
+void PlayerVideo::pause()
+{
+    // todo add support for pauseDisplay
+    MediaDecoder.data()->pause();
 }
 
 void PlayerVideo::changeSize(int w, int h)

@@ -19,10 +19,14 @@ RefCommand::~RefCommand()
 {
 }
 
-void RefCommand::init(BaseMedia *media, Region *reg)
+void RefCommand::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
+}
+
+void RefCommand::play()
+{
     QString source = SmilMedia->getLoadablePath();
     if (source.toLower() == "adapi:blankscreen")
     {
@@ -32,11 +36,22 @@ void RefCommand::init(BaseMedia *media, Region *reg)
     }
 }
 
-void RefCommand::deinit()
+
+void RefCommand::stop()
 {
     MyLauncher->toggleScreenActivity(true);
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
+}
+
+void RefCommand::resume()
+{
+
+}
+
+void RefCommand::pause()
+{
+
 }
 
 void RefCommand::changeSize(int w, int h)

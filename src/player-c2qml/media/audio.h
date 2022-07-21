@@ -10,12 +10,16 @@ class Audio : public PlayerBaseMedia
     public:
         Audio(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Audio();
-        void                        init(BaseMedia *media, Region *reg);
-        void                        deinit();
+        void                        loadMedia(BaseMedia *media, Region *reg);
+        void                        play();
+        void                        stop();
+        void                        resume();
+        void                        pause();
         void                        setParentItem(QQuickItem *parent);
         void                        changeSize(int w, int h);
+        Q_INVOKABLE void stopDaShit();
     protected:
-        QScopedPointer<QQuickItem>  audio_item;
+        QScopedPointer<QQuickItem, QScopedPointerDeleteLater>  audio_item;
         qreal                       determineVolume(QString percent);
         QString                     qml;
         QQmlComponent              *media_component;

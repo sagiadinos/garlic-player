@@ -77,14 +77,15 @@ bool Timings::SimpleTimer::start()
         return false;
 
     bool ret = false;
+    // to reset probably corrected trigger from recalculateTimeClock
+    clock_in_ms = MyClockValue.getTriggerInMSec();
+
     if (clock_in_ms > 0)
     {
        MyTimer->start(clock_in_ms-tolerance);
        ret = true;
     }
 
-    // to reset probably corrected trigger from recalculateTimeClock
-    clock_in_ms = MyClockValue.getTriggerInMSec();
     return ret;
 }
 

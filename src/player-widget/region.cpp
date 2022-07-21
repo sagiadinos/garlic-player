@@ -46,20 +46,42 @@ void TRegion::paintEvent(QPaintEvent *)
 
 void TRegion::startShowMedia(BaseMedia *media)
 {
-    MyMedia = MyMediaFactory.initMedia(media, &region);
+    MyMedia = MyMediaFactory.create(media);
+    if (MyMedia == Q_NULLPTR)
+        return;
+
+
+    MyMediaList.insert(media->getID(), MyMedia);
+    MyMedia->loadMedia(media, &region);
+    MyMedia->play();
 
     QWidget *widget = MyMedia->getView();
     if (widget != Q_NULLPTR)
     {
         layout.data()->addWidget(widget);
     }
+
+
 }
 
 void TRegion::stopShowMedia(BaseMedia *media)
 {
+    MyMedia = findMediaById(media->getID());
     if (MyMedia == Q_NULLPTR)
         return;
 
+    QWidget *widget = MyMedia->getView();
+    if (widget != Q_NULLPTR)
+    {
+        layout.data()->removeWidget(widget);
+    }
+
+    MyMedia->stop();
+
+    MyMediaList.remove(media->getID());
+    delete MyMedia;
+
+/*
     // 2021-07-21 see tests/data/smil/par/3_changes.smil brush over image
     // we need to stop the media in parameter if differs
     // 2021-10-01 enhancemend cause of syn-bug see tests/data/smil/par/bugs/2_pseudo_sync.smil
@@ -72,7 +94,30 @@ void TRegion::stopShowMedia(BaseMedia *media)
     }
 
     secureStopDisplayingMedia(MyMedia);
+*/
 }
+
+void TRegion::resumeShowMedia(BaseMedia *media)
+{
+    MyMedia = findMediaById(media->getID());
+    if (MyMedia == Q_NULLPTR)
+    {
+        startShowMedia(media); // could be a resume by defer
+        return;
+    }
+
+    MyMedia->resume();
+}
+
+void TRegion::pauseShowMedia(BaseMedia *media)
+{
+    MyMedia = findMediaById(media->getID());
+    if (MyMedia == Q_NULLPTR)
+        return;
+
+    MyMedia->pause();
+}
+
 
 bool TRegion::event(QEvent *event)
 {
@@ -99,7 +144,9 @@ bool TRegion::event(QEvent *event)
         if (count_touch < 2 && MyMedia != Q_NULLPTR)
         {
             event->accept();
-            MyMedia->getSmilMedia()->emitActivated();
+            BaseMedia *smil = MyMedia->getSmilMedia();
+            if (smil != Q_NULLPTR)
+                smil->emitActivated();
         }
     }
     return QWidget::event(event);
@@ -152,7 +199,7 @@ void TRegion::secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia)
     {
         layout.data()->removeWidget(widget);
     }
-    TmpMedia->deinit();
+    TmpMedia->stop();
     TmpMedia = Q_NULLPTR;
 }
 
@@ -207,4 +254,14 @@ QString TRegion::determineBackgroundImageRepeat()
     return ret;
 }
 
+PlayerBaseMedia *TRegion::findMediaById(QString id)
+{
+    PlayerBaseMedia                   *MyTmpMedia  = Q_NULLPTR;
+    QMap<QString, PlayerBaseMedia *>::iterator  it = MyMediaList.find(id);
+    if (it != MyMediaList.end())
+    {
+        MyTmpMedia = *it;
+    }
+    return MyTmpMedia;
+}
 

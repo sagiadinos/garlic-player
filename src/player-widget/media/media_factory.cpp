@@ -19,51 +19,45 @@
 
 MediaFactory::MediaFactory(QObject *parent) : QObject(parent)
 {
-    MyImage.reset(new PlayerImage(this));
-    MyBrush.reset(new PlayerBrush(this));
-    MyVideo.reset(new PlayerVideo(this));
-    MyAudio.reset(new PlayerAudio(this));
-    MyWeb.reset(new PlayerWeb(this));
-    MyRefCommand.reset(new PlayerRefCommand(this));
 }
 
-PlayerBaseMedia *MediaFactory::initMedia(BaseMedia *media, Region *reg)
+PlayerBaseMedia *MediaFactory::create(BaseMedia *media)
 {
     QString type   = media->objectName();
     if (type == "TImage")
     {
-        MyImage.data()->init(media, reg);
-        return MyImage.data();
+        MyImage = new PlayerImage(this);
+        return MyImage;
     }
     else if (type == "TBrush")
     {
-        MyBrush.data()->init(media, reg);
-        return MyBrush.data();
+        MyBrush = new PlayerBrush(this);
+        return MyBrush;
     }
     else if (type == "TVideo")
     {
-        MyVideo.data()->init(media, reg);
-        return MyVideo.data();
+        MyVideo = new PlayerVideo(this);
+        return MyVideo;
     }
     else if (type == "TAudio")
     {
-        MyAudio.data()->init(media, reg);
-        return MyAudio.data();
+        MyAudio = new PlayerAudio(this);
+        return MyAudio;
     }
     else if (type == "TWeb")
     {
-        MyWeb.data()->init(media, reg);
-        return MyWeb.data();
+        MyWeb = new PlayerWeb(this);
+        return MyWeb;
     }
     else if (type == "TWidget")
     {
-        MyWeb.data()->init(media, reg);
-        return MyWeb.data();
+        MyWeb = new PlayerWeb(this);
+        return MyWeb;
     }
     else if (type == "TRefCommand")
     {
-        MyRefCommand.data()->init(media, reg);
-        return MyRefCommand.data();
+        MyRefCommand = new PlayerRefCommand(this);
+        return MyRefCommand;
     }
     else
         return Q_NULLPTR;

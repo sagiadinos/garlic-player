@@ -95,12 +95,16 @@ class LibFacade : public QObject
         void               emitInstallSoftware(QString file_path);
         void               emitStartShowMedia(BaseMedia *media);
         void               emitStopShowMedia(BaseMedia *media);
+        void               emitPauseShowMedia(BaseMedia *media);
+        void               emitResumeShowMedia(BaseMedia *media);
         void               processBodyParsing();
     private:
         QScopedPointer<Smil> MySmil;
     signals:
         void               startShowMedia(BaseMedia *media);
         void               stopShowMedia(BaseMedia *media);
+        void               pauseShowMedia(BaseMedia *media);
+        void               resumeShowMedia(BaseMedia *media);
         void               readyForPlaying();
         void               newConfig();
         void               screenshot(QString file_path);

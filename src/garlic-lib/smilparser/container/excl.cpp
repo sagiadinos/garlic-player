@@ -344,36 +344,6 @@ bool TExcl::areQueuesToProceed()
     }
     return true; // make sure do not move, until queue is not empty
 
-
-    // if elements are in queues starts resume or starts them
- /*
-    QMap<int, TPriorityClass *>::iterator      it;
-    TPriorityClass                             *MyPriorityClass;
-    for (it =  PriorityClassList.begin(); it != PriorityClassList.end(); it++ )
-    {
-        MyPriorityClass       = *it;
-        if (MyPriorityClass->countQueue() > 0)
-        {
-            secureRemoveActivated(current_activated_element);
-            current_activated_element = MyPriorityClass->getFromQueue();
-            current_activated_element->resumeAllTimers();
-
-            // sometimes after resumeAll Timer we discover that a element is ended
-            if (current_activated_element == Q_NULLPTR)
-                return true;
-            if (current_activated_element->getStatus() == _paused)
-            {
-                emitResumeElementSignal(current_activated_element);
-            }
-            else // if defered
-            {
-                current_activated_element->prepareDurationTimers();
-            }
-            return true; // make sure do not move, until queue is not empty
-        }
-    }
-    return false;
-*/
 }
 
 void TExcl::secureRemoveActivated(BaseTimings *element)
@@ -440,8 +410,6 @@ void TExcl::priorityNever(BaseTimings *new_element)
 {
     // ignore new Element
     // emit stop is not necessary cause no start was emitted
-    // do not stop or remove element, because it can be played later
+    // do not stop or remove element, because it can be played later in a repeat
     secureRemoveActivated(new_element);
 }
-
-

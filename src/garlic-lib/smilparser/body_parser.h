@@ -56,6 +56,8 @@ protected:
     CurrentPlayingMedia               *MyCurrentPlayingMedia;
     void                               emitStartShowMedia(BaseMedia *media);
     void                               emitStopShowMedia(BaseMedia *media);
+    void                               emitResumeShowMedia(BaseMedia *media);
+    void                               emitPauseShowMedia(BaseMedia *media);
     void                               connectSlots(BaseTimings *element);
     bool                               determineContinueBasedOnParent(BaseTimings *element);
     void                               fireTrigger(QString trigger, BaseTimings *element, QString source_id);
@@ -73,6 +75,7 @@ protected slots:
 signals:
     void                               startShowMedia(BaseMedia *media);
     void                               stopShowMedia(BaseMedia *media);
-};
+    void                               pauseShowMedia(BaseMedia *media);
+    void                               resumeShowMedia(BaseMedia *media);};
 
 #endif // SMILPARSER_H

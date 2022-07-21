@@ -150,7 +150,7 @@ void BodyParser::pauseElement(BaseTimings *element)
     element->pause();
 
     if (element->getBaseType() == "media")
-        emitStopShowMedia(qobject_cast<BaseMedia *> (element));
+        emitPauseShowMedia(qobject_cast<BaseMedia *> (element));
 }
 
 void BodyParser::resumeQueuedElement(BaseTimings *element)
@@ -161,7 +161,7 @@ void BodyParser::resumeQueuedElement(BaseTimings *element)
     qDebug() << "Resume: " + element->getID();
     element->resume();
     if (element->getBaseType() == "media")
-        emitStartShowMedia(qobject_cast<BaseMedia *> (element));
+        emitResumeShowMedia(qobject_cast<BaseMedia *> (element));
 }
 
 void BodyParser::triggerAccessKey(QChar key)
@@ -224,7 +224,6 @@ void BodyParser::connectSlots(BaseTimings *element)
 {
     connect(element, SIGNAL(startElementSignal(BaseTimings*)), this, SLOT(startElement(BaseTimings*)));
     connect(element, SIGNAL(stopElementSignal(BaseTimings*,bool)), this, SLOT(stopElement(BaseTimings*,bool)));
-
     connect(element, SIGNAL(resumeElementSignal(BaseTimings*)), this, SLOT(resumeQueuedElement(BaseTimings*)));
     connect(element, SIGNAL(pauseElementSignal(BaseTimings*)), this, SLOT(pauseElement(BaseTimings*)));
 
@@ -276,4 +275,16 @@ void BodyParser::emitStopShowMedia(BaseMedia *media)
 {
    if (MyCurrentPlayingMedia->remove(media)) // not sending stops if skipElement
         emit stopShowMedia(media);
+}
+
+void BodyParser::emitResumeShowMedia(BaseMedia *media)
+{
+    if (stop_all) // preventing for starting media during stop process
+        return;
+    emit resumeShowMedia(media);
+}
+
+void BodyParser::emitPauseShowMedia(BaseMedia *media)
+{
+     emit pauseShowMedia(media);
 }

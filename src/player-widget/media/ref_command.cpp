@@ -10,10 +10,14 @@ PlayerRefCommand::~PlayerRefCommand()
 
 }
 
-void PlayerRefCommand::init(BaseMedia *media, Region *reg)
+void PlayerRefCommand::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
+}
+
+void PlayerRefCommand::play()
+{
     QString path = SmilMedia->getLoadablePath();
     if (path.toLower() == "adapi:blankscreen")
     {
@@ -27,11 +31,22 @@ void PlayerRefCommand::init(BaseMedia *media, Region *reg)
     }
 }
 
-void PlayerRefCommand::deinit()
+
+void PlayerRefCommand::stop()
 {
     // MyLauncher->toggleScreenActivity(true);
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
+}
+
+void PlayerRefCommand::resume()
+{
+
+}
+
+void PlayerRefCommand::pause()
+{
+
 }
 
 void PlayerRefCommand::changeSize(int w, int h)

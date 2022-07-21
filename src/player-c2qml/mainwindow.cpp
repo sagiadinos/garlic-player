@@ -37,6 +37,8 @@ void MainWindow::init()
     connect (this, SIGNAL(statusChanged(QQuickView::Status)), this, SLOT(doStatusChanged(QQuickView::Status)));
     connect(MyLibFacade, SIGNAL(startShowMedia(BaseMedia*)), this, SLOT(startShowMedia(BaseMedia*)));
     connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia*)), this, SLOT(stopShowMedia(BaseMedia*)));
+    connect(MyLibFacade, SIGNAL(resumeShowMedia(BaseMedia*)), this, SLOT(resumeShowMedia(BaseMedia*)));
+    connect(MyLibFacade, SIGNAL(pauseShowMedia(BaseMedia*)), this, SLOT(pauseShowMedia(BaseMedia*)));
     connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
 
     connect(MyLibFacade, SIGNAL(newConfig()), this, SLOT(sendConfig()));
@@ -215,6 +217,16 @@ void MainWindow::startShowMedia(BaseMedia *media)
 void MainWindow::stopShowMedia(BaseMedia *media)
 {
     MyRegionsList->stopShowMedia(media);
+}
+
+void MainWindow::resumeShowMedia(BaseMedia *media)
+{
+    MyRegionsList->resumeShowMedia(media);
+}
+
+void MainWindow::pauseShowMedia(BaseMedia *media)
+{
+    MyRegionsList->pauseShowMedia(media);
 }
 
 void MainWindow::doStatusChanged(QQuickView::Status status)

@@ -12,8 +12,11 @@ class PlayerBaseMedia : public QObject
         Q_OBJECT
     public:
         explicit PlayerBaseMedia(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
-        virtual void          init(BaseMedia *media, Region *reg)   = 0;
-        virtual void          deinit()   = 0;
+        virtual void          loadMedia(BaseMedia *media, Region *reg)   = 0;
+        virtual void          play()   = 0;
+        virtual void          stop()   = 0;
+        virtual void          pause()   = 0;
+        virtual void          resume()   = 0;
         virtual void          setParentItem(QQuickItem *parent)   = 0;
         BaseMedia            *getSmilMedia();
         QString               getRegionId() const;
@@ -28,6 +31,7 @@ class PlayerBaseMedia : public QObject
         BaseMedia            *SmilMedia;
         QString               start_time = "";
         QString               region_id  = "";
+
         QQuickItem           *createMediaItem(QQmlComponent *mc, QString str);
         bool                  load(QQuickItem *item);
         bool                  isFileExists(QString path);

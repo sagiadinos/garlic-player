@@ -71,6 +71,8 @@ class MainWindow : public QQuickView
         void                      prepareParsing();
         void                      startShowMedia(BaseMedia *media);
         void                      stopShowMedia(BaseMedia *media);
+        void                      resumeShowMedia(BaseMedia *media);
+        void                      pauseShowMedia(BaseMedia *media);
         void                      doStatusChanged(QQuickView::Status status);
         void                      sendConfig();
         void                      takeScreenshot(QString file_path);

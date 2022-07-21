@@ -18,6 +18,8 @@ public:
     QStringList               select(QString region_name);
     void                      startShowMedia(BaseMedia *media);
     void                      stopShowMedia(BaseMedia *media);
+    void                      resumeShowMedia(BaseMedia *media);
+    void                      pauseShowMedia(BaseMedia *media);
 
 
 private:

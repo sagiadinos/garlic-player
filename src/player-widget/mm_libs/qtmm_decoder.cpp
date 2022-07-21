@@ -51,6 +51,17 @@ void QtMMDecoder::stop()
     MediaDecoder.data()->stop();
 }
 
+void QtMMDecoder::resume()
+{
+    play();
+}
+
+void QtMMDecoder::pause()
+{
+    MediaDecoder.data()->pause();
+}
+
+
 void QtMMDecoder::onMediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
     switch (status)

@@ -17,12 +17,15 @@ class Video : public PlayerBaseMedia
 
         Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Video();
-        void                        init(BaseMedia *media, Region *reg);
-        void                        deinit();
+        void                        loadMedia(BaseMedia *media, Region *reg);
+        void                        play();
+        void                        stop();
+        void                        resume();
+        void                        pause();
         void                        setParentItem(QQuickItem *parent);
         void                        changeSize(int w, int h);
     protected:
-        QScopedPointer<QQuickItem>  video_item;
+        QScopedPointer<QQuickItem, QScopedPointerDeleteLater>  video_item;
         qreal                       determineVolume(QString percent);
         QString                     qml;
         QQmlComponent              *media_component;

@@ -12,8 +12,11 @@ class PlayerAudio : public PlayerBaseMedia
     public:
         explicit PlayerAudio(QObject *parent = nullptr);
         ~PlayerAudio();
-        void          init(BaseMedia *media, Region *reg);
-        void          deinit();
+        void          loadMedia(BaseMedia *media, Region *reg);
+        void          play();
+        void          stop();
+        void          resume();
+        void          pause();
         QWidget      *getView();
         void          changeSize(int w, int h);
     protected:

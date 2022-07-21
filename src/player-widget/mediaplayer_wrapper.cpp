@@ -44,6 +44,17 @@ void MediaPlayerWrapper::stop()
     MediaDecoder.stop();
 }
 
+void MediaPlayerWrapper::resume()
+{
+    MediaDecoder.resume();
+}
+
+void MediaPlayerWrapper::pause()
+{
+    MediaDecoder.pause();
+}
+
+
 void MediaPlayerWrapper::ended()
 {
     emit finished();

@@ -5,6 +5,7 @@
 void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
    Q_UNUSED(ctx);
+    Q_UNUSED(data);
 
     char *result;
     if (vasprintf(&result, fmt, args) < 0)
@@ -80,6 +81,9 @@ bool VlcDecoder::load(QString file_path)
 
     libvlc_media_player_set_media(vlcPlayer, vlcMedia);
 
+    PositionTimer.reset(new QTimer(this));
+    connect(PositionTimer.data(), SIGNAL(timeout()), this, SLOT(updatePosition()));
+
     return true;
 }
 
@@ -108,8 +112,6 @@ void VlcDecoder::play()
     libvlc_media_player_play(vlcPlayer);
 
     /* A timer to update the sliders */
-    PositionTimer.reset(new QTimer(this));
-    connect(PositionTimer.data(), SIGNAL(timeout()), this, SLOT(updatePosition()));
     PositionTimer.data()->start(100);
 
 }
@@ -120,6 +122,22 @@ void VlcDecoder::stop()
         return;
 
     libvlc_media_player_stop(vlcPlayer);
+    PositionTimer.data()->stop();
+}
+
+
+void VlcDecoder::resume()
+{
+    play();
+}
+
+void VlcDecoder::pause()
+{
+    if (vlcPlayer == NULL)
+        return;
+
+    libvlc_media_player_pause(vlcPlayer);
+    PositionTimer.data()->stop();
 }
 
 void VlcDecoder::updatePosition()

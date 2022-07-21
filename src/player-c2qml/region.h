@@ -34,6 +34,8 @@ class TRegion : public QQuickItem
         void                setRegion(Region r, Launcher *lc, QQmlEngine *e);
         void                startShowMedia(BaseMedia *media);
         void                stopShowMedia(BaseMedia *media);
+        void                resumeShowMedia(BaseMedia *media);
+        void                pauseShowMedia(BaseMedia *media);
     public slots:
         void clickSlot();
 
@@ -43,8 +45,10 @@ class TRegion : public QQuickItem
         QQuickItem           *root_item;
         QQmlEngine           *engine;
         LibFacade            *MyLibFacade;
-        Region                region;
+        Region               region;
         PlayerBaseMedia                    *MyMedia = Q_NULLPTR;
+        QMap<QString, PlayerBaseMedia *>    MyMediaList;
+
         QScopedPointer<QQmlComponent>       rectangle;
         QScopedPointer<QQmlComponent>       media_component;
         QScopedPointer<QQuickItem>          rectangle_item;
@@ -56,8 +60,8 @@ class TRegion : public QQuickItem
         void                secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia);
         void                registerEventStarts();
         void                registerEventEnds();
-
         void                resizeGeometry();
+        PlayerBaseMedia    *findMediaById(QString id);
 };
 
 #endif // TREGION_H

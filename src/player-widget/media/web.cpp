@@ -19,28 +19,29 @@
 
 PlayerWeb::PlayerWeb(QObject *parent) : PlayerBaseMedia(parent)
 {
+    browser   = new QWebEngineView();
+    connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
 }
 
 PlayerWeb::~PlayerWeb()
 {
+    // could be obsolete 21 July 2022
     // FIX THIS! delete or deleteLater for browser crashes,
     // when playliste changed and browser was used method init/deinit
     // it crashes even as stack variable or QScopedPointer
     // actual solution works, but unsatisfied
-
     // Info: delete crashes cause this destructor invoked two times
     // deleteLater crashes someone else deep in assembler
 
 
     qDebug() << "delete browser";
+    delete  browser;
 }
 
-void PlayerWeb::init(BaseMedia *media, Region *reg)
+void PlayerWeb::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
-    browser   = new QWebEngineView;
-    connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
 
     // Deactivate caching for testing
     // browser->page()->profile()->setHttpCacheType(QWebEngineProfile::NoCache);
@@ -50,8 +51,8 @@ void PlayerWeb::init(BaseMedia *media, Region *reg)
     browser->settings()->setAttribute(QWebEngineSettings::ShowScrollBars, false);
     browser->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true); // needed to block SOP Attention can be deprecated look at param functions in main.cpp
 
-// activates everything for debug and testing
 /*
+    // activates everything for debug and testing
     browser->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
     browser->settings()->setAttribute(QWebEngineSettings::SpatialNavigationEnabled, true);
     browser->settings()->setAttribute(QWebEngineSettings::HyperlinkAuditingEnabled, true);
@@ -68,24 +69,37 @@ void PlayerWeb::init(BaseMedia *media, Region *reg)
     browser->settings()->setAttribute(QWebEngineSettings::DnsPrefetchEnabled, true);
 */
 
-    QString uri = sanitizeUri(media->getLoadablePath()) + media->getParamsAsQuery();
+    QString uri = sanitizeUri(SmilMedia->getLoadablePath()) + SmilMedia->getParamsAsQuery();
     browser->load(uri);
-    qDebug() << "The Uri: " + uri;
+}
+
+void PlayerWeb::play()
+{
+    browser->setVisible(true);
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
 
-void PlayerWeb::deinit()
+void PlayerWeb::stop()
 {
     if (browser == Q_NULLPTR)
         return;
 
-    browser->load(QUrl(""));
+    browser->setVisible(false);
     browser->close();
-    delete  browser;
-    browser = Q_NULLPTR;
+
     if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
+
+}
+
+void PlayerWeb::resume()
+{
+}
+
+void PlayerWeb::pause()
+{
+    // todo add support for pauseDisplay
 }
 
 void PlayerWeb::changeSize(int w, int h)

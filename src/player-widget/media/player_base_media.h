@@ -11,11 +11,14 @@
             Q_OBJECT
         public:
             explicit PlayerBaseMedia(QObject *parent = nullptr);
-            virtual void          init(BaseMedia *media, Region *reg)   = 0;
-            BaseMedia            *getSmilMedia();
-            virtual void          deinit() = 0;
+            virtual void          loadMedia(BaseMedia *media, Region *reg)   = 0;
+            virtual void          play() = 0;
+            virtual void          stop() = 0;
+            virtual void          resume() = 0;
+            virtual void          pause() = 0;
             virtual QWidget      *getView()= 0;
             virtual void          changeSize(int w, int h) = 0;
+            BaseMedia            *getSmilMedia();
         protected:
             Logger&      MyLogger = Logger::getInstance();
             BaseMedia   *SmilMedia = Q_NULLPTR;

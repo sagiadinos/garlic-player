@@ -14,11 +14,14 @@ class MediaFactory : public QObject
 {
         Q_OBJECT
     public:
-        explicit MediaFactory(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
-        PlayerBaseMedia *initMedia(BaseMedia *media, Region *reg);
+        explicit MediaFactory(QQmlComponent *m, QString id, Launcher *l, QObject *parent = nullptr);
+        PlayerBaseMedia *create(BaseMedia *media);
 
-    protected:
-        QScopedPointer<PlayerBaseMedia, QScopedPointerDeleteLater>  MyVideo, MyImage, MyBrush, MyAudio, MyWeb, MyRefCommand;
+    private:
+        PlayerBaseMedia *MyVideo, *MyImage, *MyBrush, *MyAudio, *MyWeb, *MyRefCommand;
+        QQmlComponent *media_component;
+        QString region_name;
+        Launcher *MyLauncher;
 
 };
 

@@ -99,5 +99,33 @@ void RegionsList::stopShowMedia(BaseMedia *media)
     for (i = region_ids.begin(); i != region_ids.end(); ++i)
     {
         regions_list[*i]->stopShowMedia(media);
-   }
+    }
 }
+
+void RegionsList::resumeShowMedia(BaseMedia *media)
+{
+    if (regions_list.size() == 0) // prevent to call functionx of deleted or not existing regions
+        return;
+
+    QStringList region_ids = select(media->getRegionName());
+    QStringList::iterator i;
+    for (i = region_ids.begin(); i != region_ids.end(); ++i)
+    {
+        regions_list[*i]->resumeShowMedia(media);
+    }
+
+}
+
+void RegionsList::pauseShowMedia(BaseMedia *media)
+{
+    if (regions_list.size() == 0) // prevent to call functionx of deleted or not existing regions
+        return;
+
+    QStringList region_ids = select(media->getRegionName());
+    QStringList::iterator i;
+    for (i = region_ids.begin(); i != region_ids.end(); ++i)
+    {
+        regions_list[*i]->pauseShowMedia(media);
+    }
+}
+

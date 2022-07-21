@@ -67,6 +67,8 @@ class MainWindow : public QMainWindow
         void                      takeScreenshot(QString file_path);
         void                      startShowMedia(BaseMedia *media);
         void                      stopShowMedia(BaseMedia *media);
+        void                      resumeShowMedia(BaseMedia *media);
+        void                      pauseShowMedia(BaseMedia *media);
 
 };
 

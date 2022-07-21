@@ -12,8 +12,11 @@ class PlayerVideo : public PlayerBaseMedia
     public:
         PlayerVideo(QObject *parent = nullptr);
         ~PlayerVideo();
-        void              init(BaseMedia *media, Region *reg);
-        void              deinit();
+        void              loadMedia(BaseMedia *media, Region *reg);
+        void              play();
+        void              stop();
+        void              resume();
+        void              pause();
         void              changeSize(int w, int h);
         QWidget          *getView();
     protected:

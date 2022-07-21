@@ -26,7 +26,7 @@ PlayerImage::~PlayerImage()
 {
 }
 
-void PlayerImage::init(BaseMedia *media, Region *reg)
+void PlayerImage::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia    = media;
     region       = reg;
@@ -47,11 +47,6 @@ void PlayerImage::init(BaseMedia *media, Region *reg)
             SmilMedia->finishedNotFound();
             return;
         }
-
-        ImageWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        ImageWidget.data()->setPixmap(loaded_image);
-        if (SmilMedia->getLogContentId() != "")
-            setStartTime();
     }
     else
     {
@@ -59,12 +54,28 @@ void PlayerImage::init(BaseMedia *media, Region *reg)
     }
 }
 
-void PlayerImage::deinit()
+void PlayerImage::play()
 {
-    loaded_image.load("");
+    ImageWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     ImageWidget.data()->setPixmap(loaded_image);
     if (SmilMedia->getLogContentId() != "")
+        setStartTime();
+}
+
+void PlayerImage::stop()
+{
+    if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
+
+}
+
+void PlayerImage::resume()
+{
+    // todo add support for pauseDisplay
+}
+
+void PlayerImage::pause()
+{
 }
 
 void PlayerImage::changeSize(int w, int h)

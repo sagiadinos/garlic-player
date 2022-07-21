@@ -25,6 +25,8 @@ signals:
 public slots:
     void                play();
     void                stop();
+    void                resume();
+    void                pause();
 
 protected:
     QString             current_media_path;

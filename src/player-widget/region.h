@@ -46,6 +46,8 @@ public:
     void                setRegion(Region region);
     void                startShowMedia(BaseMedia *media);
     void                stopShowMedia(BaseMedia *media);
+    void                resumeShowMedia(BaseMedia *media);
+    void                pauseShowMedia(BaseMedia *media);
     Region             *getRegion() {return &region;}
     bool                event(QEvent *event);
 protected:
@@ -58,6 +60,7 @@ protected:
     LibFacade            *MyLibFacade;
     QScopedPointer<QStackedLayout>          layout;
     PlayerBaseMedia      *MyMedia = Q_NULLPTR;
+    QMap<QString, PlayerBaseMedia *>    MyMediaList;
     MediaFactory          MyMediaFactory;
     bool                  has_background_image = false;
     void                  resizeGeometry();
@@ -65,6 +68,7 @@ protected:
     void                  determineStylesheets();
     QString               determineBackgroundImage();
     QString               determineBackgroundImageRepeat();
+    PlayerBaseMedia      *findMediaById(QString id);
 };
 
 #endif // TREGION_H

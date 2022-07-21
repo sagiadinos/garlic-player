@@ -16,24 +16,39 @@ Brush::Brush(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : P
 
 Brush::~Brush()
 {
-    brush_item.reset();
 }
 
-void Brush::init(BaseMedia *media, Region *reg)
+void Brush::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
     MyBrush = qobject_cast<TBrush *> (media);
     brush_item.data()->setProperty("color", MyBrush->getColor());
+}
+
+void Brush::play()
+{
+    brush_item.data()->setVisible(true);
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
 
-void Brush::deinit()
+void Brush::stop()
 {
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
-    brush_item.data()->setProperty("source","");
+    brush_item.data()->setVisible(false);
+}
+
+void Brush::resume()
+{
+    // todo add support for pauseDisplay
+    brush_item.data()->setVisible(true);
+}
+
+void Brush::pause()
+{
+    brush_item.data()->setVisible(true);
 }
 
 void Brush::changeSize(int w, int h)

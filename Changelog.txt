@@ -13,8 +13,10 @@ Changelog
 	* On Philips DS-devices UUID created from serial and model codes 
 	* support Philips SICP function for disable/enable backlight
 	* exec-attribute for every element possible 
+	* enhance excl priority handling
+	* video and audio files can now pause and resume
 	* fix delete bug
-	* various minor bugfixes
+	* various bugfixes
 
 0.4.0 -> 0.5.0
 ---------------------
