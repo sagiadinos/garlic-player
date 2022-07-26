@@ -51,7 +51,7 @@ void Web::resume()
 void Web::pause()
 {
      // todo add support for pauseDisplay
-    web_item.data()->setVisible(true);
+    web_item.data()->setVisible(false);
 }
 
 void Web::changeSize(int w, int h)

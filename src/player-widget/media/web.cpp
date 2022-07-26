@@ -95,10 +95,12 @@ void PlayerWeb::stop()
 
 void PlayerWeb::resume()
 {
+    browser->setVisible(true);
 }
 
 void PlayerWeb::pause()
 {
+    browser->setVisible(false);
     // todo add support for pauseDisplay
 }
 
