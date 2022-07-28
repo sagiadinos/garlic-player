@@ -55,6 +55,7 @@ void LibFacade::init(MainConfiguration *config)
     connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(changeConfig()));
     connect(MyTaskScheduler.data(), SIGNAL(installSoftware(QString)), this, SLOT(emitInstallSoftware(QString)));
     connect(MyTaskScheduler.data(), SIGNAL(reboot(QString)), this, SLOT(reboot(QString)));
+    connect(MyTaskScheduler.data(), SIGNAL(applyCommand(QString,QString)), this, SLOT(applyCpmmand(QString,QString)));
 
 }
 
@@ -213,6 +214,24 @@ void LibFacade::emitInstallSoftware(QString file_path)
 void LibFacade::reboot(QString task_id)
 {
     emit rebootOS(task_id);
+}
+
+void LibFacade::applyCommand(QString task_id, QString command)
+{
+    Q_UNUSED(task_id);
+    if (command == "clear_all_caches")
+    {
+        MyFreeDiscSpace->clearPlayerCache();
+        MyFreeDiscSpace->clearWebCache();
+    }
+    else if (command == "clear_playercache")
+    {
+        MyFreeDiscSpace->clearPlayerCache();
+    }
+    else if (command == "clear_webcache")
+    {
+        MyFreeDiscSpace->clearWebCache();
+    }
 }
 
 void LibFacade::takeScreenshot(QString file_path)

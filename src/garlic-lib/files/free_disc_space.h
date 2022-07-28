@@ -44,12 +44,15 @@ class FreeDiscSpace : public QObject
         void     init(QString cp);
         void     freedSpace(qint64 size_deleted);
         bool     freeDiscSpace(qint64 size_to_free);
+        bool     clearPlayerCache();
+        void     clearWebCache();
         qint64   calculateNeededDiscSpaceToFree(qint64 size);
 
-        void setInventoryTable(DB::InventoryTable *value);
-        bool            deleteFile(QString file_path);
+        void     setInventoryTable(DB::InventoryTable *value);
+        bool     deleteFile(QString file_path);
 
-    protected:
+    private:
+        void            deleteEntry(QFileInfo fi);
         bool            deleteDirectory(QString dir_path);
         qint64          calculateDirectorySize(QString dir_path);
         void            setBytesTotal(const quint64 &value);
@@ -61,6 +64,8 @@ class FreeDiscSpace : public QObject
         QFile          del_file;
         QFileInfo      del_file_info;
         QDir           del_dir;
+
+
     signals:
 
 

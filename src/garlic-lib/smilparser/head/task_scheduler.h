@@ -46,7 +46,7 @@ namespace SmilHead
         QString content_checksum = "";
         QString checksum_method  = "MD5";
     };
-    struct applyCommand
+    struct ApplyCommand
     {
         QString task_id          = "";
         QString command          = "";
@@ -74,10 +74,11 @@ namespace SmilHead
             UpdateSettings      MyUpdateSetting;
             FirmwareUpdate      MyFirmwareUpdate;
             ShutdownPlayer      MyShutdownPlayer;
+            ApplyCommand        MyApplyCommand;
             void            parseFirmwareUpdate(QDomElement element);
             void            parseUpdateSetting(QDomElement element);
             void            parseShutdownPlayer(QDomElement element);
-          // for later  void            parseApplyCommand(QDomElement update_settings);
+            void            parseApplyCommand(QDomElement update_settings);
             bool            hasUsedTaskId(QString task_id, QString task_name);
             bool            loadDocument(QString file_path);
     protected slots:
@@ -89,6 +90,7 @@ namespace SmilHead
         void                   applyConfiguration();
         void                   installSoftware(QString file_path);
         void                   reboot(QString task_id);
+        void                   applyCommand(QString task_id, QString command);
     };
 }
 #endif // TASKSCHEDULER_H

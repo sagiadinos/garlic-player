@@ -38,10 +38,13 @@ private Q_SLOTS:
     void cleanup();
     void testCalculateNeededDiscSpaceToFree();
     void testfreeDiscSpaceOldestFile();
-    void testfreeDiscSpaceAll();
     void testFreeDiscSpaceToMuch();
+    void testClearPlayerCache();
+    void testClearWebCache();
+    void createFilesForLastReadDelete();
     void createFilesForDelete();
     void openCloseForLastRead(QString source, QString copy);
+    int countFilesInDir(QFileInfo fi);
 };
 
 void TestDiscSpace::init()
@@ -49,7 +52,10 @@ void TestDiscSpace::init()
     qInstallMessageHandler(noMessageOutput);
     cache_dir.setPath("./");
     if (cache_dir.mkpath("cache/test_dir"))
+    {
+        cache_dir.mkpath("cache/QtWebEngine");
         cache_dir.setPath("./cache");
+    }
 }
 
 void TestDiscSpace::cleanup()
@@ -72,8 +78,7 @@ void TestDiscSpace::testCalculateNeededDiscSpaceToFree()
 
 void TestDiscSpace::testfreeDiscSpaceOldestFile()
 {
-    createFilesForDelete();
-    QVERIFY(QFile::exists("./cache/test_dir/1.png"));
+    createFilesForLastReadDelete();
 
     NiceMock<DiscSpaceMocked>  MyDiscSpaceMock;
     FreeDiscSpace *MyFreeDiscSpace = new FreeDiscSpace(&MyDiscSpaceMock);
@@ -85,22 +90,6 @@ void TestDiscSpace::testfreeDiscSpaceOldestFile()
     QVERIFY(!QFile::exists("./cache/test_dir/1.png"));
 }
 
-void TestDiscSpace::testfreeDiscSpaceAll()
-{
-    createFilesForDelete();
-    NiceMock<DiscSpaceMocked>  MyDiscSpaceMock;
-    FreeDiscSpace *MyFreeDiscSpace = new FreeDiscSpace(&MyDiscSpaceMock);
-    MyFreeDiscSpace->init(cache_dir.path());
-
-    QVERIFY(QFile::exists("./cache/1.png"));
-    QVERIFY(QFile::exists("./cache/1.wgt"));
-
-    QVERIFY(MyFreeDiscSpace->freeDiscSpace(5610));
-
-    QVERIFY(!QFile::exists("./cache/1.png"));
-    QVERIFY(!QFile::exists("./cache/1.wgt"));
-}
-
 void TestDiscSpace::testFreeDiscSpaceToMuch()
 {
     createFilesForDelete();
@@ -108,28 +97,102 @@ void TestDiscSpace::testFreeDiscSpaceToMuch()
     NiceMock<DiscSpaceMocked>  MyDiscSpaceMock;
     FreeDiscSpace *MyFreeDiscSpace = new FreeDiscSpace(&MyDiscSpaceMock);
     MyFreeDiscSpace->init(cache_dir.path());
+    QTest::qWait(800); // needed for inits
 
     // Free more than possible
-    QVERIFY(!MyFreeDiscSpace->freeDiscSpace(18000));
+    QVERIFY(!MyFreeDiscSpace->freeDiscSpace(200000));
 
+    QVERIFY(!QFile::exists("./cache/test_dir/1.png"));
+    QVERIFY(!QFile::exists("./cache/test_dir/1.wgt"));
+    QVERIFY(!QFile::exists("./cache/1.png"));
+    QVERIFY(!QFile::exists("./cache/1.wgt"));
+    QVERIFY(!QFile::exists("./cache/2.png"));
+    QVERIFY(!QFile::exists("./cache/2.wgt"));
+    QVERIFY(!QFile::exists("./cache/3.png"));
+    QVERIFY(!QFile::exists("./cache/4.png"));
+    QVERIFY(!QFile::exists("./cache/5.png"));
+
+    // This tests fails sometimes because of the files will not be deleted
+    // maybe the os cache makes some crap
 }
+
+void TestDiscSpace::testClearPlayerCache()
+{
+    createFilesForDelete();
+    NiceMock<DiscSpaceMocked>  MyDiscSpaceMock;
+    FreeDiscSpace *MyFreeDiscSpace = new FreeDiscSpace(&MyDiscSpaceMock);
+    MyFreeDiscSpace->init(cache_dir.path());
+    QTest::qWait(800); // needed for inits
+
+    MyFreeDiscSpace->clearPlayerCache();
+    QVERIFY(QFile::exists("./cache/QtWebEngine"));
+    QVERIFY(!QFile::exists("./cache/test_dir/1.png"));
+    QVERIFY(!QFile::exists("./cache/test_dir/1.wgt"));
+    QVERIFY(!QFile::exists("./cache/1.png"));
+    QVERIFY(!QFile::exists("./cache/1.wgt"));
+    QVERIFY(!QFile::exists("./cache/2.png"));
+    QVERIFY(!QFile::exists("./cache/2.wgt"));
+    QVERIFY(!QFile::exists("./cache/3.png"));
+    QVERIFY(!QFile::exists("./cache/4.png"));
+    QVERIFY(!QFile::exists("./cache/5.png"));
+}
+
+
+void TestDiscSpace::testClearWebCache()
+{
+    createFilesForDelete();
+    NiceMock<DiscSpaceMocked>  MyDiscSpaceMock;
+    FreeDiscSpace *MyFreeDiscSpace = new FreeDiscSpace(&MyDiscSpaceMock);
+    MyFreeDiscSpace->init(cache_dir.path());
+
+    QVERIFY(QFile::exists("./cache/QtWebEngine"));
+
+    MyFreeDiscSpace->clearWebCache();
+
+    QVERIFY(!QFile::exists("./cache/QtWebEngine"));
+    QVERIFY(QFile::exists("./cache/test_dir/1.png"));
+    QVERIFY(QFile::exists("./cache/test_dir/1.wgt"));
+    QVERIFY(QFile::exists("./cache/1.png"));
+    QVERIFY(QFile::exists("./cache/1.wgt"));
+    QVERIFY(QFile::exists("./cache/2.png"));
+    QVERIFY(QFile::exists("./cache/2.wgt"));
+    QVERIFY(QFile::exists("./cache/3.png"));
+    QVERIFY(QFile::exists("./cache/4.png"));
+    QVERIFY(QFile::exists("./cache/5.png"));
+}
+
+void TestDiscSpace::createFilesForLastReadDelete()
+{
+    // put two files in the testdir
+    openCloseForLastRead(":/test.png", "./cache/test_dir/1.png"); // => 629 Byte
+    openCloseForLastRead(":/test.wgt", "./cache/test_dir/1.wgt"); // without directory => 1118
+    QTest::qWait(800); // needed for set as oldest read
+
+    openCloseForLastRead(":/test.wgt", "./cache/2.wgt");
+    openCloseForLastRead(":/test.png", "./cache/5.png");
+    openCloseForLastRead(":/test.png", "./cache/4.png");
+    openCloseForLastRead(":/test.png", "./cache/3.png");
+    openCloseForLastRead(":/test.png", "./cache/2.png");
+    openCloseForLastRead(":/test.png", "./cache/1.png");
+    openCloseForLastRead(":/test.wgt", "./cache/1.wgt");
+    openCloseForLastRead(":/test.png", "./cache/index.smil");
+}
+
 
 void TestDiscSpace::createFilesForDelete()
 {
     // put two files in the testdir
     openCloseForLastRead(":/test.png", "./cache/test_dir/1.png"); // => 629 Byte
     openCloseForLastRead(":/test.wgt", "./cache/test_dir/1.wgt"); // without directory => 1118
-
-    openCloseForLastRead(":/test.wgt", "./cache/2.wgt"); //  => 2236 Byte
-
-    openCloseForLastRead(":/test.png", "./cache/5.png");  // => 3145 Byte
+    openCloseForLastRead(":/test.wgt", "./cache/2.wgt");
+    openCloseForLastRead(":/test.png", "./cache/5.png");
     openCloseForLastRead(":/test.png", "./cache/4.png");
     openCloseForLastRead(":/test.png", "./cache/3.png");
     openCloseForLastRead(":/test.png", "./cache/2.png");
     openCloseForLastRead(":/test.png", "./cache/1.png");
+    openCloseForLastRead(":/test.wgt", "./cache/1.wgt");
+    openCloseForLastRead(":/test.png", "./cache/index.smil");
 
-    // create some deleteable png files and wgt
-    openCloseForLastRead(":/test.wgt", "./cache/1.wgt"); // without directory => 1118
 }
 
 void TestDiscSpace::openCloseForLastRead(QString source, QString destination)
@@ -141,6 +204,15 @@ void TestDiscSpace::openCloseForLastRead(QString source, QString destination)
     copy.open(QIODevice::ReadOnly);
     copy.close();
 }
+
+int TestDiscSpace::countFilesInDir(QFileInfo fi)
+{
+    QDir dir(fi.absoluteDir());
+    QStringList totalfiles;
+    totalfiles = dir.entryList(QStringList("*"), QDir::Files | QDir::NoSymLinks);
+    return totalfiles.length();
+}
+
 
 QTEST_APPLESS_MAIN(TestDiscSpace)
 

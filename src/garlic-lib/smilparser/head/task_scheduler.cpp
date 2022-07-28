@@ -94,6 +94,10 @@ void SmilHead::TaskScheduler::doSucceed(TNetworkAccess *network)
         {
             parseShutdownPlayer(childs.item(i).toElement());
         }
+        else if (childs.item(i).toElement().tagName() == "applyCommand")
+        {
+            parseApplyCommand(childs.item(i).toElement());
+        }
     }
     return;
 }
@@ -213,6 +217,22 @@ void SmilHead::TaskScheduler::parseShutdownPlayer(QDomElement element)
         return;
 
     emit reboot(MyShutdownPlayer.task_id);
+}
+
+void SmilHead::TaskScheduler::parseApplyCommand(QDomElement element)
+{
+    if (element.hasAttribute("id"))
+    {
+        MyApplyCommand.task_id = element.attribute("id");
+    }
+
+    if (hasUsedTaskId(MyApplyCommand.task_id, "apply_command_task_id"))
+        return;
+
+    QDomElement child = element.firstChildElement("command");
+
+    if(!child.isNull())
+       emit applyCommand(MyShutdownPlayer.task_id, child.text());
 }
 
 

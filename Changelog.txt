@@ -8,6 +8,8 @@ Changelog
 	* add Restful API (files, oauth2, tasks, app , hardware) 
 	* add screenshot method
 	* add support for network trigger (notify)
+	* clear webcache via task_scheduler
+	* clear all caches via task scheduler
 
 2. Improvements
 	* On Philips DS-devices UUID created from serial and model codes 

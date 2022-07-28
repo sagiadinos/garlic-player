@@ -53,33 +53,17 @@ qint64 FreeDiscSpace::calculateNeededDiscSpaceToFree(qint64 size_new_file)
 bool FreeDiscSpace::freeDiscSpace(qint64 size_to_free)
 {
     QMap<qint64, QFileInfo> dir_list = sortCacheContentsByLastRead();
-    QMapIterator<qint64, QFileInfo> i(dir_list);
     bytes_deleted = 0;
-    while (i.hasNext())
+    for (QMap<qint64, QFileInfo>::Iterator i = dir_list.begin(); i != dir_list.end(); ++i)
     {
-        i.next();
-        if (i.value().isDir())
-        {
-            deleteDirectory(i.value().absoluteFilePath());
-            deleteFile(i.value().absoluteFilePath()+".wgt");
-        }
-        else
-        {
-            deleteFile(i.value().absoluteFilePath());
-        }
+        deleteEntry(i.value());
 
         QStringList list;
         list  << "resourceURI" << i.value().absoluteFilePath() + " removed";
         qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECT_REMOVED", list);
 
-        // delete entry from db
-        if (MyInventoryTable != Q_NULLPTR)
-            MyInventoryTable->deleteByCacheName(i.value().fileName());
-
         if (size_to_free < bytes_deleted)
             break;
-
-        i.next();
     }
 
     if (size_to_free > bytes_deleted) // if it is not possible to delete target bytes
@@ -95,6 +79,64 @@ bool FreeDiscSpace::freeDiscSpace(qint64 size_to_free)
     qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECTS_REMOVED", list2);
 
     return true;
+}
+
+bool FreeDiscSpace::clearPlayerCache()
+{
+    QMap<qint64, QFileInfo> dir_list = sortCacheContentsByLastRead();
+    bytes_deleted = 0;
+    for (QMap<qint64, QFileInfo>::Iterator i = dir_list.begin(); i != dir_list.end(); ++i)
+    {
+        deleteEntry(i.value());
+    }
+
+    if (bytes_deleted == 0) // if it is not possible to delete target bytes
+    {
+        QStringList list1;
+        list1  << "errorMessage" << " - Cache could not be cleared";
+        qCritical(ContentManager) << Logger::getInstance().createEventLogMetaData("FAILED_FREEING_SPACE", list1);
+        return false;
+    }
+
+    QStringList list2;
+    list2  << "information" << "Cache is cleared" + QString::number(bytes_deleted) + " Bytes were deleted";
+    qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECTS_REMOVED", list2);
+
+    return true;
+
+}
+
+void FreeDiscSpace::clearWebCache()
+{
+    // for desktop
+    QDir webcache_dir(cache_path + "/QtWebEngine");
+    if (webcache_dir.exists())
+        webcache_dir.removeRecursively();
+
+    // for Android WebView
+    QStringList data_dirs = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+    QDir android_webcache_dir(data_dirs.at(0) + "/../app_webview");
+    if (android_webcache_dir.exists())
+        android_webcache_dir.removeRecursively();
+
+}
+
+void FreeDiscSpace::deleteEntry(QFileInfo fi)
+{
+    if (fi.isDir())
+    {
+        deleteDirectory(fi.absoluteFilePath());
+        deleteFile(fi.absoluteFilePath()+".wgt");
+    }
+    else
+    {
+        deleteFile(fi.absoluteFilePath());
+    }
+
+    // delete entry from db
+    if (MyInventoryTable != Q_NULLPTR)
+        MyInventoryTable->deleteByCacheName(fi.fileName());
+
 }
 
 bool FreeDiscSpace::deleteFile(QString file_path)
@@ -153,7 +195,7 @@ QMap<qint64, QFileInfo> FreeDiscSpace::sortCacheContentsByLastRead()
     QMap<qint64, QFileInfo> map;
     for(int i = 0; i < dir_list.size(); i++)
     {
-        if (dir_list.at(i).fileName() != "index.smil")
+        if (dir_list.at(i).fileName() != "index.smil" && dir_list.at(i).fileName() != "QtWebEngine")
             map.insert(dir_list.at(i).lastRead().toMSecsSinceEpoch(), dir_list.at(i));
     }
 

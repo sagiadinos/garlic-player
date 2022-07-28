@@ -63,6 +63,7 @@ class LibFacade : public QObject
     public slots:
         void               initParser();
         void               reboot(QString task_id);
+        void               applyCommand(QString task_id, QString command);
         void               takeScreenshot(QString file_path);
     protected:
         int               resource_monitor_timer_id;
