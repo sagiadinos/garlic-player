@@ -12,7 +12,11 @@ Based on [SMIL standard](https://www.w3.org/TR/SMIL3/) it works together with ev
 
 You are able to play local and remote (via http) SMIL files with the features described below.
 
-[Download compiled binaries](https://garlic-player.com/garlic-player/)
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
+     alt="Get it on IzzyOnDroid"
+     height="80">](https://f-droid.org/packages/org.hollowbamboo.chordreader2/)
+
+Or [download compiled binaries from the website](https://garlic-player.com/garlic-player/)
 
 ## Libraries used
  - [Qt5](https://www.qt.io) >= 5.10 (5.12.x LTS recommended)
