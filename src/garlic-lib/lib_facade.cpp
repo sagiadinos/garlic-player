@@ -55,7 +55,7 @@ void LibFacade::init(MainConfiguration *config)
     connect(MyTaskScheduler.data(), SIGNAL(applyConfiguration()), this, SLOT(changeConfig()));
     connect(MyTaskScheduler.data(), SIGNAL(installSoftware(QString)), this, SLOT(emitInstallSoftware(QString)));
     connect(MyTaskScheduler.data(), SIGNAL(reboot(QString)), this, SLOT(reboot(QString)));
-    connect(MyTaskScheduler.data(), SIGNAL(applyCommand(QString,QString)), this, SLOT(applyCpmmand(QString,QString)));
+    connect(MyTaskScheduler.data(), SIGNAL(applyCommand(QString,QString)), this, SLOT(applyCommand(QString,QString)));
 
 }
 

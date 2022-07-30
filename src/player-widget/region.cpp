@@ -81,6 +81,8 @@ void TRegion::stopShowMedia(BaseMedia *media)
     MyMediaList.remove(media->getID());
     delete MyMedia;
 
+    MyMedia = Q_NULLPTR;
+
 /*
     // 2021-07-21 see tests/data/smil/par/3_changes.smil brush over image
     // we need to stop the media in parameter if differs

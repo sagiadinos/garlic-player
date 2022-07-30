@@ -487,7 +487,9 @@ void Timings::EnhancedTimer::activateWallClock(Timings::EnhancedTimer::TriggerSt
 {
     // we need to calculate a previous trigger, cause it can be possible that an
     // element triggrered active in the past and last on  du to long or indefinite (active) duration
-    ts->MyWallClock->calculateCurrentTrigger(QDateTime::currentDateTime());
+
+    QDateTime dt = QDateTime::currentDateTime();
+    ts->MyWallClock->calculateCurrentTrigger(dt);
     qint64 previous_trigger = ts->MyWallClock->getPreviousTimerTrigger();
     qint64 next_trigger     = ts->MyWallClock->getNextTimerTrigger();
 
@@ -516,7 +518,7 @@ void Timings::EnhancedTimer::calculateNegativeTrigger(qint64 negative_time)
 
 void Timings::EnhancedTimer::calculatePositiveTrigger(qint64 positive_time)
 {
-    // we must find the positibe trigger which is nearest to zero
+    // we must find the positive trigger which is nearest to zero
     if (positive_trigger == 0 || positive_time < positive_trigger)
         positive_trigger = positive_time;
 }
@@ -536,7 +538,8 @@ void Timings::EnhancedTimer::determineNextTrigger()
     {
         if (ts->type == TYPE_WALLCLOCK && ts->MyTimer != Q_NULLPTR && !ts->MyTimer->isActive())
         {
-            ts->MyWallClock->calculateNextTrigger(QDateTime::currentDateTime());
+            QDateTime dt = QDateTime::currentDateTime();
+            ts->MyWallClock->calculateNextTrigger(dt);
             qint64 next_trigger     = ts->MyWallClock->getNextTimerTrigger();
             if (next_trigger > 0) // not sure if this has sie effects, but it prevents an endless loop when next_trigger ==  0
                 ts->MyTimer->start(next_trigger);

@@ -465,7 +465,9 @@ void BaseTimings::finishIntrinsicDuration()
 
 void BaseTimings::finishedSimpleDuration()
 {
-    if (handleRepeatCountStatus()) // repeatCount and repeatDur extends simple duration
+    // ignore repeatCount if begintimer has a wallclock repeatinterval
+    // repeatCount and repeatDur extends simple duration
+    if (!isBeginTimerActive() && handleRepeatCountStatus())
     {
         // ToDo: activate probably repeat event trigger here
         qDebug() << getID() <<  "repeat by repeatCount";

@@ -66,7 +66,6 @@ void PlayerImage::stop()
 {
     if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
-
 }
 
 void PlayerImage::resume()

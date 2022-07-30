@@ -75,7 +75,6 @@ void PlayerWeb::loadMedia(BaseMedia *media, Region *reg)
 
 void PlayerWeb::play()
 {
-    browser->setVisible(true);
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
@@ -85,7 +84,6 @@ void PlayerWeb::stop()
     if (browser == Q_NULLPTR)
         return;
 
-    browser->setVisible(false);
     browser->close();
 
     if (SmilMedia->getLogContentId() != "")

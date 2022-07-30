@@ -69,6 +69,6 @@
 					<img region="screen4" xml:id="imgCend" src="../../images/end.jpg" dur="1s"  fit="meet" />
 				</seq>
 			</par>
-		</par>	
+		</par>
 	</body>
 </smil>
