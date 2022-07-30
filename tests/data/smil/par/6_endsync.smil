@@ -17,7 +17,7 @@
 
 	sequence
 		up left Count to ten for control
-		up right display endsync="last" which is also the default value: begin, 1, 2, 3, ,4, 5, 4s wait end,
+		up right display endsync="last" which is also the default value: begin, 1, 2, 3, 4, 4s wait end,
 
 		down left display endsync="first": begin only (endless repeat)
 
@@ -41,7 +41,7 @@
 			</seq>
 			<par xml:id="par_last" repeatCount="indefinite" begin="0s" endsync="last">
 				<img region="screen2" xml:id="imgBbegin" src="../../images/begin.jpg" dur="1s"  fit="meet" />
-				<seq xml:id="seq1" begin="0s">
+				<seq xml:id="seq1" begin="1s">
 					<img region="screen2" xml:id="imgB0001" src="../../images/0001.jpg" dur="1s" fit="meet" />
 					<img region="screen2" xml:id="imgB0002" src="../../images/0002.jpg" dur="1s" fit="meet" />
 					<img region="screen2" xml:id="imgB0003" src="../../images/0003.jpg" dur="1s" fit="meet" />

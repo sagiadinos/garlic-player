@@ -16,7 +16,7 @@
 
 		The correct behaviour is:
 		Left zone: shows video image
-		right Zone: 1,2, 3, 4, 5, the 5s black then repeat count to 5
+		right Zone: 1, 2, 3, 4, 5, the 5s black then repeat count to 5
 	-->
 
 		<par id="global">

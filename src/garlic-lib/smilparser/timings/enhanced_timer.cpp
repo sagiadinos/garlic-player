@@ -452,9 +452,7 @@ bool Timings::EnhancedTimer::parseOneValue(QString value)
     }
     else if (value.at(0).isLetter() && value.contains("."))
     {
-        QString symbol =  value.split(".").at(0);
-
-        if (symbol.endsWith("begin") || symbol.endsWith("end"))
+        if (value.endsWith("begin") || value.endsWith("end"))
             is_parsable = initTimer(TYPE_SYNCBASE, value);
         else
             is_parsable = initTimer(TYPE_EVENT, value);
