@@ -59,9 +59,8 @@ void TRegion::startShowMedia(BaseMedia *media)
     if (widget != Q_NULLPTR)
     {
         layout.data()->addWidget(widget);
+        layout.data()->setCurrentWidget(widget);
     }
-
-
 }
 
 void TRegion::stopShowMedia(BaseMedia *media)
@@ -109,6 +108,11 @@ void TRegion::resumeShowMedia(BaseMedia *media)
     }
 
     MyMedia->resume();
+    QWidget *widget = MyMedia->getView();
+    if (widget != Q_NULLPTR) // bring current widget to the top of the LayoutStack
+    {
+        layout.data()->setCurrentWidget(widget);
+    }
 }
 
 void TRegion::pauseShowMedia(BaseMedia *media)
