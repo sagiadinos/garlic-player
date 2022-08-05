@@ -213,8 +213,8 @@ void BodyParser::fireTrigger(QString trigger, BaseTimings *element, QString sour
 
     if (trigger == "begin")
     {
-        if (!determineContinueBasedOnParent(element))
-            return;
+     //   if (!determineContinueBasedOnParent(element))
+     //       return;
 
         element->startTrigger(source_id);
     }
@@ -244,15 +244,6 @@ void BodyParser::connectSlots(BaseTimings *element)
 bool BodyParser::determineContinueBasedOnParent(BaseTimings *element)
 {
     // When there is excl as parent container we need to stops or pause lower and activate higher priorityClass.
-    // but it is not enough to put these method only in BodyParser::startElement
-    // this is only adequate when children have wallclock or clock values
-
-    // a external trigger can have an additional ClockValue like begin="xyz.begin+2s" or end="accesskey(w)+3s";
-    // In this case we must stop/pause the lower priority classes before starting the additional timer
-
-    // look for tests/data/smil/excl/trigger/2_indefinite_with_clock.smil
-    // in this scenario we would get a kind of deadlock and never reach BodyParser::startElement
-    // so this method must called 2 times in case of a external trigger
 
     TContainer *ParentContainer = qobject_cast<TContainer *> (element->getParentContainer());
     if (ParentContainer != Q_NULLPTR && ParentContainer->objectName() == "TExcl")

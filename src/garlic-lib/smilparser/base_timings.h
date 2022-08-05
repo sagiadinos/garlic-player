@@ -71,7 +71,7 @@ class BaseTimings : public TBase
                 QHash<QString, QString> fetchExternalBegins();
                 QHash<QString, QString> fetchExternalEnds();
 
-                void           setDefered(){status = _defered;}
+                void           setDefered();
                 int            getStatus(){return status;}
                 bool           isActive(){return (status == _active);}
                 void           finishedNotFound();

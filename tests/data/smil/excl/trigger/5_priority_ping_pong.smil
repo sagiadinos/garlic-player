@@ -22,7 +22,7 @@
 
 		<!--
 
-			Sequence: Start count at every 10s beginmnnig with 0th second of a minute
+			Sequence: Start count at every 10s begining with 0th second of a minute
 			1, 2, video, 4, 5 standby for 5 s
 			repeat indefinite
 		-->
@@ -35,7 +35,7 @@
 				</seq>
 			</priorityClass>
 			<priorityClass higher="pause">
-				<seq id="monitor" begin="wallclock(R/2021-07-27T13:00:00/PT10S)" end="wallclock(R/2021-07-27T13:00:05/PT10S)">
+				<seq id="monitor" begin="wallclock(R/2021-07-27T13:00:00/PT10S)" end="wallclock(R/2021-07-27T13:00:06/PT10S)">
 					<seq repeatCount="indefinite">
 						<img id="Image1" src="../../../images/0001.jpg" dur="1s" fit="meet" />
 						<img id="Image2" src="../../../images/0002.jpg" dur="1s" fit="meet" />

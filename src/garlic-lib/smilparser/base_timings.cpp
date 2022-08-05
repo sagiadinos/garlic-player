@@ -233,6 +233,11 @@ QHash<QString, QString> BaseTimings::fetchExternalEnds()
    return EndTimer->fetchTriggerList();
 }
 
+void BaseTimings::setDefered()
+{
+    status = _defered;
+}
+
 
 void BaseTimings::finishedNotFound()
 {

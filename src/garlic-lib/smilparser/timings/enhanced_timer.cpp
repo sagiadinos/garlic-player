@@ -258,7 +258,6 @@ void Timings::EnhancedTimer::startFromExternalTrigger(QString source_id)
             break;
         }
     }
-
 }
 
 void Timings::EnhancedTimer::stop()
@@ -452,7 +451,16 @@ bool Timings::EnhancedTimer::parseOneValue(QString value)
     }
     else if (value.at(0).isLetter() && value.contains("."))
     {
-        if (value.endsWith("begin") || value.endsWith("end"))
+        QString check;
+        // seperate the the +/i
+        if (value.contains("+"))
+            check = value.split("+").at(0);
+        else if (value.contains("-"))
+            check = value.split("-").at(0);
+        else
+             check = value;
+
+        if (check.endsWith("begin") || check.endsWith("end"))
             is_parsable = initTimer(TYPE_SYNCBASE, value);
         else
             is_parsable = initTimer(TYPE_EVENT, value);

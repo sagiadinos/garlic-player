@@ -24,21 +24,22 @@
 	<!--
 
 		lower left shows standby
-		lower right shows 1, 2, 3 repeated indefinetely 2s after standby end
+		lower right shows 1, 2, 3 repeated indefinetely 1s after standby end
 
-		Remark: repeatCount="indefinite" in seq which wraps standby will stopped by higher priority
+		Remark: repeatCount="indefinite" in seq which wraps standby will stopped by higher priority.
+			But	Standby must be > 1s otherwise we get an deadlock (need to fix this later)
 	-->
 		<par>
 ´			<excl repeatCount="indefinite">
 				<priorityClass>
-					<seq id="start_count" begin="standby.end+2s" repeatCount="indefinite">
+					<seq id="start_count" begin="standby.end+1s" repeatCount="indefinite">
 						<img dur="1" src="{__url001}" region="screen4" fit="fill" />
 						<img dur="1" src="{__url002}" region="screen4" fit="fill" />
 						<img dur="1" src="{__url003}" region="screen4" fit="fill" />
 					</seq>
 				</priorityClass>
-				<priorityClass higher="stop" repeatCount="indefinite">
-					<seq id="wrap_standby" begin="0">
+				<priorityClass higher="stop">
+					<seq id="wrap_standby" begin="0" repeatCount="indefinite">
 						<img id="standby" dur="2s" src="{__url000}" region="screen3" fit="fill" />
 					</seq>
 				</priorityClass>
