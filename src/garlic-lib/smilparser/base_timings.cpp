@@ -178,6 +178,9 @@ void BaseTimings::startTrigger(QString source_id)
 
 void BaseTimings::stopTrigger(QString source_id)
 {
+    if (status == _stopped)
+        return;
+
     if (EndTimer != Q_NULLPTR)
        EndTimer->startFromExternalTrigger(source_id);
     else

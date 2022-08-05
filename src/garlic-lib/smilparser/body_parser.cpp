@@ -211,11 +211,13 @@ void BodyParser::fireTrigger(QString trigger, BaseTimings *element, QString sour
     if (qobject_cast<TContainer *> (element->getParentContainer())->isActive() != true) // only active elements!
         return;
 
-    if (!determineContinueBasedOnParent(element))
-        return;
+    if (trigger == "begin")
+    {
+        if (!determineContinueBasedOnParent(element))
+            return;
 
-   if (trigger == "begin")
         element->startTrigger(source_id);
+    }
     else
         element->stopTrigger(source_id);
 }
