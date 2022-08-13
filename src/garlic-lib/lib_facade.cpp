@@ -93,11 +93,17 @@ void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_par
 
 void LibFacade::transferNotify(QString key)
 {
+    if (MyElementsContainer.isNull())
+        return;
+
     MyBodyParser.data()->triggerNotify(key);
 }
 
 void LibFacade::transferAccessKey(QChar key)
 {
+    if (MyElementsContainer.isNull())
+        return;
+
     MyBodyParser.data()->triggerAccessKey(key);
 }
 
