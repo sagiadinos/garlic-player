@@ -43,7 +43,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts); // Raspberry and POT needs this http://thebugfreeblog.blogspot.de/2018/01/pot-570-with-qt-5100-built-for-armv8.html
 
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
+    QtWebView::initialize();
 
 // must be checked and before app create directories
 #if defined Q_OS_ANDROID
@@ -68,7 +69,6 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(handleMessages); // must set after createDiretories
 
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
-    QtWebView::initialize();
 
     LibFacade  *MyLibFacade = new LibFacade();
 

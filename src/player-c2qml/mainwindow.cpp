@@ -83,7 +83,7 @@ void MainWindow::keyPressEvent(QKeyEvent *ke)
             openDebugInfos();
             setCursor(Qt::BlankCursor);
             break;
-        case Qt::Key_S:  // Ctrl-C will not work during qwebengineview
+        case Qt::Key_S:  // Ctrl-C will not work during qwebview
             openConfigDialog();
         break;
 
