@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts); // Raspberry and POT needs this http://thebugfreeblog.blogspot.de/2018/01/pot-570-with-qt-5100-built-for-armv8.html
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
     QtWebView::initialize();
 
 // must be checked and before app create directories
