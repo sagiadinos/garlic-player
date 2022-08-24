@@ -18,6 +18,8 @@ class Video : public PlayerBaseMedia
         Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Video();
         void                        loadMedia(BaseMedia *media, Region *reg);
+        void                        init();
+        void                        loadInternal();
         void                        play();
         void                        stop();
         void                        resume();
@@ -29,7 +31,8 @@ class Video : public PlayerBaseMedia
         qreal                       determineVolume(QString percent);
         QString                     qml;
         QQmlComponent              *media_component;
-      public slots:
+        QQuickItem                 *parent_item;
+    public slots:
         void                        doStopped();
 };
 

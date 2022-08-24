@@ -127,7 +127,7 @@ bool MainWindow::event(QEvent *event)
 
 void MainWindow::openDebugInfos()
 {
-    DebugInfos MyDebugInfos(MyLibFacade);
+    DebugInfos MyDebugInfos(MyLibFacade, Q_NULLPTR);
     if (MyDebugInfos.exec() == QDialog::Accepted)
     {
         quitApplication();
