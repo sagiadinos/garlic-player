@@ -3,7 +3,7 @@
 #ifndef VLC_WIDGET_H
 #define VLC_WIDGET_H
 
-#include <QWidget>
+#include <QOpenGLWidget>
 
 class VlcWidget : public QWidget
 {
@@ -19,7 +19,7 @@ public:
 
 signals:
 protected:
-    QScopedPointer<QWidget> VideoWidget;
+    QOpenGLWidget VideoWidget;
 public slots:
 };
 #endif

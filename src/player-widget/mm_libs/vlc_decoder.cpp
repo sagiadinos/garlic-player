@@ -37,7 +37,15 @@ void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt
 
 VlcDecoder::VlcDecoder(QObject *parent) : QObject(parent)
 {
-    vlcInstance = libvlc_new(0, Q_NULLPTR);
+
+#if defined(Q_OS_UNIX)
+    const char *arguments[] = {"--avcodec-hw=any"};
+#else
+    const char *arguments[] = {""};
+#endif
+
+    vlcInstance = libvlc_new(sizeof(arguments) / sizeof(arguments[0]), arguments);
+
     if (vlcInstance)
     {
 #ifdef QT_DEBUG
@@ -94,7 +102,7 @@ void VlcDecoder::setVolume(QString percent)
 
     int vol = 0;
     if (percent.endsWith('%'))
-        vol = percent.mid(0, percent.length()-1).toInt();
+        vol = percent.midRef(0, percent.length()-1).toInt();
     libvlc_audio_set_volume(vlcPlayer,vol);
 }
 

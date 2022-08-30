@@ -3,17 +3,16 @@
 
 VlcWidget::VlcWidget(QWidget *parent) : QWidget(parent)
 {
-    VideoWidget.reset(new QWidget);
 }
 
 QWidget *VlcWidget::getVideoWidget()
 {
-    return VideoWidget.data();
+    return &VideoWidget;
 }
 
 QWidget *VlcWidget::getVideoRenderer()
 {
-    return VideoWidget.data();
+    return getVideoWidget();
 }
 
 void VlcWidget::ignoreAspectRatio()
