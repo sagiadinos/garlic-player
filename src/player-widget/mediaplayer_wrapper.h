@@ -3,6 +3,8 @@
 
 #if defined SUPPORT_QTAV
     #include "mm_libs/qtav_decoder.h"
+#elif defined SUPPORT_QFFPLAY
+    #include "mm_libs/qffpl_decoder.h"
 #elif defined SUPPORT_LIBVLC
     #include "mm_libs/vlc_decoder.h"
 #else
@@ -11,7 +13,6 @@
 
 #include <QObject>
 #include "mediawidget_wrapper.h"
-#include "tools/logging_categories.h"
 
 class MediaPlayerWrapper : public QObject
 {
@@ -38,8 +39,10 @@ protected:
     QString             current_media_path;
 #if defined SUPPORT_QTAV
    QtAVDecoder  MediaDecoder;
+#elif defined SUPPORT_QFFPLAY
+   QffplDecoder MediaDecoder;
 #elif defined SUPPORT_LIBVLC
-    VlcDecoder MediaDecoder;
+    VlcDecoder  MediaDecoder;
 #else
     QtMMDecoder  MediaDecoder;
 #endif

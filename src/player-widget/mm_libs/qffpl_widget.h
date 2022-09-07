@@ -1,26 +1,26 @@
-#ifdef SUPPORT_LIBVLC
+#ifdef SUPPORT_QFFPLAY
 
-#ifndef VLC_WIDGET_H
-#define VLC_WIDGET_H
+#ifndef QFFPLWIDGET_H
+#define QFFPLWIDGET_H
 
 #include <QWidget>
+#include "qffplaylib/videoout.h"
 
-class VlcWidget : public QWidget
+class QffplWidget : public QWidget
 {
-        Q_OBJECT
     public:
-        explicit VlcWidget(QWidget *parent = nullptr);
+        QffplWidget();
+
         QWidget              *getVideoWidget();
         QWidget              *getVideoRenderer();
 
         void                  ignoreAspectRatio();
         void                  keepAspectRatio();
         void                  keepAspectRatioByExpanding();
-
-    signals:
     protected:
-    public slots:
+        VideoOut              VideoWidget;
 };
-#endif
 
-#endif // VLC_WIDGET_H
+#endif // QFFPLWIDGET_H
+
+#endif

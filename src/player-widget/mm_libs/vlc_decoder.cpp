@@ -7,7 +7,7 @@ void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt
    Q_UNUSED(ctx);
     Q_UNUSED(data);
 
-    char *result;
+/*    char *result;
     if (vasprintf(&result, fmt, args) < 0)
     {
         return;
@@ -32,6 +32,7 @@ void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt
             qDebug(message.toUtf8().data(), NULL);
             break;
     }
+    */
 }
 
 
@@ -66,18 +67,26 @@ VlcDecoder::~VlcDecoder()
 void VlcDecoder::setVideoOutput(MediaWidgetWrapper *renderer)
 {
     Renderer = renderer;
+
 #if defined(Q_OS_MAC)
-    libvlc_media_player_set_nsobject(vlcPlayer, (void *)Renderer->getVideoWidget()->winId());
+
+    NSView *video = reinterpret_cast<NSView*>(Renderer->getVideoWidget()->winId());
+   // QMacCocoaViewContainer *container = new QMacCocoaViewContainer(video, Renderer->getVideoWidget());
+
+    libvlc_media_player_set_nsobject(vlcPlayer, video);
+
 #elif defined(Q_OS_UNIX)
     libvlc_media_player_set_xwindow(vlcPlayer, Renderer->getVideoRenderer()->winId());
 #elif defined(Q_OS_WIN)
     libvlc_media_player_set_hwnd(vlcPlayer, Renderer->getVideoRenderer()->winId());
 #endif
+
 }
 
 void VlcDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
 {
     Q_UNUSED(renderer);
+    libvlc_media_player_set_nsobject(vlcPlayer, Q_NULLPTR);
 }
 
 bool VlcDecoder::load(QString file_path)

@@ -6,6 +6,11 @@
 #include <QObject>
 #include <QObject>
 #include <QTimer>
+
+#if defined(Q_OS_MAC)
+    #include <QMacCocoaViewContainer>
+#endif
+
 #include <vlc/vlc.h>
 #include "mediawidget_wrapper.h"
 #include "tools/logging_categories.h"

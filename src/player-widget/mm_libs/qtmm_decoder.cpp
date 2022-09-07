@@ -15,7 +15,8 @@ void QtMMDecoder::setVideoOutput(MediaWidgetWrapper *renderer)
 
 void QtMMDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
 {
-    Q_UNUSED(renderer)
+    Q_UNUSED(renderer);
+    MediaDecoder.data()->setVideoOutput((QVideoWidget *) Q_NULLPTR);
 }
 
 bool QtMMDecoder::load(QString file_path)
@@ -32,7 +33,7 @@ void QtMMDecoder::setVolume(QString percent)
 {
     int vol = 0;
     if (percent.endsWith('%'))
-        vol = percent.mid(0, percent.length()-1).toInt();
+        vol = percent.midRef(0, percent.length()-1).toInt();
     MediaDecoder.data()->setVolume(vol);
 }
 

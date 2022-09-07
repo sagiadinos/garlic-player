@@ -7,7 +7,7 @@ VlcWidget::VlcWidget(QWidget *parent) : QWidget(parent)
 
 QWidget *VlcWidget::getVideoWidget()
 {
-    return &VideoWidget;
+    return this;
 }
 
 QWidget *VlcWidget::getVideoRenderer()

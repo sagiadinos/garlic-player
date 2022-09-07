@@ -6,8 +6,10 @@
 
 #if defined SUPPORT_QTAV
     #include "mm_libs/qtav_widget.h"
+#elif defined SUPPORT_QFFPLAY
+    #include "mm_libs/qffpl_widget.h"
 #elif defined SUPPORT_LIBVLC
-#include "mm_libs/vlc_widget.h"
+    #include "mm_libs/vlc_widget.h"
 #else
     #include "mm_libs/qtmm_widget.h"
 #endif
@@ -20,6 +22,8 @@ public:
     ~MediaWidgetWrapper();
 #if defined SUPPORT_QTAV
     QtAV::VideoRenderer    *getVideoRenderer(){return VideoWidget.getVideoRenderer();}
+#elif defined SUPPORT_QFFPLAY
+   QWidget                *getVideoRenderer(){return VideoWidget.getVideoRenderer();}
 #elif defined SUPPORT_LIBVLC
     QWidget                *getVideoRenderer(){return VideoWidget.getVideoRenderer();}
 #else
@@ -33,6 +37,8 @@ signals:
 protected:
 #if defined SUPPORT_QTAV
     QtAVWidget VideoWidget;  // a deleteLater leads to a crash on playlistchange!
+#elif defined SUPPORT_QFFPLAY
+    QffplWidget         VideoWidget;
 #elif defined SUPPORT_LIBVLC
     VlcWidget         VideoWidget;
 #else

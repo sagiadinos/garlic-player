@@ -25,12 +25,41 @@ Release:DEFINES += QT_NO_DEBUG_OUTPUT
 #DEFINES += DEFAULT_CONTENT_URL_PROTOCOL=http
 #DEFINES += DEFAULT_CONTENT_URL=indexes.smil-control.com/index.php?site=get_index\&owner_id=12
 
-# which media backend should be used: support_qtav support_qtmm support_libvlc
+# which media backend should be used: support_qtav support_qtmm support_libvlc support_qffplay (experimental without sound)
 # on Raspberry Pi only libvlc supports 4k video
 SUPPORT_RPI {
     CONFIG   += support_libvlc
 } else {
     CONFIG   += support_qtav
+}
+
+support_qffplay {
+    DEFINES += SUPPORT_QFFPLAY
+    HEADERS += \
+        mm_libs/qffpl_decoder.h \
+        mm_libs/qffpl_widget.h \
+        mm_libs/qffplaylib/ffmpeg_decoder.h \
+        mm_libs/qffplaylib/mediaplayer.h \
+        mm_libs/qffplaylib/videoout.h
+    SOURCES += \
+        mm_libs/qffpl_decoder.cpp \
+        mm_libs/qffpl_widget.cpp \
+        mm_libs/qffplaylib/ffmpeg_decoder.cpp \
+        mm_libs/qffplaylib/mediaplayer.cpp \
+        mm_libs/qffplaylib/videoout.cpp
+
+    linux {
+       LIBS += -lavformat -lavdevice -lavcodec -lswresample -lswscale -lavutil
+    }
+    macx {
+#        INCLUDEPATH += $$[QT_INSTALL_PREFIX]/include
+        INCLUDEPATH += /Users/niko/Qt/ffmpeg-5.1/include
+#        LIBS += -L$$QT.core.libs -lavformat -lavdevice -lavcodec -lswresample -lswscale -lavutil
+        LIBS += -L/Users/niko/Qt/ffmpeg-5.1/lib -lavformat -lavdevice -lavcodec -lswresample -lswscale -lavutil
+    }
+    win32 {
+        LIBS += -L$$QT.core.libs
+    }
 }
 
 support_qtav {
@@ -61,7 +90,16 @@ support_qtav {
 
 support_libvlc{
     DEFINES += SUPPORT_LIBVLC
-    LIBS += -lvlc -lX11
+    linux {
+        LIBS += -lvlc -lX11
+    }
+    macx {
+        INCLUDEPATH  += $$QT.core.libs/vlcpp
+        QMAKE_LFLAGS += -F$$QT.core.libs/vlcpp
+        QMAKE_LFLAGS += -F$$QT.core.libs/vlcpp/plugins
+        LIBS += -L$$QT.core.libs/vlcpp/plugins
+        LIBS += -L$$QT.core.libs/vlcpp -lvlc -lvlccore
+    }
     HEADERS  += \
         mm_libs/vlc_decoder.h \
         mm_libs/vlc_widget.h
@@ -80,7 +118,6 @@ support_qtmm {
         mm_libs/qtmm_decoder.cpp \
         mm_libs/qtmm_widget.cpp
 }
-
 
 linux {
     LIBS += -L../lib -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
@@ -101,7 +138,6 @@ win32 {
 macx {
     #libgarlic release is static compiled in osx
     debug:CONFIG+=sdk_no_version_check # remove annoying SDK messages on Apple Silicon
-
     ICON = ../../deployment/macx/garlic-player.icns
     release:LIBS += -L../lib -lgarlic -lquazip -lzlib
     debug:LIBS += -L../lib -lgarlic
