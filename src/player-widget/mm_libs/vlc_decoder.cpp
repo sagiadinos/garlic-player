@@ -40,8 +40,10 @@ void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt
 VlcDecoder::VlcDecoder(QObject *parent) : QObject(parent)
 {
 
-#if defined(Q_OS_UNIX)
-    const char *arguments[] = {"--avcodec-hw=any"};
+#if defined(Q_OS_MACX)
+    const char *arguments[] = {""};
+#elif defined(Q_OS_UNIX)
+    const char *arguments[] = {"--avcodec-hw=any"}; // espcially for raspberry 4 64 Bit
 #else
     const char *arguments[] = {""};
 #endif
