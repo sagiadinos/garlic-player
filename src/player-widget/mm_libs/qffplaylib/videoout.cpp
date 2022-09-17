@@ -2,10 +2,6 @@
 
 VideoOut::VideoOut(QWidget *parent) : QWidget(parent)
 {
-  // layout = new QStackedLayout(this);
-  // layout->setMargin(0);
-  // setLayout(layout);
-
    MyLabel = new QLabel(this);
    MyLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
    MyLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -18,10 +14,14 @@ VideoOut::VideoOut(QWidget *parent) : QWidget(parent)
 VideoOut::~VideoOut()
 {
     MyLabel->clear();
+    delete MyLabel;
 }
 
 void VideoOut::placeDecodedImage(const QImage &image)
 {
+    if (image == QImage())
+        return;
+
     QSize size = MyLabel->size();
     MyLabel->setPixmap(QPixmap::fromImage(image.scaled(size.width(), size.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation),Qt::AutoColor));
 

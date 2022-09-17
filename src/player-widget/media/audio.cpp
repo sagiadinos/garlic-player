@@ -19,13 +19,12 @@
 
 PlayerAudio::PlayerAudio(QObject *parent) : PlayerBaseMedia(parent)
 {
-    MediaDecoder.reset(new MediaPlayerWrapper(this));
-    connect(MediaDecoder.data(), SIGNAL(finished()), this, SLOT(finished()));
+    connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
 }
 
 PlayerAudio::~PlayerAudio()
 {
-    MediaDecoder.data()->unload();
+    MediaDecoder.unload();
 }
 
 void PlayerAudio::loadMedia(BaseMedia *media, Region *reg)
@@ -35,9 +34,9 @@ void PlayerAudio::loadMedia(BaseMedia *media, Region *reg)
     QString path = SmilMedia->getLoadablePath();
     if (isFileExists(path))
     {
-        MediaDecoder.data()->load(path);
+        MediaDecoder.load(path);
         TAudio  *MyParser = qobject_cast<TAudio *>(media);
-        MediaDecoder.data()->setVolume(MyParser->getSoundLevel());
+        MediaDecoder.setVolume(MyParser->getSoundLevel());
     }
     else
     {
@@ -47,26 +46,26 @@ void PlayerAudio::loadMedia(BaseMedia *media, Region *reg)
 
 void PlayerAudio::play()
 {
-    MediaDecoder.data()->play();
+    MediaDecoder.play();
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
 
 void PlayerAudio::stop()
 {
-    MediaDecoder.data()->stop();
+    MediaDecoder.stop();
     if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
 void PlayerAudio::resume()
 {
-    MediaDecoder.data()->play();
+    MediaDecoder.play();
 }
 
 void PlayerAudio::pause()
 {
-    MediaDecoder.data()->pause();
+    MediaDecoder.pause();
 }
 
 void PlayerAudio::changeSize(int w, int h)

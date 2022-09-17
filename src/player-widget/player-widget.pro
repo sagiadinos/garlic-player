@@ -38,13 +38,15 @@ support_qffplay {
     HEADERS += \
         mm_libs/qffpl_decoder.h \
         mm_libs/qffpl_widget.h \
-        mm_libs/qffplaylib/ffmpeg_decoder.h \
+        mm_libs/qffplaylib/decoder.h \
         mm_libs/qffplaylib/mediaplayer.h \
+        mm_libs/qffplaylib/ffmpeg.h \
         mm_libs/qffplaylib/videoout.h
     SOURCES += \
         mm_libs/qffpl_decoder.cpp \
         mm_libs/qffpl_widget.cpp \
-        mm_libs/qffplaylib/ffmpeg_decoder.cpp \
+        mm_libs/qffplaylib/decoder.cpp \
+        mm_libs/qffplaylib/ffmpeg.cpp \
         mm_libs/qffplaylib/mediaplayer.cpp \
         mm_libs/qffplaylib/videoout.cpp
 

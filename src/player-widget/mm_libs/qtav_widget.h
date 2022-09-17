@@ -11,6 +11,7 @@ class QtAVWidget : public QWidget
     Q_OBJECT
 public:
     QtAVWidget(QWidget *parent = Q_NULLPTR);
+    ~QtAVWidget();
     QWidget              *getVideoWidget();
     QtAV::VideoRenderer  *getVideoRenderer();
     void                  ignoreAspectRatio();
@@ -18,7 +19,7 @@ public:
     void                  keepAspectRatioByExpanding();
 signals:
 protected:
-    QScopedPointer<QtAV::VideoOutput> VideoWidget;  // a deleteLater leads to a crash on playlistchange!
+    QtAV::VideoRenderer *VideoWidget;  // a deleteLater leads to a crash on playlistchange!
 };
 #endif
 

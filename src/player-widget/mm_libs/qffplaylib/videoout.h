@@ -16,7 +16,7 @@ class VideoOut : public QWidget
         void resizeEvent(QResizeEvent *event);
     private:
         QImage  paint_image;
-        QLabel *MyLabel;
+        QLabel *MyLabel = Q_NULLPTR;
 
 };
 

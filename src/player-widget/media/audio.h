@@ -20,7 +20,7 @@ class PlayerAudio : public PlayerBaseMedia
         QWidget      *getView();
         void          changeSize(int w, int h);
     protected:
-        QScopedPointer<MediaPlayerWrapper, QScopedPointerDeleteLater>   MediaDecoder;
+        MediaPlayerWrapper   MediaDecoder;
     protected slots:
         void                  finished();
 };

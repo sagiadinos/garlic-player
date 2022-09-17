@@ -30,7 +30,7 @@ public slots:
 
 protected:
     QString             current_media_path;
-    QScopedPointer<QtAV::AVPlayer, QScopedPointerDeleteLater>  MediaDecoder;
+    QtAV::AVPlayer      MediaDecoder;
 
 protected slots:
     void onMediaStatusChanged(QtAV::MediaStatus status);

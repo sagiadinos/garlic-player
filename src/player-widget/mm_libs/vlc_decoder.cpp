@@ -2,6 +2,7 @@
 
 #include "vlc_decoder.h"
 
+#ifdef QT_DEBUG
 void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
    Q_UNUSED(ctx);
@@ -34,7 +35,7 @@ void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt
     }
     */
 }
-
+#endif
 
 VlcDecoder::VlcDecoder(QObject *parent) : QObject(parent)
 {
@@ -188,7 +189,6 @@ void VlcDecoder::updatePosition()
         case libvlc_NothingSpecial:
         default:
             break;
-
     }
 }
 

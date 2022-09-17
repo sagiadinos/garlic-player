@@ -22,7 +22,7 @@
         protected:
             QPixmap       loaded_image;
             void          setAlignment();
-            QScopedPointer<QLabel, QScopedPointerDeleteLater>  ImageWidget;
+            QLabel        ImageWidget;
     };
 
 

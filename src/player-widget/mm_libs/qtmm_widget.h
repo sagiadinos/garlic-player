@@ -11,6 +11,7 @@ class QtMMWidget : public QWidget
     Q_OBJECT
 public:
     explicit QtMMWidget(QWidget *parent = Q_NULLPTR);
+    ~QtMMWidget();
     QWidget              *getVideoWidget();
     QVideoWidget         *getVideoRenderer();
 
@@ -19,7 +20,7 @@ public:
     void                  keepAspectRatioByExpanding();
 signals:
 protected:
-    QScopedPointer<QVideoWidget>         VideoWidget;
+    QVideoWidget         *VideoWidget;
 public slots:
 };
 #endif

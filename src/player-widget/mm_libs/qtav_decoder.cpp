@@ -3,75 +3,77 @@
 
 QtAVDecoder::QtAVDecoder(QObject *parent) : QObject(parent)
 {
-    MediaDecoder.reset(new QtAV::AVPlayer(this));
 
 #ifdef SUPPORT_RPI
     // ensure that Raspberry uses MMAL encoder
-    MediaDecoder.data()->setVideoDecoderPriority(QStringList() << "MMAL" << "FFmpeg");
+    MediaDecoder.setVideoDecoderPriority(QStringList() << "MMAL" << "FFmpeg");
 #endif
 
-    MediaDecoder.data()->audio()->setBufferSamples(512); // prevent stuttering
-    connect(MediaDecoder.data(), SIGNAL(mediaStatusChanged(QtAV::MediaStatus)), this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
-    connect(MediaDecoder.data(), SIGNAL(error(QtAV::AVError)), this, SLOT(displayErrorMessage(QtAV::AVError)));
+    MediaDecoder.audio()->setBufferSamples(512); // prevent stuttering
+    connect(&MediaDecoder, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)), this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
+    connect(&MediaDecoder, SIGNAL(error(QtAV::AVError)), this, SLOT(displayErrorMessage(QtAV::AVError)));
 }
 
 QtAVDecoder::~QtAVDecoder()
 {
-    MediaDecoder.data()->clearVideoRenderers();
+    MediaDecoder.clearVideoRenderers();
+    MediaDecoder.audio()->clear();
+    MediaDecoder.audio()->close();
+
 }
 
 void QtAVDecoder::setVideoOutput(MediaWidgetWrapper *renderer)
 {
-    MediaDecoder.data()->setRenderer(renderer->getVideoRenderer());
+    MediaDecoder.setRenderer(renderer->getVideoRenderer());
 }
 
 void QtAVDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
 {
-    MediaDecoder.data()->removeVideoRenderer(renderer->getVideoRenderer());
+    MediaDecoder.removeVideoRenderer(renderer->getVideoRenderer());
 }
 
 bool QtAVDecoder::load(QString file_path)
 {
     current_media_path = file_path;
-    MediaDecoder.data()->setAsyncLoad(false);
-    MediaDecoder.data()->setFile(current_media_path);
-    return MediaDecoder.data()->load();
+    MediaDecoder.setAsyncLoad(false);
+    MediaDecoder.setFile(current_media_path);
+    return MediaDecoder.load();
 }
 
 void QtAVDecoder::setVolume(QString percent)
 {
     qreal vol = 0;
     if (percent.endsWith('%'))
-        vol = (percent.mid(0, percent.length()-1).toDouble()) / 100;
+        vol = (percent.midRef(0, percent.length()-1).toDouble()) / 100;
     // sometimes result messed up with 0.10000000000000000001, but that should be no problem
     // a more significant problem could be, that e.g. 10% Volume is in QtMultimedia louder than in QtAV.
-    MediaDecoder.data()->audio()->setVolume(vol);
+    MediaDecoder.audio()->setVolume(vol);
 }
 
 void QtAVDecoder::unload()
 {
     current_media_path = "";
-    MediaDecoder.data()->setFile("");
+    MediaDecoder.setFile("");
 }
 
 void QtAVDecoder::play()
 {
-    MediaDecoder.data()->play();
+    MediaDecoder.play();
 }
 
 void QtAVDecoder::stop()
 {
-    MediaDecoder.data()->stop();
+    MediaDecoder.stop();
 }
 
 void QtAVDecoder::resume()
 {
-    MediaDecoder.data()->togglePause();
+    MediaDecoder.togglePause();
 }
 
 void QtAVDecoder::pause()
 {
-    MediaDecoder.data()->pause();
+    MediaDecoder.pause();
 }
 
 void QtAVDecoder::onMediaStatusChanged(QtAV::MediaStatus status)

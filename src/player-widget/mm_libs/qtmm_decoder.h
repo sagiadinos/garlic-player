@@ -28,7 +28,7 @@ public slots:
 
 protected:
     QString             current_media_path;
-    QScopedPointer<QMediaPlayer, QScopedPointerDeleteLater>   MediaDecoder;
+    QMediaPlayer        MediaDecoder;
 
 protected slots:
     void onMediaStatusChanged(QMediaPlayer::MediaStatus status);

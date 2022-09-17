@@ -3,20 +3,19 @@
 
 QtMMDecoder::QtMMDecoder(QObject *parent) : QObject(parent)
 {
-    MediaDecoder.reset(new QMediaPlayer(this));
-    connect(MediaDecoder.data(), SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus)));
-//    connect(MediaDecoder.data(), SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
+    connect(&MediaDecoder, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus)));
+    connect(&MediaDecoder, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 }
 
 void QtMMDecoder::setVideoOutput(MediaWidgetWrapper *renderer)
 {
-    MediaDecoder.data()->setVideoOutput(renderer->getVideoRenderer());
+    MediaDecoder.setVideoOutput(renderer->getVideoRenderer());
 }
 
 void QtMMDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
 {
     Q_UNUSED(renderer);
-    MediaDecoder.data()->setVideoOutput((QVideoWidget *) Q_NULLPTR);
+    MediaDecoder.setVideoOutput((QVideoWidget *) Q_NULLPTR);
 }
 
 bool QtMMDecoder::load(QString file_path)
@@ -25,8 +24,10 @@ bool QtMMDecoder::load(QString file_path)
         current_media_path = file_path.mid(2, file_path.length()-2);
     else
         current_media_path = file_path;
-    MediaDecoder.data()->setMedia(QMediaContent(QUrl::fromLocalFile(current_media_path)));
-    return (MediaDecoder.data()->mediaStatus() != QMediaPlayer::NoMedia && MediaDecoder.data()->mediaStatus() != QMediaPlayer::InvalidMedia);
+
+    MediaDecoder.setMedia(QMediaContent(QUrl::fromLocalFile(current_media_path)));
+    bool ret = (MediaDecoder.mediaStatus() != QMediaPlayer::NoMedia && MediaDecoder.mediaStatus() != QMediaPlayer::InvalidMedia);
+    return ret;
 }
 
 void QtMMDecoder::setVolume(QString percent)
@@ -34,22 +35,22 @@ void QtMMDecoder::setVolume(QString percent)
     int vol = 0;
     if (percent.endsWith('%'))
         vol = percent.midRef(0, percent.length()-1).toInt();
-    MediaDecoder.data()->setVolume(vol);
+    MediaDecoder.setVolume(vol);
 }
 
 void QtMMDecoder::unload()
 {
-    MediaDecoder.data()->setMedia(QMediaContent());
+    //MediaDecoder.setMedia(QMediaContent());
 }
 
 void QtMMDecoder::play()
 {
-    MediaDecoder.data()->play();
+    MediaDecoder.play();
 }
 
 void QtMMDecoder::stop()
 {
-    MediaDecoder.data()->stop();
+    MediaDecoder.stop();
 }
 
 void QtMMDecoder::resume()
@@ -59,7 +60,7 @@ void QtMMDecoder::resume()
 
 void QtMMDecoder::pause()
 {
-    MediaDecoder.data()->pause();
+    MediaDecoder.pause();
 }
 
 
@@ -100,7 +101,7 @@ void QtMMDecoder::onMediaStatusChanged(QMediaPlayer::MediaStatus status)
 
 void QtMMDecoder::displayErrorMessage()
 {
-    qWarning(Develop) << MediaDecoder->errorString();
+    qWarning(Develop) << MediaDecoder.errorString();
 }
 
 

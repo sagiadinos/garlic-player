@@ -2,7 +2,8 @@
 #define MEDIAPLAYER_H
 
 #include <QObject>
-#include "ffmpeg_decoder.h"
+#include <QThread>
+#include "decoder.h"
 
 
 namespace QtFFmpegPlayer
@@ -34,13 +35,17 @@ namespace QtFFmpegPlayer
             void pause();
             void resume();
             void seek(quint64 position);
-            QString getErrorText();
 
         private:
+            QString        error_string;
             MediaStatus    MyMediaStatus = NoMedia;
-            QtFFmpegPlayer::Decoder MyDecoder;
+            QtFFmpegPlayer::Decoder *MyDecoder      = Q_NULLPTR;
+            QtFFmpegPlayer::FFmpeg  *MyFFmpeg       = Q_NULLPTR;
+            QThread                 *MyDecodeThread = Q_NULLPTR;
+            VideoOut                *MyRenderer = Q_NULLPTR;
         private slots:
-            void doEndOfFile();
+            void setErrorText(QString error);
+            void doFinished();
         signals:
             void mediaStatusChanged(QtFFmpegPlayer::MediaStatus status);
      };

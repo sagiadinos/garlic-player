@@ -11,7 +11,7 @@ MediaPlayerWrapper::~MediaPlayerWrapper()
 
 void MediaPlayerWrapper::setVideoOutput(MediaWidgetWrapper *Renderer)
 {
-    MediaDecoder.setVideoOutput(Renderer);
+   MediaDecoder.setVideoOutput(Renderer);
 }
 
 void MediaPlayerWrapper::removeVideoOutput(MediaWidgetWrapper *renderer)

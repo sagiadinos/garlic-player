@@ -20,8 +20,8 @@ class PlayerVideo : public PlayerBaseMedia
         void              changeSize(int w, int h);
         QWidget          *getView();
     protected:
-        MediaWidgetWrapper  *VideoWidget;
-        MediaPlayerWrapper  *MediaDecoder;
+        MediaWidgetWrapper  VideoWidget;
+        MediaPlayerWrapper  MediaDecoder;
     protected slots:
         void                  finished();
 };

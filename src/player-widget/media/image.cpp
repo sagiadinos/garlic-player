@@ -19,7 +19,6 @@
 
 PlayerImage::PlayerImage(QObject *parent) : PlayerBaseMedia(parent)
 {
-    ImageWidget.reset(new QLabel);
 }
 
 PlayerImage::~PlayerImage()
@@ -56,8 +55,8 @@ void PlayerImage::loadMedia(BaseMedia *media, Region *reg)
 
 void PlayerImage::play()
 {
-    ImageWidget.data()->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ImageWidget.data()->setPixmap(loaded_image);
+    ImageWidget.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    ImageWidget.setPixmap(loaded_image);
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
@@ -85,20 +84,20 @@ void PlayerImage::changeSize(int w, int h)
     QString fit = SmilMedia->getFit().toLower();    
 
     if (fit == "fill")
-       ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+       ImageWidget.setPixmap(loaded_image.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     else if (fit == "meet")
-        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        ImageWidget.setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     else if (fit == "meetbest")
     {
         if (loaded_image.width() >= w || loaded_image.height() > h)
-            ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            ImageWidget.setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
         else
-            ImageWidget.data()->setPixmap(loaded_image);
+            ImageWidget.setPixmap(loaded_image);
     }
     else if (fit == "slice")
-        ImageWidget.data()->setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        ImageWidget.setPixmap(loaded_image.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
     else
-        ImageWidget.data()->setPixmap(loaded_image);
+        ImageWidget.setPixmap(loaded_image);
 
     setAlignment();
 }
@@ -108,7 +107,7 @@ QWidget *PlayerImage::getView()
     if (!exists)
         return Q_NULLPTR;
 
-    return ImageWidget.data();
+    return &ImageWidget;
 }
 
 void PlayerImage::setAlignment()
@@ -118,23 +117,23 @@ void PlayerImage::setAlignment()
         media_align = region->mediaAlign;
 
      if(media_align == "center")
-         ImageWidget.data()->setAlignment(Qt::AlignCenter | Qt::AlignCenter);
+         ImageWidget.setAlignment(Qt::AlignCenter | Qt::AlignCenter);
      else if(media_align == "topleft")
-         ImageWidget.data()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+         ImageWidget.setAlignment(Qt::AlignTop | Qt::AlignLeft);
      else if(media_align == "topmid")
-         ImageWidget.data()->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+         ImageWidget.setAlignment(Qt::AlignTop | Qt::AlignHCenter);
      else if(media_align == "topright")
-         ImageWidget.data()->setAlignment(Qt::AlignTop | Qt::AlignRight);
+         ImageWidget.setAlignment(Qt::AlignTop | Qt::AlignRight);
      else if(media_align == "midleft")
-         ImageWidget.data()->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+         ImageWidget.setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
      else if(media_align == "midright")
-         ImageWidget.data()->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+         ImageWidget.setAlignment(Qt::AlignVCenter | Qt::AlignRight);
      else if(media_align == "bottomleft")
-         ImageWidget.data()->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
+         ImageWidget.setAlignment(Qt::AlignBottom | Qt::AlignLeft);
      else if(media_align == "bottommid")
-         ImageWidget.data()->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
+         ImageWidget.setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
      else if(media_align == "bottomright")
-         ImageWidget.data()->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+         ImageWidget.setAlignment(Qt::AlignBottom | Qt::AlignRight);
      else
-         ImageWidget.data()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+         ImageWidget.setAlignment(Qt::AlignTop | Qt::AlignLeft);
 }

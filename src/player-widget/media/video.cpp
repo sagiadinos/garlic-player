@@ -19,18 +19,14 @@
 
 PlayerVideo::PlayerVideo(QObject *parent) : PlayerBaseMedia(parent)
 {
-    MediaDecoder = new MediaPlayerWrapper(this);
-    connect(MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
+    connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
 
-    VideoWidget = new MediaWidgetWrapper;
-    MediaDecoder->setVideoOutput(VideoWidget);
+    MediaDecoder.setVideoOutput(&VideoWidget);
 }
 
 PlayerVideo::~PlayerVideo()
 {
-   disconnect(MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
-   delete VideoWidget;
-   delete MediaDecoder;
+   disconnect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
 
 }
 
@@ -42,9 +38,9 @@ void PlayerVideo::loadMedia(BaseMedia *media, Region *reg)
    QString path = SmilMedia->getLoadablePath();
    if (isFileExists(path))
    {
-       MediaDecoder->load(path);
+       MediaDecoder.load(path);
        TVideo  *MyParser = qobject_cast<TVideo *>(media);
-       MediaDecoder->setVolume(MyParser->getSoundLevel());
+       MediaDecoder.setVolume(MyParser->getSoundLevel());
    }
    else
    {
@@ -54,28 +50,28 @@ void PlayerVideo::loadMedia(BaseMedia *media, Region *reg)
 
 void PlayerVideo::play()
 {
-    MediaDecoder->play();
+    MediaDecoder.play();
     if (SmilMedia->getLogContentId() != "")
         setStartTime();
 }
 
 void PlayerVideo::stop()
 {
-    MediaDecoder->stop();
-    MediaDecoder->unload();
+    MediaDecoder.stop();
+    MediaDecoder.unload();
     if (SmilMedia->getLogContentId() != "")
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
 void PlayerVideo::resume()
 {
-    MediaDecoder->resume();
+    MediaDecoder.resume();
 }
 
 void PlayerVideo::pause()
 {
     // todo add support for pauseDisplay
-    MediaDecoder->pause();
+    MediaDecoder.pause();
 }
 
 void PlayerVideo::changeSize(int w, int h)
@@ -87,20 +83,20 @@ void PlayerVideo::changeSize(int w, int h)
 
     QString fit = SmilMedia->getFit();
     if (fit == "fill")
-        VideoWidget->ignoreAspectRatio();
+        VideoWidget.ignoreAspectRatio();
     else if (fit == "meet")
-        VideoWidget->keepAspectRatio();
+        VideoWidget.keepAspectRatio();
     else if (fit == "meetBest")
-        VideoWidget->keepAspectRatio();
+        VideoWidget.keepAspectRatio();
     else if (fit == "slice")
-        VideoWidget->keepAspectRatioByExpanding();
+        VideoWidget.keepAspectRatioByExpanding();
 }
 
 QWidget *PlayerVideo::getView()
 {
     if (!exists)
         return Q_NULLPTR;
-    return VideoWidget->getVideoWidget();
+    return VideoWidget.getVideoWidget();
 }
 
 void PlayerVideo::finished()

@@ -3,28 +3,36 @@
 QtFFmpegPlayer::MediaPlayer::MediaPlayer(QObject *parent)
     : QObject{parent}
 {
-    MyDecoder.init();
-    connect(&MyDecoder, SIGNAL(endOfFile()), this, SLOT(doEndOfFile()));
+
 }
 
 QtFFmpegPlayer::MediaPlayer::~MediaPlayer()
 {
-    MyDecoder.deinit();
 }
 
 void QtFFmpegPlayer::MediaPlayer::setRenderer(VideoOut *r)
 {
-    MyDecoder.setRenderer(r);
+    MyRenderer = r;
 }
 
 bool QtFFmpegPlayer::MediaPlayer::load(QString file_path)
 {
- //   stop();
+    if (MyDecoder != Q_NULLPTR)
+        return false;
+
+    MyFFmpeg       = new  QtFFmpegPlayer::FFmpeg;
+    MyDecoder      = new  QtFFmpegPlayer::Decoder(MyFFmpeg);
+    MyDecoder->setRenderer(MyRenderer);
+    MyDecodeThread = new QThread;
+    MyDecoder->moveToThread(MyDecodeThread);
+    connect(MyDecoder, SIGNAL(error(QString)), this, SLOT(setErrorText(QString)));
+    connect(MyDecodeThread, &QThread::started, MyDecoder, &Decoder::decode);
+    //connect(MyDecoder, &Decoder::finished, MyDecodeThread, &QThread::quit);
+    connect(MyDecoder, SIGNAL(finished()), this, SLOT(doFinished()));
     emit mediaStatusChanged(LoadingMedia);
 
-    if (!MyDecoder.load(file_path) || !MyDecoder.findStreams() || !MyDecoder.prepareDecode())
+    if (!MyFFmpeg->load(file_path))
     {
-        MyDecoder.deinit();
         emit mediaStatusChanged(InvalidMedia);
         return false;
     }
@@ -34,24 +42,44 @@ bool QtFFmpegPlayer::MediaPlayer::load(QString file_path)
 
 void QtFFmpegPlayer::MediaPlayer::play()
 {
-    MyDecoder.start();
+    if (MyDecoder == Q_NULLPTR)
+        return;
+
+    MyDecodeThread->start();
     emit mediaStatusChanged(BufferedMedia);
 }
 
 void QtFFmpegPlayer::MediaPlayer::stop()
 {
-    MyDecoder.terminate();
-    MyDecoder.deinit();
-}
+    if (MyDecoder == Q_NULLPTR)
+        return;
+
+    MyDecoder->stop();
+    MyDecodeThread->quit();
+    MyDecodeThread->wait();
+    setRenderer(Q_NULLPTR);
+    delete MyDecodeThread;
+    delete MyDecoder;
+    delete MyFFmpeg;
+    MyDecodeThread = Q_NULLPTR;
+    MyDecoder      = Q_NULLPTR;
+    MyFFmpeg       = Q_NULLPTR;
+ }
 
 void QtFFmpegPlayer::MediaPlayer::pause()
 {
-    MyDecoder.terminate();
+    if (MyDecoder == Q_NULLPTR)
+        return;
+    MyDecoder->pause();
+    MyDecodeThread->quit();
 }
 
 void QtFFmpegPlayer::MediaPlayer::resume()
 {
-    MyDecoder.start();
+    if (MyDecoder == Q_NULLPTR)
+        return;
+
+    MyDecodeThread->start();
 }
 
 void QtFFmpegPlayer::MediaPlayer::seek(quint64 position)
@@ -59,14 +87,13 @@ void QtFFmpegPlayer::MediaPlayer::seek(quint64 position)
     Q_UNUSED(position);
 }
 
-QString QtFFmpegPlayer::MediaPlayer::getErrorText()
+void QtFFmpegPlayer::MediaPlayer::setErrorText(QString error)
 {
-    return MyDecoder.getErrorText();
+   error_string = error;
 }
 
-void QtFFmpegPlayer::MediaPlayer::doEndOfFile()
+void QtFFmpegPlayer::MediaPlayer::doFinished()
 {
-   stop();
-   emit mediaStatusChanged(EndOfMedia);
+    emit mediaStatusChanged(EndOfMedia);
 }
 
