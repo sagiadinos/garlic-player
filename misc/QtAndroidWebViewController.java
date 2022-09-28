@@ -234,6 +234,9 @@ public class QtAndroidWebViewController
 
                 webSettings.setMediaPlaybackRequiresUserGesture(false);
                 webSettings.setAllowFileAccessFromFileURLs(true);
+//                websettings.setAllowFileAccess(true);
+//                websettings.setAllowContentAccess(true);
+                webSettings.setAllowUniversalAccessFromFileURLs(true);
                 webSettings.setDomStorageEnabled(true);
 
                 m_webView.setInitialScale(1);
