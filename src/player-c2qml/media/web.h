@@ -19,7 +19,6 @@ public:
         void          changeSize(int w, int h);
     protected:
         QScopedPointer<QQuickItem, QScopedPointerDeleteLater>   web_item;
-        QQmlComponent                *media_component;
     private:
         QString sanitizeUri(QString uri);
 };

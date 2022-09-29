@@ -2,9 +2,9 @@
 #define VIDEO_H
 
 #include "smilparser/media/video.h"
-#include "player_base_media.h"
+#include "audio.h"
 
-class Video : public PlayerBaseMedia
+class Video : public Audio
 {
         Q_OBJECT
     public:
@@ -17,23 +17,9 @@ class Video : public PlayerBaseMedia
 
         Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Video();
-        void                        loadMedia(BaseMedia *media, Region *reg);
-        void                        init();
-        void                        loadInternal();
-        void                        play();
-        void                        stop();
-        void                        resume();
-        void                        pause();
-        void                        setParentItem(QQuickItem *parent);
-        void                        changeSize(int w, int h);
-    protected:
-        QScopedPointer<QQuickItem, QScopedPointerDeleteLater>  video_item;
-        qreal                       determineVolume(QString percent);
-        QString                     qml;
-        QQmlComponent              *media_component;
-        QQuickItem                 *parent_item;
-    public slots:
-        void                        doStopped();
+        void         loadInternal();
+        void         changeSize(int w, int h);
+
 };
 
 #endif // VIDEO_H

@@ -11,20 +11,25 @@ class Audio : public PlayerBaseMedia
         Audio(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Audio();
         void                        loadMedia(BaseMedia *media, Region *reg);
+        void                        loadInternal();
         void                        play();
         void                        stop();
         void                        resume();
         void                        pause();
         void                        setParentItem(QQuickItem *parent);
         void                        changeSize(int w, int h);
-        Q_INVOKABLE void stopDaShit();
     protected:
-        QScopedPointer<QQuickItem, QScopedPointerDeleteLater>  audio_item;
+        QScopedPointer<QQuickItem, QScopedPointerDeleteLater>  media_item;
         qreal                       determineVolume(QString percent);
-        QString                     qml;
         QQmlComponent              *media_component;
-    protected slots:
+        QQuickItem                 *parent_item;
+        QTimer                     *KillTimer;
+        QString                     qml;
+        int                         last_position = 0;
+        int                         getCurrentPosition();
+    public slots:
         void                        doStopped();
+        void                        checkForKill();
 };
 
 #endif // AUDIO_H

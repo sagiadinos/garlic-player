@@ -2,7 +2,9 @@
 
 Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : PlayerBaseMedia(mc, r_id, lc, parent)
 {
-    setRegionId(r_id);
+    media_component = mc;
+    KillTimer = new QTimer(this);
+    connect(KillTimer, SIGNAL(timeout()), this, SLOT(checkForKill()));
 
     // Audio QML cannot be created
     // Bug was reported at 26 Nov 2017 https://bugreports.qt.io/browse/QTBUG-64763
@@ -18,69 +20,85 @@ Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : 
             onStopped: { if (status == MediaPlayer.EndOfMedia) {qmlEndOfFile()}\n} \
                      }\n";
 
-   audio_item.reset(createMediaItem(mc, qml));
-   connect(audio_item.data(), SIGNAL(qmlEndOfFile()), this, SLOT(doStopped()));
 }
 
 Audio::~Audio()
 {
-    audio_item.reset();
 }
 
 void Audio::loadMedia(BaseMedia *media, Region *reg)
 {
     SmilMedia = media;
     region    = reg;
-    if (load(audio_item.data()))
+    loadInternal();
+}
+
+void Audio::loadInternal()
+{
+    media_item.reset(createMediaItem(media_component, qml));
+    if (!media_item.isNull())
+        connect(media_item.data(), SIGNAL(qmlEndOfFile()), this, SLOT(doStopped()));
+
+    if (load(media_item.data()))
     {
         // to set Volume we need to cast
-         TAudio *MyAudio = qobject_cast<TAudio *> (media);
-         float vol = determineVolume(MyAudio->getSoundLevel());
-         audio_item.data()->setProperty("volume", vol);
-         if (SmilMedia->getLogContentId() != "")
-             setStartTime();
+        TAudio *MyAudio = qobject_cast<TAudio *> (SmilMedia);
+        float vol = determineVolume(MyAudio->getSoundLevel());
+        media_item.data()->setProperty("volume", vol);
     }
 }
 
 void Audio::play()
 {
-     if (SmilMedia->getLogContentId() != "")
-         setStartTime();
-
-     QMetaObject::invokeMethod(audio_item.data(), "play");
-}
+    // todo add support for pauseDisplay
+   QMetaObject::invokeMethod(media_item.data(), "play");
+   KillTimer->start(1000);
+   media_item.data()->setVisible(true);
+   if (SmilMedia->getLogContentId() != "")
+       setStartTime();}
 
 void Audio::stop()
 {
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
 
-    QMetaObject::invokeMethod(audio_item.data(), "stop");
+   QMetaObject::invokeMethod(media_item.data(), "stop");
 }
 
 void Audio::resume()
 {
-    QMetaObject::invokeMethod(audio_item.data(), "play");
+    loadInternal();
+    media_item.data()->setParentItem(parent_item);
+    play();
+
+    // look at pause explanation
+//    video_item.data()->setVisible(true);
+//    QMetaObject::invokeMethod(video_item.data(), "play");
+
 }
 
 void Audio::pause()
 {
-    QMetaObject::invokeMethod(audio_item.data(), "pause");
-}
+    // numerous Android players cannot handle two videos at the same time. especially Philips Displays
+    // this result in crashes or undefined reactions. Philips OS for example kills the old video hardcoded.
+    // The Playlist will stop to continue and display the background screen
+    // To prevent this we stop and deinitialize the video component in case of a pause and reload it when resume
+
+    // QMetaObject::invokeMethod(video_item.data(), "pause");
+    // todo add support for pauseDisplay
+    // video_item.data()->setVisible(false);
+    stop();
+    media_item.reset();}
 
 void Audio::setParentItem(QQuickItem *parent)
 {
-    audio_item.data()->setParentItem(parent);
+    parent_item = parent;
+    media_item.data()->setParentItem(parent);
 }
 
 void Audio::changeSize(int w, int h)
 {
     Q_UNUSED(w);Q_UNUSED(h)
-}
-
-void Audio::stopDaShit()
-{
-    SmilMedia->finishIntrinsicDuration();
 }
 
 qreal Audio::determineVolume(QString percent)
@@ -92,16 +110,34 @@ qreal Audio::determineVolume(QString percent)
     return vol / (float) 100;
 }
 
+int Audio::getCurrentPosition()
+{
+    return media_item.data()->property("position").toInt();
+}
+
 void Audio::doStopped()
 {
-    if (audio_item.data()->property("error").toInt() != 0)
+    if (media_item.data()->property("error").toInt() != 0)
     {
         QStringList list;
          list  << "resourceURI" << SmilMedia->getSrc()
-              << "error"<< audio_item.data()->property("error").toString()
-              << "errorMessage" << audio_item.data()->property("errorString").toString();
+              << "error"<< media_item.data()->property("error").toString()
+              << "errorMessage" << media_item.data()->property("errorString").toString();
         qCritical(MediaPlayer) << MyLogger.createEventLogMetaData("MEDIA_PLAYBACK_ERROR", list);
     }
-
-   SmilMedia->finishIntrinsicDuration();
+    SmilMedia->finishIntrinsicDuration();
 }
+
+void Audio::checkForKill()
+{
+   int current = getCurrentPosition();
+   if (current > last_position)
+   {
+        last_position = current;
+   }
+   else
+   {
+        doStopped();
+   }
+}
+
