@@ -1,4 +1,5 @@
 #include "audio.h"
+#include <emmintrin.h>
 
 Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : PlayerBaseMedia(mc, r_id, lc, parent)
 {
@@ -24,6 +25,7 @@ Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : 
 
 Audio::~Audio()
 {
+    delete KillTimer;
 }
 
 void Audio::loadMedia(BaseMedia *media, Region *reg)
@@ -52,43 +54,53 @@ void Audio::play()
 {
     // todo add support for pauseDisplay
    QMetaObject::invokeMethod(media_item.data(), "play");
-   KillTimer->start(1000);
-   media_item.data()->setVisible(true);
+   KillTimer->start(2000);
    if (SmilMedia->getLogContentId() != "")
-       setStartTime();}
+       setStartTime();
+
+   media_item.data()->setVisible(true);
+}
 
 void Audio::stop()
 {
+    KillTimer->stop();
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
 
-   QMetaObject::invokeMethod(media_item.data(), "stop");
+    QMetaObject::invokeMethod(media_item.data(), "stop");
 }
 
 void Audio::resume()
 {
     loadInternal();
     media_item.data()->setParentItem(parent_item);
-    play();
+    play(); // KillTimer starts here
 
     // look at pause explanation
-//    video_item.data()->setVisible(true);
-//    QMetaObject::invokeMethod(video_item.data(), "play");
+//    QMetaObject::invokeMethod(media_item.data(), "play");
 
 }
 
 void Audio::pause()
 {
-    // numerous Android players cannot handle two videos at the same time. especially Philips Displays
-    // this result in crashes or undefined reactions. Philips OS for example kills the old video hardcoded.
-    // The Playlist will stop to continue and display the background screen
-    // To prevent this we stop and deinitialize the video component in case of a pause and reload it when resume
+    // numerous Android players cannot handle two videos at the same time. Especially Philips PPDS-screens do this.
+    // This result in crashes or undefined reactions. Philips OS for example kills the current video so hard,
+    // that the system has no chance to send an EndOfFile
+    // This breaks the playlist. It will stop to continue and display the background screen
+    // To prevent this we had to stop and deinitialize the video component in case of a pause and reload it when resume
+    // Furthermore, there is a kill timer checking every 2s the position and determine if the video/audio is progresses
+    // if not it send a stoppped signal, so that the playlist can continue.
 
-    // QMetaObject::invokeMethod(video_item.data(), "pause");
+    // QMetaObject::invokeMethod(media_item.data(), "pause");
     // todo add support for pauseDisplay
     // video_item.data()->setVisible(false);
-    stop();
-    media_item.reset();}
+
+    KillTimer->stop();
+    if (!SmilMedia->getLogContentId().isEmpty())
+        qInfo(PlayLog).noquote() << createPlayLogXml();
+    QMetaObject::invokeMethod(media_item.data(), "stop");
+    media_item.reset();
+}
 
 void Audio::setParentItem(QQuickItem *parent)
 {
@@ -131,13 +143,11 @@ void Audio::doStopped()
 void Audio::checkForKill()
 {
    int current = getCurrentPosition();
-   if (current > last_position)
-   {
-        last_position = current;
-   }
-   else
+   if (current == last_position)
    {
         doStopped();
    }
+
+    last_position = current;
 }
 
