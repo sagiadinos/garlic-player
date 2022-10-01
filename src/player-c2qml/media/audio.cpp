@@ -1,5 +1,4 @@
 #include "audio.h"
-#include <emmintrin.h>
 
 Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : PlayerBaseMedia(mc, r_id, lc, parent)
 {
@@ -17,8 +16,8 @@ Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : 
                         id: "+getRegionId()+"_audio;         \
                         autoLoad: true;                      \
                         autoPlay: false;                      \
-            signal qmlEndOfFile()\n \
-            onStopped: { if (status == MediaPlayer.EndOfMedia) {qmlEndOfFile()}\n} \
+                        signal qmlEndOfFile()\n \
+                        onStopped: { if (status == MediaPlayer.EndOfMedia) {qmlEndOfFile()}\n} \
                      }\n";
 
 }

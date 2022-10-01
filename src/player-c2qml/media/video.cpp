@@ -10,10 +10,51 @@ Video::Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : A
                         orientation: 0;                      \
                         autoLoad: true;                      \
                         autoPlay: false;                      \
-                        anchors.fill: parent;                \
-                        signal qmlEndOfFile()\n \
+                        anchors.fill: parent; \
+                        property string smil_fit: \"nativeResolution\";\
+                        property int w: 0; \
+                        property int h: 0; \
+                        signal qmlEndOfFile()\n               \
                         onStopped: { if (status == MediaPlayer.EndOfMedia) {qmlEndOfFile()}\n} \
-                     }\n";
+                        onPlaying: { \n \
+                            switch (smil_fit) {\n \
+                                 case \"fill\": fill(); break;\
+                                 case \"meet\": meet(); break;\
+                                 case \"meetbest\": meetbest(); break;\
+                                 case \"slice\": slice(); break;\
+                                 default: nativeResolution(); \
+                            }\n \
+                        }\n \
+                        function fill() {\n \
+                            anchors.fill = parent; \
+                            anchors.centerIn = undefined; \
+                            fillMode = VideoOutput.Stretch; \
+                        }\n \
+                        function meet() {\n \
+                            anchors.fill = parent; \
+                            anchors.centerIn = undefined; \
+                            fillMode = VideoOutput.PreserveAspectFit; \
+                        }\n \
+                        function slice() {\n \
+                            anchors.fill = parent; \
+                            anchors.centerIn = undefined; \
+                            fillMode = VideoOutput.PreserveAspectCrop; \
+                        }\n \
+                        function nativeResolution() {\n \
+                            anchors.fill = undefined; \
+                            anchors.centerIn = parent; \
+                            width  = metaData.resolution.width; \
+                            height = metaData.resolution.height; \
+                        }\n \
+                        function meetbest() {\n \
+                           if (metaData.resolution.width >= w || metaData.resolution.height >= h) { \
+                                meet(); \
+                            }\n \
+                            else {\n \
+                                nativeResolution(); \
+                             }\n \
+                        }\n \
+                   }\n";
 
 }
 
@@ -34,22 +75,33 @@ void Video::loadInternal()
 
 void Video::changeSize(int w, int h)
 {
-    Q_UNUSED(w); Q_UNUSED(h);
     QString smil_fit = SmilMedia->getFit().toLower();
-    int fill_mode = NONE; // for do nothing
+    media_item.data()->setProperty("w", w);
+    media_item.data()->setProperty("h", h);
+    media_item.data()->setProperty("smil_fit", smil_fit);
+
+    // we requiere this here for two reasons:
+    // 1. After an windows resize we need to invoke the correct funktion especially for meetbest
+    // 2. The onPlayed trigger could start without correct video resolutions
+
     if (smil_fit == "fill")
-        fill_mode = Qt::IgnoreAspectRatio;
+    {
+        QMetaObject::invokeMethod(media_item.data(), "fill");
+    }
     else if (smil_fit == "meet")
-        fill_mode = Qt::KeepAspectRatio;
+    {
+        QMetaObject::invokeMethod(media_item.data(), "meet");
+    }
     else if (smil_fit == "meetbest")
     {
-//        if (loaded_image.width() >= w || loaded_image.height() > h)
-//            fill_mode = Qt::KeepAspectRatio;
-//       else
-            fill_mode = NONE;
+       QMetaObject::invokeMethod(media_item.data(), "meetbest");
     }
     else if (smil_fit == "slice")
-        fill_mode =  Qt::KeepAspectRatioByExpanding;
-
-    media_item.data()->setProperty("fillMode",  fill_mode);
+    {
+        QMetaObject::invokeMethod(media_item.data(), "slice");
+    }
+    else
+    {
+        QMetaObject::invokeMethod(media_item.data(), "nativeResolution");
+    }
 }

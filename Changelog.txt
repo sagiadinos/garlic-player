@@ -1,26 +1,28 @@
 Changelog
 ===========
 
-0.5.0 -> 0.6.0
+0.5.0 -> 0.6.0 (work in progress)
 ---------------------
 1. New Features
-   	* add httpd server from Stefan Frings (http://stefanfrings.de/qtwebapp/)
-	* add Restful API (files, oauth2, tasks, app , hardware) 
+   	* integrate httpd server from Stefan Frings (http://stefanfrings.de/qtwebapp/)
+	* establish REST API (files, oauth2, tasks, app, hardware)
 	* add screenshot method
 	* add support for network trigger (notify)
 	* clear webcache via task_scheduler
 	* clear all caches via task scheduler
 
 2. Improvements
-	* On Philips DS-devices UUID created from serial and model codes 
+	* On Philips PPDS devices UUID created from serial and model codes
 	* support Philips SICP function for disable/enable backlight
-	* exec-attribute for every element possible 
-	* enhance excl priority handling
+	* Kill timer for video/audio if Android interupts media hard
+	* exec-attribute for every element possible
+	* enhance excl priority and pause/resume handling
 	* video and audio files can now pause and resume
+	* fix HTML scale bug in Android
 	* fix delete bug
 	* various bugfixes
 
-0.4.0 -> 0.5.0
+0.4.0 -> 0.5.0 (released)
 ---------------------
 1. New Features
 	* resumable downloads
