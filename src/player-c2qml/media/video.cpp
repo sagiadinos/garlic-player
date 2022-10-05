@@ -54,7 +54,7 @@ Video::Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : A
                                 nativeResolution(); \
                              }\n \
                         }\n \
-                   }\n";
+                  }\n";
 
 }
 
@@ -104,4 +104,5 @@ void Video::changeSize(int w, int h)
     {
         QMetaObject::invokeMethod(media_item.data(), "nativeResolution");
     }
+
 }

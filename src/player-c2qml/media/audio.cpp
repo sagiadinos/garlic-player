@@ -5,6 +5,7 @@ Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : 
     media_component = mc;
     KillTimer = new QTimer(this);
     connect(KillTimer, SIGNAL(timeout()), this, SLOT(checkForKill()));
+    KillTimer->setTimerType(Qt::VeryCoarseTimer);
 
     // Audio QML cannot be created
     // Bug was reported at 26 Nov 2017 https://bugreports.qt.io/browse/QTBUG-64763
@@ -24,6 +25,7 @@ Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : 
 
 Audio::~Audio()
 {
+    KillTimer->stop();
     delete KillTimer;
 }
 
@@ -53,7 +55,7 @@ void Audio::play()
 {
     // todo add support for pauseDisplay
    QMetaObject::invokeMethod(media_item.data(), "play");
-   KillTimer->start(2000);
+   KillTimer->start(KILLTIMER_INTERVALL);
    if (SmilMedia->getLogContentId() != "")
        setStartTime();
 
@@ -62,10 +64,11 @@ void Audio::play()
 
 void Audio::stop()
 {
-    KillTimer->stop();
+ //
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
 
+    KillTimer->stop();
     QMetaObject::invokeMethod(media_item.data(), "stop");
 }
 
@@ -128,6 +131,7 @@ int Audio::getCurrentPosition()
 
 void Audio::doStopped()
 {
+    KillTimer->stop();
     if (media_item.data()->property("error").toInt() != 0)
     {
         QStringList list;
@@ -142,9 +146,11 @@ void Audio::doStopped()
 void Audio::checkForKill()
 {
    int current = getCurrentPosition();
+   qDebug() << "current pos: " + QString::number(current) + " last pos: " + QString::number(last_position);
    if (current == last_position)
    {
-        doStopped();
+       qDebug() << "finish by Killtimer";
+       doStopped();
    }
 
     last_position = current;
