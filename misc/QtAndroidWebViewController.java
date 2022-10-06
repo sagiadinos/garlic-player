@@ -240,6 +240,7 @@ public class QtAndroidWebViewController
                 webSettings.setDomStorageEnabled(true);
 
                 m_webView.setInitialScale(1);
+                m_webView.setBackgroundColor(0x00000000);
                 webSettings.setSupportZoom(false);
                 webSettings.setDisplayZoomControls(false);
                 webSettings.setUseWideViewPort(true);
