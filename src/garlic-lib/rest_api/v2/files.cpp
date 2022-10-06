@@ -206,7 +206,7 @@ QString RestApi::V2::Files::removeById(QString id)
 
 bool RestApi::V2::Files::canCreateNewProceed(QTemporaryFile *tfile, quint64 file_size, QString download_path)
 {
-    if (!tfile->exists())
+    if (tfile == Q_NULLPTR || !tfile->exists())
     {
         JsonResponse.insertStringValuePair("error", "Data field missed");
         return false;
