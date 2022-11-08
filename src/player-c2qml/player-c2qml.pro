@@ -41,7 +41,6 @@ linux:!android {
 
 android {
     QT        += androidextras webview
-    LIBS      += -L../libandroid -lgarlic
     DISTFILES += \
        android_brandings/GarlicPlayer/android/AndroidManifest.xml
 
@@ -51,13 +50,37 @@ android {
     # see https://github.com/KDAB/android_openssl/issues/10
     include(../ext/android_openssl/openssl.pri)
 
-    ANDROID_EXTRA_LIBS += \
-        $$OUT_PWD/../libandroid/libgarlic.so
-
     HEADERS  += \
         Java2Cpp.h \
         android_manager.h
     SOURCES += android_manager.cpp
+
+    LIBS      += -L../libandroid
+    GARLIC_LIB = $$OUT_PWD/../libandroid
+    equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 14) {
+        LIBS      += -lgarlic
+        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic.so
+    }
+    else {
+        equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
+            LIBS      += -lgarlic_armeabi-v7a
+        }
+        equals(ANDROID_TARGET_ARCH, arm64-v8a) {
+            LIBS      += -lgarlic_arm64-v8a
+        }
+        equals(ANDROID_TARGET_ARCH, x86_64) {
+            LIBS      += -lgarlic_x86_64
+        }
+        equals(ANDROID_TARGET_ARCH, x86) {
+            LIBS      += -lgarlic_x86
+        }
+
+        # cannot be included in above equals for unknown reasons
+        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic_armeabi-v7a.so
+        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic_arm64-v8a.so
+        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic_x86_64.so
+        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic_x86.so
+    }
 
 }
 win32 {
@@ -103,4 +126,11 @@ DISTFILES += \
     android/src/com/sagiadinos/garlic/player/java/PhilipsLauncher.java \
     android/src/com/sagiadinos/garlic/player/java/SICPDef.java \
     android/src/com/sagiadinos/garlic/player/java/SmilIndexReceiver.java \
-    android/src/com/sagiadinos/garlic/player/java/SocketClient.java
+    android/src/com/sagiadinos/garlic/player/java/SocketClient.java \
+    android_brandings/GarlicPlayer/android/build.gradle \
+    android_brandings/GarlicPlayer/android/gradle.properties \
+    android_brandings/GarlicPlayer/android/gradle/wrapper/gradle-wrapper.jar \
+    android_brandings/GarlicPlayer/android/gradle/wrapper/gradle-wrapper.properties \
+    android_brandings/GarlicPlayer/android/gradlew \
+    android_brandings/GarlicPlayer/android/gradlew.bat \
+    android_brandings/GarlicPlayer/android/res/values/libs.xml

@@ -17,7 +17,24 @@ linux:!android {
 }
 win32:DESTDIR = ../../lib/
 macx:DESTDIR = ../../lib/
-android:DESTDIR = ../../libandroid/
+android {
+    DESTDIR = ../../libandroid/
+
+    equals(QT_MAJOR_VERSION, 5):greaterThan(QT_MINOR_VERSION, 13) {
+        equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
+            TARGET = zlib_armeabi-v7a
+        }
+        equals(ANDROID_TARGET_ARCH, arm64-v8a) {
+            TARGET = zlib_arm64-v8a
+        }
+        equals(ANDROID_TARGET_ARCH, x86_64) {
+           TARGET = zlib_x86_64
+        }
+        equals(ANDROID_TARGET_ARCH, x86) {
+            TARGET = zlib_x86
+        }
+    }
+}
 ios:DESTDIR = ../../libios/
 # Input
 HEADERS += crc32.h \

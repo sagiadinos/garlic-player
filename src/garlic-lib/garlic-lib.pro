@@ -8,7 +8,6 @@ DEFINES  += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
 TARGET    = garlic
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
-
 linux:!android {
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
@@ -17,6 +16,7 @@ linux:!android {
     # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
 }
+
 ios{
     DESTDIR = ../libios/
     LIBS += -L../libios -lquazip -lzlib
@@ -24,7 +24,29 @@ ios{
 
 android{
     DESTDIR = ../libandroid/
-    LIBS += -L../libandroid -lquazip -lzlib
+    LIBS += -L../libandroid
+    equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 14) {
+        LIBS += -lquazip
+        LIBS += -lzlib
+    }
+    else{
+        equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
+            LIBS += -lquazip_armeabi-v7a
+            LIBS += -lzlib_armeabi-v7a
+        }
+        equals(ANDROID_TARGET_ARCH, arm64-v8a) {
+            LIBS += -lquazip_arm64-v8a
+            LIBS += -lzlib_arm64-v8a
+        }
+        equals(ANDROID_TARGET_ARCH, x86_64) {
+            LIBS += -lquazip_x86_64
+            LIBS += -lzlib_x86_64
+        }
+        equals(ANDROID_TARGET_ARCH, x86) {
+            LIBS += -lquazip_x86
+            LIBS += -lzlib_x86
+        }
+    }
 }
 
 win32 {
