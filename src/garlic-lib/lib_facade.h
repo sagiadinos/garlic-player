@@ -18,6 +18,9 @@
 #ifndef LIB_FACADE_H
 #define LIB_FACADE_H
 
+#include <QNetworkProxyFactory>
+#include <QNetworkProxy>
+
 #include "files/index_manager.h"
 #include "files/media_manager.h"
 #include "smilparser/head_parser.h"

@@ -22,6 +22,12 @@ LibFacade::LibFacade(QObject *parent) : QObject(parent)
     MyDiscSpace.reset(new SystemInfos::DiscSpace(&MyStorage));
     MyResourceMonitor.setDiscSpace(MyDiscSpace.data());
     MyFreeDiscSpace.reset(new FreeDiscSpace(MyDiscSpace.data()));
+
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+    QNetworkProxyQuery npq(QUrl(QLatin1String("http://www.google.com")));
+    QList<QNetworkProxy> listOfProxies = QNetworkProxyFactory::systemProxyForQuery(npq);
+    foreach (QNetworkProxy p, listOfProxies)
+       qDebug() << "hostname" << p.hostName();
 }
 
 LibFacade::~LibFacade()
