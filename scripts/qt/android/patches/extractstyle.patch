@@ -1,0 +1,9 @@
+418,421c418,420
+<             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+<                 numStates = (Integer) StateListDrawable.class.getMethod("getStateCount").invoke(stateList);
+<             else
+<                 numStates = stateList.getStateCount();
+---
+> 
+>             numStates = (Integer) StateListDrawable.class.getMethod("getStateCount").invoke(stateList);
+> 
