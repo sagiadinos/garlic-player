@@ -19,38 +19,12 @@ win32 {
     DEFINES += NOMINMAX
     DESTDIR = ../../lib/
 }
-macx{
-    DESTDIR = ../../lib/
-}
-
-android {
-     DESTDIR = ../../libandroid/
-
-     equals(QT_MAJOR_VERSION, 5):greaterThan(QT_MINOR_VERSION, 13) {
-         equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
-             TARGET = quazip_armeabi-v7a
-         }
-         equals(ANDROID_TARGET_ARCH, arm64-v8a) {
-             TARGET = quazip_arm64-v8a
-         }
-         equals(ANDROID_TARGET_ARCH, x86_64) {
-            TARGET = quazip_x86_64
-         }
-         equals(ANDROID_TARGET_ARCH, x86) {
-             TARGET = quazip_x86
-         }
-     }
-}
+macx:DESTDIR = ../../lib/
+android:DESTDIR = ../../libandroid/
 ios:DESTDIR = ../../libios/
+
 INCLUDEPATH += ../zlib/includes
 LIBS += -L../../lib/ -lzlib
-
-# Creating pkgconfig .pc file
-#CONFIG += create_prl no_install_prl create_pc
-
-QMAKE_PKGCONFIG_PREFIX = $$PREFIX
-QMAKE_PKGCONFIG_INCDIR = $$headers.path
-QMAKE_PKGCONFIG_REQUIRES = Qt5Core
 
 # The ABI version.
 
@@ -72,15 +46,10 @@ QMAKE_PKGCONFIG_REQUIRES = Qt5Core
 # 2.0, VERSION to 2.0.0.
 # And so on.
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    # disable all the Qt APIs deprecated before Qt 6.0.0
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
-}
 
 # This one handles dllimport/dllexport directives.
-DEFINES += QUAZIP_BUILD
-DEFINES += QT_NO_CAST_FROM_ASCII
-DEFINES += QT_NO_CAST_TO_ASCII
+#DEFINES += QUAZIP_BUILD
+
 # You'll need to define this one manually if using a build system other
 # than qmake or using QuaZIP sources directly in your project.
 CONFIG(staticlib): DEFINES += QUAZIP_STATIC
@@ -90,7 +59,6 @@ include(quazip.pri)
 
 
 CONFIG(debug, debug|release) {
-     mac: TARGET = $$join(TARGET,,,_debug) 
      win32: TARGET = $$join(TARGET,,,d)
 }
 
@@ -98,32 +66,9 @@ unix {
     headers.path=$$PREFIX/include/quazip
     headers.files=$$HEADERS
     target.path=$$PREFIX/lib/$${LIB_ARCH}
-    QMAKE_PKGCONFIG_DESTDIR = pkgconfig
     INSTALLS += headers target
 
-	OBJECTS_DIR=.obj
-	MOC_DIR=.moc
-	
-}
+    OBJECTS_DIR=.obj
+    MOC_DIR=.moc
 
-win32 {
-    headers.path=$$PREFIX/include/quazip
-    headers.files=$$HEADERS
-    INSTALLS += headers target
-    CONFIG(staticlib){
-        target.path=$$PREFIX/lib
-        QMAKE_PKGCONFIG_LIBDIR = $$PREFIX/lib/
-    } else {
-        target.path=$$PREFIX/bin
-        QMAKE_PKGCONFIG_LIBDIR = $$PREFIX/bin/
-    }
-
-    ## odd, this path seems to be relative to the
-    ## target.path, so if we install the .dll into
-    ## the 'bin' dir, the .pc will go there as well,
-    ## unless have hack the needed path...
-    ## TODO any nicer solution?
-    QMAKE_PKGCONFIG_DESTDIR = ../lib/pkgconfig
-    # workaround for qdatetime.h macro bug
-    DEFINES += NOMINMAX
 }
