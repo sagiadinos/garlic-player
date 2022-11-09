@@ -59,7 +59,7 @@ android {
     GARLIC_LIB = $$OUT_PWD/../libandroid
     equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 14) {
         LIBS      += -lgarlic
-        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic.so
+        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic.so
     }
     else {
         equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
@@ -76,10 +76,10 @@ android {
         }
 
         # cannot be included in above equals for unknown reasons
-        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic_armeabi-v7a.so
-        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic_arm64-v8a.so
-        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic_x86_64.so
-        ANDROID_EXTRA_LIBS += $$PWD/../libandroid/libgarlic_x86.so
+        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_armeabi-v7a.so
+#        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_arm64-v8a.so
+#        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_x86_64.so
+#        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_x86.so
     }
 
 }
