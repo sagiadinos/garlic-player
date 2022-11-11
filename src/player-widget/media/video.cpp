@@ -27,7 +27,6 @@ PlayerVideo::PlayerVideo(QObject *parent) : PlayerBaseMedia(parent)
 PlayerVideo::~PlayerVideo()
 {
    disconnect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
-
 }
 
 void PlayerVideo::loadMedia(BaseMedia *media, Region *reg)

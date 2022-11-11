@@ -81,7 +81,6 @@ void TRegion::stopShowMedia(BaseMedia *media)
     MyMediaList.remove(media->getID());
     delete MyMedia;
     MyMedia = Q_NULLPTR;
-
 }
 
 void TRegion::resumeShowMedia(BaseMedia *media)

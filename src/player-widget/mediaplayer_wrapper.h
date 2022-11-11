@@ -3,6 +3,8 @@
 
 #if defined SUPPORT_QTAV
     #include "mm_libs/qtav_decoder.h"
+#elif defined SUPPORT_QTAVPLAYER
+    #include "mm_libs/qtavplayer_decoder.h"
 #elif defined SUPPORT_QFFPLAY
     #include "mm_libs/qffpl_decoder.h"
 #elif defined SUPPORT_LIBVLC
@@ -39,6 +41,8 @@ protected:
     QString             current_media_path;
 #if defined SUPPORT_QTAV
    QtAVDecoder  MediaDecoder;
+#elif defined SUPPORT_QTAVPLAYER
+   QtAVPLayerDecoder   MediaDecoder;
 #elif defined SUPPORT_QFFPLAY
    QffplDecoder MediaDecoder;
 #elif defined SUPPORT_LIBVLC
