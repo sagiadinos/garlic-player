@@ -25,13 +25,42 @@ Release:DEFINES += QT_NO_DEBUG_OUTPUT
 #DEFINES += DEFAULT_CONTENT_URL_PROTOCOL=http
 #DEFINES += DEFAULT_CONTENT_URL=indexes.smil-control.com/index.php?site=get_index\&owner_id=12
 
-# which media backend should be used: support_qtav support_qtmm support_libvlc support_qffplay (experimental without sound)
-# on Raspberry Pi only libvlc supports 4k video
-SUPPORT_RPI {
-    CONFIG   += support_libvlc
-} else {
+# possible media backends:
+# support_qtav              currently default but deprecated as QtAV has mem leaks and development abandoned)
+# support_qtmm              Qt Multimedia lib. Slow, laggy and platform dependend
+# support_qtavplayer        replacement for support_qtav
+# support_qffplay           experimental tiny ffmpeg wrapper. currently without sound output
+# support_libvlc            For Raspberry Pi OS only. libvlc has much better hw acceleration than ffmpeg
+
+linux {
+    contains(QMAKE_CXX, .*raspbian.*arm.*):{
+        CONFIG   += support_libvlc
+    } else {
+        CONFIG   += support_qtav
+    }
+}
+
+win32 {
     CONFIG   += support_qtav
 }
+
+macx {
+    CONFIG   += support_qtav
+}
+
+
+
+support_qtavplayer {
+    DEFINES += SUPPORT_QTAVPLAYER
+    QT      += multimedia multimediawidgets QtAVPlayer
+    HEADERS  += \
+        mm_libs/qtavplayer_decoder.h \
+        mm_libs/qtavplayer_widget.h
+    SOURCES += \
+        mm_libs/qtavplayer_decoder.cpp \
+        mm_libs/qtavplayer_widget.cpp
+}
+
 
 support_qffplay {
     DEFINES += SUPPORT_QFFPLAY

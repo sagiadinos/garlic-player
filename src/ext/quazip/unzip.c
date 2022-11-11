@@ -2145,3 +2145,4 @@ int ZEXPORT unzClearFlags(unzFile file, unsigned flags)
     s->flags &= ~flags;
     return UNZ_OK;
 }
+
