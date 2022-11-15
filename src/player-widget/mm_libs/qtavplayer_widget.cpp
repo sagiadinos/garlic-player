@@ -3,7 +3,7 @@
 
 QtAVPlayerWidget::QtAVPlayerWidget(QWidget *parent) : QWidget(parent)
 {
-    MyVideoWidget.show();
+   // MyVideoWidget.show();
     MyMediaObject = new MediaObject(&vr, this);
     MyVideoWidget.setMediaObject(MyMediaObject);
 }

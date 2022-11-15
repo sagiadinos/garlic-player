@@ -24,7 +24,7 @@ namespace SystemInfos
             TESTABLE quint64 getBytesLocked();
             TESTABLE quint64 getBytesAvailable();
     protected:
-            const float    _max_fill    = 0.96; // let 4% of total disc space free for Operating System logs, tmp etc
+            const float    _max_fill    = 0.96F; // let 4% of total disc space free for Operating System logs, tmp etc
             TESTABLE quint64        calculateFreeBytes();
                      quint64        bytes_locked = 0;
                      quint64        bytes_total  = 0;

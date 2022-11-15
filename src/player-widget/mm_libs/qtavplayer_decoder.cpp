@@ -38,7 +38,7 @@ void QtAVPLayerDecoder::setVolume(QString percent)
 
 void QtAVPLayerDecoder::unload()
 {
-    MediaDecoder.
+
 }
 
 void QtAVPLayerDecoder::play()

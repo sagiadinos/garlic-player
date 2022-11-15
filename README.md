@@ -1,18 +1,17 @@
 # garlic-player - Open Source SMIL Player for Digital Signage
 
-The garlic-player is a SMIL 3.0 compatible [Digital Signage Player](https://smil-control.com/magazine/what-is-a-digital-signage-player/).
+The garlic-player is a SMIL 3.0 compatible [digital aignage player](https://smil-control.com/magazine/what-is-a-digital-signage-player/).
 
 The goal for the development is to create a most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet the needs of the digital signage industry. Currently garlic-player has reached a high level of compatibility and stability. So it is used in many projects and some android hardware solutions.
 
-[Digital Signage](https://smil-control.com/) is a relatively young business and it has a lack of standards. As customer you can easily trapped into a vendor-lock. A standard like SMIL gives you independence back.
+[Digital Signage](https://smil-control.com/digital-signage/) is a relatively young business and it has a lack of standards. As customer you can easily trapped into a vendor-lock. A standard like SMIL gives you independence back.
 
 The garlic-player can be used offline and online.
 
-Based on [SMIL standard](https://www.w3.org/TR/SMIL3/) it works together with every compatible [Digital Signage Software](https://smil-control.com/software/).
+Based on [SMIL standard](https://www.w3.org/TR/SMIL3/) it works together with every compatible [digital signage software](https://smil-control.com/software/).
 
 You are able to play local and remote (via http) SMIL files with the features described below.
 
-[Download compiled binaries](https://garlic-player.com/garlic-player/)
 
 ## Libraries used
  - [Qt5](https://www.qt.io) >= 5.10 (5.12.x LTS recommended)
@@ -36,7 +35,7 @@ You are able to play local and remote (via http) SMIL files with the features de
  - MacOS M1: Big Sur (via Rosetta 2)
  - iOS 14.4.2 (experimental)
 
-For Android and iOS player-c2qml is needed, cause only QML Multimedia is supported on this operating systems.
+For Android and iOS player-c2qml is needed, cause only QML based multimedia is supported on this operating systems.
 
 *garlic.sh [options] SMIL_INDEX*
 
@@ -51,7 +50,7 @@ For Android and iOS player-c2qml is needed, cause only QML Multimedia is support
 Arguments:
 SMIL_INDEX        Path to SMIL index
 
-Binaries can be downloaded at [garlic-player.com](https://garlic-player.com). You will find stable releases and nightly build there.
+Binaries can be [downloaded](https://garlic-player.com/garlic-player/downloads/). You will find stable releases and nightly build there.
 
 ## Features (master trunk)
  - Support for multiple screens (not on Android)
@@ -143,8 +142,8 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com). Yo
 ## additional features supported not in w3c standard
  - **shuffle play** in seq container via metadata
  - **automatic refresh** via metatags in SMIL header
- - **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav like described in [a-smil.org Reporting](http://www.a-smil.org/index.php/Reporting)
- - **expr-attribute** in media tags for conditional play as described in [a-smil.org](http://www.a-smil.org/index.php/Conditional_play) by [IAdea](http://www.iadea.com/)
+ - **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav described in [Reporting](https://garlic-player.com/garlic-player/docs/essentials/logs-reports/)
+ - **expr-attribute** in media tags [conditional play](https://garlic-player.com/garlic-player/docs/essentials/conditional-play/)
  - notify network trigger for begin and end attributes
  - placeholer in head with status and data tags
  - http downloads and caching
@@ -155,15 +154,18 @@ Binaries can be downloaded at [garlic-player.com](https://garlic-player.com). Yo
  - change config.xml during plaback
  - remote update
 
+[Documentation & Tutorials](https://garlic-player.com/garlic-player/docs/)
+
 ## HotKeys
  - toogle fullscreen with Ctrl-F (not in Android)
  - toogle bigscreen with Ctrl-B (not in Android)
  - quit app with Ctrl-Q
  - open configuration dialog with Ctrl-S
 
-## future ToDo's
-- REST API
-- trigger for strings like ean-codes
+## REST API
+[REST-API Documentation](https://garlic-player.com/garlic-player/docs/rest-api/)
+
+
 
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)
