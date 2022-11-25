@@ -48,13 +48,14 @@ private:
     QString                       peers  = "stop";   // how elements inside a group interrupts each other stop|pause|defer|never
     QString                       higher = "pause";  // how a group with higher priority interrupts this group pause|stop
     QString                       lower  = "defer";  // how a group with lower priority interrupts this group defer|never
-    QString                       pause_display = "show"; // dummy
+    QString                       pause_display = "show";
     int                           count_childs       = 0;
     void                          setAttributes();
     void                          traverseChilds();
-    QString                       validatePeers();
-    QString                       validateHigher();
-    QString                       validateLower();
+    void validatePeers();
+    void validateHigher();
+    void validateLower();
+    void validatePauseDisplay();
 };
 
 #endif // TPRIORITYCLASS_H

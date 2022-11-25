@@ -50,7 +50,7 @@ QString TPriorityClass::getLower()
 
 bool TPriorityClass::findElement(QDomElement dom_element)
 {
-    for (iterator =  childs_list.begin(); iterator < childs_list.end(); iterator++)
+    for (iterator = childs_list.begin(); iterator < childs_list.end(); iterator++)
     {
         if (dom_element == *iterator)
             return true;
@@ -67,9 +67,9 @@ void TPriorityClass::setAttributes()
 {
     setBaseAttributes();
 
-    peers  = validatePeers();
-    higher = validateHigher();
-    lower  = validateLower();
+    validatePeers();
+    validateHigher();
+    validateLower();
 }
 
 void TPriorityClass::traverseChilds()
@@ -87,29 +87,33 @@ void TPriorityClass::traverseChilds()
     }
 }
 
-QString TPriorityClass::validatePeers()
+void TPriorityClass::validatePeers()
 {
-    QString attr  = getAttributeFromRootElement("peers", "stop");
-    if (attr != "stop" && attr != "pause" && attr != "defer" && attr != "never")
-        attr = "stop";
+    peers  = getAttributeFromRootElement("peers", "stop");
+    if (peers != "stop" && peers != "pause" && peers != "defer" && peers != "never")
+        peers = "stop";
 
-    return attr;
 }
 
-QString TPriorityClass::validateHigher()
+void TPriorityClass::validateHigher()
 {
-    QString attr = getAttributeFromRootElement("higher", "pause");
-    if (attr != "stop" && attr != "pause")
-        attr = "pause";
-
-    return attr;
+    higher = getAttributeFromRootElement("higher", "pause");
+    if (higher != "stop" && higher != "pause")
+        higher = "pause";
 }
 
-QString TPriorityClass::validateLower()
+void TPriorityClass::validateLower()
 {
-    QString attr  = getAttributeFromRootElement("lower", "defer");
-    if (attr != "defer" && attr != "never")
-        attr = "defer";
+    lower  = getAttributeFromRootElement("lower", "defer");
+    if (lower != "defer" && lower != "never")
+        lower = "defer";
 
-    return attr;
+}
+
+void TPriorityClass::validatePauseDisplay()
+{
+    pause_display  = getAttributeFromRootElement("pauseDisplay", "show");
+    if (pause_display != "hide" && pause_display != "show" && pause_display != "disable")
+        pause_display = "show";
+
 }
