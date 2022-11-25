@@ -22,11 +22,11 @@ Changelog
 	* fix delete bug
 	* various bugfixes
 
-0.4.0 -> 0.5.0 (released)
+0.4.0 -> 0.5.0 (current stable)
 ---------------------
 1. New Features
 	* resumable downloads
-	* logs and debug box includes disco space values
+	* logs and debug box includes disc space values
 	* reorganized debug box
 	* support endsync for excl and par (first|last|id-value)
  	* support negative values for offset

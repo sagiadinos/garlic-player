@@ -1,6 +1,6 @@
 # garlic-player - Open Source SMIL Player for Digital Signage
 
-The garlic-player is a SMIL 3.0 compatible [digital aignage player](https://smil-control.com/magazine/what-is-a-digital-signage-player/).
+The garlic-player is a SMIL 3.0 compatible [digital signage player](https://smil-control.com/magazine/what-is-a-digital-signage-player/).
 
 The goal for the development is to create a most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet the needs of the digital signage industry. Currently garlic-player has reached a high level of compatibility and stability. So it is used in many projects and some android hardware solutions.
 
@@ -109,7 +109,7 @@ Binaries can be [downloaded](https://garlic-player.com/garlic-player/downloads/)
 - **repeatCount** (currently only positive integer values)
 
 #### Begin and End Attributes
-- **Clock values* like dur
+- **Clock values** like dur
 - **Wallclock** with weekday (-/+) periods and repeats. Date is supported in full ISO 8601 format not short date like 201634W.
 - **Events** beginEvent, endEvent, activateEvent with additional clock value like id.endEvent+2s
 - **Syncbase values** with additional clock value like id.begin+2s
@@ -145,6 +145,7 @@ Binaries can be [downloaded](https://garlic-player.com/garlic-player/downloads/)
  - **Logs/reports** system and inventory-reports, events- and playlogs via subscription meta and delivery by webdav described in [Reporting](https://garlic-player.com/garlic-player/docs/essentials/logs-reports/)
  - **expr-attribute** in media tags [conditional play](https://garlic-player.com/garlic-player/docs/essentials/conditional-play/)
  - notify network trigger for begin and end attributes
+ - REST-API ([documentation](https://garlic-player.com/garlic-player/docs/rest-api/))
  - placeholer in head with status and data tags
  - http downloads and caching
  - caching of remote SMIL index file
@@ -161,10 +162,6 @@ Binaries can be [downloaded](https://garlic-player.com/garlic-player/downloads/)
  - toogle bigscreen with Ctrl-B (not in Android)
  - quit app with Ctrl-Q
  - open configuration dialog with Ctrl-S
-
-## REST API
-[REST-API Documentation](https://garlic-player.com/garlic-player/docs/rest-api/)
-
 
 
 
