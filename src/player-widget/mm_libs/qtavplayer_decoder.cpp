@@ -20,7 +20,11 @@ bool QtAVPLayerDecoder::load(QString file_path)
 {
     MediaDecoder.setSource(file_path);
 
-    QObject::connect(&MediaDecoder, SIGNAL(audioFrame(const QAVAudioFrame)), this, SLOT(outputAudioFrame(const QAVAudioFrame)));
+    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+    QList<QAudioDeviceInfo> list_devices = info.availableDevices(QAudio::AudioOutput);
+    if (list_devices.length() > 0)
+        QObject::connect(&MediaDecoder, SIGNAL(audioFrame(const QAVAudioFrame)), this, SLOT(outputAudioFrame(const QAVAudioFrame)));
+
     QObject::connect(&MediaDecoder, SIGNAL(videoFrame(const QAVVideoFrame)), this, SLOT(outputVideoFrame(const QAVVideoFrame)));
 
     return true;

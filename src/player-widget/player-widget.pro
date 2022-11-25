@@ -59,6 +59,9 @@ support_qtavplayer {
     SOURCES += \
         mm_libs/qtavplayer_decoder.cpp \
         mm_libs/qtavplayer_widget.cpp
+    win32 {
+        LIBS += -L$$QT.core.libs
+    }
 }
 
 

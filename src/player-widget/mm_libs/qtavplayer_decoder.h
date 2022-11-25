@@ -3,6 +3,8 @@
 
 
 #include <QObject>
+#include <QAudioDeviceInfo>
+#include <QList>
 #include <QtAVPlayer/qavplayer.h>
 #include <QtAVPlayer/qavvideoframe.h>
 #include <QtAVPlayer/qavaudiooutput.h>
