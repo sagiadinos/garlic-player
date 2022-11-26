@@ -23,6 +23,12 @@ void Web::loadMedia(BaseMedia *media, Region *reg)
     web_item.data()->setVisible(true);
 }
 
+void Web::restart()
+{
+    stop();
+    play();
+}
+
 void Web::play()
 {
     QString uri = sanitizeUri(SmilMedia->getLoadablePath()) + SmilMedia->getParamsAsQuery();

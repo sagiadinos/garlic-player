@@ -51,6 +51,20 @@ void Audio::loadInternal()
     }
 }
 
+void Audio::restart()
+{
+    if (!SmilMedia->getLogContentId().isEmpty())
+        qInfo(PlayLog).noquote() << createPlayLogXml();
+
+    // seek did not work
+    // set seekable in QML as true crashes
+    QMetaObject::invokeMethod(media_item.data(), "stop");
+    QMetaObject::invokeMethod(media_item.data(), "play");
+
+    if (SmilMedia->getLogContentId() != "")
+        setStartTime();
+}
+
 void Audio::play()
 {
     // todo add support for pauseDisplay

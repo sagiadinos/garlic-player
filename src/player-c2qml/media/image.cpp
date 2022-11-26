@@ -30,6 +30,12 @@ void Image::loadMedia(BaseMedia *media, Region *reg)
     }
 }
 
+void Image::restart()
+{
+    stop();
+    play();
+}
+
 void Image::play()
 {
     image_item.data()->setVisible(true);

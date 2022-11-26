@@ -12,6 +12,7 @@ class Brush : public PlayerBaseMedia
         Brush(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Brush();
         void          loadMedia(BaseMedia *media, Region *reg);
+        void          restart();
         void          play();
         void          stop();
         void          resume();

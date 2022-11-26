@@ -12,6 +12,7 @@ public:
     ~RefCommand();
 
     void           loadMedia(BaseMedia *media, Region *reg);
+    void           restart();
     void           play();
     void           stop();
     void           resume();

@@ -11,6 +11,7 @@ public:
         Web(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Web();
         void          loadMedia(BaseMedia *media, Region *reg);
+        void          restart();
         void          play();
         void          stop();
         void          resume();

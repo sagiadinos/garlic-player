@@ -16,6 +16,7 @@ class Image : public PlayerBaseMedia
         explicit      Image(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
         ~Image();
         void          loadMedia(BaseMedia *media, Region *reg);
+        void          restart();
         void          play();
         void          stop();
         void          resume();

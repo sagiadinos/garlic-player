@@ -11,7 +11,7 @@ Video::Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : A
                         autoLoad: true;                      \
                         autoPlay: false;                      \
                         anchors.fill: parent; \
-                        property string smil_fit: \"nativeResolution\";\
+                       property string smil_fit: \"nativeResolution\";\
                         property int w: 0; \
                         property int h: 0; \
                         signal qmlEndOfFile()\n               \

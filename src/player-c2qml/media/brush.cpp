@@ -26,6 +26,13 @@ void Brush::loadMedia(BaseMedia *media, Region *reg)
     brush_item.data()->setProperty("color", MyBrush->getColor());
 }
 
+void Brush::restart()
+{
+    stop();
+    play();
+
+}
+
 void Brush::play()
 {
     brush_item.data()->setVisible(true);

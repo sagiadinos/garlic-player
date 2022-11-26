@@ -13,6 +13,7 @@ class Audio : public PlayerBaseMedia
         ~Audio();
         void                        loadMedia(BaseMedia *media, Region *reg);
         void                        loadInternal();
+        void                        restart();
         void                        play();
         void                        stop();
         void                        resume();

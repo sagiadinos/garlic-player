@@ -46,7 +46,13 @@ void PlayerAudio::loadMedia(BaseMedia *media, Region *reg)
 
 void PlayerAudio::restart()
 {
+    if (SmilMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
+
     MediaDecoder.restart();
+
+    if (SmilMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
 void PlayerAudio::play()

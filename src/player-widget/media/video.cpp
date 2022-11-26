@@ -49,7 +49,13 @@ void PlayerVideo::loadMedia(BaseMedia *media, Region *reg)
 
 void PlayerVideo::restart()
 {
+    if (SmilMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
+
     MediaDecoder.restart();
+
+    if (SmilMedia->getLogContentId() != "")
+        qInfo(PlayLog).noquote() << createPlayLogXml();
 }
 
 void PlayerVideo::play()
