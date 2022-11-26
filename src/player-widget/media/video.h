@@ -13,6 +13,7 @@ class PlayerVideo : public PlayerBaseMedia
         PlayerVideo(QObject *parent = nullptr);
         ~PlayerVideo();
         void              loadMedia(BaseMedia *media, Region *reg);
+        void              restart();
         void              play();
         void              stop();
         void              resume();

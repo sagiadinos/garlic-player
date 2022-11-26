@@ -107,6 +107,11 @@ bool VlcDecoder::load(QString file_path)
     return true;
 }
 
+void VlcDecoder::restart()
+{
+    libvlc_media_player_set_time(vlcPlayer, 0);
+}
+
 void VlcDecoder::setVolume(QString percent)
 {
     if (vlcPlayer == NULL)

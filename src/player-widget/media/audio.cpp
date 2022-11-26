@@ -42,7 +42,12 @@ void PlayerAudio::loadMedia(BaseMedia *media, Region *reg)
     {
          SmilMedia->finishedNotFound();
     }
- }
+}
+
+void PlayerAudio::restart()
+{
+    MediaDecoder.restart();
+}
 
 void PlayerAudio::play()
 {

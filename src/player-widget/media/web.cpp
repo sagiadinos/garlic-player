@@ -73,6 +73,12 @@ void PlayerWeb::loadMedia(BaseMedia *media, Region *reg)
     browser->load(uri);
 }
 
+void PlayerWeb::restart()
+{
+    stop();
+    play();
+}
+
 void PlayerWeb::play()
 {
     if (SmilMedia->getLogContentId() != "")

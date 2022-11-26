@@ -29,7 +29,12 @@ void QffplDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
 
 bool QffplDecoder::load(QString file_path)
 {
-   return MediaDecoder.load(file_path);
+    return MediaDecoder.load(file_path);
+}
+
+void QffplDecoder::restart()
+{
+    MediaDecoder.seek(0);
 }
 
 void QffplDecoder::setVolume(QString percent)

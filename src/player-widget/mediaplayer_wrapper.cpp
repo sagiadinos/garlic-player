@@ -24,6 +24,11 @@ bool MediaPlayerWrapper::load(QString file_path)
     return MediaDecoder.load(file_path);
 }
 
+void MediaPlayerWrapper::restart()
+{
+    MediaDecoder.restart();
+}
+
 void MediaPlayerWrapper::setVolume(QString percent)
 {
     MediaDecoder.setVolume(percent);

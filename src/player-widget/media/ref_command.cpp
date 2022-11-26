@@ -16,6 +16,12 @@ void PlayerRefCommand::loadMedia(BaseMedia *media, Region *reg)
     region    = reg;
 }
 
+void PlayerRefCommand::restart()
+{
+    stop();
+    play();
+}
+
 void PlayerRefCommand::play()
 {
     QString path = SmilMedia->getLoadablePath();

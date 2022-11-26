@@ -13,6 +13,7 @@ class PlayerAudio : public PlayerBaseMedia
         explicit PlayerAudio(QObject *parent = nullptr);
         ~PlayerAudio();
         void          loadMedia(BaseMedia *media, Region *reg);
+        void          restart();
         void          play();
         void          stop();
         void          resume();

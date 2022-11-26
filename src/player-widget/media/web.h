@@ -17,6 +17,7 @@ class PlayerWeb : public PlayerBaseMedia
         PlayerWeb(QObject *parent = nullptr);
         ~PlayerWeb();
         void            loadMedia(BaseMedia *media, Region *reg);
+        void            restart();
         void            play();
         void            stop();
         void            resume();

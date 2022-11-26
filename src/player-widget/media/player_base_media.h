@@ -13,6 +13,7 @@
             explicit PlayerBaseMedia(QObject *parent = nullptr);
             virtual void          loadMedia(BaseMedia *media, Region *reg)   = 0;
             virtual void          play() = 0;
+            virtual void          restart() = 0;
             virtual void          stop() = 0;
             virtual void          resume() = 0;
             virtual void          pause() = 0;

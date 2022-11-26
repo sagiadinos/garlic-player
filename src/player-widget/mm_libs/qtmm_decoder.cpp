@@ -30,6 +30,11 @@ bool QtMMDecoder::load(QString file_path)
     return ret;
 }
 
+void QtMMDecoder::restart()
+{
+    MediaDecoder.setPosition(0);
+}
+
 void QtMMDecoder::setVolume(QString percent)
 {
     int vol = 0;

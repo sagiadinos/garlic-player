@@ -47,6 +47,11 @@ void PlayerVideo::loadMedia(BaseMedia *media, Region *reg)
    }
 }
 
+void PlayerVideo::restart()
+{
+    MediaDecoder.restart();
+}
+
 void PlayerVideo::play()
 {
     MediaDecoder.play();

@@ -64,6 +64,11 @@ void QtFFmpegPlayer::Decoder::pause()
         decoder_status = paused;
 }
 
+void QtFFmpegPlayer::Decoder::seek(int position)
+{
+
+}
+
 void QtFFmpegPlayer::Decoder::setRenderer(VideoOut *r)
 {
     MyVideoOut = r;

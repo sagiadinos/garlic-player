@@ -53,6 +53,12 @@ void PlayerImage::loadMedia(BaseMedia *media, Region *reg)
     }
 }
 
+void PlayerImage::restart()
+{
+    stop();
+    play();
+}
+
 void PlayerImage::play()
 {
     ImageWidget.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);

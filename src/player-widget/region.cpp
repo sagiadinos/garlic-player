@@ -47,6 +47,13 @@ void TRegion::paintEvent(QPaintEvent *)
 
 void TRegion::startShowMedia(BaseMedia *media)
 {
+    // check if this is media is already player now and if yes restart only
+    if (findMediaById(media->getID()) != Q_NULLPTR)
+    {
+        MyMedia->restart();
+        return;
+    }
+
     MyMedia = MyMediaFactory.create(media);
     if (MyMedia == Q_NULLPTR)
         return;

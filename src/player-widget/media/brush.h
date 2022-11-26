@@ -12,6 +12,7 @@ class PlayerBrush : public PlayerBaseMedia
         PlayerBrush(QObject *parent);
         ~PlayerBrush();
         void          loadMedia(BaseMedia *media, Region *reg);
+        void          restart();
         void          play();
         void          stop();
         void          resume();

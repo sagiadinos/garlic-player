@@ -20,6 +20,12 @@ void PlayerBrush::loadMedia(BaseMedia *media, Region *reg)
     BrushWidget.data()->setStyleSheet("background-color:" + MyBrush->getColor());
 }
 
+void PlayerBrush::restart()
+{
+    stop();
+    play();
+}
+
 void PlayerBrush::play()
 {
     if (MyBrush->getLogContentId() != "")

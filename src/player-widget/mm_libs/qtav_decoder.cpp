@@ -40,6 +40,11 @@ bool QtAVDecoder::load(QString file_path)
     return MediaDecoder.load();
 }
 
+bool QtAVDecoder::restart()
+{
+    MediaDecoder.setPosition(0);
+}
+
 void QtAVDecoder::setVolume(QString percent)
 {
     qreal vol = 0;
