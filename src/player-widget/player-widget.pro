@@ -41,7 +41,7 @@ linux {
 }
 
 win32 {
-    CONFIG   += support_qtav
+    CONFIG   += support_qtavplayer
 }
 
 macx {
