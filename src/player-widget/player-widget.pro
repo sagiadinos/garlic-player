@@ -36,7 +36,7 @@ linux {
     contains(QMAKE_CXX, .*raspbian.*arm.*):{
         CONFIG   += support_libvlc
     } else {
-        CONFIG   += support_qtav
+        CONFIG   += support_qtavplayer
     }
 }
 
@@ -47,8 +47,6 @@ win32 {
 macx {
     CONFIG   += support_qtav
 }
-
-
 
 support_qtavplayer {
     DEFINES += SUPPORT_QTAVPLAYER
