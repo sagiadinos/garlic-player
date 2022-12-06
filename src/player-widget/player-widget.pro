@@ -45,7 +45,7 @@ win32 {
 }
 
 macx {
-    CONFIG   += support_qtav
+    CONFIG   += support_qtavplayer
 }
 
 support_qtavplayer {
@@ -60,8 +60,13 @@ support_qtavplayer {
     win32 {
         LIBS += -L$$QT.core.libs
     }
+    macx {
+        # because someone is to silly to find ffmpeg includes even in Qt Dir
+        # this is only for the build server. Change it to your values
+        INCLUDEPATH += /Users/niko/Qt/5.12.12/clang_64/include
+        INCLUDEPATH += /usr/local/Cellar/ffmpeg/4.3.1_7/include
+    }
 }
-
 
 support_qffplay {
     DEFINES += SUPPORT_QFFPLAY
@@ -84,10 +89,9 @@ support_qffplay {
        LIBS += -lavformat -lavdevice -lavcodec -lswresample -lswscale -lavutil
     }
     macx {
-#        INCLUDEPATH += $$[QT_INSTALL_PREFIX]/include
-        INCLUDEPATH += /Users/niko/Qt/ffmpeg-5.1/include
-#        LIBS += -L$$QT.core.libs -lavformat -lavdevice -lavcodec -lswresample -lswscale -lavutil
-        LIBS += -L/Users/niko/Qt/ffmpeg-5.1/lib -lavformat -lavdevice -lavcodec -lswresample -lswscale -lavutil
+        # because someone is to silly to find ffmpeg includes in Qt Dir
+        INCLUDEPATH += /Users/niko/Qt/5.12.12/clang_64/include
+        LIBS += -L$$QT.core.libs -lavformat -lavdevice -lavcodec -lswresample -lswscale -lavutil
     }
     win32 {
         LIBS += -L$$QT.core.libs
