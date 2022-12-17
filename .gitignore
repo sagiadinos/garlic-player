@@ -6,6 +6,7 @@ lib
 libandroid
 libios
 .DS_Store
-*.pro.user
+*.pro.user*
 ./*.sh
 ./*.bat
+!./build_scripts/

@@ -1,0 +1,57 @@
+233d232
+< 
+234a234,247
+> 
+>                 webSettings.setMediaPlaybackRequiresUserGesture(false);
+>                 webSettings.setAllowFileAccessFromFileURLs(true);
+> //                websettings.setAllowFileAccess(true);
+> //                websettings.setAllowContentAccess(true);
+>                 webSettings.setAllowUniversalAccessFromFileURLs(true);
+>                 webSettings.setDomStorageEnabled(true);
+> 
+>                 m_webView.setInitialScale(1);
+>                 m_webView.setBackgroundColor(0x00000000);
+>                 webSettings.setSupportZoom(false);
+>                 webSettings.setDisplayZoomControls(false);
+>                 webSettings.setUseWideViewPort(true);
+>                 webSettings.setLoadWithOverviewMode(true);
+248,286d260
+<         } catch (Exception e) {
+<             e.printStackTrace();
+<         }
+<     }
+< 
+<     public String getUserAgent()
+<     {
+<         final String[] ua = {""};
+<         final Semaphore sem = new Semaphore(0);
+<         m_activity.runOnUiThread(new Runnable() {
+<             @Override
+<             public void run() {
+<                 ua[0] = m_webView.getSettings().getUserAgentString();
+<                 sem.release();
+<             }
+<         });
+< 
+<         try {
+<             sem.tryAcquire(BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
+<         } catch (Exception e) {
+<             e.printStackTrace();
+<         }
+< 
+<         return ua[0];
+<     }
+< 
+<     public void setUserAgent(final String uaString)
+<     {
+<         final Semaphore sem = new Semaphore(0);
+<         m_activity.runOnUiThread(new Runnable() {
+<             @Override
+<             public void run() {
+<                 m_webView.getSettings().setUserAgentString(uaString);
+<                 sem.release();
+<             }
+<         });
+< 
+<         try {
+<             sem.tryAcquire(BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
