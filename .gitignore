@@ -9,4 +9,4 @@ libios
 *.pro.user*
 ./*.sh
 ./*.bat
-!./build-scripts/
+!./build_scripts/
