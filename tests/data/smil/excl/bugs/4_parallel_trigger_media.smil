@@ -11,8 +11,8 @@
 	<!--
         Trigger should played every 10s
 
-        First time image.jpg for 4s
-        Second time image.jpg for 2s and then video for 2s
+        First time blue for 1s
+        Second time vide for 2s and then blue for 3s
     -->
 
 		<excl repeatCount="indefinite">
@@ -21,7 +21,7 @@
 			</priorityClass>
 
 			<priorityClass id="second" higher="pause">
-                <brush id="image_trigger" begin="wallclock(R/2022-07-08T23:24:00/PT10S)" color="blue" dur="4s" />
+                <brush id="image_trigger" begin="wallclock(R/2022-07-08T23:24:59/PT10S)" color="blue" dur="4s" />
 			</priorityClass>
 
 			<priorityClass id="playlist">

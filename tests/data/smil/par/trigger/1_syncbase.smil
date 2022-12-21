@@ -39,7 +39,7 @@
 
 			<video region="screen3" xml:id="video0001" src="../../../videos/0001.mp4" fit="meet" />
 			<img region="screen4" xml:id="img_video" src="../../../images/video.jpg" begin="video0001.begin" end="video0001.end" fit="meet" />
-			<img region="screen2" xml:id="img_end" src="../../../images/end.jpg" begin="video0001.end" dur="1s" fit="meet" />
+			<img region="screen2" xml:id="img_end" src="../../../images/end.jpg" begin="video0001.end" dur="2s" fit="meet" />
 		</par>
 
 

@@ -23,8 +23,11 @@
 		<!--
 
 			Sequence: Start count at every 10s begining with 0th second of a minute
-			1, 2, video, 4, 5 standby for 5 s
+			1, 2, video, 2 (paused rest) 4, 5, 1 (until the 6. second hit) standby for 5 s
 			repeat indefinite
+
+			Remark:
+			Due to the short times we need to add some deciseconds
 		-->
 
 
@@ -34,13 +37,14 @@
 					<img id="video" src="../../../images/video.jpg" dur="1s" fit="meet" />
 				</seq>
 			</priorityClass>
+
 			<priorityClass higher="pause">
 				<seq id="monitor" begin="wallclock(R/2021-07-27T13:00:00/PT10S)" end="wallclock(R/2021-07-27T13:00:06/PT10S)">
 					<seq repeatCount="indefinite">
-						<img id="Image1" src="../../../images/0001.jpg" dur="1s" fit="meet" />
-						<img id="Image2" src="../../../images/0002.jpg" dur="1s" fit="meet" />
-						<img id="Image4" src="../../../images/0004.jpg" dur="1s" fit="meet" />
-						<img id="Image5" src="../../../images/0005.jpg" dur="1s" fit="meet" />
+						<img id="Image1" src="../../../images/0001.jpg" dur="1.1s" fit="meet" />
+						<img id="Image2" src="../../../images/0002.jpg" dur="1.1s" fit="meet" />
+						<img id="Image4" src="../../../images/0004.jpg" dur="1.1s" fit="meet" />
+						<img id="Image5" src="../../../images/0005.jpg" dur="1.1s" fit="meet" />
 					</seq>
 .				</seq>
 			</priorityClass>
