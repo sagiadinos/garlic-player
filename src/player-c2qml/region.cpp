@@ -104,8 +104,10 @@ void TRegion::clickSlot()
 void TRegion::startShowMedia(BaseMedia *media)
 {
     // check if this is media is already player now and if yes restart only
-    if (findMediaById(media->getID()) != Q_NULLPTR)
+    PlayerBaseMedia  *MyTmpMedia  = findMediaById(media->getID());
+    if (MyTmpMedia != Q_NULLPTR)
     {
+        MyMedia = MyTmpMedia;
         MyMedia->restart();
         return;
     }
