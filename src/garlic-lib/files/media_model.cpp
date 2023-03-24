@@ -89,7 +89,12 @@ void MediaModel::insertCacheableFile(QString src_file_path, QString local_file_p
 
 QString MediaModel::determineHashedFilePath(QString src_file_path)
 {
-    QFileInfo fi(src_file_path);
+    // get file extension, because like http://domain.tld/file.jpg?param=value
+    // Todo: find a way to recognize script generated files http://domain.tld/file.php?id=xyz&param=jpg
+
+    QUrl url(src_file_path);
+    QFileInfo fi(url.path());
+
     return QString(QCryptographicHash::hash((src_file_path.toUtf8()), QCryptographicHash::Md5).toHex())+ "."+fi.suffix();
 }
 
