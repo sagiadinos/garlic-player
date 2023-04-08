@@ -54,7 +54,6 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
         reply->deleteLater();
         return;
     }
-
     int status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     if (status_code != 301 && status_code != 302)
         checkStatusCode(reply, status_code);
@@ -117,6 +116,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         return;
     }
 
+
     QStringList list;
     if (!validContentType(content_type) && !validFileExtension())
     {
@@ -142,7 +142,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
     }
 
     QDateTime remote_last_modified = reply->header(QNetworkRequest::LastModifiedHeader).toDateTime();
-    qint64    remote_size          = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
+    remote_size                    = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
 
     // we need to check for size and last Modified, cause a previous index smil on the server can have a older Date and would not be loaded
     // we need to check also if there is an already downloaded file which is signed and waiting via downloaded suffix
@@ -192,7 +192,7 @@ void Downloader::startDownload(QNetworkReply *reply)
     connect(MyFileDownloader.data(), SIGNAL(downloadSuccessful()), SLOT(doDownloadSuccessFul()));
     connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply*)), SLOT(doDownloadError(QNetworkReply*)));
     //
-    MyFileDownloader->startDownload(reply->url(), local_file_info.absoluteFilePath());
+    MyFileDownloader->startDownload(reply->url(), local_file_info.absoluteFilePath(), remote_size);
 }
 
 void Downloader::doDownloadSuccessFul()

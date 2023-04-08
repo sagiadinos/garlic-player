@@ -13,10 +13,12 @@ FileDownloader::~FileDownloader()
     }
 }
 
-void FileDownloader::startDownload(QUrl url, QString file_name)
+void FileDownloader::startDownload(QUrl url, QString file_name, qint64 rs)
 {
     if(network_reply)
         return;
+
+    remote_size        = rs;
     original_file_name = file_name;
     destination_file.setFileName(file_name+FILE_DOWNLOAD_SUFFIX); // add suffix to prevent overwriting
     setRemoteFileUrl(url);
@@ -35,7 +37,6 @@ void FileDownloader::startDownload(QUrl url, QString file_name)
         if(!destination_file.open(QIODevice::WriteOnly))
             return;
     }
-    emit goingBusy();
 
     request.setPriority(QNetworkRequest::LowPriority);
 
@@ -52,7 +53,6 @@ void FileDownloader::cancelDownload()
         return;
     cleanupDownload();
     qDebug() << "manually cancelled download"  << remote_file_url.toString();
-    emit backReady();
 }
 
 quint64 FileDownloader::getBytesTransfered()
@@ -109,17 +109,24 @@ void FileDownloader::finishDownload()
     {
         cleanupDownload();
         emit downloadError(network_reply);
+        return;
     }
-    else
-    {
-        readData();
-        destination_file.close();
-        renameAfterDownload();
-        network_reply->deleteLater();
 
-        emit downloadSuccessful();
+    readData();
+    destination_file.close();
+
+    if (destination_file.size() != remote_size)
+    {
+        cleanupDownload();
+        emit downloadError(network_reply);
+        return;
     }
+
+    renameAfterDownload();
+    network_reply->deleteLater();
+
+    emit downloadSuccessful();
+
     qDebug() << "finished download"  << remote_file_url.toString();
-    emit backReady();
 }
 

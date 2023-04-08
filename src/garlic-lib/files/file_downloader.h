@@ -20,16 +20,13 @@ class FileDownloader : public TNetworkAccess
         explicit FileDownloader(QNetworkAccessManager* nam, MainConfiguration *config, QObject* parent= nullptr);
         ~FileDownloader();
 
-        void    startDownload(QUrl url, QString file_name);
+        void    startDownload(QUrl url, QString file_name, qint64 rs);
         void    cancelDownload();
         quint64 getBytesTransfered();
     signals:
         void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
         void downloadSuccessful();
         void downloadError(QNetworkReply *reply);
-
-        void goingBusy();
-        void backReady();
 
     protected:
         QNetworkAccessManager  *network_manager;
@@ -38,6 +35,7 @@ class FileDownloader : public TNetworkAccess
         QString                 original_file_name;
         QPointer<QNetworkReply> network_reply;
         quint64                 bytes_transfered = 0;
+        qint64                  remote_size;
         void addBytesTransfered(quint64 add_bytes);
         void renameAfterDownload();
         void cleanupDownload();
