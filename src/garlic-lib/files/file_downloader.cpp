@@ -115,7 +115,8 @@ void FileDownloader::finishDownload()
     readData();
     destination_file.close();
 
-    if (destination_file.size() != remote_size)
+    qint64 tmp = destination_file.size();
+    if (tmp != remote_size)
     {
         cleanupDownload();
         emit downloadError(network_reply);

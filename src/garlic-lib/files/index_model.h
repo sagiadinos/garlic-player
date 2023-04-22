@@ -37,7 +37,6 @@ class IndexModel : public QObject
         bool            loadDocument(QString file_path);
         QDomDocument getDocument() const;
         void setDocument(const QDomDocument &value);
-
     signals:
 
     protected:

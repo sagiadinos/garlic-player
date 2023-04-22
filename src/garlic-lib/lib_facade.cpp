@@ -137,6 +137,8 @@ QString LibFacade::requestLoaddableMediaPath(QString path)
 
 void LibFacade::loadIndex()
 {
+    // validate
+
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
     if (!MyBodyParser.isNull())
     {
@@ -146,7 +148,10 @@ void LibFacade::loadIndex()
 
     // Start with this only when it is absolutly sure that in the player component is no activity anymore.
     if (!MyIndexManager.data()->load())
+    {
+        reboot("index_broken");
         return;
+    }
 
     MyPlaceHolder.reset(new SmilHead::PlaceHolder(this)); // must init before Filemanager
 
