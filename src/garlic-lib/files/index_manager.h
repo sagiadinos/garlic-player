@@ -52,8 +52,13 @@ namespace Files
 
         protected slots:
             void doSucceed(TNetworkAccess *downloader);
+            void doNotModified(TNetworkAccess *downloader);
+
+        private:
+            bool is_loaded = false;
         signals:
             void readyForLoading();
+
 
     };
 }

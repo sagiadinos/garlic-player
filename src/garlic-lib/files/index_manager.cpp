@@ -22,6 +22,7 @@ Files::IndexManager::IndexManager(DB::InventoryTable *it, MainConfiguration *con
     MyDownloader    = new Downloader(fds, it, MyConfiguration, this);
     MyIndexModel    = new IndexModel(this);
     connect(MyDownloader, SIGNAL(succeed(TNetworkAccess*)), SLOT(doSucceed(TNetworkAccess*)));
+    connect(MyDownloader, SIGNAL(notmodified(TNetworkAccess*)), SLOT(doNotModified(TNetworkAccess*)));
 }
 
 void Files::IndexManager::init(QString src)
@@ -55,12 +56,17 @@ bool Files::IndexManager::load()
     if (src_index_path == "")
     {
         qWarning(Develop) << "set index path first";
-        return false;
+        is_loaded = false;
+        return is_loaded;
     }
+
     if (isRemote(src_index_path))
-        return loadLocal(MyConfiguration->getLastPlayedIndexPath());
+        is_loaded = loadLocal(MyConfiguration->getLastPlayedIndexPath());
     else
-        return loadLocal(src_index_path);
+        is_loaded = loadLocal(src_index_path);
+
+    return is_loaded;
+
 }
 
 void Files::IndexManager::activateRefresh(int value)
@@ -137,4 +143,12 @@ void Files::IndexManager::doSucceed(TNetworkAccess *downloader)
     Q_UNUSED(downloader); // This class have one permenent downloader instance so function paramter not used
 
     emit readyForLoading();
+}
+
+void Files::IndexManager::doNotModified(TNetworkAccess *downloader)
+{
+    Q_UNUSED(downloader); // This class have one permenent downloader instance so function paramter not used
+    if (!is_loaded)
+        emit readyForLoading();
+
 }

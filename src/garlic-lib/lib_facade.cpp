@@ -80,14 +80,15 @@ void LibFacade::initParser()
 {
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
     MyIndexManager.data()->lookUpForUpdatedIndex();
-    loadIndex();
+   // look if we can can check first foor a new index before load loacl
+   //  loadIndex();
 }
 
 void LibFacade::initParserWithTemporaryFile(QString uri)
 {
     MyIndexManager.data()->init(uri);
     MyIndexManager.data()->lookUpForUpdatedIndex();
-    loadIndex();
+   // loadIndex();
 }
 void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_parsing)
 {
@@ -138,7 +139,6 @@ QString LibFacade::requestLoaddableMediaPath(QString path)
 void LibFacade::loadIndex()
 {
     // validate
-
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
     if (!MyBodyParser.isNull())
     {
