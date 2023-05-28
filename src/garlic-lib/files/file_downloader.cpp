@@ -113,10 +113,12 @@ void FileDownloader::finishDownload()
     }
 
     readData();
+    qint64 tmp = destination_file.size();
     destination_file.close();
 
-    qint64 tmp = destination_file.size();
-    if (tmp != remote_size)
+    // Workaround as taskscheduler request do not sending content-length in header
+    // see downloader.cpp Row 144
+    if (tmp != remote_size && !destination_file.fileName().contains("task_scheduler"))
     {
         cleanupDownload();
         emit downloadError(network_reply);

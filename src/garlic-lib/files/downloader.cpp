@@ -144,6 +144,8 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
     QDateTime remote_last_modified = reply->header(QNetworkRequest::LastModifiedHeader).toDateTime();
     remote_size                    = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
 
+   // QList<QByteArray> my_header = reply->rawHeaderList();
+
     // we need to check for size and last Modified, cause a previous index smil on the server can have a older Date and would not be loaded
     // we need to check also if there is an already downloaded file which is signed and waiting via downloaded suffix
     QFileInfo fi(local_file_info.absoluteFilePath() + FILE_DOWNLOADED_SUFFIX);
