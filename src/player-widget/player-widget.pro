@@ -50,7 +50,11 @@ macx {
 
 support_qtavplayer {
     DEFINES += SUPPORT_QTAVPLAYER
-    QT      += multimedia multimediawidgets QtAVPlayer
+    DEFINES+="QT_AVPLAYER_MULTIMEDIA"
+    INCLUDEPATH += ../ext/
+    include(../ext/QtAVPlayer/QtAVPlayer.pri)
+
+    QT += multimedia multimediawidgets
     HEADERS  += \
         mm_libs/qtavplayer_decoder.h \
         mm_libs/qtavplayer_widget.h
@@ -58,6 +62,12 @@ support_qtavplayer {
         mm_libs/qtavplayer_decoder.cpp \
         mm_libs/qtavplayer_widget.cpp
     win32 {
+        # include ffmpeg  Use your own directories
+        # alternatively you can put it in Qt paths.
+        INCLUDEPATH += "C:\BuildEssentials\ffmpeg\include"
+        LIBS += -LC:\BuildEssentials\ffmpeg\lib
+        LIBS += -LC:\BuildEssentials\ffmpeg\bin
+
         LIBS += -L$$QT.core.libs
     }
     macx {
