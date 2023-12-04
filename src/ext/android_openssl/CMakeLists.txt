@@ -1,102 +1,18 @@
-if (CMAKE_BUILD_TYPE EQUAL "DEBUG")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set (SSL_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR}/no-asm)
 else()
     set (SSL_ROOT_PATH ${CMAKE_CURRENT_LIST_DIR})
 endif()
 
-
-if (QT_VERSION LESS 5.12.4)
-    message(QT_VERSION)
-    if (ANDROID_TARGET_ARCH STREQUAL "armeabi-v7a")
-        set(ANDROID_EXTRA_LIBS
-            ${SSL_ROOT_PATH}/Qt-5.12.3/arm/libcrypto.so
-            ${SSL_ROOT_PATH}/Qt-5.12.3/arm/libssl.so
-        CACHE INTERNAL "")
-    endif()
-
-    if (ANDROID_TARGET_ARCH STREQUAL "arm64-v8a")
-        set(ANDROID_EXTRA_LIBS
-            ${SSL_ROOT_PATH}/Qt-5.12.3/arm64/libcrypto.so
-            ${SSL_ROOT_PATH}/Qt-5.12.3/arm64/libssl.so
-        CACHE INTERNAL "")
-    endif()
-
-    if (ANDROID_TARGET_ARCH STREQUAL "x86")
-        set(ANDROID_EXTRA_LIBS
-            ${SSL_ROOT_PATH}/Qt-5.12.3/x86/libcrypto.so
-            ${SSL_ROOT_PATH}/Qt-5.12.3/x86/libssl.so
-        CACHE INTERNAL "")
-    endif()
+if (Qt6_VERSION VERSION_GREATER_EQUAL 6.5.0)
+    list(APPEND ANDROID_EXTRA_LIBS
+        ${SSL_ROOT_PATH}/ssl_3/${CMAKE_ANDROID_ARCH_ABI}/libcrypto_3.so
+        ${SSL_ROOT_PATH}/ssl_3/${CMAKE_ANDROID_ARCH_ABI}/libssl_3.so)
 else()
-    if (QT_VERSION EQUAL 5.12.4 OR QT_VERSION EQUAL 5.13.0)
-        if (ANDROID_TARGET_ARCH STREQUAL "armeabi-v7a")
-            set(ANDROID_EXTRA_LIBS
-                ${SSL_ROOT_PATH}/Qt-5.12.4_5.13.0/arm/libcrypto.so
-                ${SSL_ROOT_PATH}/Qt-5.12.4_5.13.0/arm/libssl.so
-            CACHE INTERNAL "")
-        endif()
-
-        if (ANDROID_TARGET_ARCH STREQUAL "arm64-v8a")
-            set(ANDROID_EXTRA_LIBS
-                ${SSL_ROOT_PATH}/Qt-5.12.4_5.13.0/arm64/libcrypto.so
-                ${SSL_ROOT_PATH}/Qt-5.12.4_5.13.0/arm64/libssl.so
-            CACHE INTERNAL "")
-        endif()
-
-        if (ANDROID_TARGET_ARCH STREQUAL "x86")
-            set(ANDROID_EXTRA_LIBS
-                ${SSL_ROOT_PATH}/Qt-5.12.4_5.13.0/x86/libcrypto.so
-                ${SSL_ROOT_PATH}/Qt-5.12.4_5.13.0/x86/libssl.so
-            CACHE INTERNAL "")
-        endif()
-
-        if (ANDROID_TARGET_ARCH STREQUAL "x86_64")
-            set(ANDROID_EXTRA_LIBS
-                ${SSL_ROOT_PATH}/Qt-5.12.4_5.13.0/x86_64/libcrypto.so
-                ${SSL_ROOT_PATH}/Qt-5.12.4_5.13.0/x86_64/libssl.so
-            CACHE INTERNAL "")
-        endif()
-    else()
-        if (NOT (QT_VERSION LESS 5.14.0))
-            message(${SSL_ROOT_PATH})
-            set(ANDROID_EXTRA_LIBS
-                ${SSL_ROOT_PATH}/latest/arm/libcrypto_1_1.so
-                ${SSL_ROOT_PATH}/latest/arm/libssl_1_1.so
-                ${SSL_ROOT_PATH}/latest/arm64/libcrypto_1_1.so
-                ${SSL_ROOT_PATH}/latest/arm64/libssl_1_1.so
-                ${SSL_ROOT_PATH}/latest/x86/libcrypto_1_1.so
-                ${SSL_ROOT_PATH}/latest/x86/libssl_1_1.so
-                ${SSL_ROOT_PATH}/latest/x86_64/libcrypto_1_1.so
-                ${SSL_ROOT_PATH}/latest/x86_64/libssl_1_1.so
-            CACHE INTERNAL "")
-        else()
-            if (ANDROID_TARGET_ARCH STREQUAL "armeabi-v7a")
-                set(ANDROID_EXTRA_LIBS
-                    ${SSL_ROOT_PATH}/latest/arm/libcrypto_1_1.so
-                    ${SSL_ROOT_PATH}/latest/arm/libssl_1_1.so
-                CACHE INTERNAL "")
-            endif()
-
-            if (ANDROID_TARGET_ARCH STREQUAL "arm64-v8a")
-                set(ANDROID_EXTRA_LIBS
-                    ${SSL_ROOT_PATH}/latest/arm64/libcrypto_1_1.so
-                    ${SSL_ROOT_PATH}/latest/arm64/libssl_1_1.so
-                CACHE INTERNAL "")
-            endif()
-
-            if (ANDROID_TARGET_ARCH STREQUAL "x86")
-                set(ANDROID_EXTRA_LIBS
-                    ${SSL_ROOT_PATH}/latest/x86/libcrypto_1_1.so
-                    ${SSL_ROOT_PATH}/latest/x86/libssl_1_1.so
-                CACHE INTERNAL "")
-            endif()
-
-            if (ANDROID_TARGET_ARCH STREQUAL "x86_64")
-                set(ANDROID_EXTRA_LIBS
-                    ${SSL_ROOT_PATH}/latest/x86_64/libcrypto_1_1.so
-                    ${SSL_ROOT_PATH}/latest/x86_64/libssl_1_1.so
-                CACHE INTERNAL "")
-            endif()
-        endif()
-    endif()
+    list(APPEND ANDROID_EXTRA_LIBS
+        ${SSL_ROOT_PATH}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI}/libcrypto_1_1.so
+        ${SSL_ROOT_PATH}/ssl_1.1/${CMAKE_ANDROID_ARCH_ABI}/libssl_1_1.so)
 endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    QT_ANDROID_EXTRA_LIBS "${ANDROID_EXTRA_LIBS}")
