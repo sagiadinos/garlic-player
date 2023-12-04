@@ -1,5 +1,6 @@
 include(../defaults.pri)
 include(../ext/QtWebApp/httpserver/httpserver.pri)
+include(../ext/quazip/quazip.pri)
 
 QT       += core sql network xml xmlpatterns widgets
 TEMPLATE  = lib
@@ -30,21 +31,23 @@ android{
         LIBS += -lzlib
     }
     else{
+        CONFIG += staticlib # because androiddeploy is not able to put the dyn lib in the required folder
+        ANDROID_ABIS=armeabi-v7a arm64-v8a x86 x86_64
         equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
-            LIBS += -lquazip_armeabi-v7a
-            LIBS += -lzlib_armeabi-v7a
+            TARGET = garlic_armeabi-v7a
+            LIBS += -lquazip_armeabi-v7a -lzlib_armeabi-v7a
         }
         equals(ANDROID_TARGET_ARCH, arm64-v8a) {
-            LIBS += -lquazip_arm64-v8a
-            LIBS += -lzlib_arm64-v8a
+            TARGET = garlic_arm64-v8a
+            LIBS += -lquazip_arm64-v8a -lzlib_arm64-v8a
         }
         equals(ANDROID_TARGET_ARCH, x86_64) {
-            LIBS += -lquazip_x86_64
-            LIBS += -lzlib_x86_64
+            TARGET = garlic_x86_64
+            LIBS += -lquazip_x86_64 -lzlib_x86_64
         }
         equals(ANDROID_TARGET_ARCH, x86) {
-            LIBS += -lquazip_x86
-            LIBS += -lzlib_x86
+            TARGET = garlic_x86
+            LIBS += -lquazip_x86 -lzlib_x86
         }
     }
 }

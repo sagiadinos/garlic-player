@@ -19,8 +19,11 @@ win32:DESTDIR = ../../lib/
 macx:DESTDIR = ../../lib/
 android {
     DESTDIR = ../../libandroid/
-
-    equals(QT_MAJOR_VERSION, 5):greaterThan(QT_MINOR_VERSION, 13) {
+    equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 14) {
+        TARGET = zlib
+    }
+    else {
+        ANDROID_ABIS=armeabi-v7a arm64-v8a x86 x86_64
         equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
             TARGET = zlib_armeabi-v7a
         }
@@ -33,7 +36,7 @@ android {
         equals(ANDROID_TARGET_ARCH, x86) {
             TARGET = zlib_x86
         }
-    }
+   }
 }
 ios:DESTDIR = ../../libios/
 # Input

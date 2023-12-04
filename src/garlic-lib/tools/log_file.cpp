@@ -21,7 +21,7 @@ void LogFile::setMaxNumber(qint64 number)
 
 void LogFile::write(QString data)
 {
-    out << data << endl;
+    out << data;
     if (isSizeExeeds() && !is_rotated)
     {
         rotateFile();

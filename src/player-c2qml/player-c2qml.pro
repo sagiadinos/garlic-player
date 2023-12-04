@@ -1,6 +1,6 @@
 include(../defaults.pri)
 
-QT          += core sql widgets gui xml xmlpatterns quick qml quickcontrols2
+QT          += core sql widgets gui xml xmlpatterns quick qml quickcontrols2 multimedia multimediawidgets
 CONFIG      += warn_on c++11
 TARGET       = garlic-player
 TEMPLATE     = app
@@ -10,6 +10,8 @@ INCLUDEPATH += ../ext/QtWebApp/httpserver
 INCLUDEPATH +=../ext/quazip/includes
 INCLUDEPATH += ../garlic-lib/
 DEFINES     += QT_DEPRECATED_WARNINGS
+
+#message(check variable: $$[ANDROID_VERSION_NAME])
 
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
 
@@ -62,26 +64,28 @@ android {
         ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic.so
     }
     else {
+
+        # 5.15.2 fails to build arm64-v8a 5.15.11 succeed
+        ANDROID_ABIS=x86_64 arm64-v8a armeabi-v7a x86
         equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
-            LIBS      += -lgarlic_armeabi-v7a
+            LIBS += -lgarlic_armeabi-v7a -lquazip_armeabi-v7a -lzlib_armeabi-v7a
         }
         equals(ANDROID_TARGET_ARCH, arm64-v8a) {
-            LIBS      += -lgarlic_arm64-v8a
+            LIBS += -lgarlic_arm64-v8a -lquazip_arm64-v8a -lzlib_arm64-v8a
         }
         equals(ANDROID_TARGET_ARCH, x86_64) {
-            LIBS      += -lgarlic_x86_64
+            LIBS += -lgarlic_x86_64 -lquazip_x86_64 -lzlib_x86_64
         }
         equals(ANDROID_TARGET_ARCH, x86) {
-            LIBS      += -lgarlic_x86
+            LIBS += -lgarlic_x86 -lquazip_x86 -lzlib_x86
         }
 
-        # cannot be included in above equals for unknown reasons
-        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_armeabi-v7a.so
-#        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_arm64-v8a.so
-#        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_x86_64.so
-#        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_x86.so
+        # sometimes neccessary to include here
+      #  ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_armeabi-v7a.so
+      # ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_arm64-v8a.so
+     #   ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_x86_64.so
+     #   ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic_x86.so
     }
-
 }
 win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
