@@ -16,7 +16,10 @@ linux:!android {
     DESTDIR = ../../lib/
 }
 win32:DESTDIR = ../../lib/
-macx:DESTDIR = ../../lib/
+macx:{
+    DESTDIR = ../../lib/
+    QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
+}
 android {
     DESTDIR = ../../libandroid/
     equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 14) {

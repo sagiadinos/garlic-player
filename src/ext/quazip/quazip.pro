@@ -21,6 +21,7 @@ win32 {
 }
 macx{
     DESTDIR = ../../lib/
+    QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
 }
 
 android {
@@ -94,7 +95,7 @@ include(quazip.pri)
 
 
 CONFIG(debug, debug|release) {
-     mac: TARGET = $$join(TARGET,,,_debug) 
+#     mac: TARGET = $$join(TARGET,,,_debug)
      win32: TARGET = $$join(TARGET,,,d)
 }
 

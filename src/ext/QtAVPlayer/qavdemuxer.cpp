@@ -71,7 +71,8 @@ public:
     AVFormatContext *ctx = nullptr;
     AVBSFContext *bsf_ctx = nullptr;
 
-    std::atomic_bool abortRequest = false;
+    //std::atomic_
+    bool abortRequest = false;
     mutable QMutex mutex;
 
     bool seekable = false;
