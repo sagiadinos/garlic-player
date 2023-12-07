@@ -73,8 +73,9 @@ support_qtavplayer {
     macx {
         # because someone is to silly to find ffmpeg includes even in Qt Dir
         # this is only for the build server. Change it to your values
-        INCLUDEPATH += /Users/niko/Qt/5.12.12/clang_64/include
-        INCLUDEPATH += /usr/local/Cellar/ffmpeg/4.3.1_7/include
+        INCLUDEPATH += /Users/niko/Qt/5.15.11/clang_64/include
+        INCLUDEPATH += /Users/niko/Desktop/BuildEssentials/ffmpeg-6.1/include
+        LIBS += -L/Users/niko/Desktop/BuildEssentials/ffmpeg-6.1/lib
     }
 }
 
@@ -182,11 +183,13 @@ win32 {
 }
 
 macx {
-    #libgarlic release is static compiled in osx
+    QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
     debug:CONFIG+=sdk_no_version_check # remove annoying SDK messages on Apple Silicon
     ICON = ../../deployment/macx/garlic-player.icns
+
+    #libgarlic release is static compiled in osx
     release:LIBS += -L../lib -lgarlic -lquazip -lzlib
-    debug:LIBS += -L../lib -lgarlic
+    debug:LIBS += -L../lib -lgarlic -lquazip_debug -lzlib
 }
 
 SOURCES += \

@@ -62,6 +62,7 @@ win32 {
 macx {
     # release version build as static lib
     release:CONFIG += staticlib
+    QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
 }
