@@ -73,9 +73,8 @@ support_qtavplayer {
     macx {
         # because someone is to silly to find ffmpeg includes even in Qt Dir
         # this is only for the build server. Change it to your values
-        INCLUDEPATH += /Users/niko/Qt/5.15.11/clang_64/include
-        INCLUDEPATH += /Users/niko/Desktop/BuildEssentials/ffmpeg-6.1/include
-        LIBS += -L/Users/niko/Desktop/BuildEssentials/ffmpeg-6.1/lib
+        INCLUDEPATH += /Users/niko/Deployment/ffmpeg-6.1/include
+        LIBS += -L/Users/niko/Deployment/ffmpeg-6.1/lib
     }
 }
 
@@ -189,7 +188,7 @@ macx {
 
     #libgarlic release is static compiled in osx
     release:LIBS += -L../lib -lgarlic -lquazip -lzlib
-    debug:LIBS += -L../lib -lgarlic -lquazip_debug -lzlib
+    debug:LIBS += -L../lib -lgarlic -lquazip -lzlib
 }
 
 SOURCES += \
