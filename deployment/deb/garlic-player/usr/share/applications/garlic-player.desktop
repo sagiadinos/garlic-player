@@ -1,11 +1,7 @@
 [Desktop Entry]
-Name=Garlic Player
-Name[­de­]=Garlic Player
-Comment=Digital Signage Media Player based on SMIL
-Comment[­de­]=SMIL-kompatibler Digital Signage Medienplayer
-Exec=/opt/garlic-player/garlic.sh
-Icon=garlic-player
-Terminal=true
 Type=Application
+Name=Garlic Player
+Comment=Digital Signage Media Player based on SMIL
+Exec=garlic-player
+Icon=garlic-player
 Categories=Qt;AudioVideo;Player;
-StartupNotify=false 
