@@ -6,7 +6,7 @@
 void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt, va_list args)
 {
    Q_UNUSED(ctx);
-    Q_UNUSED(data);
+   Q_UNUSED(data);
 
 /*    char *result;
     if (vasprintf(&result, fmt, args) < 0)
@@ -33,7 +33,7 @@ void logCallback(void *data, int level, const libvlc_log_t *ctx, const char *fmt
             qDebug(message.toUtf8().data(), NULL);
             break;
     }
-    */
+*/
 }
 #endif
 
@@ -43,17 +43,16 @@ VlcDecoder::VlcDecoder(QObject *parent) : QObject(parent)
 #if defined(Q_OS_MACX)
     const char *arguments[] = {""};
 #elif defined(Q_OS_UNIX)
-    const char *arguments[] = {"--avcodec-hw=any"}; // espcially for raspberry 4 64 Bit
+    const char *arguments[] = {"--avcodec-hw=any"}; // set hw acceleration especially for raspberry
 #else
     const char *arguments[] = {""};
 #endif
 
     vlcInstance = libvlc_new(sizeof(arguments) / sizeof(arguments[0]), arguments);
-
-    if (vlcInstance)
+     if (vlcInstance)
     {
 #ifdef QT_DEBUG
-        libvlc_log_set(vlcInstance, logCallback, NULL);
+//        libvlc_log_set(vlcInstance, logCallback, NULL); // Todo: Fix this
 #endif
         vlcPlayer    = libvlc_media_player_new(vlcInstance);
     }
@@ -81,7 +80,7 @@ void VlcDecoder::setVideoOutput(MediaWidgetWrapper *renderer)
 #elif defined(Q_OS_UNIX)
     libvlc_media_player_set_xwindow(vlcPlayer, Renderer->getVideoRenderer()->winId());
 #elif defined(Q_OS_WIN)
-    libvlc_media_player_set_hwnd(vlcPlayer, Renderer->getVideoRenderer()->winId());
+    libvlc_media_player_set_hwnd(vlcPlayer, (HWND) Renderer->getVideoWidget()->winId());
 #endif
 
 }
@@ -89,15 +88,25 @@ void VlcDecoder::setVideoOutput(MediaWidgetWrapper *renderer)
 void VlcDecoder::removeVideoOutput(MediaWidgetWrapper *renderer)
 {
     Q_UNUSED(renderer);
-    libvlc_media_player_set_nsobject(vlcPlayer, Q_NULLPTR);
 }
 
 bool VlcDecoder::load(QString file_path)
 {
     current_media_path = file_path;
+
+#elif defined(Q_OS_UNIX)
     vlcMedia = libvlc_media_new_path(vlcInstance, current_media_path.toStdString().c_str());
+#elif defined(Q_OS_WIN)
+
+    std::string bspath = current_media_path.toStdString();
+    std::replace(bspath.begin(), bspath.end(), '/', '\\');
+    vlcMedia = libvlc_media_new_path(vlcInstance, bspath.c_str());
+#endif
     if (vlcMedia == NULL)
+    {
+        qCritical() << "VLC-Qt Error: vlcMedia failed to load!";
         return false;
+    }
 
     libvlc_media_player_set_media(vlcPlayer, vlcMedia);
 
@@ -114,7 +123,7 @@ void VlcDecoder::restart()
 
 void VlcDecoder::setVolume(QString percent)
 {
-    if (vlcPlayer == NULL)
+    if (vlcPlayer == NULL ||vlcMedia == NULL)
         return;
 
     int vol = 0;
@@ -125,13 +134,18 @@ void VlcDecoder::setVolume(QString percent)
 
 void VlcDecoder::unload()
 {
+    if (vlcPlayer == NULL)
+        return;
     libvlc_media_player_set_media(vlcPlayer, NULL);
+
+    if (vlcMedia == NULL)
+        return;
     libvlc_media_release(vlcMedia);
 }
 
 void VlcDecoder::play()
 {
-    if (vlcPlayer == NULL)
+    if (vlcPlayer == NULL ||vlcMedia == NULL)
         return;
 
     libvlc_media_player_play(vlcPlayer);
@@ -143,7 +157,7 @@ void VlcDecoder::play()
 
 void VlcDecoder::stop()
 {
-    if (vlcPlayer == NULL)
+    if (vlcPlayer == NULL ||vlcMedia == NULL)
         return;
 
     libvlc_media_player_stop(vlcPlayer);

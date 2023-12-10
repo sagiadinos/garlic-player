@@ -6,9 +6,12 @@
 #include <QObject>
 #include <QObject>
 #include <QTimer>
-
 #if defined(Q_OS_MAC)
     #include <QMacCocoaViewContainer>
+#endif
+
+#ifdef _MSC_VER
+    typedef long int ssize_t;
 #endif
 
 #include <vlc/vlc.h>
