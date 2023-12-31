@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Garlic Player
+Comment=Digital Signage Media Player based on SMIL
+Icon=/usr/local/share/applications/pixmaps/garlic-player.png
+Categories=Qt;AudioVideo;Player;
+Exec=/usr/local/bin/start-garlic.sh

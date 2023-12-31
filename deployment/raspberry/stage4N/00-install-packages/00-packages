@@ -1,0 +1,12 @@
+dillo
+raspberrypi-net-mods raspberrypi-ui-mods
+python3-pip
+rc-gui
+tree
+libgl1-mesa-dri libgles1 libgles2-mesa xcompmgr
+piclone
+pprompt
+piwiz
+rp-prefapps
+ffmpeg
+vlc
