@@ -94,7 +94,7 @@ bool VlcDecoder::load(QString file_path)
 {
     current_media_path = file_path;
 
-#elif defined(Q_OS_UNIX)
+#if defined(Q_OS_UNIX)
     vlcMedia = libvlc_media_new_path(vlcInstance, current_media_path.toStdString().c_str());
 #elif defined(Q_OS_WIN)
 
