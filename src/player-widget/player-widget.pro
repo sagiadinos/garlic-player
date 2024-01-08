@@ -33,7 +33,7 @@ Release:DEFINES += QT_NO_DEBUG_OUTPUT
 # support_libvlc            For Raspberry Pi OS only. libvlc has much better hw acceleration than ffmpeg
 
 linux {
-    contains(QMAKE_CXX, .*raspbian.*arm.*):{
+    contains(QT_ARCH, arm64){
         CONFIG   += support_libvlc
     } else {
         CONFIG   += support_qtavplayer
