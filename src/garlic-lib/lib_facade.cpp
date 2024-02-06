@@ -80,8 +80,10 @@ void LibFacade::initParser()
 {
     MyIndexManager.data()->init(MyConfiguration.data()->getIndexUri());
     MyIndexManager.data()->lookUpForUpdatedIndex();
-   // look if we can can check first foor a new index before load loacl
-   //  loadIndex();
+
+    // load index from cache, because if remote check fails
+    // or has a long timeout player will be show a white screen
+    loadIndex();
 }
 
 void LibFacade::initParserWithTemporaryFile(QString uri)
