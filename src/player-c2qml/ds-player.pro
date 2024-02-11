@@ -66,7 +66,29 @@ android {
         android_manager.h
     SOURCES += android_manager.cpp
 
+    LIBS      += -L../libandroid
+    GARLIC_LIB = $$OUT_PWD/../libandroid
+    equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 14) {
+        LIBS      += -lgarlic
+        ANDROID_EXTRA_LIBS += $$OUT_PWD/../libandroid/libgarlic.so
+    }
+    else {
 
+        # 5.15.2 fails to build arm64-v8a 5.15.11 succeed
+        ANDROID_ABIS=armeabi-v7a
+        equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
+            LIBS += -lgarlic_armeabi-v7a -lquazip_armeabi-v7a -lzlib_armeabi-v7a
+        }
+        equals(ANDROID_TARGET_ARCH, arm64-v8a) {
+            LIBS += -lgarlic_arm64-v8a -lquazip_arm64-v8a -lzlib_arm64-v8a
+        }
+        equals(ANDROID_TARGET_ARCH, x86_64) {
+            LIBS += -lgarlic_x86_64 -lquazip_x86_64 -lzlib_x86_64
+        }
+        equals(ANDROID_TARGET_ARCH, x86) {
+            LIBS += -lgarlic_x86 -lquazip_x86 -lzlib_x86
+        }
+    }
 }
 win32 {
     Release:LIBS += -L../lib -lgarlic -lquazip -lzlib
@@ -111,4 +133,6 @@ DISTFILES += \
     android/src/com/sagiadinos/garlic/player/java/PhilipsLauncher.java \
     android/src/com/sagiadinos/garlic/player/java/SICPDef.java \
     android/src/com/sagiadinos/garlic/player/java/SmilIndexReceiver.java \
-    android/src/com/sagiadinos/garlic/player/java/SocketClient.java
+    android/src/com/sagiadinos/garlic/player/java/SocketClient.java \
+    android_brandings/DS_DE/android/build.gradle
+
