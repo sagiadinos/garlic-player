@@ -2,37 +2,35 @@
 
 The garlic-player is a SMIL 3.0 compatible [digital signage player](https://smil-control.com/magazine/what-is-a-digital-signage-player/).
 
-The goal for the development is to create a most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet the needs of the digital signage industry. Currently garlic-player has reached a high level of compatibility and stability. So it is used in many projects and some android hardware solutions.
+The goal for the development was to create a most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet the needs of the digital signage industry. The garlic-player has reached now a high level of compatibility and stability. So it is used in many projects and some android hardware solutions.
 
-[Digital Signage](https://smil-control.com/digital-signage/) is a relatively young business and it has a lack of standards. As customer you can easily trapped into a vendor-lock. A standard like SMIL gives you independence back.
+[Digital Signage](https://smil-control.com/digital-signage/) is a relatively young business and it has a lack of standards. As customer you can easily trapped into a vendor-lock. A public standard like SMIL offers you more independence and security for investment.
 
 The garlic-player can be used offline and online.
 
-Based on [SMIL standard](https://www.w3.org/TR/SMIL3/) it works together with every compatible [digital signage software](https://smil-control.com/software/).
+Based on [SMIL standard](https://garlic-player.com/resources/digital-signage-smil/) it works together with every compatible [digital signage software](https://smil-control.com/software/).
 
 You are able to play local and remote (via http) SMIL files with the features described below.
 
+## External Libraries Used in Latest Commit
+ - [Qt5](https://www.qt.io) >= 5.15 LTS (Qt6 not supported)
+ - [Quazip](http://quazip.sourceforge.net) 0.9 (included in ./src/ext)
+ - [zlib](https://zlib.net) 1.2.12 (included in ./src/ext)
 
-## Libraries used
- - [Qt5](https://www.qt.io) >= 5.10 (5.12.x LTS recommended)
- - [QtAV](http://www.qtav.org) >= 1.13.0 as alternative to QtMultimedia
- - [Quazip](http://quazip.sourceforge.net) 0.7.3 (included in ./src/ext)
- - [zlib](https://zlib.net) 1.2.11 (included in ./src/ext)
-
-## Current Operating System Supported
+## Official Operating Systems Supported
  - Linux
  - Windows
  - Android
  - macOS
  
-## Successful tested with:
+## Successful Tested With:
  - Linux 64Bit: Kde Neon, Kubuntu, Debian, Arch64
- - Raspberry Pi: 3 and 4 for 32 and 64Bit
+ - Raspberry Pi: 3, 4, and 5 for 32 and 64Bit (recommended))
  - Tinker Board: (Linaro OS 1.8)
  - Android Armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2, 7.1, 9 and 10)
  - Windows 64Bit: 7, 8 and 10
  - MacOS 64Bit (Intel): High Sierra, Mojave, Catalina and Big Sur 
- - MacOS M1: Big Sur (via Rosetta 2)
+ - MacOS M1: Big Sur (via Rosetta 2 and Universaql Binary)
  - iOS 14.4.2 (experimental)
 
 For Android and iOS player-c2qml is needed, cause only QML based multimedia is supported on this operating systems.
@@ -162,7 +160,5 @@ Binaries can be [downloaded](https://garlic-player.com/garlic-player/downloads/)
  - toogle bigscreen with Ctrl-B (not in Android)
  - quit app with Ctrl-Q
  - open configuration dialog with Ctrl-S
-
-
 
 Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)
