@@ -2,7 +2,9 @@ include(../defaults.pri)
 include(../ext/QtWebApp/httpserver/httpserver.pri)
 include(../ext/quazip/quazip.pri)
 
-QT       += core sql network xml xmlpatterns widgets
+QT       += core sql network xml widgets
+lessThan(QT_MAJOR_VERSION, 6): QT += xmlpatterns
+
 TEMPLATE  = lib
 CONFIG   += warn_on c++11 stl
 DEFINES  += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
@@ -65,6 +67,12 @@ macx {
     QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
+
+    greaterThan(QT_MAJOR_VERSION, 5) {
+        INCLUDEPATH += /usr/local/include
+        LIBS += -L/usr/local/lib -lxerces-c -lxqilla
+    }
+
 }
 
 
