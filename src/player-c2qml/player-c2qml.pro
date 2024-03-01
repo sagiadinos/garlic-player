@@ -66,7 +66,7 @@ android {
     else {
 
         # 5.15.2 fails to build arm64-v8a 5.15.11 succeed
-        ANDROID_ABIS=x86_64 arm64-v8a armeabi-v7a x86
+        #ANDROID_ABIS=x86_64 arm64-v8a armeabi-v7a x86
         equals(ANDROID_TARGET_ARCH, armeabi-v7a) {
             LIBS += -lgarlic_armeabi-v7a -lquazip_armeabi-v7a -lzlib_armeabi-v7a
         }
