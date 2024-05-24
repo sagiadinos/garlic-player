@@ -5,12 +5,11 @@
 #include <QImageReader>
 #include <QPixmap>
 #include "player_base_media.h"
-#include "smilparser/media/image.h"
 
     class PlayerImage : public PlayerBaseMedia
     {
             Q_OBJECT
-        public:            explicit      PlayerImage(QObject *parent = nullptr);
+        public:            explicit      PlayerImage(MainConfiguration *config, QObject *parent = nullptr);
             ~PlayerImage();
             void          loadMedia(BaseMedia *media, Region *reg);
             void          restart();

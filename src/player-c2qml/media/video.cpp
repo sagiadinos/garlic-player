@@ -1,6 +1,7 @@
 #include "video.h"
+#include "smilparser/media/video.h"
 
-Video::Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : Audio(mc, r_id, lc, parent)
+Video::Video(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : Audio(mc, r_id, lc, config, parent)
 {
     // create signal as shitty QML has no signal for finished (EndOfFile)
     qml = "import QtQuick 2.12\n                             \
@@ -67,7 +68,7 @@ void Video::loadInternal()
     if (load(media_item.data()))
     {
         // to set Volume we need to cast
-        TVideo *MyVideo = qobject_cast<TVideo *> (SmilMedia);
+        MediaParser::TVideo *MyVideo = qobject_cast<MediaParser::TVideo *> (SmilMedia);
         float vol = determineVolume(MyVideo->getSoundLevel());
         media_item.data()->setProperty("volume", vol);
     }

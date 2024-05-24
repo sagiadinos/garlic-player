@@ -1,7 +1,6 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-#include "smilparser/media/video.h"
 #include "audio.h"
 
 class Video : public Audio
@@ -15,7 +14,7 @@ class Video : public Audio
         const int TILE_V             = 5;
         const int NONE               = 6;
 
-        Video(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
+        Video(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent = nullptr);
         ~Video();
         void         loadInternal();
         void         changeSize(int w, int h);

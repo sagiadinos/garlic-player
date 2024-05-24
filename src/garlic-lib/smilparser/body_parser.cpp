@@ -17,6 +17,7 @@
 *************************************************************************************/
 
 #include "body_parser.h"
+#include "excl.h"
 
 BodyParser::BodyParser(ElementFactory *ef, Files::MediaManager *mm, ElementsContainer *ec, QObject *parent) : QObject(parent)
 {

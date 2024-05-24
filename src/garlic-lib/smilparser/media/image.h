@@ -21,17 +21,19 @@
 
 #include "base_media.h"
 
-class TImage : public BaseMedia
+namespace MediaParser
 {
-    Q_OBJECT
-    public:
-        explicit TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
-        ~TImage();
-    public slots:
-        void     prepareDurationTimers();
-    protected:
-        void     setAttributes();
-        void     prepareDurationTimersForRepeat();
-};
-
+    class TImage : public BaseMedia
+    {
+        Q_OBJECT
+        public:
+            explicit TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+            ~TImage();
+        public slots:
+            void     prepareDurationTimers();
+        protected:
+            void     setAttributes();
+            void     prepareDurationTimersForRepeat();
+    };
+}
 #endif // IMAGE_H

@@ -56,7 +56,7 @@ void TRegion::startShowMedia(BaseMedia *media)
         return;
     }
 
-    MyMedia = MyMediaFactory.create(media);
+    MyMedia = MyMediaFactory.create(MyLibFacade->getConfiguration(), media);
     if (MyMedia == Q_NULLPTR)
         return;
 

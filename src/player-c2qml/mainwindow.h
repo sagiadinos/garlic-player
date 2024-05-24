@@ -23,13 +23,9 @@
 #include <QMap>
 
 #include "regions_list.h"
-#include "../player-common/configdialog.h"
 #include "../player-common/screen.h"
-#include "../player-common/debug_infos.h"
 #include "../player-common/launcher.h"
 #include "../player-common/player_configuration.h"
-#include "files/index_manager.h"
-#include "files/media_manager.h"
 #include "lib_facade.h"
 
 class MainWindow : public QQuickView

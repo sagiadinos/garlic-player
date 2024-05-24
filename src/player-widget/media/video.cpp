@@ -16,8 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "video.h"
+#include "smilparser/media/video.h"
 
-PlayerVideo::PlayerVideo(QObject *parent) : PlayerBaseMedia(parent)
+using namespace MediaParser;
+
+
+PlayerVideo::PlayerVideo(MainConfiguration *config, QObject *parent) : PlayerBaseMedia(config, parent)
 {
     connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
 

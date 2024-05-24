@@ -73,6 +73,20 @@ void BaseTimings::activateTriggerTimers()
     }
 }
 
+int BaseTimings::determineNextEndTime()
+{
+    int dur = DurTimer->getRemaining();
+    int end = EndTimer->determineRemainingSeconds();
+
+    if (dur == 0)
+        return end;
+
+    if (dur < end)
+        return dur;
+
+    return end;
+}
+
 void BaseTimings::pauseAllTimers()
 {
     qDebug() << "pauseAllTimers: " + getID() + " parent: " + getParentContainer()->getID();

@@ -86,6 +86,14 @@ public class GarlicLauncher implements LauncherInterface
         MyContext.sendBroadcast(intent);
     }
 
+    public void activateDeepStandBy(String seconds_to_wakeup)
+    {
+        Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");
+        intent.putExtra("command", "deep_standby");
+        intent.putExtra("seconds_to_wakeup", seconds_to_wakeup);
+        MyContext.sendBroadcast(intent);
+    }
+
     public void rebootOS(String task_id)
     {
         Intent intent = new Intent("com.sagiadinos.garlic.launcher.receiver.CommandReceiver");

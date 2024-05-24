@@ -16,47 +16,52 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "media_factory.h"
+#include "audio.h"
+#include "media/brush.h"
+#include "media/image.h"
+#include "media/ref_command.h"
+#include "media/web.h"
 
 MediaFactory::MediaFactory(QObject *parent) : QObject(parent)
 {
 }
 
-PlayerBaseMedia *MediaFactory::create(BaseMedia *media)
+PlayerBaseMedia *MediaFactory::create(MainConfiguration *config, BaseMedia *media)
 {
     QString type   = media->objectName();
     if (type == "TImage")
     {
-        MyImage = new PlayerImage(this);
+        MyImage = new PlayerImage(config, this);
         return MyImage;
     }
     else if (type == "TBrush")
     {
-        MyBrush = new PlayerBrush(this);
+        MyBrush = new PlayerBrush(config, this);
         return MyBrush;
     }
     else if (type == "TVideo")
     {
-        MyVideo = new PlayerVideo(this);
+        MyVideo = new PlayerAudio(config, this);
         return MyVideo;
     }
     else if (type == "TAudio")
     {
-        MyAudio = new PlayerAudio(this);
+        MyAudio = new PlayerAudio(config, this);
         return MyAudio;
     }
     else if (type == "TWeb")
     {
-        MyWeb = new PlayerWeb(this);
+        MyWeb = new PlayerWeb(config, this);
         return MyWeb;
     }
     else if (type == "TWidget")
     {
-        MyWeb = new PlayerWeb(this);
+        MyWeb = new PlayerWeb(config, this);
         return MyWeb;
     }
     else if (type == "TRefCommand")
     {
-        MyRefCommand = new PlayerRefCommand(this);
+        MyRefCommand = new PlayerRefCommand(config, this);
         return MyRefCommand;
     }
     else

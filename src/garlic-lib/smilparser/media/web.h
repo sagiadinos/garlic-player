@@ -19,19 +19,21 @@
 #define TWEB_H
 
 #include "base_media.h"
-class TWeb : public BaseMedia
+namespace MediaParser
 {
-    Q_OBJECT
-public:
-    explicit TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
-    ~TWeb();
-public slots:
-    void            prepareDurationTimers();
-protected:
-    void            setAttributes();
-    void            prepareDurationTimersForRepeat();
+    class TWeb : public BaseMedia
+    {
+        Q_OBJECT
+    public:
+        explicit TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+        ~TWeb();
+    public slots:
+        void            prepareDurationTimers();
+    protected:
+        void            setAttributes();
+        void            prepareDurationTimersForRepeat();
 
-};
-
+    };
+}
 
 #endif // TWEB_H

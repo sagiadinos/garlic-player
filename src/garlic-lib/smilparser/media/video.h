@@ -20,11 +20,13 @@
 #define TVIDEO_H
 #include "audio.h"
 
-class TVideo : public TAudio
+namespace MediaParser
 {
-    Q_OBJECT
-public:
-    explicit TVideo(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
-};
-
+    class TVideo : public TAudio
+    {
+        Q_OBJECT
+    public:
+        explicit TVideo(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+    };
+}
 #endif // TVIDEO_H

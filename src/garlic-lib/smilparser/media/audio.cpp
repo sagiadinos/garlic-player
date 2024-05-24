@@ -18,18 +18,18 @@
 
 #include "audio.h"
 
-TAudio::TAudio(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent)  : BaseMedia(mm, config, ph, parent)
+MediaParser::TAudio::TAudio(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent)  : BaseMedia(mm, config, ph, parent)
 {
     setObjectName("TAudio");
     is_media = true;
 }
 
-TAudio::~TAudio()
+MediaParser::TAudio::~TAudio()
 {
 }
 
 
-void TAudio::prepareDurationTimers()
+void MediaParser::TAudio::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
@@ -48,14 +48,14 @@ void TAudio::prepareDurationTimers()
 
 // ====================  protected methods =================================
 
-void TAudio::setAttributes()
+void MediaParser::TAudio::setAttributes()
 {
     parseBaseMediaAttributes();
     src        = getAttributeFromRootElement("src", "");
     soundLevel = getAttributeFromRootElement("soundLevel", "");
 }
 
-void TAudio::prepareDurationTimersForRepeat()
+void MediaParser::TAudio::prepareDurationTimersForRepeat()
 {
     startDurTimer();
     emit repeat(this);

@@ -56,6 +56,7 @@ class BaseTimings : public TBase
                               ~BaseTimings();
 
                 void           activateTriggerTimers();
+                int            determineNextEndTime();
                 void           pauseAllTimers();
                 void           selectWhichTimerShouldStop();
                 void           stopAllTimers();

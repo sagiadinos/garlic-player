@@ -3,14 +3,13 @@
 
 #include "mediaplayer_wrapper.h"
 #include "mediawidget_wrapper.h"
-#include "smilparser/media/video.h"
 #include "player_base_media.h"
 
 class PlayerVideo : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        PlayerVideo(QObject *parent = nullptr);
+        PlayerVideo(MainConfiguration *config, QObject *parent = nullptr);
         ~PlayerVideo();
         void              loadMedia(BaseMedia *media, Region *reg);
         void              restart();

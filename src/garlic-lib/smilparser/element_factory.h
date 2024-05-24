@@ -17,32 +17,23 @@
 *************************************************************************************/
 #ifndef ElementFactory_H
 #define ElementFactory_H
-#include "smilparser/media/image.h"
-#include "smilparser/media/audio.h"
-#include "smilparser/media/brush.h"
-#include "smilparser/media/video.h"
-#include "smilparser/media/web.h"
-#include "smilparser/media/prefetch.h"
-#include "smilparser/media/unknown.h"
-#include "smilparser/media/widget.h"
-#include "smilparser/media/ref_command.h"
-#include "smilparser/container/body.h"
-#include "smilparser/container/seq.h"
-#include "smilparser/container/par.h"
-#include "smilparser/container/excl.h"
+
+#include "base_timings.h"
+#include "media_manager.h"
+#include "placeholder.h"
+#include <QObject>
+
 
 class ElementFactory : public QObject
 {
-    Q_OBJECT
-public:
-    explicit ElementFactory(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
-    BaseTimings    *createBase(QDomElement dom_element, QObject *parent);
-protected:
-    Files::MediaManager   *MyMediaManager;
-    SmilHead::PlaceHolder *MyPlaceHolder;
-    MainConfiguration     *MyMainConfiguration;
-
-
+        Q_OBJECT
+    public:
+        explicit ElementFactory(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+        BaseTimings    *createBase(QDomElement dom_element, QObject *parent);
+    protected:
+        Files::MediaManager   *MyMediaManager;
+        SmilHead::PlaceHolder *MyPlaceHolder;
+        MainConfiguration     *MyMainConfiguration;
 };
 
 #endif // ElementFactory_H

@@ -113,6 +113,11 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         MyLauncherInterface.setScreenOn();
     }
 
+    public static void activateDeepStandBy(String seconds_to_wakeup)
+    {
+        MyLauncherInterface.activateDeepStandBy(seconds_to_wakeup);
+    }
+
     public static void rebootOS(String task_id)
     {
         MyLauncherInterface.rebootOS(task_id);

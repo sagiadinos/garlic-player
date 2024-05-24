@@ -235,6 +235,16 @@ void MainConfiguration::setValidatedContentUrl(const QString &value)
     validated_content_url = value;
 }
 
+void MainConfiguration::setStandbyMode(const QString &value)
+{
+    setUserConfigByKey("standby_mode", value);
+}
+
+QString MainConfiguration::getStandbyMode()
+{
+    return getUserConfigByKey("standby_mode");
+}
+
 QString MainConfiguration::getStartTime() const
 {
     return start_time;

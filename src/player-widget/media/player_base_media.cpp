@@ -17,9 +17,9 @@
 *************************************************************************************/
 #include "player_base_media.h"
 
-PlayerBaseMedia::PlayerBaseMedia(QObject *parent) : QObject(parent)
+PlayerBaseMedia::PlayerBaseMedia(MainConfiguration *config, QObject *parent) : QObject(parent)
 {
-
+    MyMainConfiguration = config;
 }
 
 BaseMedia *PlayerBaseMedia::getSmilMedia()

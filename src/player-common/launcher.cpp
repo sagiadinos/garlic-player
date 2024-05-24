@@ -33,7 +33,7 @@ void Launcher::installSoftware(QString file_path)
 {
 #if defined  Q_OS_ANDROID
    QAndroidJniObject java_file_path = QAndroidJniObject::fromString(file_path);
-    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
+   QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
                                               "installSoftware",
                                               "(Ljava/lang/String;)V",
                                               java_file_path.object<jstring>());
@@ -69,9 +69,26 @@ void Launcher::toggleScreenActivity(bool is_on)
 #elif defined Q_OS_WIN32
 #endif
 
-
 //    is_screen_on = is_on;
 }
+
+void Launcher::activateDeepStandby(QString wakeup)
+{
+
+#if defined  Q_OS_ANDROID
+    QAndroidJniObject seconds_to_wakeup = QAndroidJniObject::fromString(wakeup);
+    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
+                                              "activateDeepStandBy",
+                                              "(Ljava/lang/String;)V",
+                                              seconds_to_wakeup.object<jstring>());
+
+#elif defined Q_OS_LINUX
+#elif defined Q_OS_OSX
+#elif defined Q_OS_WIN32
+#endif
+
+}
+
 
 void Launcher::sendClosePlayerCorrect()
 {

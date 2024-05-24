@@ -17,6 +17,9 @@
 *************************************************************************************/
 
 #include "mainwindow.h"
+#include "qdialog.h"
+#include "../player-common/debug_infos.h"
+#include "../player-common/configdialog.h"
 
 MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade, PlayerConfiguration *pc)
 {

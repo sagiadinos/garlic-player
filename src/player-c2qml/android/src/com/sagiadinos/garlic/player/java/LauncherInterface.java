@@ -33,6 +33,8 @@ public interface LauncherInterface
 
     public void setScreenOn();
 
+    public void activateDeepStandBy(String seconds_to_wakeup);
+
     public void rebootOS(String task_id);
 
     public void installSoftware(String apk_path);

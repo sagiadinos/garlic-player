@@ -23,6 +23,7 @@
 
 #include "lib_facade.h"
 #include "media/media_factory.h"
+#include "media/player_base_media.h"
 
 class TRegion : public QQuickItem
 {
@@ -31,7 +32,7 @@ class TRegion : public QQuickItem
         explicit TRegion(LibFacade *lf, QObject *parent);
         ~TRegion();
         void                setRootSize(int w, int h);
-        void                setRegion(Region r, Launcher *lc, QQmlEngine *e);
+        void                setRegion(Region r, Launcher *lc, QQmlEngine *e, MainConfiguration *config);
         void                startShowMedia(BaseMedia *media);
         void                stopShowMedia(BaseMedia *media);
         void                resumeShowMedia(BaseMedia *media);

@@ -17,6 +17,23 @@
 *************************************************************************************/
 #include "element_factory.h"
 
+
+#include "image.h"
+#include "video.h"
+#include "brush.h"
+#include "web.h"
+#include "widget.h"
+#include "prefetch.h"
+#include "unknown.h"
+#include "seq.h"
+#include "par.h"
+#include "excl.h"
+#include "ref_command.h"
+
+
+using namespace MediaParser;
+
+
 ElementFactory::ElementFactory(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : QObject(parent)
 {
     MyMediaManager      = mm;
@@ -77,7 +94,7 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, QObject *parent
     }
     else if (type == "prefetch")
     {
-        return new TPrefetch(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+        return new MediaParser::TPrefetch(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
     }
     else if (type == "ref_command")
     {

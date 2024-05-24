@@ -19,21 +19,22 @@
 #define TAUDIO_H
 
 #include "base_media.h"
-
-class TAudio : public BaseMedia
+namespace MediaParser
 {
-    Q_OBJECT
-public:
-    explicit TAudio(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent);
-    ~TAudio();
-    QString                 getSoundLevel(){return soundLevel;}
-protected:
-    QString                 soundLevel = "100%";
-    void                    setAttributes();
-    bool                    loadMedia();
-    void                    prepareDurationTimersForRepeat();
-protected slots:
-    void                    prepareDurationTimers();
-};
-
+    class TAudio : public BaseMedia
+    {
+        Q_OBJECT
+    public:
+        explicit TAudio(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent);
+        ~TAudio();
+        QString                 getSoundLevel(){return soundLevel;}
+    protected:
+        QString                 soundLevel = "100%";
+        void                    setAttributes();
+        bool                    loadMedia();
+        void                    prepareDurationTimersForRepeat();
+    protected slots:
+        void                    prepareDurationTimers();
+    };
+}
 #endif // TAUDIO_H

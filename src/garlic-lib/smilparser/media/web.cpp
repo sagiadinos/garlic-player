@@ -18,17 +18,17 @@
 
 #include "web.h"
 
-TWeb::TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TWeb::TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     setObjectName("TWeb");
     is_media = true;
 }
 
-TWeb::~TWeb()
+MediaParser::TWeb::~TWeb()
 {
 }
 
-void TWeb::prepareDurationTimers()
+void MediaParser::TWeb::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery())
     {
@@ -51,13 +51,13 @@ void TWeb::prepareDurationTimers()
     }
 }
 
-void TWeb::setAttributes()
+void MediaParser::TWeb::setAttributes()
 {
     parseBaseMediaAttributes();
     src = getAttributeFromRootElement("src", "");
 }
 
-void TWeb::prepareDurationTimersForRepeat()
+void MediaParser::TWeb::prepareDurationTimersForRepeat()
 {
     startDurTimer();
 }

@@ -52,6 +52,7 @@ namespace Timings
             ~EnhancedTimer();
             bool        parse(QString svalue, QString p_tag);
             void        deleteTimer();
+            int         determineRemainingSeconds();
             void        activate();
             void        startFromExternalTrigger(QString source_id);
             void        pause();

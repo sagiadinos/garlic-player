@@ -19,19 +19,20 @@
 #define TBRUSH_H
 
 #include "base_media.h"
-
-class TBrush : public BaseMedia
+namespace MediaParser
 {
-        Q_OBJECT
-    public:
-        TBrush(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent);
-        QString getColor();
-    public slots:
-        void     prepareDurationTimers();
-    protected:
-        QString  color = "inherit";
-        void     setAttributes();
-        void     prepareDurationTimersForRepeat();
-};
-
+    class TBrush : public BaseMedia
+    {
+            Q_OBJECT
+        public:
+            TBrush(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent);
+            QString getColor();
+        public slots:
+            void     prepareDurationTimers();
+        protected:
+            QString  color = "inherit";
+            void     setAttributes();
+            void     prepareDurationTimersForRepeat();
+    };
+}
 #endif // TBRUSH_H

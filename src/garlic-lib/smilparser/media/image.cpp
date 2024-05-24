@@ -18,17 +18,17 @@
 
 #include "image.h"
 
-TImage::TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TImage::TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     setObjectName("TImage");
     is_media = true;
 }
 
-TImage::~TImage()
+MediaParser::TImage::~TImage()
 {
 }
 
-void TImage::prepareDurationTimers()
+void MediaParser::TImage::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
@@ -52,13 +52,13 @@ void TImage::prepareDurationTimers()
 
 // ====================  protected methods =================================
 
-void TImage::setAttributes()
+void MediaParser::TImage::setAttributes()
 {
     parseBaseMediaAttributes();
     src        = getAttributeFromRootElement("src", "");
 }
 
-void TImage::prepareDurationTimersForRepeat()
+void MediaParser::TImage::prepareDurationTimersForRepeat()
 {
     startDurTimer();
 }

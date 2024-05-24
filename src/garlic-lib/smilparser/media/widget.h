@@ -20,17 +20,20 @@
 
 #include "base_media.h"
 
-class TWidget : public BaseMedia
+namespace MediaParser
 {
-    Q_OBJECT
-public:
-    explicit TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
-    ~TWidget();
-public slots:
-    void     prepareDurationTimers();
-protected:
-    void     setAttributes();
-    void     parseWidgetCallParameters(QDomElement param);
-    void     prepareDurationTimersForRepeat();
-};
+    class TWidget : public BaseMedia
+    {
+        Q_OBJECT
+    public:
+        explicit TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+        ~TWidget();
+    public slots:
+        void     prepareDurationTimers();
+    protected:
+        void     setAttributes();
+        void     parseWidgetCallParameters(QDomElement param);
+        void     prepareDurationTimersForRepeat();
+    };
+}
 #endif // TWIDGET_H

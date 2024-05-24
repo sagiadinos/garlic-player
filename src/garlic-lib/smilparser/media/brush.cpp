@@ -17,18 +17,18 @@
 *************************************************************************************/
 #include "brush.h"
 
-TBrush::TBrush(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TBrush::TBrush(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     setObjectName("TBrush");
     is_media = true;
 }
 
-QString TBrush::getColor()
+QString MediaParser::TBrush::getColor()
 {
     return color;
 }
 
-void TBrush::prepareDurationTimers()
+void MediaParser::TBrush::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery())
     {
@@ -52,13 +52,13 @@ void TBrush::prepareDurationTimers()
 
 // ====================  protected methods =================================
 
-void TBrush::setAttributes()
+void MediaParser::TBrush::setAttributes()
 {
     parseBaseMediaAttributes();
     color = getAttributeFromRootElement("color", "");
 }
 
-void TBrush::prepareDurationTimersForRepeat()
+void MediaParser::TBrush::prepareDurationTimersForRepeat()
 {
     startDurTimer();
 }

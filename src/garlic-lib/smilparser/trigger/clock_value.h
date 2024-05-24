@@ -19,7 +19,6 @@
 #ifndef TCLOCKVALUE_H
 #define TCLOCKVALUE_H
 #include <QObject>
-#include "clock_value.h"
 
 /**
  * @brief The TClockValue class calculate timings for dur, min and max attributes.

@@ -17,8 +17,8 @@
 *************************************************************************************/
 #include <QQmlApplicationEngine>
 
+#include "qdialog.h"
 #include "tools/logger.h"
-#include "tools/resource_monitor.h"
 #include "../player-common/cmdparser.h"
 #include "../player-common/screen.h"
 #include "../player-common/player_configuration.h"

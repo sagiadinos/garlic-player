@@ -18,7 +18,7 @@
 
 #include "base_media.h"
 
-BaseMedia::BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseTimings(parent)
+MediaParser::BaseMedia::BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseTimings(parent)
 {
     MyMainConfiguration = config;
     MyMediaManager      = mm;
@@ -26,12 +26,12 @@ BaseMedia::BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHea
 
 }
 
-void BaseMedia::setRegion(Region r)
+void MediaParser::BaseMedia::setRegion(Region r)
 {
     MyRegion = r;
 }
 
-void BaseMedia::preloadParse(QDomElement element)
+void MediaParser::BaseMedia::preloadParse(QDomElement element)
 {
     root_element   = element;
     setAttributes();     // special for every media type
@@ -39,7 +39,7 @@ void BaseMedia::preloadParse(QDomElement element)
 }
 
 
-QString BaseMedia::getLoadablePath()
+QString MediaParser::BaseMedia::getLoadablePath()
 {
     // local media should be played always regardless of the cache mode
     if (MyMediaManager->checkCacheStatus(src) == MEDIA_IS_LOCAL)
@@ -72,47 +72,47 @@ QString BaseMedia::getLoadablePath()
     }
 }
 
-void BaseMedia::start()
+void MediaParser::BaseMedia::start()
 {
     status      = _active;
     has_started = true;
 }
 
-void BaseMedia::repeat()
+void MediaParser::BaseMedia::repeat()
 {
     prepareDurationTimersForRepeat() ;
 }
 
-void BaseMedia::stop(bool is_forced)
+void MediaParser::BaseMedia::stop(bool is_forced)
 {
     Q_UNUSED(is_forced);
     selectWhichTimerShouldStop();
 }
 
-void BaseMedia::pause()
+void MediaParser::BaseMedia::pause()
 {
     status = _paused;
     pauseAllTimers();
 }
 
-void BaseMedia::resume()
+void MediaParser::BaseMedia::resume()
 {
     status = _active;
     resumeAllTimers();
 }
 
-void BaseMedia::interruptByRestart()
+void MediaParser::BaseMedia::interruptByRestart()
 {
     status = _stopped;
     // check for repeat
 }
 
-QString BaseMedia::getRegionName()
+QString MediaParser::BaseMedia::getRegionName()
 {
     return region_name;
 }
 
-void BaseMedia::registerInMediaManager()
+void MediaParser::BaseMedia::registerInMediaManager()
 {
     if (MyPlaceHolder->isPlaceHolder(src))
         src = MyPlaceHolder->findPathByPlaceHolder(src);
@@ -120,7 +120,7 @@ void BaseMedia::registerInMediaManager()
     MyMediaManager->registerFile(src);
 }
 
-void BaseMedia::registerInMediaManagerAsUncachable()
+void MediaParser::BaseMedia::registerInMediaManagerAsUncachable()
 {
     if (MyPlaceHolder->isPlaceHolder(src))
         src = MyPlaceHolder->findPathByPlaceHolder(src);
@@ -129,7 +129,7 @@ void BaseMedia::registerInMediaManagerAsUncachable()
 }
 
 
-QString BaseMedia::getParamsAsQuery() const
+QString MediaParser::BaseMedia::getParamsAsQuery() const
 {
     QString ret;
     if (params_as_query.length() > 0)
@@ -138,7 +138,7 @@ QString BaseMedia::getParamsAsQuery() const
 }
 
 
-void BaseMedia::parseBaseMediaAttributes()
+void MediaParser::BaseMedia::parseBaseMediaAttributes()
 {
     parseTimingAttributes();
 
@@ -149,12 +149,12 @@ void BaseMedia::parseBaseMediaAttributes()
    //  type   = getAttributeFromRootElement("type");
 }
 
-void BaseMedia::emitfinishedElement() // called from finishedActiveDuration() BaseTimings
+void MediaParser::BaseMedia::emitfinishedElement() // called from finishedActiveDuration() BaseTimings
 {
     emitStopElementSignal(this, false);
 }
 
-void BaseMedia::parseBaseParameters()
+void MediaParser::BaseMedia::parseBaseParameters()
 {
     if (!root_element.hasChildNodes())
      return;
@@ -166,17 +166,17 @@ void BaseMedia::parseBaseParameters()
     }
 }
 
-void BaseMedia::emitPause()
+void MediaParser::BaseMedia::emitPause()
 {
     emitPauseElementSignal(this);
 }
 
-void BaseMedia::emitResume()
+void MediaParser::BaseMedia::emitResume()
 {
     emitResumeElementSignal(this);
 }
 
-void BaseMedia::setAdditionalParameters(QDomElement param)
+void MediaParser::BaseMedia::setAdditionalParameters(QDomElement param)
 {
     if (param.tagName() != "param" || !param.hasAttribute("name") || !param.hasAttribute("value"))
         return;
@@ -195,7 +195,7 @@ void BaseMedia::setAdditionalParameters(QDomElement param)
     }
 }
 
-int BaseMedia::determineCacheControl(QString value)
+int MediaParser::BaseMedia::determineCacheControl(QString value)
 {
     if (value.toUpper() == "ONLYIFCACHED")
     {
@@ -204,7 +204,7 @@ int BaseMedia::determineCacheControl(QString value)
     return CACHE_CONTROL_USE_CACHE;
 }
 
-void BaseMedia::decodePageExtraSettings(QString pageExtraSettings){
+void MediaParser::BaseMedia::decodePageExtraSettings(QString pageExtraSettings){
     try
     {
         if(!pageExtraSettings.trimmed().isEmpty()){

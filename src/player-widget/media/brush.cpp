@@ -1,6 +1,6 @@
 #include "brush.h"
 
-PlayerBrush::PlayerBrush(QObject *parent) : PlayerBaseMedia(parent)
+PlayerBrush::PlayerBrush(MainConfiguration *config, QObject *parent) : PlayerBaseMedia(config, parent)
 {
     BrushWidget.reset(new QLabel);
 }

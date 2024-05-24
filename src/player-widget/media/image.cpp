@@ -17,7 +17,8 @@
 *************************************************************************************/
 #include "media/image.h"
 
-PlayerImage::PlayerImage(QObject *parent) : PlayerBaseMedia(parent)
+
+PlayerImage::PlayerImage(MainConfiguration *config, QObject *parent) : PlayerBaseMedia(config, parent)
 {
 }
 

@@ -17,8 +17,10 @@
 *************************************************************************************/
 
 #include "region.h"
+#include "QtQuick/qquickitem.h"
 #include <QLayout>
 #include <unistd.h>
+#include "media/media_factory.h"
 
 TRegion::TRegion(LibFacade *lf, QObject *parent)
 {
@@ -47,7 +49,7 @@ void TRegion::setRootSize(int w, int h)
     resizeGeometry();
 }
 
-void TRegion::setRegion(Region r, Launcher *lc, QQmlEngine *e)
+void TRegion::setRegion(Region r, Launcher *lc, QQmlEngine *e, MainConfiguration *config)
 {
     region = r;
     engine = e;
@@ -71,7 +73,7 @@ void TRegion::setRegion(Region r, Launcher *lc, QQmlEngine *e)
     rectangle_item.data()->setParentItem(root_item);
 
     connect(rectangle_item.data(), SIGNAL(qmlClick()), this, SLOT(clickSlot()));
-    MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, lc, this));
+    MyMediaFactory.reset(new MediaFactory(media_component.data(), r.regionName, lc, config, this));
 }
 
 

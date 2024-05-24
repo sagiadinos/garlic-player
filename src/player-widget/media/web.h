@@ -6,15 +6,13 @@
 #include <QWebEngineSettings>
 #include <QWebEngineProfile>
 
-#include "smilparser/media/widget.h"
-#include "smilparser/media/web.h"
 #include "player_base_media.h"
 
 class PlayerWeb : public PlayerBaseMedia
 {
     Q_OBJECT
     public:
-        PlayerWeb(QObject *parent = nullptr);
+        PlayerWeb(MainConfiguration *config, QObject *parent = nullptr);
         ~PlayerWeb();
         void            loadMedia(BaseMedia *media, Region *reg);
         void            restart();

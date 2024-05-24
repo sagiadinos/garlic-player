@@ -18,7 +18,7 @@ void RegionsList::create(LibFacade *MyLibFacade, QSize rs, QQuickItem *qv, Launc
     for (int i = 0; i < region_list->length(); i++)
     {
         j = regions_list.insert(region_list->at(i).id, new TRegion(MyLibFacade, (QObject *) qv));
-        regions_list[j.key()]->setRegion(region_list->at(i), lc, engine);
+        regions_list[j.key()]->setRegion(region_list->at(i), lc, engine, MyLibFacade->getConfiguration());
         regions_list[j.key()]->setRootSize(root_size.width(), root_size.height());
         QString region_name = region_list->at(i).regionName;
         if (region_name.isEmpty())

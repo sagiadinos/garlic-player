@@ -17,26 +17,26 @@
 *************************************************************************************/
 #include "unknown.h"
 
-TUnknown::TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TUnknown::TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     setObjectName("Unknown");
     is_media = false;
 
 }
 
-void TUnknown::prepareDurationTimers()
+void MediaParser::TUnknown::prepareDurationTimers()
 {
     Q_UNUSED(dur);
     qWarning(Develop) << src << " Unknown tag";
     skipElement();
 }
 
-void TUnknown::setAttributes()
+void MediaParser::TUnknown::setAttributes()
 {
     parseBaseMediaAttributes();
 }
 
-void TUnknown::prepareDurationTimersForRepeat()
+void MediaParser::TUnknown::prepareDurationTimersForRepeat()
 {
     // dummy
     return;

@@ -2,13 +2,12 @@
 #define REFCOMMAND_H
 
 #include "player_base_media.h"
-#include "smilparser/media/ref_command.h"
 
 class PlayerRefCommand : public PlayerBaseMedia
 {
     Q_OBJECT
 public:
-    explicit PlayerRefCommand(QObject *parent = nullptr);
+    explicit PlayerRefCommand(MainConfiguration *config, QObject *parent = nullptr);
     ~PlayerRefCommand();
     void          loadMedia(BaseMedia *media, Region *reg);
     void          restart();

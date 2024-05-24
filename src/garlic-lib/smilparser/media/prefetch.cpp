@@ -17,17 +17,17 @@
 *************************************************************************************/
 #include "prefetch.h"
 
-TPrefetch::TPrefetch(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TPrefetch::TPrefetch(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     setObjectName("TPrefetch");
     is_media = false;
 }
 
-TPrefetch::~TPrefetch()
+MediaParser::TPrefetch::~TPrefetch()
 {
 }
 
-void TPrefetch::prepareDurationTimers()
+void MediaParser::TPrefetch::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery())
     {
@@ -39,13 +39,13 @@ void TPrefetch::prepareDurationTimers()
     skipElement();
 }
 
-void TPrefetch::setAttributes()
+void MediaParser::TPrefetch::setAttributes()
 {
     parseBaseMediaAttributes();
     src        = getAttributeFromRootElement("src", "");
 }
 
-void TPrefetch::prepareDurationTimersForRepeat()
+void MediaParser::TPrefetch::prepareDurationTimersForRepeat()
 {
     return;
 }

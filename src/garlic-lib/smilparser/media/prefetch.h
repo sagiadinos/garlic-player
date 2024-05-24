@@ -20,17 +20,19 @@
 
 #include "base_media.h"
 
-class TPrefetch : public BaseMedia
+namespace MediaParser
 {
-    Q_OBJECT
-public:
-    explicit TPrefetch(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
-    ~TPrefetch();
-public slots:
-    void     prepareDurationTimers();
-protected:
-    void     setAttributes();
-    void     prepareDurationTimersForRepeat();
-};
-
+    class TPrefetch : public BaseMedia
+    {
+        Q_OBJECT
+    public:
+        explicit TPrefetch(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+        ~TPrefetch();
+    public slots:
+        void     prepareDurationTimers();
+    protected:
+        void     setAttributes();
+        void     prepareDurationTimersForRepeat();
+    };
+}
 #endif // TPREFETCH_H

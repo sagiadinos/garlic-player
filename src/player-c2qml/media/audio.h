@@ -2,14 +2,13 @@
 #define AUDIO_H
 
 #include <QTimer>
-#include "smilparser/media/video.h"
 #include "player_base_media.h"
 
 class Audio : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        Audio(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
+        Audio(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent = nullptr);
         ~Audio();
         void                        loadMedia(BaseMedia *media, Region *reg);
         void                        loadInternal();

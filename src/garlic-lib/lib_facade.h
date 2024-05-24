@@ -29,6 +29,7 @@
 #include "tools/resource_monitor.h"
 #include "head/placeholder.h"
 
+
 /**
  * @brief The LibFacade class is the interface for a player component to the garlic parser
  *

@@ -17,17 +17,17 @@
 *************************************************************************************/
 #include "ref_command.h"
 
-TRefCommand::TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TRefCommand::TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     setObjectName("TRefCommand");
     is_media = true;
 }
 
-TRefCommand::~TRefCommand()
+MediaParser::TRefCommand::~TRefCommand()
 {
 }
 
-void TRefCommand::prepareDurationTimers()
+void MediaParser::TRefCommand::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
@@ -51,13 +51,13 @@ void TRefCommand::prepareDurationTimers()
 
 // ====================  protected methods =================================
 
-void TRefCommand::setAttributes()
+void MediaParser::TRefCommand::setAttributes()
 {
     parseBaseMediaAttributes();
     src        = getAttributeFromRootElement("src", "");
 }
 
-void TRefCommand::prepareDurationTimersForRepeat()
+void MediaParser::TRefCommand::prepareDurationTimersForRepeat()
 {
     startDurTimer();
 }

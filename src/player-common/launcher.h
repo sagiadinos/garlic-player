@@ -18,6 +18,7 @@ public:
     void rebootOS(QString task_id);
     void installSoftware(QString file_path);
     void toggleScreenActivity(bool is_on);
+    void activateDeepStandby(QString wakeup);
     void sendClosePlayerCorrect();
 private:
     bool is_screen_on = true;

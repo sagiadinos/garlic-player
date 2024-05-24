@@ -1,8 +1,9 @@
 #include "player_base_media.h"
 
-PlayerBaseMedia::PlayerBaseMedia(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : QObject(parent)
+PlayerBaseMedia::PlayerBaseMedia(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : QObject(parent)
 {
     Q_UNUSED(mc);
+    MyMainConfiguration = config;
     setRegionId(r_id);
     MyLauncher = lc;
 }

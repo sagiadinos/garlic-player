@@ -1,6 +1,7 @@
 #include "audio.h"
+#include "smilparser/media/audio.h"
 
-Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc,  QObject *parent) : PlayerBaseMedia(mc, r_id, lc, parent)
+Audio::Audio(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *config,  QObject *parent) : PlayerBaseMedia(mc, r_id, lc, config, parent)
 {
     media_component = mc;
     KillTimer = new QTimer(this);
@@ -45,7 +46,7 @@ void Audio::loadInternal()
     if (load(media_item.data()))
     {
         // to set Volume we need to cast
-        TAudio *MyAudio = qobject_cast<TAudio *> (SmilMedia);
+        MediaParser::TAudio *MyAudio = qobject_cast<MediaParser::TAudio *> (SmilMedia);
         float vol = determineVolume(MyAudio->getSoundLevel());
         media_item.data()->setProperty("volume", vol);
     }

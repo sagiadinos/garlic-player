@@ -16,8 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "audio.h"
+#include "smilparser/media/audio.h"
 
-PlayerAudio::PlayerAudio(QObject *parent) : PlayerBaseMedia(parent)
+using namespace MediaParser;
+
+PlayerAudio::PlayerAudio(MainConfiguration *config, QObject *parent) : PlayerBaseMedia(config, parent)
 {
     connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
 }

@@ -6,6 +6,7 @@
 #include "head_parser.h"
 #include "base_media.h"
 
+using namespace MediaParser;
 
 /**
  * @brief Maybe obsolete know. 2021-05-14

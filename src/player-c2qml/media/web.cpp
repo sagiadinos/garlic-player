@@ -1,6 +1,6 @@
 #include "web.h"
 
-Web::Web(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : PlayerBaseMedia(mc, r_id, lc, parent)
+Web::Web(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : PlayerBaseMedia(mc, r_id, lc, config, parent)
 {
     QString str("import QtQuick 2.12\n \
                  import QtWebView 1.1\n \

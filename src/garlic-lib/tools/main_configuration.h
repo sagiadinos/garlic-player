@@ -47,6 +47,11 @@ class MainConfiguration  : public QObject
         const     QString        OS_WINDOWS  = "windows";
         const     QString        OS_UNKNOWN  = "unknown";
 
+        const     QString        STANDBY_MODE_NONE       = "no_standby";
+        const     QString        STANDBY_MODE_PARTIALLY  = "no_standby";
+        const     QString        STANDBY_MODE_DEEP       = "deep";
+
+
         explicit        MainConfiguration(QSettings *uc, QString dun, QString dcu, QObject *parent = Q_NULLPTR);
         QString         getVersion(){return version;}
         void            setAdditionalVersion(QString value);
@@ -84,6 +89,8 @@ class MainConfiguration  : public QObject
         QString         getErrorText() const {return error_text;};
 
         void            setValidatedContentUrl(const QString &value);
+        void            setStandbyMode(const QString &value);
+        QString         getStandbyMode();
         QString         getLastPlayedIndexPath();
         QString         getStartTime() const;
         void            setStartTime(const QString &value);

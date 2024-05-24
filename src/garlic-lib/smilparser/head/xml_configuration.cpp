@@ -28,6 +28,7 @@ void SmilHead::XMLConfiguration::processFromUrl(QUrl config_url)
     QFile::remove(MyConfiguration->getPaths("cache")+"configuration.xml"); // remove old file
 
     XMLDownloader->processFile(config_url, MyConfiguration->getPaths("cache")+"configuration.xml");
+
 }
 
 void SmilHead::XMLConfiguration::processFromLocalFile(QString file_path)
@@ -98,7 +99,7 @@ void SmilHead::XMLConfiguration::parse()
         {
             MyConfiguration->setIndexUri(attr_value);
         }
-        else if (attr_name == "display.brightness")
+        else if (attr_name == "display.brightness" || attr_name == "brightness")
         {
             MyConfiguration->setUserConfigByKey("display/brightness", attr_value);
         }
@@ -106,13 +107,9 @@ void SmilHead::XMLConfiguration::parse()
         {
             MyConfiguration->setUserConfigByKey("display/rotation", attr_value);
         }
-        else if (attr_name == "audio.soundlevel")
+        else if (attr_name == "audio.soundlevel" || attr_name == "volume" || attr_name == "hardware.audioOut.0.masterSoundLevel")
         {
-            MyConfiguration->setUserConfigByKey("audio/soundlevel", attr_value);
-        }
-        else if (attr_name == "hardware.audioOut.0.masterSoundLevel")
-        {
-            MyConfiguration->setUserConfigByKey("audio/soundlevel", attr_value);
+            MyConfiguration->setUserConfigByKey("audio/volume", attr_value);
         }
         else if (attr_name == "time.tzDescription")
         {
@@ -130,21 +127,17 @@ void SmilHead::XMLConfiguration::parse()
         {
             MyConfiguration->setUserConfigByKey("time/server", attr_value);
         }
-        else if (attr_name == "task.scheduledReboot.days")
+        else if (attr_name == "task.scheduledReboot.days" || attr_name == "schedule.reboot.days")
         {
             MyConfiguration->setUserConfigByKey("schedule/reboot_days", attr_value);
         }
-        else if (attr_name == "schedule.reboot.days")
-        {
-            MyConfiguration->setUserConfigByKey("schedule/reboot_days", attr_value);
-        }
-        else if (attr_name == "schedule.reboot.time")
+        else if (attr_name == "task.scheduledReboot.time" || attr_name == "schedule.reboot.time")
         {
             MyConfiguration->setUserConfigByKey("schedule/reboot_time", attr_value);
         }
-        else if (attr_name == "task.scheduledReboot.time")
+        else if (attr_name == "standby_mode")
         {
-            MyConfiguration->setUserConfigByKey("schedule/reboot_time", attr_value);
+            MyConfiguration->setStandbyMode(attr_value);
         }
     }
     emit finishedConfiguration();

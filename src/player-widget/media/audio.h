@@ -3,14 +3,13 @@
 
 #include <QLabel>
 #include "mediaplayer_wrapper.h"
-#include "smilparser/media/audio.h"
 #include "player_base_media.h"
 
 class PlayerAudio : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        explicit PlayerAudio(QObject *parent = nullptr);
+        explicit PlayerAudio(MainConfiguration *config, QObject *parent = nullptr);
         ~PlayerAudio();
         void          loadMedia(BaseMedia *media, Region *reg);
         void          restart();

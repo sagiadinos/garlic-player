@@ -24,17 +24,19 @@
  * This class will used, when a unknown tag found
  * It will be treated as media and will be ignored
  */
-class TUnknown : public BaseMedia
+namespace MediaParser
 {
-        Q_OBJECT
-    public:
-        explicit TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
-    public slots:
-        void     prepareDurationTimers();
-    protected:
-        void     setAttributes();
-        void     prepareDurationTimersForRepeat();
+    class TUnknown : public BaseMedia
+    {
+            Q_OBJECT
+        public:
+            explicit TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+        public slots:
+            void     prepareDurationTimers();
+        protected:
+            void     setAttributes();
+            void     prepareDurationTimersForRepeat();
 
-};
-
+    };
+}
 #endif // UNKNOWN_H

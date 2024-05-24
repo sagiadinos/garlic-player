@@ -2,7 +2,6 @@
 #define MPIMAGE_H
 
 #include "player_base_media.h"
-#include "smilparser/media/image.h"
 #include <QImageReader>
 #include <QPixmap>
 #include <QQuickImageProvider>
@@ -13,7 +12,7 @@ class Image : public PlayerBaseMedia
     public:
         const int NONE               = 6;
 
-        explicit      Image(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent = nullptr);
+        explicit      Image(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent = nullptr);
         ~Image();
         void          loadMedia(BaseMedia *media, Region *reg);
         void          restart();

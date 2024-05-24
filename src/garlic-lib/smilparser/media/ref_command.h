@@ -22,18 +22,20 @@
 
 // Todo inherit from TWeb, cause that is the same functionality
 
-class TRefCommand : public BaseMedia
+namespace MediaParser
 {
-    Q_OBJECT
-public:
-    explicit TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
-    ~TRefCommand();
-public slots:
-    void     prepareDurationTimers();
-protected:
-    void     setAttributes();
-    void     prepareDurationTimersForRepeat();
+    class TRefCommand : public BaseMedia
+    {
+        Q_OBJECT
+    public:
+        explicit TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+        ~TRefCommand();
+    public slots:
+        void     prepareDurationTimers();
+    protected:
+        void     setAttributes();
+        void     prepareDurationTimersForRepeat();
 
-};
-
+    };
+    }
 #endif // TREFCOMMAND_H

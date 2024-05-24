@@ -1,6 +1,6 @@
 #include "brush.h"
 
-Brush::Brush(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : PlayerBaseMedia(mc, r_id, lc, parent)
+Brush::Brush(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : PlayerBaseMedia(mc, r_id, lc, config, parent)
 {
     setRegionId(r_id);
     QString str(

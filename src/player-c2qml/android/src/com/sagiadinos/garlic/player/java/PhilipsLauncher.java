@@ -118,6 +118,11 @@ public class PhilipsLauncher implements LauncherInterface
         sendSICPCommand(SICPDef.getSICPCommand(SICPCommand.SICP_COMMAND_SET_BACKLIGHT_ENABLE));
     }
 
+    public void activateDeepStandBy(String seconds_to_wakeup)
+    {
+        // temporary dummy
+    }
+
     public void rebootOS(String task_id)
     {
         Intent intent = new Intent();

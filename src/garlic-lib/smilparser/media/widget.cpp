@@ -17,18 +17,18 @@
 *************************************************************************************/
 #include "widget.h"
 
-TWidget::TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TWidget::TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
 {
     setObjectName("TWidget");
     is_media = true;
 }
 
 
-TWidget::~TWidget()
+MediaParser::TWidget::~TWidget()
 {
 }
 
-void TWidget::prepareDurationTimers()
+void MediaParser::TWidget::prepareDurationTimers()
 {
     if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
     {
@@ -52,7 +52,7 @@ void TWidget::prepareDurationTimers()
 
 // ====================  protected methods =================================
 
-void TWidget::setAttributes()
+void MediaParser::TWidget::setAttributes()
 {
     parseBaseMediaAttributes();
     src  = getAttributeFromRootElement("src", "");
@@ -64,7 +64,7 @@ void TWidget::setAttributes()
     }
 }
 
-void TWidget::parseWidgetCallParameters(QDomElement param)
+void MediaParser::TWidget::parseWidgetCallParameters(QDomElement param)
 {
     if (param.tagName() != "param" || !param.hasAttribute("name") || !param.hasAttribute("value"))
         return;
@@ -76,7 +76,7 @@ void TWidget::parseWidgetCallParameters(QDomElement param)
     params_as_query.append(attribute_name + "=" + QUrl::toPercentEncoding(param.attribute("value")));
 }
 
-void TWidget::prepareDurationTimersForRepeat()
+void MediaParser::TWidget::prepareDurationTimersForRepeat()
 {
     startDurTimer();
 }

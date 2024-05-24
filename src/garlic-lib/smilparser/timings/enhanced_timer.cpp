@@ -149,6 +149,26 @@ void Timings::EnhancedTimer::deleteTimer()
     MyTriggerList.clear();
 }
 
+int Timings::EnhancedTimer::determineRemainingSeconds()
+{
+    int ret = 0;
+
+    if (MyTriggerList.size() == 0)
+        return ret;
+
+    for (TriggerStruct *ts : qAsConst(MyTriggerList))
+    {
+        if ((ts->type == TYPE_OFFSET || ts->type == TYPE_WALLCLOCK) && ts->MyTimer != Q_NULLPTR && ts->MyTimer->isActive())
+        {
+
+            if (ret == 0 || ret > ts->MyTimer->remainingTime())
+                ret = ts->MyTimer->remainingTime();
+        }
+    }
+
+    return floor(ret / 1000);
+}
+
 bool Timings::EnhancedTimer::parse(QString attr_value, QString p_tag)
 {
     parent_tag = p_tag;

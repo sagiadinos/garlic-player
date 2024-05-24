@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "subscription.h"
+#include "QtCore/qstring.h"
 
 SubScription::SubScription(QObject *parent) : QObject(parent)
 {

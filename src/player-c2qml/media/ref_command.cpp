@@ -1,6 +1,6 @@
 #include "ref_command.h"
 
-RefCommand::RefCommand(QQmlComponent *mc, QString r_id, Launcher *lc, QObject *parent) : PlayerBaseMedia(mc, r_id, lc, parent)
+RefCommand::RefCommand(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : PlayerBaseMedia(mc, r_id, lc, config, parent)
 {
     setRegionId(r_id);
     MyLauncher = lc;
@@ -36,7 +36,11 @@ void RefCommand::play()
     QString source = SmilMedia->getLoadablePath();
     if (source.toLower() == "adapi:blankscreen")
     {
-        MyLauncher->toggleScreenActivity(false);
+        if (MyMainConfiguration->getStandbyMode() == MyMainConfiguration->STANDBY_MODE_PARTIALLY)
+            MyLauncher->toggleScreenActivity(false);
+        else if (MyMainConfiguration->getStandbyMode() == MyMainConfiguration->STANDBY_MODE_DEEP)
+            MyLauncher->activateDeepStandby(QString::number(SmilMedia->determineNextEndTime()));
+
         if (SmilMedia->getLogContentId() != "")
             setStartTime();
     }
@@ -45,7 +49,10 @@ void RefCommand::play()
 
 void RefCommand::stop()
 {
-    MyLauncher->toggleScreenActivity(true);
+    // check if this is work when values are changuing meanwhile
+    if (MyMainConfiguration->getStandbyMode() == MyMainConfiguration->STANDBY_MODE_PARTIALLY)
+        MyLauncher->toggleScreenActivity(true);
+
     if (!SmilMedia->getLogContentId().isEmpty())
         qInfo(PlayLog).noquote() << createPlayLogXml();
 }
