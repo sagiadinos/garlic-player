@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "enhanced_timer.h"
+#include <cmath>
 
 Timings::EnhancedTimer::EnhancedTimer(QObject *parent) : QObject(parent)
 {
@@ -166,7 +167,7 @@ int Timings::EnhancedTimer::determineRemainingSeconds()
         }
     }
 
-    return floor(ret / 1000);
+    return std::floor(ret / 1000);
 }
 
 bool Timings::EnhancedTimer::parse(QString attr_value, QString p_tag)

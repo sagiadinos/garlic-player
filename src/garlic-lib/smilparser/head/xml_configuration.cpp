@@ -107,7 +107,7 @@ void SmilHead::XMLConfiguration::parse()
         {
             MyConfiguration->setUserConfigByKey("display/rotation", attr_value);
         }
-        else if (attr_name == "audio.soundlevel" || attr_name == "volume" || attr_name == "hardware.audioOut.0.masterSoundLevel")
+        else if (attr_name == "audio.soundlevel" || attr_name == "volume" || attr_name == "hardware.audioOut.0.masterSoundLevel")
         {
             MyConfiguration->setUserConfigByKey("audio/volume", attr_value);
         }
