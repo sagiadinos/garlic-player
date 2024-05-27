@@ -245,6 +245,26 @@ QString MainConfiguration::getStandbyMode()
     return getUserConfigByKey("standby_mode");
 }
 
+void MainConfiguration::setRebootDays(const QString &value)
+{
+    setUserConfigByKey("schedule/reboot_days", value);
+}
+
+QString MainConfiguration::getRebootDays()
+{
+    return getUserConfigByKey("schedule/reboot_days");
+}
+
+void MainConfiguration::setRebootTime(const QString &value)
+{
+    setUserConfigByKey("schedule/reboot_time", value);
+}
+
+QString MainConfiguration::getRebootTime()
+{
+    return getUserConfigByKey("schedule/reboot_time");
+}
+
 QString MainConfiguration::getStartTime() const
 {
     return start_time;

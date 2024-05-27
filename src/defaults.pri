@@ -14,4 +14,5 @@ INCLUDEPATH += $$PWD/garlic-lib/smilparser/timings
 INCLUDEPATH += $$PWD/garlic-lib/smilparser/trigger
 INCLUDEPATH += $$PWD/garlic-lib/system_infos
 INCLUDEPATH += $$PWD/garlic-lib/tools
+INCLUDEPATH += $$PWD/garlic-lib/tools/reboot
 SRC_DIR = $$PWD

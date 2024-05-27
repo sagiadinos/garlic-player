@@ -64,7 +64,7 @@ win32 {
 macx {
     # release version build as static lib
     release:CONFIG += staticlib
-    QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
+    QMAKE_APPLE_DEVICE_ARCHS = arm64 x86_64
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
 
@@ -172,6 +172,9 @@ SOURCES += \
     db/inventory_table.cpp \
     reports/create/inventory_report.cpp \
     tools/main_configuration.cpp \
+    tools/reboot/scheduler.cpp \
+    tools/reboot/timer.cpp \
+    tools/reboot/weekdayconverter.cpp \
     tools/resource_monitor.cpp
 
 HEADERS += \
@@ -255,6 +258,9 @@ HEADERS += \
     tools/logger.h \
     tools/log_file.h \
     tools/main_configuration.h \
+    tools/reboot/scheduler.h \
+    tools/reboot/timer.h \
+    tools/reboot/weekdayconverter.h \
     tools/resource_monitor.h \
     reports/create/base_reports.h \
     reports/create/system_report.h \

@@ -48,7 +48,7 @@ class MainConfiguration  : public QObject
         const     QString        OS_UNKNOWN  = "unknown";
 
         const     QString        STANDBY_MODE_NONE       = "no_standby";
-        const     QString        STANDBY_MODE_PARTIALLY  = "no_standby";
+        const     QString        STANDBY_MODE_PARTIALLY  = "partially";
         const     QString        STANDBY_MODE_DEEP       = "deep";
 
 
@@ -91,6 +91,10 @@ class MainConfiguration  : public QObject
         void            setValidatedContentUrl(const QString &value);
         void            setStandbyMode(const QString &value);
         QString         getStandbyMode();
+        void            setRebootDays(const QString &value);
+        QString         getRebootDays();
+        void            setRebootTime(const QString &value);
+        QString         getRebootTime();
         QString         getLastPlayedIndexPath();
         QString         getStartTime() const;
         void            setStartTime(const QString &value);

@@ -7,9 +7,11 @@ linux {
     QMAKE_CXXFLAGS += -O0 -Wno-deprecated-declarations -Wno-deprecated-copy
 }
 macx {
-    #libgarlic release is static compiled in osx
     CONFIG+=sdk_no_version_check # remove annoying SDK messages on Apple Silicon
-    LIBS += -L$$PWD/../src/lib -lgarlic
+    QMAKE_APPLE_DEVICE_ARCHS = arm64 #x86_64 test only in arm64
+    LIBS += -L$$PWD/../src/lib -lgarlic -lquazip -lzlib
+    LIBS += -L/usr/lib -lgmock -lgtest
+
 }
 win32 {
     Release:LIBS += -L$$shadowed($$PWD)/lib -lgarlic -lquazip -lzlib

@@ -129,11 +129,11 @@ void SmilHead::XMLConfiguration::parse()
         }
         else if (attr_name == "task.scheduledReboot.days" || attr_name == "schedule.reboot.days")
         {
-            MyConfiguration->setUserConfigByKey("schedule/reboot_days", attr_value);
+            MyConfiguration->setRebootDays(attr_value);
         }
         else if (attr_name == "task.scheduledReboot.time" || attr_name == "schedule.reboot.time")
         {
-            MyConfiguration->setUserConfigByKey("schedule/reboot_time", attr_value);
+            MyConfiguration->setRebootTime(attr_value);
         }
         else if (attr_name == "standby_mode")
         {
