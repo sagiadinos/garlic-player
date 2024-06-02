@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>simple.smil</file>
+    <file>no_head.smil</file>
+    <file>no_body.smil</file>
+</qresource>
+</RCC>
