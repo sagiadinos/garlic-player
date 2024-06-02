@@ -88,7 +88,7 @@ class LibFacade : public QObject
         QScopedPointer<BodyParser>                 MyBodyParser;
         QScopedPointer<SystemInfos::DiscSpace>     MyDiscSpace;
         QScopedPointer<FreeDiscSpace>              MyFreeDiscSpace;
-        QStorageInfo                               MyStorage;
+        WrapperStorageInfo                         MyStorage;
         ResourceMonitor            MyResourceMonitor;
         void               initFileManager();
         void               processHeadParsing();

@@ -15,9 +15,8 @@ linux:!android {
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
     #temporary ToDO
-    # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
-    # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
-    QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy
+    #  warning: template-id not allowed for constructor in C++20 in Arch gcc
+    QMAKE_CXXFLAGS += -Wno-template-id-cdtor
 }
 
 ios{
@@ -150,6 +149,7 @@ SOURCES += \
     smilparser/container/priorityclass.cpp \
     smilparser/container/seq.cpp \
     system_infos/disc_space.cpp \
+    system_infos/wrapper_storageinfo.cpp \
     tools/logging_categories.cpp \
     smilparser/head/subscription.cpp \
     system_infos/memory.cpp \
@@ -250,10 +250,12 @@ HEADERS += \
     smilparser/base.h \
     smilparser/head/subscription.h \
     system_infos/disc_space.h \
+    system_infos/i_storageinfo.h \
     system_infos/memory.h \
     system_infos/network.h \
     system_infos/cpu.h \
     system_infos/general.h \
+    system_infos/wrapper_storageinfo.h \
     tools/logging_categories.h \
     tools/logger.h \
     tools/log_file.h \

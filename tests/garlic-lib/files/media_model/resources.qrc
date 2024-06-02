@@ -1,7 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>test.wgt</file>
-    <file>simple.smil</file>
-    <file>test.png</file>
-</qresource>
-</RCC>

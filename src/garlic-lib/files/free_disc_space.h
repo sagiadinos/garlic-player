@@ -21,7 +21,6 @@
 #include <QObject>
 #include <QStorageInfo>
 #include <QDirIterator>
-#include "tools/logger.h"
 #include "db/inventory_table.h"
 #include "QMap"
 #include "system_infos/disc_space.h"
