@@ -169,10 +169,8 @@ linux {
     LIBS += -L../lib -lgarlic #quazip and lzlib are compiled as static libs into libgarlic.so
     # hide some annoying GCC compiler warnings
     # Todo check if neccessary from time to time
-    # -Wno-deprecated-copy is against the warnings floading with gcc 9 and Qt < 5.13
-    # -Wno-deprecated-declarations is against the warnings floading with gcc 9 and Qt < 5.13
-    # -Wno-expansion-to-defined QtAV has "this use of defined may not be portable" issues with newer gcc
-    QMAKE_CXXFLAGS += -Wno-deprecated-declarations -Wno-deprecated-copy -Wno-expansion-to-defined
+    #  warning: template-id not allowed for constructor in C++20 in Arch gcc
+    QMAKE_CXXFLAGS += -Wno-template-id-cdtor
 }
 
 win32 {

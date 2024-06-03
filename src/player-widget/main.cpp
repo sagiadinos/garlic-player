@@ -17,6 +17,7 @@
 *************************************************************************************/
 
 #include <QString>
+#include "wrapper_settings.hpp"
 #include "tools/logger.h"
 #include "mainwindow.h"
 #include "../player-common/cmdparser.h"
@@ -36,14 +37,10 @@ int main(int argc, char *argv[])
     QApplication::setAttribute(Qt::AA_X11InitThreads);
 
     QApplication app(argc, argv);
-    MainConfiguration    *MyMainConfiguration   = new MainConfiguration(
-                                                        new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"),
-                                                        PlayerConfiguration::determineDefaultContentUrlName(),
-                                                        PlayerConfiguration::determineDefaultContentUrl()
-
-    );
-
+    MainConfiguration *MyMainConfiguration = new MainConfiguration(new WrapperSettings());
+    MyMainConfiguration->init();
     MyMainConfiguration->createDirectories();
+
     qInstallMessageHandler(handleMessages); // must be after create Directories
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
     MyPlayerConfiguration->determineInitConfigValues();

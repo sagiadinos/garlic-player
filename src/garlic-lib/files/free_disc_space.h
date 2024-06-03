@@ -23,7 +23,7 @@
 #include <QDirIterator>
 #include "db/inventory_table.h"
 #include "QMap"
-#include "system_infos/disc_space.h"
+#include "system_infos/disc_space.hpp"
 
 /**
  * @brief The DiscSpace is a helper class to handle deletes/cleanups for FileModel

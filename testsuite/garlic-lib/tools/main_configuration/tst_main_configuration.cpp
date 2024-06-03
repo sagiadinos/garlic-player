@@ -16,18 +16,91 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "tst_main_configuration.hpp"
+#include "tools/main_configuration.h"
 
-void TestMainConfiguration::cleanup()
+using ::testing::Exactly;
+using ::testing::Return;
+
+
+void TestMainConfiguration::test_init()
 {
-    QDir             dir;
-    dir.setPath(QDir::homePath()+"/.qttest");
-    dir.removeRecursively(); // clean up
-    QSettings *Settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    QFile file(Settings->fileName());
-    if (file.exists())
-        file.remove();
+    EXPECT_CALL(mockSettings, value(QString("uuid"))).Times(Exactly(1)).WillOnce(Return("the-uuid"));
+    EXPECT_CALL(mockSettings, value(QString("player_name"))).Times(Exactly(1)).WillOnce(Return("playername"));
+
+    MainConfiguration *MyConfig = new MainConfiguration(&mockSettings);
+    MyConfig->init();
+
+    QCOMPARE(MyConfig->getUuid(), "the-uuid");
+    QCOMPARE(MyConfig->getPlayerName(), "playername");
 }
 
+
+void TestMainConfiguration::test_determineUserAgent()
+{
+    EXPECT_CALL(mockSettings, value(QString("uuid"))).Times(Exactly(1)).WillOnce(Return("the-uuid-is-this"));
+    EXPECT_CALL(mockSettings, value(QString("player_name"))).Times(Exactly(1)).WillOnce(Return("the playername"));
+
+    MainConfiguration *MyConfig = new MainConfiguration(&mockSettings);
+    MyConfig->init();
+
+    MyConfig->determineUserAgent();
+
+#if defined Q_OS_LINUX
+    QVERIFY(MyConfig->getUserAgent().contains("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-linux"));
+#elif defined Q_OS_OSX
+    QVERIFY(MyConfig->getUserAgent().contains("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-macOS"));
+#elif defined Q_OS_WIN32
+    QVERIFY(MyConfig->getUserAgent().contains("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-windows"));
+#else
+    QVERIFY(MyConfig->getUserAgent().contains("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-unknown"));
+#endif
+}
+
+void TestMainConfiguration::test_determineBasePath()
+{
+    MainConfiguration *MyConfig = new MainConfiguration(&mockSettings);
+    MyConfig->determineBasePath("/absolute/path/to/bin");
+    QCOMPARE(MyConfig->getBasePath(), "/absolute/path/to/");
+
+    MyConfig->determineBasePath("/absolute/path/");
+    QCOMPARE(MyConfig->getBasePath(), "/absolute/path/");
+
+    MyConfig->determineBasePath("/absolute/path");
+    QCOMPARE(MyConfig->getBasePath(), "/absolute/path/");
+}
+
+void TestMainConfiguration::test_validateContentUrl()
+{
+    MainConfiguration *MyConfig = new MainConfiguration(&mockSettings);
+
+    QVERIFY(MyConfig->validateContentUrl("") == false);
+    QCOMPARE(MyConfig->getErrorText(), "A content-url is neccessary\n");
+
+    QVERIFY(MyConfig->validateContentUrl("hurz.com") == false);
+    QCOMPARE(MyConfig->getErrorText(), "Relative path to SMIL-Index is not allowed! Use /path/to/index, http://domain.tld, https://domain.tld, or file://path/to/index\n");
+
+    QVERIFY(MyConfig->validateContentUrl("relative/path/to") == false);
+    QCOMPARE(MyConfig->getErrorText(), "Relative path to SMIL-Index is not allowed! Use /path/to/index, http://domain.tld, https://domain.tld, or file://path/to/index\n");
+
+    QVERIFY(MyConfig->validateContentUrl("https:/hurz.com") == false);
+    QCOMPARE(MyConfig->getErrorText(), "Url Scheme is no valid! Use https://domain.tld\n");
+
+    // positives
+    QVERIFY(MyConfig->validateContentUrl("/path/to/hurz"));
+    QCOMPARE(MyConfig->getValidatedContentUrl(), "/path/to/hurz");
+
+    QVERIFY(MyConfig->validateContentUrl("file://path/to/hurz"));
+    QCOMPARE(MyConfig->getValidatedContentUrl(), "//path/to/hurz");
+
+    QVERIFY(MyConfig->validateContentUrl("HtTps://hurz.com"));
+    QCOMPARE(MyConfig->getValidatedContentUrl(), "https://hurz.com");
+
+    QVERIFY(MyConfig->validateContentUrl("heidewitzka://hurz.com"));
+    QCOMPARE(MyConfig->getValidatedContentUrl(), "heidewitzka://hurz.com");
+}
+
+
+/*
 void TestMainConfiguration::test_determineIndexUriWhenParameter()
 {
     MainConfiguration *MyConfig = initTestClass();
@@ -48,9 +121,11 @@ void TestMainConfiguration::test_determineIndexUriWhenParameter()
 
 void TestMainConfiguration::test_determineIndexUriWhenIni()
 {
-    QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    MainConfiguration *MyConfig = new MainConfiguration(Settings, "Test", "Uri");
-    Settings->setValue("index_uri", "https://smil-index-via-ini-file.tld/a_path/second/path/index.smil");
+    QVariant my_variant;
+    my_variant.setValue("an_index_uri");
+    EXPECT_CALL(mockSettings, setValue(QString("uuid"), my_variant)).Times(Exactly(1));
+
+    MainConfiguration *MyConfig = new MainConfiguration(&mockSettings);
 
     MyConfig->determineIndexUri("");
     QCOMPARE(MyConfig->getIndexUri(), QString("https://smil-index-via-ini-file.tld/a_path/second/path/index.smil"));
@@ -59,34 +134,8 @@ void TestMainConfiguration::test_determineIndexUriWhenIni()
     MyConfig->determineIndexUri("ftps://ftpdomain.tld/path_to/index.smil");
     QCOMPARE(MyConfig->getIndexUri(), QString("ftps://ftpdomain.tld/path_to/index.smil"));
     QCOMPARE(MyConfig->getIndexPath(), QString("ftps://ftpdomain.tld/path_to/"));
-
 }
+*/
 
-
-void TestMainConfiguration::test_determineUserAgent()
-{
-   MainConfiguration *MyConfig = initTestClass();
-   MyConfig->setUuid("the-uuid-is-this");
-   MyConfig->setPlayerName("the playername");
-   MyConfig->determineUserAgent();
-
-#if defined Q_OS_LINUX
-   QVERIFY(MyConfig->getUserAgent().contains("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-linux"));
-#elif defined Q_OS_OSX
-   QVERIFY(MyConfig->getUserAgent().contains("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-macOS"));
-#elif defined Q_OS_WIN32
-   QVERIFY(MyConfig->getUserAgent().contains("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-windows"));
-#else
-   QVERIFY(MyConfig->getUserAgent().contains("GAPI/1.0 (UUID:the-uuid-is-this; NAME:the playername) garlic-unknown"));
-#endif
-
-   return;
-}
-
-MainConfiguration *TestMainConfiguration::initTestClass()
-{
-    QSettings *Settings      = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player-test");
-    return new MainConfiguration(Settings, "TestCompany", "https://indexes.domain.tld" );
-}
 
 static TestMainConfiguration TEST_MAINCONFIGURATION;

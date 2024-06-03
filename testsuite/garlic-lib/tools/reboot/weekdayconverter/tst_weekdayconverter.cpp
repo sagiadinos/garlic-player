@@ -15,27 +15,21 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include "system_report_manager.h"
+#include "tst_weekdayconverter.hpp"
+#include "tools/reboot/weekdayconverter.h"
 
-Reporting::SystemReportManager::SystemReportManager(MainConfiguration *config, SystemInfos::DiscSpace *ds, QObject *parent) : Reporting::BaseReportManager(config, ds, parent)
+void TestWeekdayConverter::testConvertWeekDay()
 {
-    MyCreateSystemReport.reset(new Reporting::CreateSystemReport(MyConfiguration, this));
-    MyCreateSystemReport.data()->setDiscSpace(ds);
+    WeekdayConverter TestClass;
+
+   QCOMPARE(TestClass.convertWeekDay("MonDay"), 1);
+   QCOMPARE(TestClass.convertWeekDay("tuesday"), 2);
+   QCOMPARE(TestClass.convertWeekDay("Wednesday"), 3);
+   QCOMPARE(TestClass.convertWeekDay("thursday"), 4);
+   QCOMPARE(TestClass.convertWeekDay("Friday"), 5);
+   QCOMPARE(TestClass.convertWeekDay("saturday"), 6);
+   QCOMPARE(TestClass.convertWeekDay("sunday"), 7);
+   QCOMPARE(TestClass.convertWeekDay("notexistsday"), 0);
 }
 
-void Reporting::SystemReportManager::handleSend()
-{
-    MyCreateSystemReport.data()->process();
-    MyWebDav.data()->processPutData(action_url, MyCreateSystemReport.data()->asXMLString().toUtf8());
-}
-
-void Reporting::SystemReportManager::doSucceed(TNetworkAccess *uploader)
-{
-    qInfo(Develop) << "upload succeed" << uploader->getRemoteFileUrl().toString();
-}
-
-void Reporting::SystemReportManager::doFailed(TNetworkAccess *uploader)
-{
-    qWarning(Develop) << "upload failed" << uploader->getRemoteFileUrl().toString();
-}
-
+static TestWeekdayConverter TEST_WEEKDAYCONVERTER;

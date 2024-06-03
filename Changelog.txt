@@ -6,8 +6,20 @@ Changelog
 ---------------------
 
 1. New Features
+        * include daily reboot timer via config.xml
+        * select if screen off or deep stand by (depends on hardware) via config.xml
+        * create new testsuite
 
 2. Improvements
+        * Using Qt5.15.14
+        * multiabi builds for Android
+        * fix cache file names when tehre are url params
+        * start to replace QXmlPatterns with XQilla for switching to Qt6
+        * new build scripts
+        * updated AVPalyer
+        * look first for an updated image beefore starting old index
+        * fix Taskscheduler errors
+        * fixes for vlc and Windows
 
 
 0.5.0 -> 0.6.0 (current stable)

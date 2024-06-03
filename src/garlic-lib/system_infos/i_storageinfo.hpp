@@ -1,5 +1,5 @@
-#ifndef I_STORAGEINFO_H
-#define I_STORAGEINFO_H
+#ifndef I_STORAGEINFO_HPP
+#define I_STORAGEINFO_HPP
 
 #include <QStorageInfo>
 
@@ -13,4 +13,4 @@ class IStorageInfo
         virtual void setPath(const QString & ) = 0;
 };
 
-#endif // I_STORAGEINFO_H
+#endif // I_STORAGEINFO_HPP

@@ -23,7 +23,7 @@
 #include <QDomElement>
 #include "tools/main_configuration.h"
 #include "system_infos/memory.h"
-#include "system_infos/disc_space.h"
+#include "system_infos/disc_space.hpp"
 
 namespace Reporting
 {

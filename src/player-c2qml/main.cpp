@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include <QQmlApplicationEngine>
-
+#include "wrapper_settings.hpp"
 #include "qdialog.h"
 #include "tools/logger.h"
 #include "../player-common/cmdparser.h"
@@ -58,15 +58,11 @@ int main(int argc, char *argv[])
     MyAndroidManager->disableScreenSaver();
 #endif
 
-    MainConfiguration    *MyMainConfiguration   = new MainConfiguration(
-                                                        new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player"),
-                                                        PlayerConfiguration::determineDefaultContentUrlName(),
-                                                        PlayerConfiguration::determineDefaultContentUrl()
-
-    );
-
+    MainConfiguration *MyMainConfiguration   = new MainConfiguration(new WrapperSettings());
+    MyMainConfiguration->init();
     MyMainConfiguration->createDirectories();
-    qInstallMessageHandler(handleMessages); // must set after createDiretories
+
+	qInstallMessageHandler(handleMessages); // must set after createDiretories
 
     PlayerConfiguration  *MyPlayerConfiguration = new PlayerConfiguration(MyMainConfiguration);
 

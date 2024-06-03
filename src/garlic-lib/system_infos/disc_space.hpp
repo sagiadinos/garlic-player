@@ -1,7 +1,7 @@
-#ifndef DISKSPACE_H
-#define DISKSPACE_H
+#ifndef DISKSPACE_HPP
+#define DISKSPACE_HPP
 
-#include "wrapper_storageinfo.h"
+#include "i_storageinfo.hpp"
 
 namespace SystemInfos
 {
@@ -26,4 +26,4 @@ namespace SystemInfos
 
     };
 }
-#endif // DISKSPACE_H
+#endif // DISKSPACE_HPP

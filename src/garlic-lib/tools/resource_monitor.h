@@ -22,7 +22,7 @@
 #include <QDateTime>
 #include "system_infos/memory.h"
 #include "system_infos/general.h"
-#include "system_infos/disc_space.h"
+#include "system_infos/disc_space.hpp"
 
 class ResourceMonitor : public QObject
 {

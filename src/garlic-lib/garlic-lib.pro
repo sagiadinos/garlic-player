@@ -175,7 +175,8 @@ SOURCES += \
     tools/reboot/scheduler.cpp \
     tools/reboot/timer.cpp \
     tools/reboot/weekdayconverter.cpp \
-    tools/resource_monitor.cpp
+    tools/resource_monitor.cpp \
+    tools/wrapper_settings.cpp
 
 HEADERS += \
     files/base_manager.h \
@@ -249,13 +250,14 @@ HEADERS += \
     smilparser/base_timings.h \
     smilparser/base.h \
     smilparser/head/subscription.h \
-    system_infos/disc_space.h \
-    system_infos/i_storageinfo.h \
+    system_infos/disc_space.hpp \
+    system_infos/i_storageinfo.hpp \
     system_infos/memory.h \
     system_infos/network.h \
     system_infos/cpu.h \
     system_infos/general.h \
-    system_infos/wrapper_storageinfo.h \
+    system_infos/wrapper_storageinfo.hpp \
+    tools/i_settings.hpp \
     tools/logging_categories.h \
     tools/logger.h \
     tools/log_file.h \
@@ -276,6 +278,7 @@ HEADERS += \
     reports/inventory_report_manager.h \
     db/inventory_table.h \
     lib_facade.h \
+    tools/wrapper_settings.hpp \
     version.h
 
 DISTFILES +=

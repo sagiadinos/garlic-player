@@ -1,4 +1,4 @@
-#include "disc_space.h"
+#include "disc_space.hpp"
 
 SystemInfos::DiscSpace::DiscSpace(IStorageInfo *si, QObject *parent) : QObject(parent)
 {

@@ -26,9 +26,11 @@
 #include <QUuid>
 #include <QString>
 #include <QCryptographicHash>
+#include <qt/QtCore/qobject.h>
+
+#include "i_settings.hpp"
 #include "logger.h"
 #include "version.h"
-
 
 /**
  * @brief The MainConfiguration class
@@ -52,7 +54,8 @@ class MainConfiguration  : public QObject
         const     QString        STANDBY_MODE_DEEP       = "deep";
 
 
-        explicit        MainConfiguration(QSettings *uc, QString dun, QString dcu, QObject *parent = Q_NULLPTR);
+        explicit        MainConfiguration(ISettings *uc, QObject *parent = Q_NULLPTR);
+        void            init();
         QString         getVersion(){return version;}
         void            setAdditionalVersion(QString value);
         void            setAppName(QString value){app_name = value;}
@@ -63,7 +66,7 @@ class MainConfiguration  : public QObject
         static QString  getLogDir();
 
         void            setLastPlayedIndexPath(const QString &value);
-        QSettings      *getUserConfig() {return UserConfig;}
+        QSettings      *getUserConfig();
         QString         getUserConfigByKey(QString key);
         void            setUserConfigByKey(QString key, QString value);
         QString         createUuid();
@@ -74,21 +77,20 @@ class MainConfiguration  : public QObject
         QString         getApiAccessToken();
         QString         getApiAccessTokenExpire();
 
-        // easy getter
-        QString         getUuid() const {return uuid;}
-        QString         getPlayerName() const {return player_name;}
-        void            setLogDir(const QString &value){log_dir = value;}
-        void            setUserAgent(const QString &value){user_agent = value;}
-        QString         getUserAgent() const {return user_agent;}
-        QString         getIndexUri(){return index_uri;}
-        QString         getOS() const {return os;}
-        QString         getValidatedContentUrl() const {return validated_content_url;}
-        QString         getIndexPath(){return index_path;}
-        QString         getTimeZone() const {return time_zone;}
-        QString         getBasePath() const{return base_path;};
-        QString         getErrorText() const {return error_text;};
+        QString         getUuid() const;
+        QString         getPlayerName() const;
+        void            setLogDir(const QString &value);
+        void            setUserAgent(const QString &value);
+        QString         getUserAgent() const;
+        QString         getIndexUri();
+        QString         getOS() const;
+        QString         getIndexPath();
+        QString         getTimeZone() const;
+        QString         getBasePath() const;;
+        QString         getErrorText() const;;
 
         void            setValidatedContentUrl(const QString &value);
+        QString         getValidatedContentUrl();
         void            setStandbyMode(const QString &value);
         QString         getStandbyMode();
         void            setRebootDays(const QString &value);
@@ -107,11 +109,11 @@ class MainConfiguration  : public QObject
         void            determineBasePath(QString absolute_path_to_bin);
         void            determineIndexUri(const QString &value);
         void            createDirectories();
-        void            determineUserAgent();
         bool            validateContentUrl(QString url_string);
+        void            determineUserAgent();
 
-protected:
-        QSettings      *UserConfig;
+private:
+        ISettings      *MySettings;
         QString         uuid = "";
         QString         player_name = "";
         QString         version = version_from_git;
@@ -126,8 +128,6 @@ protected:
         QString         cache_dir = "";
         QString         log_dir = "";
         QString         app_name = "garlic-player";
-        QString         default_content_url_name = "";
-        QString         default_content_url = "";
         QString         error_text = "";
         void            createDirectoryIfNotExist(QString path);
         void            determineIndexPath();

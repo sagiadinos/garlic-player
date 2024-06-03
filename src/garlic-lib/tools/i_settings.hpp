@@ -1,6 +1,6 @@
 /*************************************************************************************
     garlic-player: SMIL Player for Digital Signage
-    Copyright (C) 2016 Nikolaos Saghiadinos <ns@smil-control.com>
+    Copyright (C) 2024 Nikolaos Saghiadinos <ns@smil-control.com>
     This file is part of the garlic-player source code
 
     This program is free software: you can redistribute it and/or  modify
@@ -15,35 +15,18 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include "base_testsuite.hpp"
-#include <QtTest/QtTest>
-#include <gmock/gmock.h>
-#include "tools/i_settings.hpp"
+#ifndef I_SETTINGS_H
+#define I_SETTINGS_H
 
-class MockSettings : public ISettings
+#include <QSettings>
+
+class ISettings
 {
     public:
-        MOCK_METHOD(QString, value, (const QString &key), (const, override));
-        MOCK_METHOD(void, setValue, (const QString &key, const QVariant &value), (override));
-        MOCK_METHOD(QSettings*, getOriginal, (), (const, override));
+        virtual ~ISettings() {}
+        virtual QString value(const QString &key) const = 0;
+        virtual void setValue(const QString &key, const QVariant &value) = 0;
+        virtual QSettings *getOriginal() const = 0;
 };
 
-
-class TestMainConfiguration : public BaseTestSuite
-{
-        Q_OBJECT
-    public:
-        TestMainConfiguration(){}
-
-    private Q_SLOTS:
-        void test_init();
-        void test_determineUserAgent();
-        void test_determineBasePath();
-        void test_validateContentUrl();
-//        void test_determineIndexUriWhenParameter();
-//        void test_determineIndexUriWhenIni();
-
-    private:
-        MockSettings      mockSettings;
-
-};
+#endif // I_SETTINGS_H

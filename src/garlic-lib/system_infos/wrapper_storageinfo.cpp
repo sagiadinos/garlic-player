@@ -1,4 +1,4 @@
-#include "wrapper_storageinfo.h"
+#include "wrapper_storageinfo.hpp"
 
 WrapperStorageInfo::WrapperStorageInfo()
 {

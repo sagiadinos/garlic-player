@@ -19,8 +19,6 @@
 #include "main_configuration.h"
 #include <QXmlStreamReader>
 #include <QString>
-#include <memory>
-#include <mutex>
 
 // need to define static variable
 QString MainConfiguration::log_directory = "";
@@ -28,16 +26,18 @@ QString MainConfiguration::log_directory = "";
 
 /**
  * @brief TConfiguration::TConfiguration
- * @param UserConfig
+ * @param MySettings
  */
-MainConfiguration::MainConfiguration(QSettings *uc, QString dun, QString dcu, QObject *parent) : QObject(parent)
+MainConfiguration::MainConfiguration(ISettings *uc, QObject *parent) : QObject(parent)
 {
-    UserConfig = uc;
+    MySettings  = uc;
+}
+
+void MainConfiguration::init()
+{
     uuid        = getUserConfigByKey("uuid");
     player_name = getUserConfigByKey("player_name");
     time_zone   = QTimeZone::systemTimeZoneId();
-    default_content_url_name = dun;
-    default_content_url = dcu;
 
     determineOS();
 
@@ -72,14 +72,16 @@ void MainConfiguration::setLastPlayedIndexPath(const QString &value)
     setUserConfigByKey("last_played_index_path", value);
 }
 
+QSettings *MainConfiguration::getUserConfig() {return MySettings->getOriginal();}
+
 QString MainConfiguration::getUserConfigByKey(QString key)
 {
-    return UserConfig->value(key, "").toString();
+    return MySettings->value(key);
 }
 
 void MainConfiguration::setUserConfigByKey(QString key, QString value)
 {
-    UserConfig->setValue(key, value);
+    MySettings->setValue(key, value);
 }
 
 void MainConfiguration::setPlayerName(const QString &value)
@@ -130,6 +132,28 @@ QString MainConfiguration::getApiAccessTokenExpire()
     return getUserConfigByKey("api_access_token_expire");
 }
 
+QString MainConfiguration::getUuid() const {return uuid;}
+
+QString MainConfiguration::getPlayerName() const {return player_name;}
+
+void MainConfiguration::setLogDir(const QString &value){log_dir = value;}
+
+void MainConfiguration::setUserAgent(const QString &value){user_agent = value;}
+
+QString MainConfiguration::getUserAgent() const {return user_agent;}
+
+QString MainConfiguration::getIndexUri(){return index_uri;}
+
+QString MainConfiguration::getOS() const {return os;}
+
+QString MainConfiguration::getIndexPath(){return index_path;}
+
+QString MainConfiguration::getTimeZone() const {return time_zone;}
+
+QString MainConfiguration::getBasePath() const{return base_path;}
+
+QString MainConfiguration::getErrorText() const {return error_text;}
+
 QString MainConfiguration::createUuid()
 {
     QString id = QUuid::createUuid().toString();
@@ -142,45 +166,53 @@ void MainConfiguration::setIndexUri(const QString &value)
     setUserConfigByKey("index_uri", value);
 }
 
+void MainConfiguration::determineBasePath(QString absolute_path_to_bin)
+{
+    if (absolute_path_to_bin.contains("/bin"))
+        setBasePath(absolute_path_to_bin.mid(0, absolute_path_to_bin.length()-3));
+    else
+        setBasePath(absolute_path_to_bin);
+
+    if (base_path.mid(base_path.length()-1, 1) != "/")
+        setBasePath(base_path+"/");
+}
+
+
 bool MainConfiguration::validateContentUrl(QString url_string)
 {
-    QUrl    url(url_string, QUrl::StrictMode);
-    bool    error = false;
-    error_text    = "";
-    if (url_string == "") // isEmpty or isValid do not work as expected
+    if (url_string.isEmpty()) // isEmpty or isValid do not work as expected
     {
         error_text += "A content-url is neccessary\n";
-        error = true;
+		return false;
     }
 
-    if (url.scheme() != "") // prevent thingsq like Http or httP
+	QUrl    url(url_string, QUrl::StrictMode);
+    error_text    = "";
+
+	if (url.scheme() != "") // prevent thingsq like Http or httP
     {
         if (url.toString(QUrl::RemoveScheme).mid(0, 2) != "//")
         {
-            error_text += "Url Scheme is no valid! Use "+ url.scheme() + "://domain.tld \n";
-            error = true;
+            error_text += "Url Scheme is no valid! Use "+ url.scheme() + "://domain.tld\n";
+			return false;
         }
-        else
-        {
-            if (url.scheme() != "file") // file:// will irritate garlic-lib TODO! Fix this later!
-                setValidatedContentUrl(url.toString());
-            else
-                setValidatedContentUrl(url.toString(QUrl::RemoveScheme));
-        }
+
+		if (url.scheme() != "file") // file:// will irritate garlic-lib TODO! Fix this later!
+			setValidatedContentUrl(url.toString());
+		else
+			setValidatedContentUrl(url.toString(QUrl::RemoveScheme));
     }
     else
     {
         if (url_string.mid(0, 1) != "/")
         {
-            error_text += "Relative path for Content-Url/SMIL-Index is not allowed! Use /path/to/index, http://domain.tld or file://path/to/index \n";
-            error = true;
+            error_text += "Relative path to SMIL-Index is not allowed! Use /path/to/index, http://domain.tld, https://domain.tld, or file://path/to/index\n";
+			return false;
         }
         else
             setValidatedContentUrl(url.toString());
     }
 
-    if (error)
-        return false;
 
     return true;
 }
@@ -203,36 +235,14 @@ void MainConfiguration::setIndexPath(const QString &value)
     index_path = value;
 }
 
-/**
- * @brief TConfiguration::determineIndexPath
- * determine the clean index path
- * e.g only the scheme://domain.tld/path_to/
- */
-void MainConfiguration::determineIndexPath()
-{
-    if (index_uri.mid(0, 4) == "http" || index_uri.mid(0, 3) == "ftp")
-    {
-        QUrl url(index_uri);
-        setIndexPath(url.adjusted(QUrl::RemoveFilename |
-                                  QUrl::RemoveQuery |
-                                  QUrl::RemoveFragment |
-                                  QUrl::RemovePort).toString());
-        if (index_path.mid(index_path.length()-1, 1) != "/")
-            setIndexPath(index_path+"/");
-
-    }
-    else
-    {
-        QFileInfo fi(index_uri);
-        setIndexPath(fi.path()+"/");
-    }
-}
-
-
-
 void MainConfiguration::setValidatedContentUrl(const QString &value)
 {
     validated_content_url = value;
+}
+
+QString MainConfiguration::getValidatedContentUrl()
+{
+    return validated_content_url;
 }
 
 void MainConfiguration::setStandbyMode(const QString &value)
@@ -280,18 +290,6 @@ void MainConfiguration::setBasePath(const QString &value)
     base_path = value;
 }
 
-void MainConfiguration::determineBasePath(QString absolute_path_to_bin)
-{
-    if (absolute_path_to_bin.contains("/bin"))
-        setBasePath(absolute_path_to_bin.mid(0, absolute_path_to_bin.length()-3)); // "/" is set when xyz/bin
-    else
-        setBasePath(absolute_path_to_bin);
-
-    if (base_path.mid(base_path.length()-1, 1) != "/")
-        setBasePath(base_path+"/");
-}
-
-
 /**
  * @brief TConfiguration::getPaths returns paths.
  *        Values can be config, var, media or base
@@ -330,9 +328,38 @@ void MainConfiguration::createDirectories()
     MainConfiguration::log_directory = log_dir;
 }
 
+
 void MainConfiguration::determineUserAgent()
 {
     user_agent = "GAPI/1.0 (UUID:"+getUuid()+"; NAME:"+getPlayerName()+") garlic-"+getOS()+"/"+getVersion()+" (MODEL:Garlic)";
+}
+
+
+// ========================  private ================================================
+
+/**
+ * @brief TConfiguration::determineIndexPath
+ * determine the clean index path
+ * e.g only the scheme://domain.tld/path_to/
+ */
+void MainConfiguration::determineIndexPath()
+{
+    if (index_uri.mid(0, 4) == "http" || index_uri.mid(0, 3) == "ftp")
+    {
+        QUrl url(index_uri);
+        setIndexPath(url.adjusted(QUrl::RemoveFilename |
+                                  QUrl::RemoveQuery |
+                                  QUrl::RemoveFragment |
+                                  QUrl::RemovePort).toString());
+        if (index_path.mid(index_path.length()-1, 1) != "/")
+            setIndexPath(index_path+"/");
+
+    }
+    else
+    {
+        QFileInfo fi(index_uri);
+        setIndexPath(fi.path()+"/");
+    }
 }
 
 void MainConfiguration::createDirectoryIfNotExist(QString path)

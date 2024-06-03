@@ -15,27 +15,24 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include "system_report_manager.h"
+#include "wrapper_settings.hpp"
 
-Reporting::SystemReportManager::SystemReportManager(MainConfiguration *config, SystemInfos::DiscSpace *ds, QObject *parent) : Reporting::BaseReportManager(config, ds, parent)
+WrapperSettings::WrapperSettings()
 {
-    MyCreateSystemReport.reset(new Reporting::CreateSystemReport(MyConfiguration, this));
-    MyCreateSystemReport.data()->setDiscSpace(ds);
+    MySettings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "SmilControl", "garlic-player");
 }
 
-void Reporting::SystemReportManager::handleSend()
+QString WrapperSettings::value(const QString &key) const
 {
-    MyCreateSystemReport.data()->process();
-    MyWebDav.data()->processPutData(action_url, MyCreateSystemReport.data()->asXMLString().toUtf8());
+    return MySettings->value(key).toString();
 }
 
-void Reporting::SystemReportManager::doSucceed(TNetworkAccess *uploader)
+void WrapperSettings::setValue(const QString &key, const QVariant &value)
 {
-    qInfo(Develop) << "upload succeed" << uploader->getRemoteFileUrl().toString();
+    MySettings->setValue(key, value);
 }
 
-void Reporting::SystemReportManager::doFailed(TNetworkAccess *uploader)
+QSettings *WrapperSettings::getOriginal() const
 {
-    qWarning(Develop) << "upload failed" << uploader->getRemoteFileUrl().toString();
+    return MySettings;
 }
-

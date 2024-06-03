@@ -28,6 +28,7 @@
 #include "body_parser.h"
 #include "tools/resource_monitor.h"
 #include "head/placeholder.h"
+#include "wrapper_storageinfo.hpp"
 
 
 /**

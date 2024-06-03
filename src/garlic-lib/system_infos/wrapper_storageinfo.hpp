@@ -1,7 +1,7 @@
-#ifndef WRAPPER_STORAGEINFO_H
-#define WRAPPER_STORAGEINFO_H
+#ifndef WRAPPER_STORAGEINFO_HPP
+#define WRAPPER_STORAGEINFO_HPP
 
-#include "i_storageinfo.h"
+#include "i_storageinfo.hpp"
 
 class WrapperStorageInfo : public IStorageInfo
 {
@@ -19,4 +19,4 @@ class WrapperStorageInfo : public IStorageInfo
 };
 
 
-#endif // WRAPPER_STORAGEINFO_H
+#endif // WRAPPER_STORAGEINFO_HPP
