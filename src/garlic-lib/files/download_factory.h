@@ -2,7 +2,7 @@
 #define DOWNLOADFACTORY_H
 
 #include <QObject>
-#include "main_configuration.h"
+#include "main_configuration.hpp"
 #include "downloader.h"
 namespace Files
 {

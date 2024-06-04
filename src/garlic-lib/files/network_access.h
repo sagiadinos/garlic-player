@@ -25,7 +25,7 @@
 #include <QUrl>
 #include <QThread>
 #include "tools/logger.h"
-#include "main_configuration.h"
+#include "main_configuration.hpp"
 
 class TNetworkAccess : public QObject
 {

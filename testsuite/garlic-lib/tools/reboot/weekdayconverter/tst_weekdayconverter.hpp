@@ -9,5 +9,5 @@ public:
     TestWeekdayConverter(){};
 
 private Q_SLOTS:
-    void testConvertWeekDay();
+    void test_ConvertWeekDay();
 };

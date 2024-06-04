@@ -19,22 +19,23 @@
 #define SCHEDULER_H
 
 #include <QObject>
-#include "main_configuration.h"
-#include "weekdayconverter.h"
+#include <QDateTime>
+#include "i_main_configuration.hpp"
+#include "i_weekdayconverter.hpp"
 
 class Scheduler : public QObject
 {
         Q_OBJECT
     public:
-        explicit Scheduler(MainConfiguration *config, WeekdayConverter *converter, QObject *parent = nullptr);
-        void determineNextReboot();
+        explicit Scheduler(IMainConfiguration *config, IWeekdayConverter *converter, QObject *parent = nullptr);
+        void determineNextReboot(QDateTime current);
         QDateTime getNextDatetime() const;
 
     private:
-        MainConfiguration *MyMainConfiguration;
-        WeekdayConverter  *MyWeekdayConverter;
+        IMainConfiguration *MyMainConfiguration;
+        IWeekdayConverter  *MyWeekdayConverter;
 
-        QDateTime          next_datetime = QDateTime::fromMSecsSinceEpoch(0);
+        QDateTime          next_reboot_datetime;
         QStringList        reboot_days;
         QTime              reboot_time;
         QDate              today;

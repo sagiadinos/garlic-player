@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QMap>
 #include <QCryptographicHash>
-#include "tools/main_configuration.h"
+#include "tools/main_configuration.hpp"
 #include "files/wgt.h"
 
 

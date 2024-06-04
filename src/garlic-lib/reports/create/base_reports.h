@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QDomDocument>
 #include <QDomElement>
-#include "tools/main_configuration.h"
+#include "tools/main_configuration.hpp"
 #include "system_infos/memory.h"
 #include "system_infos/disc_space.hpp"
 

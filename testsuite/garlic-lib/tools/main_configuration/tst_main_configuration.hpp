@@ -40,8 +40,9 @@ class TestMainConfiguration : public BaseTestSuite
         void test_determineUserAgent();
         void test_determineBasePath();
         void test_validateContentUrl();
-//        void test_determineIndexUriWhenParameter();
-//        void test_determineIndexUriWhenIni();
+        void test_determineIndexUriWithParameter();
+        void test_determineIndexUriNoParam();
+        void test_determineIndexUriEmpty();
 
     private:
         MockSettings      mockSettings;

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#include "main_configuration.h"
+#include "main_configuration.hpp"
 #include <QXmlStreamReader>
 #include <QString>
 
@@ -227,6 +227,7 @@ void MainConfiguration::determineIndexUri(const QString &value)
     {
         setIndexUri(getUserConfigByKey("index_uri"));
     }
+
     determineIndexPath();
 }
 

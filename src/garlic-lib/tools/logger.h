@@ -26,7 +26,7 @@
 #include <iostream>
 #include <mutex>
 
-#include "main_configuration.h"
+#include "main_configuration.hpp"
 #include "log_file.h"
 #include "logging_categories.h"
 

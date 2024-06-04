@@ -29,13 +29,14 @@
 #include <qt/QtCore/qobject.h>
 
 #include "i_settings.hpp"
+#include "i_main_configuration.hpp"
 #include "logger.h"
 #include "version.h"
 
 /**
  * @brief The MainConfiguration class
  */
-class MainConfiguration  : public QObject
+class MainConfiguration  : public QObject, public IMainConfiguration
 {
     Q_OBJECT
     public:
@@ -103,8 +104,8 @@ class MainConfiguration  : public QObject
         QString         getPaths(QString path_name);
         void            setIndexUri(const QString &value);
         void            setIndexPath(const QString &value);
-        void            setNetworkInterface(const QString &value);
-        QString         getNetworkInterface();
+//        void            setNetworkInterface(const QString &value);
+//        QString         getNetworkInterface();
         void            setBasePath(const QString &value);
         void            determineBasePath(QString absolute_path_to_bin);
         void            determineIndexUri(const QString &value);

@@ -15,14 +15,14 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#ifndef WEEKDAYCONVERTER_H
-#define WEEKDAYCONVERTER_H
+#ifndef WEEKDAYCONVERTER_HPP
+#define WEEKDAYCONVERTER_HPP
 
 #include <QObject>
-#include <QMap>
+#include <QHash>
+#include "i_weekdayconverter.hpp"
 
-
-class WeekdayConverter : public QObject
+class WeekdayConverter : public QObject, public IWeekdayConverter
 {
         Q_OBJECT
     public:
@@ -30,4 +30,4 @@ class WeekdayConverter : public QObject
         int convertWeekDay(const QString &weekday_string) const;
 };
 
-#endif // WEEKDAYCONVERTER_H
+#endif // WEEKDAYCONVERTER_HPP

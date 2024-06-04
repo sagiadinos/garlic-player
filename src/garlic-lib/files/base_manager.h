@@ -20,7 +20,7 @@
 
 #include <QFile>
 #include "download_queue.h"
-#include "tools/main_configuration.h"
+#include "tools/main_configuration.hpp"
 #include "files/free_disc_space.h"
 
 namespace Files

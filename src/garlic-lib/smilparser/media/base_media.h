@@ -20,7 +20,7 @@
 
 #include "files/media_manager.h"
 #include "container.h"
-#include "tools/main_configuration.h"
+#include "tools/main_configuration.hpp"
 #include "head/placeholder.h"
 #include "head_parser.h"
 

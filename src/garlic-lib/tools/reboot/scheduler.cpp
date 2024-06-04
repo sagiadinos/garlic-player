@@ -15,50 +15,49 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include "scheduler.h"
+#include "scheduler.hpp"
 #include <QDebug>
 #include <QList>
 
-Scheduler::Scheduler(MainConfiguration *config, WeekdayConverter *converter, QObject *parent) : QObject{parent}, MyMainConfiguration{config}, MyWeekdayConverter{converter}
+Scheduler::Scheduler(IMainConfiguration *config, IWeekdayConverter *converter, QObject *parent) : QObject{parent}, MyMainConfiguration{config}, MyWeekdayConverter{converter}
 {
-
 }
 
-void Scheduler::determineNextReboot()
+void Scheduler::determineNextReboot(QDateTime current)
 {
     reboot_days = MyMainConfiguration->getRebootDays().split(" ");
 
     if (reboot_days.size() == 0)
         return;
 
-
     reboot_time = QTime::fromString(MyMainConfiguration->getRebootTime());
     if (!reboot_time.isValid())
         reboot_time = QTime::fromString("03:00:00");
 
-    QDateTime now = QDateTime::currentDateTime();
-    today = now.date();
-    current_time = now.time();
+    today         = current.date();
+    current_time  = current.time();
 
     calculateNextReboot();
 }
 
 void Scheduler::calculateNextReboot()
 {
-    next_datetime = findEarliestReboot();
+    next_reboot_datetime = findEarliestReboot();
 
-    qDebug() << "Next available appointment is on" << next_datetime.toString("dddd, yyyy-MM-dd HH:mm");
+    qDebug() << "Next available appointment is on" << next_reboot_datetime.toString("dddd, yyyy-MM-dd HH:mm");
 }
 
 
 QDateTime Scheduler::getNextDatetime() const
 {
-    return next_datetime;
+    return next_reboot_datetime;
 }
 
 QDateTime Scheduler::findEarliestReboot() const
 {
-    QDateTime earliest_reboot = QDateTime::fromMSecsSinceEpoch(LLONG_MAX);
+    // as initialisation with max QDateime fails somehow we uyse one moth ahead.
+    QDateTime maximum = QDateTime::currentDateTime().addMonths(1);
+    QDateTime earliest_reboot = maximum;
 
     foreach (const QDateTime &reboot_time, computePotentialRebootTimes())
     {
@@ -68,7 +67,10 @@ QDateTime Scheduler::findEarliestReboot() const
         }
     }
 
-    return earliest_reboot;
+    if (earliest_reboot < maximum)
+        return earliest_reboot;
+    else
+        return QDateTime();
 }
 
 QList<QDateTime> Scheduler::computePotentialRebootTimes() const
@@ -78,9 +80,12 @@ QList<QDateTime> Scheduler::computePotentialRebootTimes() const
     foreach (const QString &day_str, reboot_days)
     {
         int day_of_week = MyWeekdayConverter->convertWeekDay(day_str);
-        int days_to_add = calculateDaysToAdd(day_of_week);
-        QDateTime potential_datetime(today.addDays(days_to_add), reboot_time);
-        potential_reboot_times.append(potential_datetime);
+        if (day_of_week > 0)
+        {
+            int days_to_add = calculateDaysToAdd(day_of_week);
+            QDateTime potential_datetime(today.addDays(days_to_add), reboot_time);
+            potential_reboot_times.append(potential_datetime);
+        }
     }
 
     return potential_reboot_times;

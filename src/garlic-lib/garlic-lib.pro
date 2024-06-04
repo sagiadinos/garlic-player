@@ -257,14 +257,16 @@ HEADERS += \
     system_infos/cpu.h \
     system_infos/general.h \
     system_infos/wrapper_storageinfo.hpp \
+    tools/i_main_configuration.hpp \
     tools/i_settings.hpp \
     tools/logging_categories.h \
     tools/logger.h \
     tools/log_file.h \
-    tools/main_configuration.h \
-    tools/reboot/scheduler.h \
+    tools/main_configuration.hpp \
+    tools/reboot/i_weekdayconverter.hpp \
+    tools/reboot/scheduler.hpp \
     tools/reboot/timer.h \
-    tools/reboot/weekdayconverter.h \
+    tools/reboot/weekdayconverter.hpp \
     tools/resource_monitor.h \
     reports/create/base_reports.h \
     reports/create/system_report.h \

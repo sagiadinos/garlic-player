@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "tst_weekdayconverter.hpp"
-#include "tools/reboot/weekdayconverter.h"
+#include "tools/reboot/weekdayconverter.hpp"
 
-void TestWeekdayConverter::testConvertWeekDay()
+void TestWeekdayConverter::test_ConvertWeekDay()
 {
     WeekdayConverter TestClass;
 

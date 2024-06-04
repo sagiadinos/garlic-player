@@ -16,12 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "tst_main_configuration.hpp"
-#include "tools/main_configuration.h"
+#include "tools/main_configuration.hpp"
 
 using ::testing::Exactly;
 using ::testing::Return;
+using ::testing::AnyNumber;
 
-
+MATCHER_P(IsQVariantOfType, type, "")
+{
+    return arg.type() == type;
+}
 void TestMainConfiguration::test_init()
 {
     EXPECT_CALL(mockSettings, value(QString("uuid"))).Times(Exactly(1)).WillOnce(Return("the-uuid"));
@@ -100,10 +104,12 @@ void TestMainConfiguration::test_validateContentUrl()
 }
 
 
-/*
-void TestMainConfiguration::test_determineIndexUriWhenParameter()
+void TestMainConfiguration::test_determineIndexUriWithParameter()
 {
-    MainConfiguration *MyConfig = initTestClass();
+
+    EXPECT_CALL(mockSettings, setValue(QString("index_uri"), IsQVariantOfType(QVariant::String))).Times(AnyNumber());
+
+    MainConfiguration *MyConfig = new MainConfiguration(&mockSettings);
 
     MyConfig->determineIndexUri("http://domain.tld/path_to/index.smil");
     QCOMPARE(MyConfig->getIndexUri(), QString("http://domain.tld/path_to/index.smil"));
@@ -119,11 +125,9 @@ void TestMainConfiguration::test_determineIndexUriWhenParameter()
     QCOMPARE(MyConfig->getIndexPath(), QString("/path_to/"));
 }
 
-void TestMainConfiguration::test_determineIndexUriWhenIni()
+void TestMainConfiguration::test_determineIndexUriNoParam()
 {
-    QVariant my_variant;
-    my_variant.setValue("an_index_uri");
-    EXPECT_CALL(mockSettings, setValue(QString("uuid"), my_variant)).Times(Exactly(1));
+    EXPECT_CALL(mockSettings, value(QString("index_uri"))).Times(Exactly(2)).WillRepeatedly(Return("https://smil-index-via-ini-file.tld/a_path/second/path/index.smil"));
 
     MainConfiguration *MyConfig = new MainConfiguration(&mockSettings);
 
@@ -131,11 +135,18 @@ void TestMainConfiguration::test_determineIndexUriWhenIni()
     QCOMPARE(MyConfig->getIndexUri(), QString("https://smil-index-via-ini-file.tld/a_path/second/path/index.smil"));
     QCOMPARE(MyConfig->getIndexPath(), QString("https://smil-index-via-ini-file.tld/a_path/second/path/"));
 
-    MyConfig->determineIndexUri("ftps://ftpdomain.tld/path_to/index.smil");
-    QCOMPARE(MyConfig->getIndexUri(), QString("ftps://ftpdomain.tld/path_to/index.smil"));
-    QCOMPARE(MyConfig->getIndexPath(), QString("ftps://ftpdomain.tld/path_to/"));
 }
-*/
 
+void TestMainConfiguration::test_determineIndexUriEmpty()
+{
+    EXPECT_CALL(mockSettings, value(QString("index_uri"))).Times(Exactly(1)).WillOnce(Return(""));
+
+    MainConfiguration *MyConfig = new MainConfiguration(&mockSettings);
+
+    MyConfig->determineIndexUri("");
+    QCOMPARE(MyConfig->getIndexUri(), QString(""));
+    QCOMPARE(MyConfig->getIndexPath(), QString("/"));
+
+}
 
 static TestMainConfiguration TEST_MAINCONFIGURATION;
