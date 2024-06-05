@@ -95,5 +95,4 @@ void TestScheduler::test_CalculateNextRebootOnSameDay()
     QCOMPARE(monday_at_4.addSecs(60 * 36), next_reboot); // the next reboot must be in 36 minutes.
     QCOMPARE(next_reboot.time(), QTime(4, 36, 0));
 }
-
 static TestScheduler TEST_SCHEDULER;

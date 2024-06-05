@@ -3,7 +3,7 @@
 
 #include <QApplication>
 #include <QObject>
-#include "tools/main_configuration.h"
+#include "tools/main_configuration.hpp"
 #include "tools/logging_categories.h"
 
 #define _STR(x) #x

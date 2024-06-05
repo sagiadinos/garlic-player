@@ -51,6 +51,8 @@ void LibFacade::init(MainConfiguration *config)
     MyFreeDiscSpace.data()->init(MyConfiguration.data()->getPaths("cache"));
     MyFreeDiscSpace.data()->setInventoryTable(MyInventoryTable.data());
 
+    configureRebootTimer();
+
     MyDiscSpace.data()->init(MyConfiguration.data()->getPaths("cache"));
     MyIndexManager.reset(new Files::IndexManager(MyInventoryTable.data(), MyConfiguration.data(), MyFreeDiscSpace.data(), this));
     connect(MyIndexManager.data(), SIGNAL(readyForLoading()), this, SLOT(loadIndex()));
@@ -212,6 +214,18 @@ void LibFacade::processBodyParsing()
 
     MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());
     emit readyForPlaying();
+}
+
+void LibFacade::configureRebootTimer()
+{
+    RebootScheduler.reset(new Scheduler(MyConfiguration.data(), &MyWeekDayConverter));
+    RebootScheduler.data()->determineNextReboot(QDateTime::currentDateTime());
+    RebootTimer.stopTimer();
+    if (RebootScheduler.data()->getNextDatetime().isValid())
+    {
+        RebootTimer.setRebootTime(RebootScheduler.data()->getNextDatetimeInMSecs());
+    }
+    connect(&RebootTimer, SIGNAL(reboot()), this, SLOT(reboot(QString("ByRebootTimer"))));
 }
 
 void LibFacade::timerEvent(QTimerEvent *event)

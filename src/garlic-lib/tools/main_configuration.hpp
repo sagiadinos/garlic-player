@@ -26,7 +26,6 @@
 #include <QUuid>
 #include <QString>
 #include <QCryptographicHash>
-#include <qt/QtCore/qobject.h>
 
 #include "i_settings.hpp"
 #include "i_main_configuration.hpp"

@@ -265,7 +265,7 @@ HEADERS += \
     tools/main_configuration.hpp \
     tools/reboot/i_weekdayconverter.hpp \
     tools/reboot/scheduler.hpp \
-    tools/reboot/timer.h \
+    tools/reboot/timer.hpp \
     tools/reboot/weekdayconverter.hpp \
     tools/resource_monitor.h \
     reports/create/base_reports.h \

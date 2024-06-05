@@ -28,8 +28,9 @@ class Scheduler : public QObject
         Q_OBJECT
     public:
         explicit Scheduler(IMainConfiguration *config, IWeekdayConverter *converter, QObject *parent = nullptr);
-        void determineNextReboot(QDateTime current);
+        void      determineNextReboot(QDateTime current);
         QDateTime getNextDatetime() const;
+        qint64    getNextDatetimeInMSecs() const;
 
     private:
         IMainConfiguration *MyMainConfiguration;
@@ -38,6 +39,7 @@ class Scheduler : public QObject
         QDateTime          next_reboot_datetime;
         QStringList        reboot_days;
         QTime              reboot_time;
+        QDateTime          now;
         QDate              today;
         QTime              current_time;
 

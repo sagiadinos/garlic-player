@@ -23,13 +23,15 @@
 
 #include "files/index_manager.h"
 #include "files/media_manager.h"
+#include "scheduler.hpp"
 #include "smilparser/head_parser.h"
 #include "smil.h"
 #include "body_parser.h"
 #include "tools/resource_monitor.h"
 #include "head/placeholder.h"
+#include "weekdayconverter.hpp"
 #include "wrapper_storageinfo.hpp"
-
+#include "tools/reboot/timer.hpp"
 
 /**
  * @brief The LibFacade class is the interface for a player component to the garlic parser
@@ -89,7 +91,9 @@ class LibFacade : public QObject
         QScopedPointer<BodyParser>                 MyBodyParser;
         QScopedPointer<SystemInfos::DiscSpace>     MyDiscSpace;
         QScopedPointer<FreeDiscSpace>              MyFreeDiscSpace;
+        QScopedPointer<Scheduler>                  RebootScheduler;
         WrapperStorageInfo                         MyStorage;
+        WeekdayConverter                           MyWeekDayConverter;
         ResourceMonitor            MyResourceMonitor;
         void               initFileManager();
         void               processHeadParsing();
@@ -106,6 +110,8 @@ class LibFacade : public QObject
         void               processBodyParsing();
     private:
         QScopedPointer<Smil> MySmil;
+        Timer             RebootTimer;
+        void              configureRebootTimer();
     signals:
         void               startShowMedia(BaseMedia *media);
         void               stopShowMedia(BaseMedia *media);

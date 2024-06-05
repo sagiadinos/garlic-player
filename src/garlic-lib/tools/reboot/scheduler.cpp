@@ -34,6 +34,7 @@ void Scheduler::determineNextReboot(QDateTime current)
     if (!reboot_time.isValid())
         reboot_time = QTime::fromString("03:00:00");
 
+    now           = current;
     today         = current.date();
     current_time  = current.time();
 
@@ -51,6 +52,11 @@ void Scheduler::calculateNextReboot()
 QDateTime Scheduler::getNextDatetime() const
 {
     return next_reboot_datetime;
+}
+
+qint64 Scheduler::getNextDatetimeInMSecs() const
+{
+    return next_reboot_datetime.msecsTo(now);
 }
 
 QDateTime Scheduler::findEarliestReboot() const
