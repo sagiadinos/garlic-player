@@ -7,8 +7,12 @@ Timer::Timer(QObject *parent) : QObject{parent}
 
 void Timer::setRebootTime(const qint64 &reboot_time)
 {
+    if (reboot_time < 0)
+        return;
+
     RebootTimer.setSingleShot(true);
     RebootTimer.start(reboot_time);
+
 }
 
 void Timer::stopTimer()
@@ -19,6 +23,6 @@ void Timer::stopTimer()
 
 void Timer::emitReboot()
 {
-    emit reboot();
+    emit reboot("DailyReboot");
 }
 

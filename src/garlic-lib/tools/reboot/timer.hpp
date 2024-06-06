@@ -20,7 +20,7 @@ class Timer : public QObject
         QTimer RebootTimer;
         QDateTime reboot_time;
     signals:
-        void reboot();
+        void reboot(QString);
 
 
 };

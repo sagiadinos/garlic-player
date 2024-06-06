@@ -44,7 +44,6 @@ void MainWindow::init()
     connect(MyLibFacade, SIGNAL(pauseShowMedia(BaseMedia*)), this, SLOT(pauseShowMedia(BaseMedia*)));
     connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
 
-    connect(MyLibFacade, SIGNAL(newConfig()), this, SLOT(sendConfig()));
     connect(MyLibFacade, SIGNAL(rebootOS(QString)), this, SLOT(rebootOS(QString)));
     connect(MyLibFacade, SIGNAL(installSoftware(QString)), this, SLOT(installSoftware(QString)));
     connect(MyLibFacade, SIGNAL(screenshot(QString)), this, SLOT(takeScreenShot(QString)));
@@ -256,11 +255,6 @@ void MainWindow::doStatusChanged(QQuickView::Status status)
             break;
     }
 
-}
-
-void MainWindow::sendConfig()
-{
-    MyLauncher.data()->sendConfig(MyLibFacade->getConfiguration()->getPaths("cache"));
 }
 
 void MainWindow::rebootOS(QString task_id)

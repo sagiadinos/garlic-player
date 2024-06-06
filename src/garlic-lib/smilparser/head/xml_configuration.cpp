@@ -25,7 +25,7 @@ SmilHead::XMLConfiguration::XMLConfiguration(DB::InventoryTable *it, MainConfigu
 
 void SmilHead::XMLConfiguration::processFromUrl(QUrl config_url)
 {
-    QFile::remove(MyConfiguration->getPaths("cache")+"configuration.xml"); // remove old file
+    QFile::remove(MyConfiguration->getPaths("cache")+"configuration.xml"); // remove probably old file
 
     XMLDownloader->processFile(config_url, MyConfiguration->getPaths("cache")+"configuration.xml");
 
@@ -140,7 +140,8 @@ void SmilHead::XMLConfiguration::parse()
             MyConfiguration->setStandbyMode(attr_value);
         }
     }
-    emit finishedConfiguration();
+
+    emit finishedConfiguration(); // should lead to reboot;
 }
 
 

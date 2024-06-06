@@ -51,8 +51,6 @@ void LibFacade::init(MainConfiguration *config)
     MyFreeDiscSpace.data()->init(MyConfiguration.data()->getPaths("cache"));
     MyFreeDiscSpace.data()->setInventoryTable(MyInventoryTable.data());
 
-    configureRebootTimer();
-
     MyDiscSpace.data()->init(MyConfiguration.data()->getPaths("cache"));
     MyIndexManager.reset(new Files::IndexManager(MyInventoryTable.data(), MyConfiguration.data(), MyFreeDiscSpace.data(), this));
     connect(MyIndexManager.data(), SIGNAL(readyForLoading()), this, SLOT(loadIndex()));
@@ -161,18 +159,12 @@ void LibFacade::loadIndex()
 
     initFileManager();
     processHeadParsing();
+    configureRebootTimer();
 }
 
 void LibFacade::changeConfig()
 {
-    if (has_launcher)
-    {
-        emit newConfig();
-    }
-    else
-    {
-        loadIndex();
-    }
+    loadIndex();
 }
 
 void LibFacade::initFileManager()
@@ -225,7 +217,7 @@ void LibFacade::configureRebootTimer()
     {
         RebootTimer.setRebootTime(RebootScheduler.data()->getNextDatetimeInMSecs());
     }
-    connect(&RebootTimer, SIGNAL(reboot()), this, SLOT(reboot(QString("ByRebootTimer"))));
+    connect(&RebootTimer, SIGNAL(reboot(QString)), this, SLOT(reboot(QString)));
 }
 
 void LibFacade::timerEvent(QTimerEvent *event)

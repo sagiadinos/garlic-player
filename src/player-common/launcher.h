@@ -14,7 +14,6 @@ class Launcher : public QObject
 public:
     explicit Launcher(QObject *parent = nullptr);
 
-    void sendConfig(QString path);
     void rebootOS(QString task_id);
     void installSoftware(QString file_path);
     void toggleScreenActivity(bool is_on);

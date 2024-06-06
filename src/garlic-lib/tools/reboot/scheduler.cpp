@@ -56,7 +56,7 @@ QDateTime Scheduler::getNextDatetime() const
 
 qint64 Scheduler::getNextDatetimeInMSecs() const
 {
-    return next_reboot_datetime.msecsTo(now);
+    return now.msecsTo(next_reboot_datetime);
 }
 
 QDateTime Scheduler::findEarliestReboot() const

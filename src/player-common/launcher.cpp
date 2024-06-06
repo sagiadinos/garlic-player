@@ -4,18 +4,6 @@ Launcher::Launcher(QObject *parent) : QObject(parent)
 {
 
 }
-void Launcher::sendConfig(QString path)
-{
-#if defined  Q_OS_ANDROID
-    QAndroidJniObject java_file_path = QAndroidJniObject::fromString(path + "configuration.xml");
-    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
-                                              "applyConfig",
-                                              "(Ljava/lang/String;)V",
-                                              java_file_path.object<jstring>()
-                                              );
-#endif
-
-}
 
 void Launcher::rebootOS(QString task_id)
 {

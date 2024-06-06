@@ -35,6 +35,7 @@ void TestScheduler::test_DetermineNextRebootInvalidRebootTime()
     MyScheduler->determineNextReboot(QDateTime::currentDateTime());
     QDateTime nextReboot = MyScheduler->getNextDatetime();
     QVERIFY(nextReboot.isValid());
+    QVERIFY(MyScheduler->getNextDatetimeInMSecs() > 0);
     QCOMPARE(nextReboot.time(), QTime(3, 0, 0)); // default time
 }
 
@@ -49,6 +50,7 @@ void TestScheduler::test_CalculateNextReboot()
     MyScheduler->determineNextReboot(QDateTime::currentDateTime());
     QDateTime nextReboot = MyScheduler->getNextDatetime();
     QVERIFY(nextReboot.isValid());
+    QVERIFY(MyScheduler->getNextDatetimeInMSecs() > 0);
     QCOMPARE(nextReboot.time(), QTime(4, 36, 0));
 }
 
@@ -72,6 +74,7 @@ void TestScheduler::test_CalculateNextRebootOnSameDayPassed()
     QDateTime next_reboot = MyScheduler->getNextDatetime();
 
     QVERIFY(test_future < next_reboot);
+    QVERIFY(MyScheduler->getNextDatetimeInMSecs() > 0);
     QCOMPARE(next_reboot.time(), QTime(4, 36, 0));
 }
 
@@ -93,6 +96,7 @@ void TestScheduler::test_CalculateNextRebootOnSameDay()
     QDateTime next_reboot = MyScheduler->getNextDatetime();
 
     QCOMPARE(monday_at_4.addSecs(60 * 36), next_reboot); // the next reboot must be in 36 minutes.
+    QVERIFY(MyScheduler->getNextDatetimeInMSecs() > 0);
     QCOMPARE(next_reboot.time(), QTime(4, 36, 0));
 }
 static TestScheduler TEST_SCHEDULER;
