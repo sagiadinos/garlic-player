@@ -8,6 +8,7 @@
 #include "v2/files.h"
 #include "v2/app.h"
 #include "v2/task.h"
+#include <staticfilecontroller.h>
 
 using namespace stefanfrings;
 
@@ -17,7 +18,7 @@ namespace RestApi
     {
             Q_OBJECT
         public:
-            RequestMapper(LibFacade *lf, QObject* parent = Q_NULLPTR);
+            RequestMapper(LibFacade *lf, QSettings *HttpdSettings, QObject* parent = Q_NULLPTR);
             void service(HttpRequest& request, HttpResponse& response);
         private:
             LibFacade               *MyLibFacade;
@@ -26,11 +27,13 @@ namespace RestApi
             RestApi::V2::Files       MyFilesController;
             RestApi::V2::App         MyAppController;
             RestApi::V2::Task        MyTaskController;
+            StaticFileController*    MyStaticFileController;
             void queryOauth(HttpRequest &request, HttpResponse &response);
             void querySystem(HttpRequest &request, HttpResponse &response, QStringList path);
             void queryFiles(HttpRequest &request, HttpResponse &response, QStringList path);
             void queryApp(HttpRequest &request, HttpResponse &response, QStringList path);
             void queryTask(HttpRequest &request, HttpResponse &response, QStringList path);
+            void queryPlayerCache(HttpRequest &request, HttpResponse &response);
 
             void respond(HttpResponse& response, QString json);
             void respondImage(HttpResponse& response, QString file_path);

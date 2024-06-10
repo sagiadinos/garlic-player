@@ -28,6 +28,8 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade, PlayerConfigurati
     MyPlayerConfiguration  = pc;
     MyRegionsList          = new RegionsList(this);
     MyLauncher.reset(new Launcher());
+    MyLauncher.data()->toogleLauncher(MyPlayerConfiguration->hasLauncher());
+
 }
 
 MainWindow::~MainWindow()

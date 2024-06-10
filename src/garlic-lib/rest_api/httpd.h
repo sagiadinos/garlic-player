@@ -3,12 +3,6 @@
 
 #include "lib_facade.h"
 #include <QCoreApplication>
-#include "httplistener.h"
-#include "request_mapper.h"
-#include "files/free_disc_space.h"
-
-
-using namespace stefanfrings;
 
 namespace RestApi
 {
@@ -19,7 +13,10 @@ namespace RestApi
             explicit Httpd(LibFacade *lf, QObject *parent = nullptr);
             void init(QCoreApplication *app);
         private:
-            LibFacade          *MyLibFacade;
+            void        determineHttpdSettings(QSettings *all_settings);
+            void        initDefaultSettings();
+            QSettings   HttpdSettings;
+            LibFacade   *MyLibFacade;
     };
 }
 #endif // HTTPD_H

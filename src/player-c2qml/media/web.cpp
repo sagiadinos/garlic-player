@@ -75,7 +75,10 @@ QString Web::sanitizeUri(QString uri)
     // add file scheme if neccessary
     if (uri.at(0) == "/")
     {
-        uri = "file://" + uri;
+        QString prefix_to_remove = MyMainConfiguration->getPaths("cache");
+        uri.remove(prefix_to_remove);
+
+        uri = "http://localhost:8080/cache/" + uri;
     }
     return uri;
 }

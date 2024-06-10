@@ -40,7 +40,19 @@ StaticFileController::StaticFileController(const QSettings *settings, QObject* p
 
 void StaticFileController::service(HttpRequest &request, HttpResponse &response)
 {
-    QByteArray path=request.getPath();
+//    QByteArray path=request.getPath();
+    QString originalString = request.getPath();
+    QByteArray path;
+    if (originalString.contains("cache"))
+    {
+        QStringList parts = originalString.split("/");
+        parts.removeAt(1);
+        QString newString = parts.join("/");
+        path = newString.toLatin1();
+    }
+    else
+        path = originalString.toLatin1();
+
     // Check if we have the file in cache
     qint64 now=QDateTime::currentMSecsSinceEpoch();
     mutex.lock();

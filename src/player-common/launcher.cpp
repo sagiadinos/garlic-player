@@ -2,11 +2,13 @@
 
 Launcher::Launcher(QObject *parent) : QObject(parent)
 {
-
 }
 
 void Launcher::rebootOS(QString task_id)
 {
+    if (!has_launcher)
+        return;
+
 #if defined  Q_OS_ANDROID
     QAndroidJniObject java_task_id = QAndroidJniObject::fromString(task_id);
     QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
@@ -19,6 +21,8 @@ void Launcher::rebootOS(QString task_id)
 
 void Launcher::installSoftware(QString file_path)
 {
+    if (!has_launcher)
+        return;
 #if defined  Q_OS_ANDROID
    QAndroidJniObject java_file_path = QAndroidJniObject::fromString(file_path);
    QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity",
@@ -30,6 +34,8 @@ void Launcher::installSoftware(QString file_path)
 
 void Launcher::toggleScreenActivity(bool is_on)
 {
+    if (!has_launcher)
+        return;
 
 #if defined  Q_OS_ANDROID
     if (is_on)
@@ -62,6 +68,8 @@ void Launcher::toggleScreenActivity(bool is_on)
 
 void Launcher::activateDeepStandby(QString wakeup)
 {
+    if (!has_launcher)
+        return;
 
 #if defined  Q_OS_ANDROID
     QAndroidJniObject seconds_to_wakeup = QAndroidJniObject::fromString(wakeup);
@@ -80,7 +88,15 @@ void Launcher::activateDeepStandby(QString wakeup)
 
 void Launcher::sendClosePlayerCorrect()
 {
+    if (!has_launcher)
+        return;
+
 #if defined  Q_OS_ANDROID
     QAndroidJniObject::callStaticMethod<void>("com/sagiadinos/garlic/player/java/GarlicActivity", "closePlayerCorrect");
 #endif
+}
+
+void Launcher::toogleLauncher(bool has)
+{
+    has_launcher = has;
 }

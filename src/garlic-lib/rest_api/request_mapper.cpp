@@ -17,20 +17,29 @@
 *************************************************************************************/
 #include "request_mapper.h"
 
-RestApi::RequestMapper::RequestMapper(LibFacade *lf, QObject* parent) : HttpRequestHandler(parent)
+RestApi::RequestMapper::RequestMapper(LibFacade *lf, QSettings *HttpdSettings, QObject* parent) : HttpRequestHandler(parent)
 {
-    MyLibFacade      = lf;
+    MyLibFacade          = lf;
+    MyStaticFileController = new  StaticFileController(HttpdSettings, parent);
 }
 
 void RestApi::RequestMapper::service(HttpRequest& request, HttpResponse& response)
 {
     QStringList sl  = QString(request.getPath()).split('/');
     qDebug() << sl;
-    if (sl.size() < 4 || sl.at(1) != "v2")
+    if (sl.size() < 4 || (sl.at(1) != "v2" && sl.at(1) != "cache"))
     {
         responseNotFound(response);
         return;
     }
+
+    if (sl.at(1) == "cache")
+    {
+        queryPlayerCache(request, response);
+        return;
+    }
+
+
     if (sl.at(2) == "oauth2")
     {
         queryOauth(request, response);
@@ -239,6 +248,11 @@ void RestApi::RequestMapper::queryTask(HttpRequest &request, HttpResponse &respo
     }
 */    else
         responseNotFound(response);
+}
+
+void RestApi::RequestMapper::queryPlayerCache(HttpRequest &request, HttpResponse &response)
+{
+    MyStaticFileController->service(request,response);
 }
 
 void RestApi::RequestMapper::respond(HttpResponse& response, QString json)

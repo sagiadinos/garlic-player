@@ -1,8 +1,8 @@
 #ifndef BASE_MEDIA_H
 #define BASE_MEDIA_H
 
-#include <QQuickItem> // interates QQmlComponent
 #include <QScopedPointer>
+#include "QtQuick/qquickitem.h"
 #include "smilparser/media/base_media.h"
 #include "tools/logger.h"
 #include "../player-common/launcher.h"
