@@ -28,6 +28,8 @@ LibFacade::LibFacade(QObject *parent) : QObject(parent)
     QList<QNetworkProxy> listOfProxies = QNetworkProxyFactory::systemProxyForQuery(npq);
     foreach (QNetworkProxy p, listOfProxies)
        qDebug() << "hostname" << p.hostName();
+
+    connect(&RebootTimer, SIGNAL(reboot(QString)), this, SLOT(reboot(QString)));
 }
 
 LibFacade::~LibFacade()
@@ -151,7 +153,12 @@ void LibFacade::loadIndex()
     // Start with this only when it is absolutly sure that in the player component is no activity anymore.
     if (!MyIndexManager.data()->load())
     {
-        reboot("index_broken");
+        // Why we are here?
+        // index in cache? => wait
+        // index is corrupt and there is no ongoing download process for a new index? =>Y reboot
+        if (MyIndexManager.data()->getError() == Files::IndexManager::INDEX_CORRUPT && !MyIndexManager.data()->isIndexInDownload())
+            reboot("index_broken");
+
         return;
     }
 
@@ -217,7 +224,6 @@ void LibFacade::configureRebootTimer()
     {
         RebootTimer.setRebootTime(RebootScheduler.data()->getNextDatetimeInMSecs());
     }
-    connect(&RebootTimer, SIGNAL(reboot(QString)), this, SLOT(reboot(QString)));
 }
 
 void LibFacade::timerEvent(QTimerEvent *event)
