@@ -12,12 +12,13 @@ Changelog
 
 2. Improvements
         * Using Qt5.15.14
+		* call widgets index.html via integrated httpd
+		* reboot when index.smil is corrupt and no download in progress
         * multiabi builds for Android
-        * fix cache file names when tehre are url params
+        * fix cache file names when there are url params
         * start to replace QXmlPatterns with XQilla for switching to Qt6
         * new build scripts
-        * updated AVPalyer
-        * look first for an updated image beefore starting old index
+        * updated AVPlayer
         * fix Taskscheduler errors
         * fixes for vlc and Windows
 

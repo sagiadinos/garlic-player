@@ -27,8 +27,12 @@ MainWindow::MainWindow(TScreen *screen, LibFacade *lib_facade)
     connect(MyLibFacade, SIGNAL(stopShowMedia(BaseMedia*)), this, SLOT(stopShowMedia(BaseMedia*)));
     connect(MyLibFacade, SIGNAL(resumeShowMedia(BaseMedia*)), this, SLOT(resumeShowMedia(BaseMedia*)));
     connect(MyLibFacade, SIGNAL(pauseShowMedia(BaseMedia*)), this, SLOT(pauseShowMedia(BaseMedia*)));
-    connect(MyLibFacade, SIGNAL(screenshot(QString)), this, SLOT(takeScreenshot(QString)));
     connect(MyLibFacade, SIGNAL(readyForPlaying()), this, SLOT(prepareParsing()));
+
+    connect(MyLibFacade, SIGNAL(rebootOS(QString)), this, SLOT(rebootOS(QString)));
+    connect(MyLibFacade, SIGNAL(installSoftware(QString)), this, SLOT(installSoftware(QString)));
+    connect(MyLibFacade, SIGNAL(screenshot(QString)), this, SLOT(takeScreenShot(QString)));
+
     setCursor(Qt::BlankCursor);
     setCentralWidget(centralWidget);
     MyRegionsList = new RegionsList(this);
@@ -204,6 +208,17 @@ void MainWindow::prepareParsing()
     MyRegionsList->create(MyLibFacade, QSize(width(), height()));
     MyLibFacade->beginSmilPlaying(); // begin playing not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
+
+void MainWindow::rebootOS(QString task_id)
+{
+    MyLauncher.data()->rebootOS(task_id);
+}
+
+void MainWindow::installSoftware(QString file_path)
+{
+    MyLauncher.data()->installSoftware(file_path);
+}
+
 
 void MainWindow::takeScreenshot(QString file_path)
 {

@@ -65,6 +65,8 @@ class MainWindow : public QMainWindow
     protected slots:
         void                      prepareParsing();
         void                      takeScreenshot(QString file_path);
+        void                      rebootOS(QString task_id);
+        void                      installSoftware(QString file_path);
         void                      startShowMedia(BaseMedia *media);
         void                      stopShowMedia(BaseMedia *media);
         void                      resumeShowMedia(BaseMedia *media);
