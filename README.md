@@ -30,7 +30,7 @@ You are able to play local and remote (via http) SMIL files with the features de
  - Android Armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2, 7.1, 9 and 10)
  - Windows 64Bit: 7, 8 and 10
  - MacOS 64Bit (Intel): High Sierra, Mojave, Catalina and Big Sur 
- - MacOS M1: Big Sur (via Rosetta 2 and Universaql Binary)
+ - MacOS M1: Big Sur, Ventura (Universal Binary)
  - iOS 14.4.2 (experimental)
 
 For Android and iOS player-c2qml is needed, cause only QML based multimedia is supported on this operating systems.

@@ -51,6 +51,17 @@ void Files::IndexManager::lookUpForUpdatedIndex()
     }
 }
 
+int Files::IndexManager::getError() const
+{
+    return error;
+}
+
+bool Files::IndexManager::isIndexInDownload() const
+{
+    return MyDownloader->isRequestInProgress();
+}
+
+
 bool Files::IndexManager::load()
 {
     if (src_index_path == "")
@@ -122,6 +133,7 @@ bool Files::IndexManager::loadLocal(QString local_path)
 
     if (!MyIndexModel->loadDocument(local_path))
     {
+        error = INDEX_CORRUPT;
         return false;
     }
     return true;

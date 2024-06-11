@@ -42,6 +42,7 @@ class Downloader : public TNetworkAccess
         //Getter/Setter
         QFileInfo  getLocalFileInfo();
         void       setLocalFileInfo(const QFileInfo &value) {local_file_info = value;}
+        bool       isRequestInProgress() const;
 
     protected:
         QFileInfo               local_file_info;
@@ -64,6 +65,8 @@ class Downloader : public TNetworkAccess
         void                    finishedHeadRedirectRequest(QNetworkReply *reply);
         void                    doDownloadSuccessFul();
         void                    doDownloadError(QNetworkReply *reply);
+    private:
+        bool is_request_in_progress = false;
     signals:
         void                    notmodified(TNetworkAccess *);
         void                    notcacheable(TNetworkAccess *);

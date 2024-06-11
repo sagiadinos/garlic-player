@@ -29,6 +29,7 @@ namespace Files
     {
             Q_OBJECT
         public:
+            const static int  INDEX_CORRUPT  = 1;
             explicit IndexManager(DB::InventoryTable *it, MainConfiguration *config, FreeDiscSpace *fds, QObject *parent=Q_NULLPTR);
             void            init(QString src);
             bool            load();
@@ -39,7 +40,8 @@ namespace Files
             QDomElement     getHead();
             QDomElement     getBody();
             void            lookUpForUpdatedIndex();
-
+            int getError() const;
+            bool isIndexInDownload() const;
         protected:
 
             int             refresh_time = 0;
@@ -56,6 +58,7 @@ namespace Files
 
         private:
             bool is_loaded = false;
+            int  error = 0;
         signals:
             void readyForLoading();
 

@@ -36,6 +36,7 @@ void Downloader::processFile(QUrl url, QFileInfo fi)
 {
     setRemoteFileUrl(url);
     setLocalFileInfo(fi);
+    is_request_in_progress = true;
     manager_head.data()->head(prepareNetworkRequest(remote_file_url));
     return;
 }
@@ -75,6 +76,7 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
 void Downloader::finishedHeadRedirectRequest(QNetworkReply *reply)
 {
     qInfo(Develop) << "finished Redirect Request for " << remote_file_url.toString();
+    is_request_in_progress = false;
     if (reply->error() != QNetworkReply::NoError)
     {
         handleNetworkError(reply);
@@ -95,6 +97,7 @@ void Downloader::checkStatusCode(QNetworkReply *reply, int status_code)
         case 304:
         default:
             qWarning(Develop) << "status code: " << status_code << "not handled for " << remote_file_url.toString();
+            is_request_in_progress = false;
             emit notmodified(this);
         break;
     }
@@ -111,6 +114,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
     if (content_type.contains("text/html")  || content_type.contains("application/xhtml+xml"))
     {
+        is_request_in_progress = false;
         emit notcacheable(this);
         reply->deleteLater();
         return;
@@ -127,6 +131,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
         qCritical(ContentManager) << Logger::getInstance().createEventLogMetaData("FETCH_FAILED",list);
         reply->deleteLater();
+        is_request_in_progress = false;
         emit failed(this);
         return;
     }
@@ -156,6 +161,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         )
     {
         qDebug() << remote_file_url.toString() << " no need for update";
+        is_request_in_progress = false;
         emit notmodified(this);
         reply->deleteLater();
         return;
@@ -165,7 +171,6 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
     if (calc > 0 && !MyFreeDiscSpace->freeDiscSpace(calc))
     {
         handleNetworkError(reply);
-        emit failed(this);
         return;
     }
 
@@ -193,7 +198,7 @@ void Downloader::startDownload(QNetworkReply *reply)
     MyFileDownloader.reset(new FileDownloader(manager_get.data(), MyConfiguration, this));
     connect(MyFileDownloader.data(), SIGNAL(downloadSuccessful()), SLOT(doDownloadSuccessFul()));
     connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply*)), SLOT(doDownloadError(QNetworkReply*)));
-    //
+
     MyFileDownloader->startDownload(reply->url(), local_file_info.absoluteFilePath(), remote_size);
 }
 
@@ -208,12 +213,18 @@ void Downloader::doDownloadSuccessFul()
     if (MyInventoryTable != Q_NULLPTR)
         MyInventoryTable->updateFileStatus(remote_file_url.toString(), DB::COMPLETE);
 
+    is_request_in_progress = false;
     emit succeed(this);
 }
 
 void Downloader::doDownloadError(QNetworkReply *reply)
 {
     handleNetworkError(reply);
+}
+
+bool Downloader::isRequestInProgress() const
+{
+    return is_request_in_progress;
 }
 
 bool Downloader::validContentType(QString content_type)
@@ -266,6 +277,7 @@ void Downloader::handleNetworkError(QNetworkReply *reply)
 
     qWarning(Develop) << " Download failed " << remote_file_url.toString();
     reply->deleteLater();
+    is_request_in_progress = false;
     emit failed(this);
 }
 
