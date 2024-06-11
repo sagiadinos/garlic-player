@@ -1,6 +1,6 @@
 #include "ref_command.h"
 
-PlayerRefCommand::PlayerRefCommand(MainConfiguration *config, QObject *parent) : PlayerBaseMedia(config, parent)
+PlayerRefCommand::PlayerRefCommand(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : PlayerBaseMedia(r_id, lc, config, parent)
 {
 
 }
@@ -27,16 +27,10 @@ void PlayerRefCommand::play()
     QString path = SmilMedia->getLoadablePath();
     if (path.toLower() == "adapi:blankscreen")
     {
-/*        if (MyMainConfiguration->getStandbyMode() == MyMainConfiguration->STANDBY_MODE_PARTIALLY)
+        if (MyMainConfiguration->getStandbyMode() == MyMainConfiguration->STANDBY_MODE_PARTIALLY)
             MyLauncher->toggleScreenActivity(false);
         else if (MyMainConfiguration->getStandbyMode() == MyMainConfiguration->STANDBY_MODE_DEEP)
             MyLauncher->activateDeepStandby(QString::number(SmilMedia->determineNextEndTime()));
-  */
-        if (MyMainConfiguration->getStandbyMode() == MyMainConfiguration->STANDBY_MODE_DEEP)
-        {
-            QString s = QString::number(SmilMedia->determineNextEndTime());
-            qDebug() << s;
-        }
 
         if (SmilMedia->getLogContentId() != "")
             setStartTime();

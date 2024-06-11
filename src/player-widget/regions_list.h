@@ -10,7 +10,7 @@ class RegionsList : public QObject
 public:
     explicit RegionsList(QObject *parent = nullptr);
     ~RegionsList();
-    void                      create(LibFacade *MyLibFacade, QSize rs);
+    void                      create(LibFacade *MyLibFacade, Launcher *lc, QSize rs);
     void                      remove();
     void                      resize(QSize rs);
     QStringList               select(QString region_name);

@@ -9,7 +9,7 @@ class PlayerVideo : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        PlayerVideo(MainConfiguration *config, QObject *parent = nullptr);
+        PlayerVideo(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent = nullptr);
         ~PlayerVideo();
         void              loadMedia(BaseMedia *media, Region *reg);
         void              restart();

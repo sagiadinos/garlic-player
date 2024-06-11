@@ -20,7 +20,7 @@
 
 using namespace MediaParser;
 
-PlayerAudio::PlayerAudio(MainConfiguration *config, QObject *parent) : PlayerBaseMedia(config, parent)
+PlayerAudio::PlayerAudio(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : PlayerBaseMedia(r_id, lc, config, parent)
 {
     connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
 }

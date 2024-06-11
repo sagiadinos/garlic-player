@@ -9,7 +9,7 @@
     class PlayerImage : public PlayerBaseMedia
     {
             Q_OBJECT
-        public:            explicit      PlayerImage(MainConfiguration *config, QObject *parent = nullptr);
+        public:            explicit      PlayerImage(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent = nullptr);
             ~PlayerImage();
             void          loadMedia(BaseMedia *media, Region *reg);
             void          restart();

@@ -22,8 +22,11 @@
 #include "media/ref_command.h"
 #include "media/web.h"
 
-MediaFactory::MediaFactory(QObject *parent) : QObject(parent)
+MediaFactory::MediaFactory(QString id, Launcher *l, MainConfiguration *config, QObject *parent) : QObject(parent)
 {
+    region_name     = id;
+    MyLauncher      = l;
+    MyMainConfiguration = config;
 }
 
 PlayerBaseMedia *MediaFactory::create(MainConfiguration *config, BaseMedia *media)
@@ -31,37 +34,37 @@ PlayerBaseMedia *MediaFactory::create(MainConfiguration *config, BaseMedia *medi
     QString type   = media->objectName();
     if (type == "TImage")
     {
-        MyImage = new PlayerImage(config, this);
+        MyImage = new PlayerImage(region_name, MyLauncher, config, this);
         return MyImage;
     }
     else if (type == "TBrush")
     {
-        MyBrush = new PlayerBrush(config, this);
+        MyBrush = new PlayerBrush(region_name, MyLauncher,config, this);
         return MyBrush;
     }
     else if (type == "TVideo")
     {
-        MyVideo = new PlayerAudio(config, this);
+        MyVideo = new PlayerAudio(region_name, MyLauncher, config, this);
         return MyVideo;
     }
     else if (type == "TAudio")
     {
-        MyAudio = new PlayerAudio(config, this);
+        MyAudio = new PlayerAudio(region_name, MyLauncher, config, this);
         return MyAudio;
     }
     else if (type == "TWeb")
     {
-        MyWeb = new PlayerWeb(config, this);
+        MyWeb = new PlayerWeb(region_name, MyLauncher, config, this);
         return MyWeb;
     }
     else if (type == "TWidget")
     {
-        MyWeb = new PlayerWeb(config, this);
+        MyWeb = new PlayerWeb(region_name, MyLauncher, config, this);
         return MyWeb;
     }
     else if (type == "TRefCommand")
     {
-        MyRefCommand = new PlayerRefCommand(config, this);
+        MyRefCommand = new PlayerRefCommand(region_name, MyLauncher, config, this);
         return MyRefCommand;
     }
     else

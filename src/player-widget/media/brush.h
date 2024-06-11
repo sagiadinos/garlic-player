@@ -9,7 +9,7 @@ class PlayerBrush : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        PlayerBrush(MainConfiguration *config, QObject *parent);
+        PlayerBrush(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent);
         ~PlayerBrush();
         void          loadMedia(BaseMedia *media, Region *reg);
         void          restart();

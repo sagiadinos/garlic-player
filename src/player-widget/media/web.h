@@ -12,7 +12,7 @@ class PlayerWeb : public PlayerBaseMedia
 {
     Q_OBJECT
     public:
-        PlayerWeb(MainConfiguration *config, QObject *parent = nullptr);
+        PlayerWeb(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent = nullptr);
         ~PlayerWeb();
         void            loadMedia(BaseMedia *media, Region *reg);
         void            restart();

@@ -21,7 +21,7 @@
 using namespace MediaParser;
 
 
-PlayerVideo::PlayerVideo(MainConfiguration *config, QObject *parent) : PlayerBaseMedia(config, parent)
+PlayerVideo::PlayerVideo(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : PlayerBaseMedia(r_id, lc, config, parent)
 {
     connect(&MediaDecoder, SIGNAL(finished()), this, SLOT(finished()));
 

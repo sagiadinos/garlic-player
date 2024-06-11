@@ -18,7 +18,7 @@
 #include "media/image.h"
 
 
-PlayerImage::PlayerImage(MainConfiguration *config, QObject *parent) : PlayerBaseMedia(config, parent)
+PlayerImage::PlayerImage(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : PlayerBaseMedia(r_id, lc, config, parent)
 {
 }
 

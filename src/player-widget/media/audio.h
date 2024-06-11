@@ -9,7 +9,7 @@ class PlayerAudio : public PlayerBaseMedia
 {
         Q_OBJECT
     public:
-        explicit PlayerAudio(MainConfiguration *config, QObject *parent = nullptr);
+        explicit PlayerAudio(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent = nullptr);
         ~PlayerAudio();
         void          loadMedia(BaseMedia *media, Region *reg);
         void          restart();

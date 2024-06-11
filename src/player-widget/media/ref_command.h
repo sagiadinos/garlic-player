@@ -7,7 +7,7 @@ class PlayerRefCommand : public PlayerBaseMedia
 {
     Q_OBJECT
 public:
-    explicit PlayerRefCommand(MainConfiguration *config, QObject *parent = nullptr);
+    explicit PlayerRefCommand(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent = nullptr);
     ~PlayerRefCommand();
     void          loadMedia(BaseMedia *media, Region *reg);
     void          restart();

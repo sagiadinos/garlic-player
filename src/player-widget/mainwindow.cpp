@@ -205,7 +205,7 @@ void MainWindow::prepareParsing()
     MyRegionsList->remove(); // Must be done first to be clear that no media is loaded or played anymore
 
     setStyleSheet("background-color:"+MyLibFacade->getHead()->getRootBackgroundColor()+";");
-    MyRegionsList->create(MyLibFacade, QSize(width(), height()));
+    MyRegionsList->create(MyLibFacade, MyLauncher.data(), QSize(width(), height()));
     MyLibFacade->beginSmilPlaying(); // begin playing not before Layout ist build to prevent crash in MainWindow::startShowMedia
 }
 

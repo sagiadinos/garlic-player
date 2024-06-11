@@ -17,10 +17,11 @@
 *************************************************************************************/
 #include "player_base_media.h"
 
-PlayerBaseMedia::PlayerBaseMedia(MainConfiguration *config, QObject *parent) : QObject(parent)
+PlayerBaseMedia::PlayerBaseMedia(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : QObject(parent)
 {
     MyMainConfiguration = config;
-}
+    region_id  = r_id;
+    MyLauncher = lc;}
 
 BaseMedia *PlayerBaseMedia::getSmilMedia()
 {

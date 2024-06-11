@@ -56,7 +56,7 @@ void TRegion::startShowMedia(BaseMedia *media)
         return;
     }
 
-    MyMedia = MyMediaFactory.create(MyLibFacade->getConfiguration(), media);
+    MyMedia = MyMediaFactory.data()->create(MyLibFacade->getConfiguration(), media);
     if (MyMedia == Q_NULLPTR)
         return;
 
@@ -169,10 +169,11 @@ void TRegion::setRootSize(int w, int h)
     resizeGeometry();
 }
 
-void TRegion::setRegion(Region r)
+void TRegion::setRegion(Region r, Launcher *lc, MainConfiguration *config)
 {
     region = r;
     determineStylesheets();
+    MyMediaFactory.reset(new MediaFactory(r.regionName, lc, config, this));
 }
 
 void TRegion::resizeGeometry()

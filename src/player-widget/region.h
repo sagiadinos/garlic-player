@@ -43,7 +43,7 @@ public:
     ~TRegion();
     void                paintEvent(QPaintEvent *);
     void                setRootSize(int w, int h);
-    void                setRegion(Region region);
+    void                setRegion(Region region, Launcher *lc, MainConfiguration *config);
     void                startShowMedia(BaseMedia *media);
     void                stopShowMedia(BaseMedia *media);
     void                resumeShowMedia(BaseMedia *media);
@@ -61,7 +61,7 @@ protected:
     QScopedPointer<QStackedLayout>          layout;
     PlayerBaseMedia      *MyMedia = Q_NULLPTR;
     QMap<QString, PlayerBaseMedia *>    MyMediaList;
-    MediaFactory          MyMediaFactory;
+    QScopedPointer<MediaFactory>        MyMediaFactory;
     bool                  has_background_image = false;
     void                  resizeGeometry();
     void                  secureStopDisplayingMedia(PlayerBaseMedia *TmpMedia);

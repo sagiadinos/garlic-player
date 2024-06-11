@@ -10,7 +10,7 @@ RegionsList::~RegionsList()
 }
 
 
-void RegionsList::create(LibFacade *MyLibFacade, QSize rs)
+void RegionsList::create(LibFacade *MyLibFacade, Launcher *lc, QSize rs)
 {
     root_size = rs;
     QList<Region> *region_list = MyLibFacade->getHead()->getLayout();
@@ -18,7 +18,7 @@ void RegionsList::create(LibFacade *MyLibFacade, QSize rs)
     for (int i = 0; i < region_list->length(); i++)
     {
         j = regions_list.insert(region_list->at(i).id, new TRegion(MyLibFacade, (QWidget *) parent()));
-        regions_list[j.key()]->setRegion(region_list->at(i));
+        regions_list[j.key()]->setRegion(region_list->at(i), lc, MyLibFacade->getConfiguration());
         regions_list[j.key()]->setRootSize(root_size.width(), root_size.height());
         regions_list[j.key()]->show();
         QString region_name = region_list->at(i).regionName;

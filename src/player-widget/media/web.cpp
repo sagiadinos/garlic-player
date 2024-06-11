@@ -16,13 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "web.h"
-#include "smilparser/media/web.h"
 using namespace MediaParser;
 
 
 #include "QtWebEngineWidgets/qwebengineview.h"
 
-PlayerWeb::PlayerWeb(MainConfiguration *config, QObject *parent) : PlayerBaseMedia(config, parent)
+PlayerWeb::PlayerWeb(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : PlayerBaseMedia(r_id, lc, config, parent)
 {
     browser   = new QWebEngineView();
     connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
