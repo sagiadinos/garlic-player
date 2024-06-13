@@ -1,7 +1,7 @@
 #ifndef SMIL_H
 #define SMIL_H
 
-#include "base.h"
+#include "base.hpp"
 
 class Smil : public TBase
 {

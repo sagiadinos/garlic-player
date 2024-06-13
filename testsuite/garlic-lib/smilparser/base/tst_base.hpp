@@ -17,33 +17,27 @@
 *************************************************************************************/
 #include "base_testsuite.hpp"
 #include <QtTest/QtTest>
-#include <gmock/gmock.h>
-#include "tools/i_settings.hpp"
 
-class MockSettings : public ISettings
+#include "garlic-lib/smilparser/base/derived_base.hpp"
+
+
+class TestTBase : public BaseTestSuite
 {
-    public:
-        MOCK_METHOD(QString, value, (const QString &key), (const, override));
-        MOCK_METHOD(void, setValue, (const QString &key, const QVariant &value), (override));
-        MOCK_METHOD(QSettings*, getOriginal, (), (const, override));
+    Q_OBJECT
+
+public:
+    TestTBase(){}
+
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+    void testDefault();
+    void testParseID();
+    void testPreloadParse();
+    void testSetBaseAttributesSMIL2();
+    void testSetBaseAttributesSMIL3();
+
+private:
+    DerivedBase *TestBase;
 };
 
-class TestMainConfiguration : public BaseTestSuite
-{
-        Q_OBJECT
-    public:
-        TestMainConfiguration(){}
-
-    private Q_SLOTS:
-        void test_init();
-        void test_determineUserAgent();
-        void test_determineBasePath();
-        void test_validateContentUrl();
-        void test_determineIndexUriWithParameter();
-        void test_determineIndexUriNoParam();
-        void test_determineIndexUriEmpty();
-
-    private:
-        MockSettings      mockSettings;
-
-};

@@ -41,13 +41,13 @@ public:
     explicit TBase(QObject *parent);
     virtual void          preloadParse(QDomElement element) = 0;
 
-            QString       getID(){return id;}
-            QString       getTitle(){return title;}
-            QString       getLang(){return lang;}
-            QString       getClass(){return a_class;}
-            QDomElement   getRootElement(){return root_element;}
+            QString       getID();
+            QString       getTitle();
+            QString       getLang();
+            QString       getClass();
+            QDomElement   getRootElement();
     static  QString       parseID(QDomElement element);
-            TBase        *getParentContainer(){return parent_container;}
+            TBase        *getParentContainer();
 protected:
             TBase        *parent_container;
             SMIL_TAG      parent_tag;

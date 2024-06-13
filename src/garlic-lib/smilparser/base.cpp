@@ -16,12 +16,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#include "base.h"
+#include "base.hpp"
 
 TBase::TBase(QObject *parent) : QObject(parent)
 {
     setParent(parent);
     parent_container = qobject_cast<TBase *> (parent);
+}
+
+QString TBase::getID()
+{
+    return id;
+}
+
+QString TBase::getTitle()
+{
+    return title;
+}
+
+QString TBase::getLang()
+{
+    return lang;
+}
+
+QString TBase::getClass()
+{
+    return a_class;
+}
+
+QDomElement TBase::getRootElement()
+{
+    return root_element;
 }
 
 
@@ -37,6 +62,11 @@ QString TBase::parseID(QDomElement element)
         ret = element.tagName()+"_"+QString::number(element.lineNumber()) + "_" + QString::number(element.columnNumber());
     }
     return ret;
+}
+
+TBase *TBase::getParentContainer()
+{
+    return parent_container;
 }
 
 void TBase::setBaseAttributes()

@@ -26,6 +26,7 @@ MATCHER_P(IsQVariantOfType, type, "")
 {
     return arg.type() == type;
 }
+
 void TestMainConfiguration::test_init()
 {
     EXPECT_CALL(mockSettings, value(QString("uuid"))).Times(Exactly(1)).WillOnce(Return("the-uuid"));

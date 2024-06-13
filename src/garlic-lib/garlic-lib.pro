@@ -9,14 +9,22 @@ TEMPLATE  = lib
 CONFIG   += warn_on c++11 stl
 DEFINES  += QUAZIP_STATIC QT_DEPRECATED_WARNINGS
 TARGET    = garlic
-Release:DEFINES += QT_NO_DEBUG_OUTPUT
+CONFIG(release, debug|release) {
+    message("release")
+    DEFINES += QT_NO_DEBUG_OUTPUT
+}
 
 linux:!android {
+    message( "linux compile" )
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
     #temporary ToDO
     #  warning: template-id not allowed for constructor in C++20 in Arch gcc
     QMAKE_CXXFLAGS += -Wno-template-id-cdtor
+    CONFIG(debug, debug|release) {
+        message( "debug" )
+        CONFIG += gcov
+    }
 }
 
 ios{
@@ -25,6 +33,7 @@ ios{
 }
 
 android{
+    message( "android compile" )
     DESTDIR = ../libandroid/
     LIBS += -L../libandroid
     equals(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 14) {
@@ -54,6 +63,7 @@ android{
 }
 
 win32 {
+    message( "windows compile" )
     CONFIG += staticlib
     DESTDIR = ../lib/
     Release:LIBS += -L../lib -lquazip -lzlib
@@ -61,6 +71,7 @@ win32 {
 }
 
 macx {
+    message( "macOS compile" )
     # release version build as static lib
     release:CONFIG += staticlib
     QMAKE_APPLE_DEVICE_ARCHS = arm64 x86_64
@@ -201,6 +212,7 @@ HEADERS += \
     rest_api/v2/oauth.h \
     rest_api/v2/system_info.h \
     rest_api/v2/task.h \
+    smilparser/base.hpp \
     smilparser/body_parser.h \
     smilparser/conditional/adapi_wrapper.h \
     smilparser/conditional/expr.h \
@@ -248,7 +260,6 @@ HEADERS += \
     smilparser/container/container.h \
     smilparser/container/excl.h \
     smilparser/base_timings.h \
-    smilparser/base.h \
     smilparser/head/subscription.h \
     system_infos/disc_space.hpp \
     system_infos/i_storageinfo.hpp \

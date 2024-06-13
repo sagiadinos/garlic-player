@@ -33,7 +33,7 @@
 #include "reports/event_logs_manager.h"
 #include "reports/play_logs_manager.h"
 #include "reports/inventory_report_manager.h"
-#include "smilparser/base.h"
+#include "smilparser/base.hpp"
 /**
  * @brief The Region struct
  * All values are QString cause there could be a percent sign (%) in SMIL

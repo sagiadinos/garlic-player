@@ -185,8 +185,7 @@ macx {
     ICON = ../../deployment/macx/garlic-player.icns
 
     #libgarlic release is static compiled in osx
-    release:LIBS += -L../lib -lgarlic -lquazip -lzlib
-    debug:LIBS += -L../lib -lgarlic -lquazip -lzlib
+    LIBS += -L../lib -lgarlic -lquazip -lzlib
 }
 
 SOURCES += \
