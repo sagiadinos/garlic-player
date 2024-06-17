@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include "simple_timer.h"
+#include "simple_timer.hpp"
 
 Timings::SimpleTimer::SimpleTimer(QObject *parent)
 {
@@ -123,6 +123,11 @@ void Timings::SimpleTimer::stop()
 qint64 Timings::SimpleTimer::getParsedClock()
 {
     return MyClockValue.getTriggerInMSec();
+}
+
+qint64 Timings::SimpleTimer::getClockInMs()
+{
+    return clock_in_ms;
 }
 
 void Timings::SimpleTimer::recalculateTimeClock(qint64 negative_trigger)

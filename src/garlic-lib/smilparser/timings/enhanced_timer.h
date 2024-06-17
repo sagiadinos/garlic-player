@@ -20,8 +20,8 @@
 
 #include <QObject>
 #include <QList>
-#include "timings/simple_timer.h"
-#include "trigger/wallclock.h"
+#include "timings/simple_timer.hpp"
+#include "trigger/wallclock.hpp"
 #include "trigger/syncbase.h"
 #include "trigger/event.h"
 #include "trigger/accesskey.h"

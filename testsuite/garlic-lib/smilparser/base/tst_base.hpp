@@ -20,24 +20,23 @@
 
 #include "garlic-lib/smilparser/base/derived_base.hpp"
 
-
 class TestTBase : public BaseTestSuite
 {
-    Q_OBJECT
+        Q_OBJECT
 
-public:
-    TestTBase(){}
+    public:
+        TestTBase(){}
 
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-    void testDefault();
-    void testParseID();
-    void testPreloadParse();
-    void testSetBaseAttributesSMIL2();
-    void testSetBaseAttributesSMIL3();
+    private Q_SLOTS:
+        void initTestCase();
+        void cleanupTestCase();
+        void testDefault();
+        void testParseID();
+        void testPreloadParse();
+        void testSetBaseAttributesSMIL2();
+        void testSetBaseAttributesSMIL3();
 
-private:
-    DerivedBase *TestBase;
+    private:
+        DerivedBase *TestBase;
 };
 

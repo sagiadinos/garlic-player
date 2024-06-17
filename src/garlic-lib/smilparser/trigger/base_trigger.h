@@ -2,7 +2,7 @@
 #define BASETRIGGER_H
 
 #include <QObject>
-#include "clock_value.h"
+#include "clock_value.hpp"
 
 namespace Trigger
 {

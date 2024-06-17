@@ -15,35 +15,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include <QString>
-#include <QtTest>
-
-#include "smilparser/trigger/wallclock.h"
-
-
-class TestWallClock : public QObject
-{
-    Q_OBJECT
-public:
-    TestWallClock(){}
-
-private Q_SLOTS:
-    void test_parse1();
-    void test_parse2();
-    void test_parse3();
-    void test_parse4();
-    void test_parseDateWithWeekDay();
-    void test_getTimerTriggerWithDayPeriod();
-    void test_getTimerTriggerWithHourPeriod();
-    void test_getTimerTriggerWithSecondPeriod();
-    void test_getTimerTriggerWithoutPeriod();
-    void test_getTimerTriggerWithoutPeriodAndLeapYear();
-    void test_getTimerTriggerWithWeekPeriod1();
-    void test_getTimerTriggerWithWeekPeriod2();
-    void test_getTimerTriggerWithWeekPeriod3();
-    void test_getTimerTriggerWithMinutePeriodRepeated();
-    void test_getTimerTriggerWithSecondsPeriodRepeated();
-};
+#include "tst_wallclock.hpp"
+#include "smilparser/trigger/wallclock.hpp"
 
 void TestWallClock::test_parse1()
 {
@@ -375,6 +348,4 @@ void TestWallClock::test_getTimerTriggerWithSecondsPeriodRepeated()
 }
 
 
-QTEST_APPLESS_MAIN(TestWallClock)
-
-#include "tst_wallclock.moc"
+static TestWallClock TEST_WALL_CLOCK;

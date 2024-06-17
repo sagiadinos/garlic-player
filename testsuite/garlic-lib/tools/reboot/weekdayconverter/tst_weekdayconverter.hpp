@@ -3,11 +3,10 @@
 
 class TestWeekdayConverter : public BaseTestSuite
 {
-    Q_OBJECT
+        Q_OBJECT
+    public:
+        TestWeekdayConverter(){};
 
-public:
-    TestWeekdayConverter(){};
-
-private Q_SLOTS:
-    void test_ConvertWeekDay();
+    private Q_SLOTS:
+        void test_ConvertWeekDay();
 };

@@ -6,26 +6,26 @@ class Thread : public QThread
 {
     Q_OBJECT
 
-public:
-    Thread(LogFile *lf)
-    {
-        MyLogFile = lf;
-    }
-    qint64 getFileSize(){return file_size;}
-protected:
-    LogFile *MyLogFile;
-    qint64   file_size = 0;
-    void run()
-    {
-        QString str = "_ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
-        for (int i = 1; i < 16001; i++)
+    public:
+        Thread(LogFile *lf)
         {
-            QString write = QString::number(i) + str;
-            MyLogFile->write(write);
-            file_size += write.length()+1; // cause of the endl
+            MyLogFile = lf;
         }
+        qint64 getFileSize(){return file_size;}
+    protected:
+        LogFile *MyLogFile;
+        qint64   file_size = 0;
+        void run()
+        {
+            QString str = "_ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
+            for (int i = 1; i < 16001; i++)
+            {
+                QString write = QString::number(i) + str;
+                MyLogFile->write(write);
+                file_size += write.length()+1; // cause of the endl
+            }
 
-    }
+        }
 };
 
 class TestLogFile : public BaseTestSuite

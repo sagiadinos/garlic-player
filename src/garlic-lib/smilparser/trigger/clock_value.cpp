@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 
-#include "clock_value.h"
+#include "clock_value.hpp"
 
 ClockValue::ClockValue(QObject *parent) : QObject(parent)
 {

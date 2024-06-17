@@ -23,7 +23,7 @@
 #include <QTimer>
 #include <QDateTime>
 
-#include "clock_value.h"
+#include "clock_value.hpp"
 
 namespace Timings
 {
@@ -52,6 +52,7 @@ namespace Timings
         void         resume();
         void         stop();
         qint64       getParsedClock();
+        qint64       getClockInMs();
         int          getType(){return type;}
         void         recalculateTimeClock(qint64 negative_trigger);
         int          getRemaining() const;

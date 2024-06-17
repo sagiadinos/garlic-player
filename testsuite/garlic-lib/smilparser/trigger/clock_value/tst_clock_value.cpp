@@ -15,23 +15,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#include <QString>
-#include <QtTest>
 
-#include "smilparser/trigger/clock_value.h"
+#include "tst_clock_value.hpp"
 
-
-class TestClockValue : public QObject
-{
-    Q_OBJECT
-public:
-    TestClockValue(){}
-
-private Q_SLOTS:
-    void test_parse();
-    void test_negativeValues();
-    void test_RubbishSigned();
-};
+#include "smilparser/trigger/clock_value.hpp"
 
 void TestClockValue::test_parse()
 {
@@ -99,6 +86,4 @@ void TestClockValue::test_RubbishSigned()
     return;
 }
 
-QTEST_APPLESS_MAIN(TestClockValue)
-
-#include "tst_clock_value.moc"
+static TestClockValue TEST_CLOCK_VALUE;

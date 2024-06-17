@@ -16,6 +16,8 @@ enable_testing()
 
 include_directories(/home/niko/Source/github/garlic-player/src/garlic-lib/)
 include_directories(/home/niko/Source/github/garlic-player/src/garlic-lib/smilparser)
+include_directories(/home/niko/Source/github/garlic-player/src/garlic-lib/smilparser/trigger)
+include_directories(/home/niko/Source/github/garlic-player/src/garlic-lib/smilparser/timings)
 include_directories(/home/niko/Source/github/garlic-player/src/garlic-lib/tools)
 include_directories(/home/niko/Source/github/garlic-player/src/garlic-lib/tools/reboot)
 link_directories(/home/niko/Source/github/garlic-player/src/lib/)

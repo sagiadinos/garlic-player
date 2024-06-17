@@ -13,7 +13,7 @@ cd build-tests					# enter test dir
 # create the tests and run
 cmake ..
 make
-ctest -V
+ctest # -V
 
 ###########################################################################################################
 #

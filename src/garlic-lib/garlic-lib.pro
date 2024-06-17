@@ -241,17 +241,16 @@ HEADERS += \
     smilparser/timings/begin_timer.h \
     smilparser/timings/end_timer.h \
     smilparser/timings/enhanced_timer.h \
+    smilparser/timings/simple_timer.hpp \
     smilparser/timings/wrapper.h \
     smilparser/trigger/accesskey.h \
     smilparser/trigger/base_trigger.h \
-    smilparser/trigger/clock_value.h \
-    smilparser/timings/simple_timer.h \
+    smilparser/trigger/clock_value.hpp \
     smilparser/trigger/event.h \
     smilparser/trigger/iso_date.h \
     smilparser/trigger/notify.h \
     smilparser/trigger/syncbase.h \
     smilparser/trigger/target_trigger.h \
-    smilparser/trigger/wallclock.h \
     smilparser/container/tools/shuffle.h \
     smilparser/container/body.h \
     smilparser/container/par.h \
@@ -261,6 +260,7 @@ HEADERS += \
     smilparser/container/excl.h \
     smilparser/base_timings.h \
     smilparser/head/subscription.h \
+    smilparser/trigger/wallclock.hpp \
     system_infos/disc_space.hpp \
     system_infos/i_storageinfo.hpp \
     system_infos/memory.h \
