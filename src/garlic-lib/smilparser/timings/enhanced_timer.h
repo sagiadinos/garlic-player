@@ -24,7 +24,7 @@
 #include "trigger/wallclock.hpp"
 #include "trigger/syncbase.h"
 #include "trigger/event.h"
-#include "trigger/accesskey.h"
+#include "trigger/accesskey.hpp"
 #include "trigger/notify.h"
 #include "tools/logger.h"
 namespace Timings

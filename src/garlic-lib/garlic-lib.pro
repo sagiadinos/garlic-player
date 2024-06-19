@@ -243,7 +243,7 @@ HEADERS += \
     smilparser/timings/enhanced_timer.h \
     smilparser/timings/simple_timer.hpp \
     smilparser/timings/wrapper.h \
-    smilparser/trigger/accesskey.h \
+    smilparser/trigger/accesskey.hpp \
     smilparser/trigger/base_trigger.h \
     smilparser/trigger/clock_value.hpp \
     smilparser/trigger/event.h \

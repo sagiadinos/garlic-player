@@ -1,4 +1,4 @@
-#include "accesskey.h"
+#include "accesskey.hpp"
 
 AccessKey::AccessKey(QObject *parent) : Trigger::BaseTrigger(parent)
 {
