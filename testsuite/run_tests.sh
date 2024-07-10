@@ -23,7 +23,8 @@ ctest # -V
 
 
 SCRIPT_DIR=$(dirname $0)
-SRC_DIR="$SCRIPT_DIR/../../src/build-garlic-lib-Qt_5_15_14_System-Debug" # the directory containing the .gcno files (%{buildDir} in Qt Creator)
+
+SRC_DIR="$SCRIPT_DIR/../../src/build-garlic-lib-Qt_5_15_13_Desktop_Qt-Debug" # the directory containing the .gcno files (%{buildDir} in Qt Creator)
 COV_DIR="$SCRIPT_DIR/./coverage"				# stores the coverage results
 HTML_RESULTS="${COV_DIR}""/html"   				# stores the HTML files
 
