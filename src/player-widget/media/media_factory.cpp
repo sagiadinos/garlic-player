@@ -20,6 +20,7 @@
 #include "media/brush.h"
 #include "media/image.h"
 #include "media/ref_command.h"
+#include "media/video.h"
 #include "media/web.h"
 
 MediaFactory::MediaFactory(QString id, Launcher *l, MainConfiguration *config, QObject *parent) : QObject(parent)
@@ -44,7 +45,7 @@ PlayerBaseMedia *MediaFactory::create(MainConfiguration *config, BaseMedia *medi
     }
     else if (type == "TVideo")
     {
-        MyVideo = new PlayerAudio(region_name, MyLauncher, config, this);
+        MyVideo = new PlayerVideo(region_name, MyLauncher, config, this);
         return MyVideo;
     }
     else if (type == "TAudio")
