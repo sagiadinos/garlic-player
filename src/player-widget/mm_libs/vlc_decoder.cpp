@@ -43,7 +43,7 @@ VlcDecoder::VlcDecoder(QObject *parent) : QObject(parent)
 #if defined(Q_OS_MACX)
     const char *arguments[] = {""};
 #elif defined(Q_OS_UNIX)
-    const char *arguments[] = {"--avcodec-hw=any"}; // set hw acceleration especially for raspberry
+    const char *arguments[] = {""}; // seg fault in bullseye {"--avcodec-hw=any"}; // set hw acceleration especially for raspberry
 #else
     const char *arguments[] = {""};
 #endif

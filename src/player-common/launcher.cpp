@@ -1,4 +1,5 @@
 #include "launcher.h"
+#include <QDebug>
 
 Launcher::Launcher(QObject *parent) : QObject(parent)
 {
@@ -68,6 +69,8 @@ void Launcher::toggleScreenActivity(bool is_on)
 
 void Launcher::activateDeepStandby(QString wakeup)
 {
+
+    qDebug() << wakeup;
     if (!has_launcher)
         return;
 

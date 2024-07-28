@@ -3,37 +3,35 @@
 
 QtMMWidget::QtMMWidget(QWidget *parent) :QWidget(parent)
 {
-    VideoWidget = new QVideoWidget;
 }
 
 QtMMWidget::~QtMMWidget()
 {
-    delete VideoWidget;
 }
 
 QWidget  *QtMMWidget::getVideoWidget()
 {
-    return VideoWidget;
+    return &VideoWidget;
 }
 
 QVideoWidget *QtMMWidget::getVideoRenderer()
 {
-    return VideoWidget;
+    return &VideoWidget;
 }
 
 void QtMMWidget::ignoreAspectRatio()
 {
-    VideoWidget->setAspectRatioMode(Qt::IgnoreAspectRatio);
+    VideoWidget.setAspectRatioMode(Qt::IgnoreAspectRatio);
 }
 
 void QtMMWidget::keepAspectRatio()
 {
-    VideoWidget->setAspectRatioMode(Qt::KeepAspectRatio);
+    VideoWidget.setAspectRatioMode(Qt::KeepAspectRatio);
 }
 
 void QtMMWidget::keepAspectRatioByExpanding()
 {
-    VideoWidget->setAspectRatioMode(Qt::KeepAspectRatioByExpanding);
+    VideoWidget.setAspectRatioMode(Qt::KeepAspectRatioByExpanding);
 }
 
 #endif

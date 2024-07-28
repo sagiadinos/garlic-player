@@ -73,10 +73,14 @@ win32 {
 macx {
     message( "macOS compile" )
     # release version build as static lib
-    release:CONFIG += staticlib
+    CONFIG += staticlib
     QMAKE_APPLE_DEVICE_ARCHS = arm64 x86_64
     DESTDIR = ../lib/
     LIBS += -L../lib -lquazip -lzlib
+    CONFIG(debug, debug|release) {
+        message( "debug" )
+ #       CONFIG += gcov
+    }
 
     greaterThan(QT_MAJOR_VERSION, 5) {
         INCLUDEPATH += /usr/local/include

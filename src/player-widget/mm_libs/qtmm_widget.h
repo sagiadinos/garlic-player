@@ -20,7 +20,7 @@ public:
     void                  keepAspectRatioByExpanding();
 signals:
 protected:
-    QVideoWidget         *VideoWidget;
+    QVideoWidget         VideoWidget;
 public slots:
 };
 #endif

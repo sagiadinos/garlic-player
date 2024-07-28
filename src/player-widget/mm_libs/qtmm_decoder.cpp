@@ -25,6 +25,7 @@ bool QtMMDecoder::load(QString file_path)
     else
         current_media_path = file_path;
 
+
     MediaDecoder.setMedia(QMediaContent(QUrl::fromLocalFile(current_media_path)));
     bool ret = (MediaDecoder.mediaStatus() != QMediaPlayer::NoMedia && MediaDecoder.mediaStatus() != QMediaPlayer::InvalidMedia);
     return ret;
@@ -45,7 +46,7 @@ void QtMMDecoder::setVolume(QString percent)
 
 void QtMMDecoder::unload()
 {
-    //MediaDecoder.setMedia(QMediaContent());
+    MediaDecoder.setMedia(QMediaContent());
 }
 
 void QtMMDecoder::play()
