@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<smil>
+	<head>
+		<meta name="title" content="Empty Triggerplaylist Bug" />
+		<meta http-equiv="Refresh" content="30" />
+		<meta name="internal_name" content="Garlic-Player Index" />
+		<layout>
+            <root-layout id="display:0" width="3840" height="2160" />
+			<region regionName="screen0" top="0" left="0" width="1920" height="1080" z-index="0" background-color="transparent" mediaAlign="center"/>
+		</layout>
+		</head>
+	<body>
+		<excl id="global_excl" repeatCount="indefinite">
+			
+			<priorityClass id="prio_blank_screen">
+				<ref id="blank_screeen" begin="wallclock(R/2024-03-03+w7T17:57:10/P1W)" end="wallclock(R/2024-03-03+w7T23:59:59/P1W)" dur="indefinite" src="adapi:blankScreen"/>
+			</priorityClass>
+
+
+			<priorityClass>
+				<seq id="empty_seq" begin="wallclock(R/2023-03-27T08:00:00/PT30S)">
+				<!-- <img id="image" src="../../../images/image.jpg" dur="5s" /> -->
+				</seq>
+			</priorityClass>
+
+			<priorityClass higher="pause">
+				<par id="par" begin="0">
+					<seq id="default_seq" repeatCount="indefinite">
+						<img id="001" src="../../../images/0001.jpg" dur="1s" />
+						<img id="002" src="../../../images/0002.jpg" dur="1s" />
+						<img id="003" src="../../../images/0003.jpg" dur="1s" />
+						<img id="004" src="../../../images/0004.jpg" dur="1s" />
+						<img id="005" src="../../../images/0005.jpg" dur="1s" />
+						<img id="006" src="../../../images/0006.jpg" dur="1s" />
+						<img id="007" src="../../../images/0007.jpg" dur="1s" />
+						<img id="008" src="../../../images/0008.jpg" dur="1s" />
+						<img id="009" src="../../../images/0009.jpg" dur="1s" />
+						<img id="010" src="../../../images/0010.jpg" dur="1s" />
+					</seq>
+				</par>
+			</priorityClass>
+		</excl>
+	</body>
+</smil>
