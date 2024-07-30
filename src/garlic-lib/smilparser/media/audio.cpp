@@ -41,7 +41,7 @@ void MediaParser::TAudio::prepareDurationTimers()
         return;
 
     resetInternalRepeatCount();
-    startDurTimer(); // audio/video not need a dur timer, but if there is one it mist be started
+    startDurTimer(); // audio/video not need a dur timer, but if there is one it must be started
 
     emitStartElementSignal(this);
 }

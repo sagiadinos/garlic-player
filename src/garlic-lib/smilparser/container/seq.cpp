@@ -60,7 +60,7 @@ void TSeq::prepareDurationTimers()
     }
 
     // otherwise empty container with dur will not start
-    if (dom_childs_list.size() > 0 || isDurTimerActive() || isEndTimerActive())
+    if (dom_childs_list.size() > 0 || isDurTimerActive() || isEndTimerActive() || isBeginTimerActive())
     {
         resetInternalRepeatCount();
         emitStartElementSignal(this);

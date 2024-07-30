@@ -13,7 +13,7 @@
 		<excl id="global_excl" repeatCount="indefinite">
 			
 			<priorityClass id="prio_blank_screen">
-				<ref id="blank_screeen" begin="wallclock(R/2024-03-03+w7T17:57:10/P1W)" end="wallclock(R/2024-03-03+w7T23:59:59/P1W)" dur="indefinite" src="adapi:blankScreen"/>
+				<ref id="blank_screeen" begin="wallclock(R/2024-03-03+w2T13:30:30/P1W)" end="wallclock(R/2024-03-03+w2T23:59:59/P1W)" dur="indefinite" src="adapi:blankScreen"/>
 			</priorityClass>
 
 

@@ -73,7 +73,7 @@ void TExcl::prepareDurationTimers()
     }
 
     // otherwise empty container with dur will not start
-    if (PriorityClassList.size() > 0 || isDurTimerActive() || isEndTimerActive())
+    if (PriorityClassList.size() > 0 || isDurTimerActive() || isEndTimerActive() || isBeginTimerActive())
     {
         emitStartElementSignal(this);
     }
