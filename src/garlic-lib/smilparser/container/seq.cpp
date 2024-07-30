@@ -91,6 +91,7 @@ void TSeq::next(BaseTimings *ended_element)
 
 void TSeq::start()
 {
+    // eigentlich ist das nicht sinnvoll
     if (dom_childs_list.size() == 0)
         return;
 
