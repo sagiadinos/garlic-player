@@ -18,7 +18,7 @@
 
 #include "seq.h"
 
-TSeq::TSeq(QObject *parent) : TContainer(parent)
+TSeq::TSeq(Expr *expr, QObject *parent) : TContainer(expr, parent)
 {
     setObjectName("TSeq");
 }
@@ -46,7 +46,7 @@ void TSeq::preloadParse(QDomElement element)
 
 void TSeq::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery())
+    if (!MyExpr->executeQuery(expr))
     {
         skipElement();
         return;

@@ -33,7 +33,7 @@ namespace MediaParser
         const     int        CACHE_CONTROL_USE_CACHE  = 0;
         const     int        CACHE_CONTROL_ONLY_IF_CACHED  = 1;
 
-            explicit BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+            explicit BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent);
 
             void                   preloadParse(QDomElement element);
             QString                getLoadablePath();

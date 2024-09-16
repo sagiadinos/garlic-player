@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "prefetch.h"
 
-MediaParser::TPrefetch::TPrefetch(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TPrefetch::TPrefetch(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent) : BaseMedia(mm, config, ph, expr, parent)
 {
     setObjectName("TPrefetch");
     is_media = false;
@@ -29,7 +29,7 @@ MediaParser::TPrefetch::~TPrefetch()
 
 void MediaParser::TPrefetch::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery())
+    if (!MyExpr->executeQuery(expr))
     {
         skipElement();
         return;

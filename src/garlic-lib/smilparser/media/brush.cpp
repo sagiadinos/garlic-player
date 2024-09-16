@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "brush.h"
 
-MediaParser::TBrush::TBrush(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TBrush::TBrush(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent)  : BaseMedia(mm, config, ph, expr, parent)
 {
     setObjectName("TBrush");
     is_media = true;
@@ -30,7 +30,7 @@ QString MediaParser::TBrush::getColor()
 
 void MediaParser::TBrush::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery())
+    if (!MyExpr->executeQuery(expr))
     {
         skipElement();
         return;

@@ -18,7 +18,7 @@
 
 #include "image.h"
 
-MediaParser::TImage::TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TImage::TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent)  : BaseMedia(mm, config, ph, expr, parent)
 {
     setObjectName("TImage");
     is_media = true;
@@ -30,7 +30,7 @@ MediaParser::TImage::~TImage()
 
 void MediaParser::TImage::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
+    if (!MyExpr->executeQuery(expr) || getLoadablePath().isEmpty())
     {
         skipElement();
         return;

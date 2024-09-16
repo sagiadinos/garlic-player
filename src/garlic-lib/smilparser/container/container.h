@@ -34,7 +34,7 @@ class TContainer : public BaseTimings
 {
     Q_OBJECT
     public:
-        explicit TContainer(QObject *parent);
+        explicit TContainer(Expr *expr, QObject *parent);
         virtual void         next(BaseTimings *ended_element) = 0;
 
                 QString      getBaseType() {return "container";}

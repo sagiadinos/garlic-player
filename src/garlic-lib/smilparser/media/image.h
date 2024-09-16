@@ -27,7 +27,7 @@ namespace MediaParser
     {
         Q_OBJECT
         public:
-            explicit TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+            explicit TImage(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent);
             ~TImage();
         public slots:
             void     prepareDurationTimers();

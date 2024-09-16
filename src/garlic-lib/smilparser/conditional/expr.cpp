@@ -4,53 +4,23 @@ Expr::Expr()
 {
 }
 
-void Expr::setExpression(QString e)
-{
-    expr = e;
-}
-
-
-bool Expr::executeQuery()
+bool Expr::executeQuery(QString expr)
 {
     if (expr.isEmpty()) // play media if expr is empty
         return true;
 
     return execute(MyAdapiWrapper.replaceAdapiFunctions(expr));
-
 }
 
-
-#if QT_VERSION == 0x060000
-bool Expr::execute(QString conv_expr)
+bool Expr::executeQueryWithoutAdapi(QString expr)
 {
-    try
-    {
-        XQilla xqilla;
-        AutoDelete<XQQuery> query(xqilla.parse(X(conv_expr.toUtf8())));
+    if (expr.isEmpty()) // play media if expr is empty
+        return true;
 
-        AutoDelete<DynamicContext> context(query->createDynamicContext());
-        Result result = query->execute(context);
-
-        Item::Ptr item = result->next(context);
-        QString bo = UTF8(item->asString(context));
-
-        if (bo.toLower() == "true")
-            return true;
-
-    }
-    catch(const XQException& e)
-    {
-        std::cerr << "XQuery Error: " << UTF8(e.getError()) << std::endl;
-    }
-    catch(...)
-    {
-        std::cerr << "Unknown error in XQilla occured." << std::endl;
-    }
-
-    return false;
+    return execute(expr);
 
 }
-#else
+
 bool Expr::execute(QString converted_expr)
 {
     QXmlQuery query;
@@ -65,4 +35,3 @@ bool Expr::execute(QString converted_expr)
 
     return true;
 }
-#endif

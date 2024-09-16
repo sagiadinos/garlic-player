@@ -77,7 +77,7 @@ void TBase::setBaseAttributes()
     lang     = getAttributeFromRootElement("xml:lang", "");
     longdesc = getAttributeFromRootElement("longdesc", "");
     alt      = getAttributeFromRootElement("alt", "");
-    MyExpr.setExpression(getAttributeFromRootElement("expr", ""));
+    expr     = getAttributeFromRootElement("expr", "");
 }
 
 QString TBase::getAttributeFromRootElement(const QString attribute_name, const QString default_value)

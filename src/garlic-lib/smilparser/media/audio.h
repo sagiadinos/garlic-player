@@ -25,7 +25,7 @@ namespace MediaParser
     {
         Q_OBJECT
     public:
-        explicit TAudio(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent);
+        explicit TAudio(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent);
         ~TAudio();
         QString                 getSoundLevel(){return soundLevel;}
     protected:

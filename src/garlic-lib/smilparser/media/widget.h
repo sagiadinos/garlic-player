@@ -26,7 +26,7 @@ namespace MediaParser
     {
         Q_OBJECT
     public:
-        explicit TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+        explicit TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent);
         ~TWidget();
     public slots:
         void     prepareDurationTimers();

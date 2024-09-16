@@ -30,7 +30,7 @@ namespace MediaParser
     {
             Q_OBJECT
         public:
-            explicit TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+            explicit TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent);
         public slots:
             void     prepareDurationTimers();
         protected:

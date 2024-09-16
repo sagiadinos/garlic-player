@@ -18,7 +18,7 @@
 
 #include "base_media.h"
 
-MediaParser::BaseMedia::BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseTimings(parent)
+MediaParser::BaseMedia::BaseMedia(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent) : BaseTimings(expr, parent)
 {
     MyMainConfiguration = config;
     MyMediaManager      = mm;

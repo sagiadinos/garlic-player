@@ -28,7 +28,7 @@ namespace MediaParser
     {
         Q_OBJECT
     public:
-        explicit TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+        explicit TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent);
         ~TRefCommand();
     public slots:
         void     prepareDurationTimers();

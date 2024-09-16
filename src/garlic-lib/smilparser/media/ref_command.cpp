@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "ref_command.h"
 
-MediaParser::TRefCommand::TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TRefCommand::TRefCommand(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent)  : BaseMedia(mm, config, ph, expr, parent)
 {
     setObjectName("TRefCommand");
     is_media = true;
@@ -29,7 +29,7 @@ MediaParser::TRefCommand::~TRefCommand()
 
 void MediaParser::TRefCommand::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
+    if (!MyExpr->executeQuery(expr) || getLoadablePath().isEmpty())
     {
         skipElement();
         return;

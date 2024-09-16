@@ -18,7 +18,7 @@
 
 #include "video.h"
 
-MediaParser::TVideo::TVideo(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : TAudio(mm, config, ph, parent)
+MediaParser::TVideo::TVideo(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent) : TAudio(mm, config, ph, expr, parent)
 {
     setObjectName("TVideo");
     is_media = true;

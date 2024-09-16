@@ -18,7 +18,7 @@
 
 #include "par.h"
 
-TPar::TPar(QObject *parent) : TContainer(parent)
+TPar::TPar(Expr *expr, QObject *parent) : TContainer(expr, parent)
 {
     setObjectName("TPar");
 }
@@ -43,7 +43,7 @@ void TPar::preloadParse(QDomElement element)
 
 void TPar::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery())
+    if (!MyExpr->executeQuery(expr))
     {
         skipElement();
         return;

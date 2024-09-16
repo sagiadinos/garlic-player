@@ -41,7 +41,7 @@ class BodyParser : public QObject
     public:
         explicit BodyParser(ElementFactory *ef, Files::MediaManager *mm, ElementsContainer *ec, QObject *parent = Q_NULLPTR);
         ~BodyParser();
-        void                               beginPreloading(TBase *smil, QDomElement body);
+        void                               beginPreloading(Expr *expr, TBase *smil, QDomElement body);
         void                               startPresentationAfterPreload();
         void                               endPlayingBody();
         void                               triggerAccessKey(QChar key);

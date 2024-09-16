@@ -194,8 +194,9 @@ void LibFacade::processHeadParsing()
 
 void LibFacade::processBodyParsing()
 {
+    MyExpr.reset(new Expr);
     MyElementsContainer.reset(new ElementsContainer(this)); // must be setted, when Layout is known
-    MyElementFactory.reset(new ElementFactory(MyMediaManager.data(), MyConfiguration.data(), MyPlaceHolder.data()));
+    MyElementFactory.reset(new ElementFactory(MyMediaManager.data(), MyConfiguration.data(), MyPlaceHolder.data(), MyExpr.data()));
 
     MyBodyParser.reset(new BodyParser(MyElementFactory.data(), MyMediaManager.data(), MyElementsContainer.data(), this));
 
@@ -208,7 +209,7 @@ void LibFacade::processBodyParsing()
     MySmil.reset(new Smil(this));
     MySmil.data()->preloadParse(MyIndexManager->getSmil());
 
-    MyBodyParser->beginPreloading(MySmil.data(), MyIndexManager->getBody());
+    MyBodyParser->beginPreloading(MyExpr.data(), MySmil.data(), MyIndexManager->getBody());
     qDebug() <<  " end preloading" ;
 
     MyIndexManager.data()->activateRefresh(MyHeadParser->getRefreshTime());

@@ -2,13 +2,7 @@
 #define EXPR_H
 #include <QString>
 #include <QtGlobal>
-
-#if QT_VERSION == 0x060000
-    #include <xqilla/xqilla-simple.hpp>
-    #include <iostream>
-#else
-    #include <QXmlQuery>
-#endif
+#include <QXmlQuery>
 
 
 #include <QDebug>
@@ -18,12 +12,12 @@ class Expr
 {
     public:
         Expr();
-        void setExpression(QString e);
-        bool executeQuery();
+        void setExpression(QString expr);
+        bool executeQuery(QString expr);
+        bool executeQueryWithoutAdapi(QString expr);
     protected:
     private:
         AdapiWrapper MyAdapiWrapper;
-        QString expr = "";
         QString result = "";
 
         bool execute(QString converted_expr);

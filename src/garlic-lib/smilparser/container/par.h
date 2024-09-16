@@ -25,7 +25,7 @@ class TPar : public TContainer
 {
         Q_OBJECT
     public:
-        explicit TPar(QObject *parent);
+        explicit TPar(Expr *expr, QObject *parent);
         ~TPar();
         void                preloadParse(QDomElement element);
         void                next(BaseTimings *ended_element);

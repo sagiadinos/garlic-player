@@ -18,8 +18,9 @@
 
 #include "base_timings.h"
 
-BaseTimings::BaseTimings(QObject * parent) : TBase(parent)
+BaseTimings::BaseTimings(Expr *expr, QObject * parent) : TBase(parent)
 {
+    MyExpr = expr;
 }
 
 BaseTimings::~BaseTimings()

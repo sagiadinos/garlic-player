@@ -18,7 +18,7 @@
 
 #include "body.h"
 
-TBody::TBody(QObject *parent) : TSeq(parent)
+TBody::TBody(Expr *expr, QObject *parent) : TSeq(expr, parent)
 {
     setObjectName("TBody");
 }

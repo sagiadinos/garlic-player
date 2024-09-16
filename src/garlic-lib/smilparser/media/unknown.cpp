@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "unknown.h"
 
-MediaParser::TUnknown::TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TUnknown::TUnknown(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent) : BaseMedia(mm, config, ph, expr, parent)
 {
     setObjectName("Unknown");
     is_media = false;

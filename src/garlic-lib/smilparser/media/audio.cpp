@@ -18,7 +18,7 @@
 
 #include "audio.h"
 
-MediaParser::TAudio::TAudio(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent)  : BaseMedia(mm, config, ph, parent)
+MediaParser::TAudio::TAudio(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent)  : BaseMedia(mm, config, ph, expr, parent)
 {
     setObjectName("TAudio");
     is_media = true;
@@ -31,7 +31,7 @@ MediaParser::TAudio::~TAudio()
 
 void MediaParser::TAudio::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
+    if (!MyExpr->executeQuery(expr) || getLoadablePath().isEmpty())
     {
         skipElement();
         return;

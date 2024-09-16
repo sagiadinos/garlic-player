@@ -25,7 +25,7 @@ namespace MediaParser
     {
             Q_OBJECT
         public:
-            TBrush(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, QObject *parent);
+            TBrush(Files::MediaManager *mm, MainConfiguration *mc, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent);
             QString getColor();
         public slots:
             void     prepareDurationTimers();

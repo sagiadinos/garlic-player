@@ -25,7 +25,7 @@ namespace MediaParser
     {
         Q_OBJECT
     public:
-        explicit TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+        explicit TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent);
         ~TWeb();
     public slots:
         void            prepareDurationTimers();

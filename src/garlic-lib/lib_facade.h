@@ -111,6 +111,7 @@ class LibFacade : public QObject
     private:
         QScopedPointer<Smil> MySmil;
         Timer             RebootTimer;
+        QScopedPointer<Expr> MyExpr;
         void              configureRebootTimer();
     signals:
         void               startShowMedia(BaseMedia *media);

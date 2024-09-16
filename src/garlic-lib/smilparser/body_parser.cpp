@@ -38,9 +38,9 @@ BodyParser::~BodyParser()
  *
  * @param body
  */
-void BodyParser::beginPreloading(TBase *smil, QDomElement body)
+void BodyParser::beginPreloading(Expr *expr, TBase *smil, QDomElement body)
 {
-    MyBody.reset(new TBody(smil));
+    MyBody.reset(new TBody(expr, smil));
     connectSlots(MyBody.data());
     MyBody.data()->preloadParse(body);
     MyElementsContainer->distributeTriggers();

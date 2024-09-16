@@ -34,11 +34,12 @@
 using namespace MediaParser;
 
 
-ElementFactory::ElementFactory(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : QObject(parent)
+ElementFactory::ElementFactory(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent) : QObject(parent)
 {
     MyMediaManager      = mm;
     MyMainConfiguration = config;
     MyPlaceHolder       = ph;
+    MyExpr              = expr;
 }
 
 BaseTimings* ElementFactory::createBase(QDomElement dom_element, QObject *parent)
@@ -70,48 +71,48 @@ BaseTimings* ElementFactory::createBase(QDomElement dom_element, QObject *parent
 
     if (type == "img")
     {
-        return new TImage(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+        return new TImage(MyMediaManager, MyMainConfiguration, MyPlaceHolder, MyExpr, parent);
     }
     else if (type == "brush")
     {
-        return new TBrush(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+        return new TBrush(MyMediaManager, MyMainConfiguration, MyPlaceHolder, MyExpr, parent);
     }
     else if (type == "video")
     {
-        return new TVideo(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+        return new TVideo(MyMediaManager, MyMainConfiguration, MyPlaceHolder, MyExpr, parent);
     }
     else if (type == "audio")
     {
-        return new TAudio(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+        return new TAudio(MyMediaManager, MyMainConfiguration, MyPlaceHolder, MyExpr, parent);
     }
     else if (type == "text")
     {
-        return new TWeb(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+        return new TWeb(MyMediaManager, MyMainConfiguration, MyPlaceHolder, MyExpr, parent);
     }
     else if (type == "widget")
     {
-        return new TWidget(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+        return new TWidget(MyMediaManager, MyMainConfiguration, MyPlaceHolder, MyExpr, parent);
     }
     else if (type == "prefetch")
     {
-        return new MediaParser::TPrefetch(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+        return new MediaParser::TPrefetch(MyMediaManager, MyMainConfiguration, MyPlaceHolder, MyExpr, parent);
     }
     else if (type == "ref_command")
     {
-        return new TRefCommand(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+        return new TRefCommand(MyMediaManager, MyMainConfiguration, MyPlaceHolder, MyExpr, parent);
     }
     else if (type == "seq")
     {
-        return new TSeq(parent);
+        return new TSeq(MyExpr, parent);
     }
     else if (type == "par")
     {
-        return new TPar(parent);
+        return new TPar(MyExpr, parent);
     }
     else if (type == "excl")
     {
-        return new TExcl(parent);
+        return new TExcl(MyExpr, parent);
     }
 
-    return new TUnknown(MyMediaManager, MyMainConfiguration, MyPlaceHolder, parent);
+    return new TUnknown(MyMediaManager, MyMainConfiguration, MyPlaceHolder, MyExpr, parent);
 }

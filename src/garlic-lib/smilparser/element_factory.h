@@ -21,6 +21,7 @@
 #include "base_timings.h"
 #include "media_manager.h"
 #include "placeholder.h"
+#include "conditional/expr.h"
 #include <QObject>
 
 
@@ -28,12 +29,14 @@ class ElementFactory : public QObject
 {
         Q_OBJECT
     public:
-        explicit ElementFactory(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent = Q_NULLPTR);
+        explicit ElementFactory(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent = Q_NULLPTR);
         BaseTimings    *createBase(QDomElement dom_element, QObject *parent);
-    protected:
+    private:
         Files::MediaManager   *MyMediaManager;
         SmilHead::PlaceHolder *MyPlaceHolder;
         MainConfiguration     *MyMainConfiguration;
+        Expr                  *MyExpr;
+
 };
 
 #endif // ElementFactory_H

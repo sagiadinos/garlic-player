@@ -18,7 +18,7 @@
 
 #include "container.h"
 
-TContainer::TContainer(QObject *parent) : BaseTimings(parent)
+TContainer::TContainer(Expr *expr, QObject *parent) : BaseTimings(expr, parent)
 {
 }
 

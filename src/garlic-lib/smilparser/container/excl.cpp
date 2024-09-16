@@ -25,7 +25,7 @@
  * @param pc
  * @param parent
  */
-TExcl::TExcl(QObject *parent) : TContainer(parent)
+TExcl::TExcl(Expr *expr, QObject *parent) : TContainer(expr, parent)
 {
     setObjectName("TExcl");
 }
@@ -59,7 +59,7 @@ void TExcl::preloadParse(QDomElement element)
 
 void TExcl::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery())
+    if (!MyExpr->executeQuery(expr))
     {
         skipElement();
         return;

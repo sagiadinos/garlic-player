@@ -23,7 +23,6 @@
 #include <QString>
 #include <QStringList>
 #include <QtXml>
-#include "conditional/expr.h"
 #include "tools/logger.h"
 
 enum class  SMIL_TAG{seq, par, excl, img, audio, video, text, ref, prefetch, unknown};
@@ -59,9 +58,9 @@ protected:
             QString       alt            = "";
             QString       longdesc       = "";
             QString       lang           = "";
+            QString       expr           = "";
             QString       a_class        = ""; // cause class is reserved word, a_class means attribut_class
             QDomElement   root_element;
-            Expr          MyExpr;
             void          setBaseAttributes();
             QString       getAttributeFromRootElement(const QString attribute_name, const QString default_value);
 };

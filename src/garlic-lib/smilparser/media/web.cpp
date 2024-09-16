@@ -18,7 +18,7 @@
 
 #include "web.h"
 
-MediaParser::TWeb::TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TWeb::TWeb(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent)  : BaseMedia(mm, config, ph, expr, parent)
 {
     setObjectName("TWeb");
     is_media = true;
@@ -30,7 +30,7 @@ MediaParser::TWeb::~TWeb()
 
 void MediaParser::TWeb::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery())
+    if (!MyExpr->executeQuery(expr))
     {
         skipElement();
         return;

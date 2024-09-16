@@ -17,7 +17,7 @@
 *************************************************************************************/
 #include "widget.h"
 
-MediaParser::TWidget::TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent) : BaseMedia(mm, config, ph, parent)
+MediaParser::TWidget::TWidget(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent)  : BaseMedia(mm, config, ph, expr, parent)
 {
     setObjectName("TWidget");
     is_media = true;
@@ -30,7 +30,7 @@ MediaParser::TWidget::~TWidget()
 
 void MediaParser::TWidget::prepareDurationTimers()
 {
-    if (!MyExpr.executeQuery() || getLoadablePath().isEmpty())
+    if (!MyExpr->executeQuery(expr) || getLoadablePath().isEmpty())
     {
         skipElement();
         return;

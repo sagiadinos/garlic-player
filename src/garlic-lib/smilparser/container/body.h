@@ -24,7 +24,7 @@ class TBody : public TSeq
 {
         Q_OBJECT
     public:
-        explicit TBody(QObject *parent);
+        explicit TBody(Expr *expr, QObject *parent);
         ~TBody();
 };
 

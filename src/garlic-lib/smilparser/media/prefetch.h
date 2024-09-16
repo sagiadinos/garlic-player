@@ -26,7 +26,7 @@ namespace MediaParser
     {
         Q_OBJECT
     public:
-        explicit TPrefetch(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, QObject *parent);
+        explicit TPrefetch(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent);
         ~TPrefetch();
     public slots:
         void     prepareDurationTimers();

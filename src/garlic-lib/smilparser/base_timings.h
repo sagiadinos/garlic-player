@@ -24,6 +24,7 @@
 #include "smilparser/timings/begin_timer.h"
 #include "smilparser/timings/end_timer.h"
 #include "smilparser/trigger/target_trigger.h"
+#include "smilparser/conditional/expr.h"
 
 /**
  * @brief The abstract BaseTimings class should inherited for begin end duration capable smil elements in body section
@@ -52,7 +53,7 @@ class BaseTimings : public TBase
         const     int        _paused   = 3;
         const     int        _defered  = 4;
 
-        explicit               BaseTimings(QObject * parent);
+        explicit               BaseTimings(Expr *expr, QObject * parent);
                               ~BaseTimings();
 
                 void           activateTriggerTimers();
@@ -112,6 +113,7 @@ class BaseTimings : public TBase
                 QString        fill    = "remove";     // stub ToDo
                 QString        min     = "0";          // stub ToDo
                 QString        max     = "indefinite"; // stub ToDo
+                Expr          *MyExpr;
 
                 int            status         = _stopped;
                 int            repeatCount    = 0;
