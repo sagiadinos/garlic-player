@@ -12,7 +12,6 @@ class Expr
 {
     public:
         Expr();
-        void setExpression(QString expr);
         bool executeQuery(QString expr);
         bool executeQueryWithoutAdapi(QString expr);
     protected:
