@@ -1,5 +1,5 @@
-#ifndef ADAPIWRAPPER_H
-#define ADAPIWRAPPER_H
+#ifndef ADAPIWRAPPER_HPP
+#define ADAPIWRAPPER_HPP
 
 #include <QString>
 #include <QDateTime>
@@ -26,4 +26,4 @@ class AdapiWrapper
         QString convertWeekdayToAdapi(int weekday);
 };
 
-#endif // ADAPIWRAPPER_H
+#endif // ADAPIWRAPPER_HPP

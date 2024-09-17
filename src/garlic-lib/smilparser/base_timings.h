@@ -24,7 +24,7 @@
 #include "smilparser/timings/begin_timer.h"
 #include "smilparser/timings/end_timer.h"
 #include "smilparser/trigger/target_trigger.h"
-#include "smilparser/conditional/expr.h"
+#include "smilparser/conditional/expr.hpp"
 
 /**
  * @brief The abstract BaseTimings class should inherited for begin end duration capable smil elements in body section

@@ -32,6 +32,8 @@ class TestTBase : public BaseTestSuite
         void cleanupTestCase();
         void testDefault();
         void testParseID();
+        void testParseIDWhenNOIDSetted();
+        void testGetParentContainer();
         void testPreloadParse();
         void testSetBaseAttributesSMIL2();
         void testSetBaseAttributesSMIL3();

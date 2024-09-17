@@ -1,4 +1,4 @@
-#include "adapi_wrapper.h"
+#include "adapi_wrapper.hpp"
 
 AdapiWrapper::AdapiWrapper()
 {

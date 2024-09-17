@@ -218,8 +218,8 @@ HEADERS += \
     rest_api/v2/task.h \
     smilparser/base.hpp \
     smilparser/body_parser.h \
-    smilparser/conditional/adapi_wrapper.h \
-    smilparser/conditional/expr.h \
+    smilparser/conditional/adapi_wrapper.hpp \
+    smilparser/conditional/expr.hpp \
     smilparser/container/excl/priority_queue.h \
     smilparser/container/tools/childs.h \
     smilparser/current_playing_media.h \

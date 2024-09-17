@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
 #include "tst_expr.hpp"
-#include "smilparser/conditional/expr.h"
+#include "smilparser/conditional/expr.hpp"
 
 void TestExpr::testEasy()
 {

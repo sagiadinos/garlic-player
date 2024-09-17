@@ -45,6 +45,19 @@ void TestTBase::testParseID()
     QCOMPARE(TBase::parseID(element), QString("test_id"));
 }
 
+void TestTBase::testParseIDWhenNOIDSetted()
+{
+    QDomDocument doc;
+    QDomElement element = doc.createElement("test");
+    QCOMPARE(TBase::parseID(element), QString("test_-1_-1"));
+}
+
+void TestTBase::testGetParentContainer()
+{
+    QCOMPARE(TestBase->getParentContainer(), nullptr);
+}
+
+
 void TestTBase::testPreloadParse()
 {
     QDomDocument doc;

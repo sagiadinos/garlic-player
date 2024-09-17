@@ -15,28 +15,27 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *************************************************************************************/
-#ifndef ElementFactory_H
-#define ElementFactory_H
+#include <QTest>
+#include <QSignalSpy>
+#include <QThread>
 
-#include "base_timings.h"
-#include "media_manager.h"
-#include "placeholder.h"
-#include "conditional/expr.hpp"
-#include <QObject>
+#include "base_testsuite.hpp"
+#include <QtTest/QtTest>
 
-
-class ElementFactory : public QObject
+class TestAdapiWrapper : public BaseTestSuite
 {
         Q_OBJECT
     public:
-        explicit ElementFactory(Files::MediaManager *mm, MainConfiguration *config, SmilHead::PlaceHolder *ph, Expr *expr, QObject *parent = Q_NULLPTR);
-        BaseTimings    *createBase(QDomElement dom_element, QObject *parent);
-    private:
-        Files::MediaManager   *MyMediaManager;
-        SmilHead::PlaceHolder *MyPlaceHolder;
-        MainConfiguration     *MyMainConfiguration;
-        Expr                  *MyExpr;
+        TestAdapiWrapper(){}
+
+    private Q_SLOTS:
+		void testReplaceSmilPlayerId();
+		void testReplaceSmilPlayerName();
+		void testReplaceDate();
+		void testReplaceGmDate();
+		void testReplaceWeekday();
+		void testReplaceGmWeekday();
+		void testReplaceCompare();
+		void testReplaceEncoded();
 
 };
-
-#endif // ElementFactory_H
