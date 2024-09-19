@@ -20,6 +20,7 @@ public:
     protected:
         QScopedPointer<QQuickItem, QScopedPointerDeleteLater>   web_item;
     private:
+        QString port;
         QString sanitizeUri(QString uri);
 };
 

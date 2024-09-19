@@ -46,24 +46,26 @@ void RestApi::Httpd::determineHttpdSettings(QSettings *settings)
 
 void RestApi::Httpd::initDefaultSettings()
 {
-  // for later
-  //  if (MyLibFacade->getConfiguration()->getUserConfig()->childGroups().contains("httpd"))
-  //      return;
+    // Later
+ //   if (MyLibFacade->getConfiguration()->getUserConfig()->childGroups().contains("httpd"))
+ //      return;
 
    // MyConfiguration->setUserConfigByKey("host","127.0.0.1");
     MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/port","8080");
-    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/minThreads","1");
-    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/maxThreads","4");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/minThreads","8");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/maxThreads","64");
     MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/cleanupInterval","60000");
     MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/readTimeout","60000");
-    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/maxRequestSize","16000");
-    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/maxMultiPartSize","10000000");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/maxRequestSize","65536");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/maxMultiPartSize","114857600");
 
     MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/path", MyLibFacade->getConfiguration()->getPaths("cache"));
     MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/encoding", "UTF-8");
-    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/maxAge", "9000");
-    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/cacheTime", "60000");
-    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/cacheSize", "1000000");
+    // This is only a internal application cache for small files, because Linux and Windows do no perform well with small files
+    // Big files are cached from th OS well.
+    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/maxAge", "0");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/cacheTime", "0");
+    MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/cacheSize", "10485760");
     MyLibFacade->getConfiguration()->setUserConfigByKey("httpd/maxCachedFileSize", "65536");
 
 }

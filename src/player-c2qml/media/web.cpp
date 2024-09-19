@@ -9,6 +9,7 @@ Web::Web(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *confi
                         anchors.fill: parent;\n \
                    }\n"
     );
+    port      = MyMainConfiguration->getUserConfig()->value("httpd/port").toString();
     web_item.reset(createMediaItem(mc, str));
 }
 
@@ -78,7 +79,7 @@ QString Web::sanitizeUri(QString uri)
         QString prefix_to_remove = MyMainConfiguration->getPaths("cache");
         uri.remove(prefix_to_remove);
 
-        uri = "http://localhost:8080/cache/" + uri;
+        uri = "http://localhost:"+port+"/cache/" + uri;
     }
     return uri;
 }

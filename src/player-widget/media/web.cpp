@@ -24,6 +24,7 @@ using namespace MediaParser;
 PlayerWeb::PlayerWeb(QString r_id, Launcher *lc, MainConfiguration *config, QObject *parent) : PlayerBaseMedia(r_id, lc, config, parent)
 {
     browser   = new QWebEngineView();
+    port      = MyMainConfiguration->getUserConfig()->value("httpd/port").toString();
     connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
 }
 
@@ -150,8 +151,7 @@ QString PlayerWeb::sanitizeUri(QString uri)
     {
         QString prefix_to_remove = MyMainConfiguration->getPaths("cache");
         uri.remove(prefix_to_remove);
-
-        uri = "http://localhost:8080/cache/" + uri;
+        uri = "http://localhost:" + port + "/cache/" + uri;
     }
     return uri;
 }

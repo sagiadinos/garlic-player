@@ -28,6 +28,7 @@ class PlayerWeb : public PlayerBaseMedia
         void             doLoadFinished(bool has_succeeded);
     private:
         QString          sanitizeUri(QString uri);
+        QString          port;
 };
 
 #endif // WEB_H
