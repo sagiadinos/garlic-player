@@ -2,25 +2,52 @@
 <ui version="4.0">
  <class>ConfigDialog</class>
  <widget class="QDialog" name="ConfigDialog">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>621</width>
+    <width>450</width>
     <height>196</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="sizeIncrement">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+   </property>
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>6</number>
      </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+     </property>
      <item>
       <widget class="QLabel" name="labelErrorMessage">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="styleSheet">
         <string notr="true">color:rgb(255, 0, 0)</string>
        </property>
@@ -32,7 +59,7 @@
      <item>
       <widget class="QLabel" name="labelPlayerName">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -44,6 +71,12 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lineEditPlayerName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="mouseTracking">
         <bool>true</bool>
        </property>
@@ -51,7 +84,7 @@
         <bool>true</bool>
        </property>
        <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
+        <enum>Qt::FocusPolicy::StrongFocus</enum>
        </property>
        <property name="acceptDrops">
         <bool>false</bool>
@@ -69,7 +102,7 @@
         <locale language="English" country="UnitedStates"/>
        </property>
        <property name="inputMethodHints">
-        <set>Qt::ImhNoAutoUppercase|Qt::ImhNoEditMenu|Qt::ImhNoPredictiveText|Qt::ImhNoTextHandles</set>
+        <set>Qt::InputMethodHint::ImhNoAutoUppercase|Qt::InputMethodHint::ImhNoEditMenu|Qt::InputMethodHint::ImhNoPredictiveText|Qt::InputMethodHint::ImhNoTextHandles</set>
        </property>
        <property name="inputMask">
         <string notr="true"/>
@@ -81,14 +114,14 @@
         <string notr="true"/>
        </property>
        <property name="cursorMoveStyle">
-        <enum>Qt::LogicalMoveStyle</enum>
+        <enum>Qt::CursorMoveStyle::LogicalMoveStyle</enum>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="labelContentUrl">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -100,6 +133,12 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lineEditContentUrl">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="mouseTracking">
         <bool>true</bool>
        </property>
@@ -107,7 +146,7 @@
         <bool>true</bool>
        </property>
        <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
+        <enum>Qt::FocusPolicy::StrongFocus</enum>
        </property>
        <property name="acceptDrops">
         <bool>true</bool>
@@ -125,7 +164,7 @@
         <locale language="English" country="UnitedStates"/>
        </property>
        <property name="inputMethodHints">
-        <set>Qt::ImhNoAutoUppercase|Qt::ImhNoEditMenu|Qt::ImhNoPredictiveText|Qt::ImhNoTextHandles</set>
+        <set>Qt::InputMethodHint::ImhNoAutoUppercase|Qt::InputMethodHint::ImhNoEditMenu|Qt::InputMethodHint::ImhNoPredictiveText|Qt::InputMethodHint::ImhNoTextHandles</set>
        </property>
        <property name="inputMask">
         <string notr="true"/>
@@ -140,7 +179,7 @@
         <string notr="true"/>
        </property>
        <property name="cursorMoveStyle">
-        <enum>Qt::LogicalMoveStyle</enum>
+        <enum>Qt::CursorMoveStyle::LogicalMoveStyle</enum>
        </property>
       </widget>
      </item>
@@ -149,16 +188,22 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
          <kerning>true</kerning>
         </font>
        </property>
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
        </property>
       </widget>
      </item>

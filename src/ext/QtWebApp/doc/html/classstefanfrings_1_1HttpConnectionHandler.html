@@ -145,9 +145,10 @@ readTimeout=60000
 maxRequestSize=16000
 maxMultiPartSize=1000000
 </pre><p></code> </p>
-<p>The readTimeout value defines the maximum time to wait for a complete HTTP request. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classstefanfrings_1_1HttpRequest.html" title="This object represents a single HTTP request.">HttpRequest</a> for description of config settings maxRequestSize and maxMultiPartSize. </dd></dl>
+<p>The readTimeout value defines the maximum time to wait for a complete HTTP request. </p>
+<p>MaxRequestSize is the maximum size of a HTTP request. In case of multipart/form-data requests (also known as file-upload), the maximum size of the body must not exceed maxMultiPartSize. </p>
 
-<p class="definition">Definition at line <a class="el" href="httpconnectionhandler_8h_source.html#l00049">49</a> of file <a class="el" href="httpconnectionhandler_8h_source.html">httpconnectionhandler.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="httpconnectionhandler_8h_source.html#l00052">52</a> of file <a class="el" href="httpconnectionhandler_8h_source.html">httpconnectionhandler.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a52a1397d46ac3662f325846904f9c5f2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a52a1397d46ac3662f325846904f9c5f2">&#9670;&nbsp;</a></span>HttpConnectionHandler()</h2>

@@ -150,21 +150,25 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Example for the required settings in the config file: <code></p><pre>
 ;host=192.168.0.100
 port=8080
+
+readTimeout=60000
+maxRequestSize=16000
+maxMultiPartSize=1000000
+
 minThreads=1
 maxThreads=10
 cleanupInterval=1000
-readTimeout=60000
-;sslKeyFile=ssl/my.key
-;sslCertFile=ssl/my.cert
-maxRequestSize=16000
-maxMultiPartSize=1000000
-</pre><p></code> The optional host parameter binds the listener to one network interface. The listener handles all network interfaces if no host is configured. The port number specifies the incoming TCP port that this listener listens to. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classstefanfrings_1_1HttpConnectionHandlerPool.html" title="Pool of http connection handlers.">HttpConnectionHandlerPool</a> for description of config settings minThreads, maxThreads, cleanupInterval and ssl settings </dd>
-<dd>
-<a class="el" href="classstefanfrings_1_1HttpConnectionHandler.html" title="Alias for QSslConfiguration if OpenSSL is not supported.">HttpConnectionHandler</a> for description of the readTimeout </dd>
-<dd>
-<a class="el" href="classstefanfrings_1_1HttpRequest.html" title="This object represents a single HTTP request.">HttpRequest</a> for description of config settings maxRequestSize and maxMultiPartSize </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="httplistener_8h_source.html#l00044">44</a> of file <a class="el" href="httplistener_8h_source.html">httplistener.h</a>.</p>
+;sslKeyFile=ssl/server.key
+;sslCertFile=ssl/server.crt
+;caCertFile=ssl/ca.crt
+;verifyPeer=false
+</pre><p></code> The optional host parameter binds the listener to a specific network interface, otherwise the server accepts connections from any network interface on the given port. </p>
+<p>The readTimeout value defines the maximum time to wait for a complete HTTP request. </p>
+<p>MaxRequestSize is the maximum size of a HTTP request. In case of multipart/form-data requests (also known as file-upload), the maximum size of the body must not exceed maxMultiPartSize. </p>
+<p>After server start, the size of the thread pool is always 0. Threads are started on demand when requests come in. The cleanup timer reduces the number of idle threads slowly by closing one thread in each interval. But the configured minimum number of threads are kept running. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classstefanfrings_1_1HttpConnectionHandlerPool.html" title="Pool of http connection handlers.">HttpConnectionHandlerPool</a> for description of the optional ssl settings </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="httplistener_8h_source.html#l00057">57</a> of file <a class="el" href="httplistener_8h_source.html">httplistener.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a4f92377bf5d139ff3706a0b41fce1fc1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4f92377bf5d139ff3706a0b41fce1fc1">&#9670;&nbsp;</a></span>HttpListener()</h2>

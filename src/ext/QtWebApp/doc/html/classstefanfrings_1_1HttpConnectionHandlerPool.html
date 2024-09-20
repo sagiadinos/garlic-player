@@ -130,24 +130,51 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <div class="textblock"><p>Pool of http connection handlers. </p>
 <p>The size of the pool grows and shrinks on demand. </p>
 <p>Example for the required configuration settings: <code></p><pre>
-minThreads=4
-maxThreads=100
-cleanupInterval=60000
 readTimeout=60000
-;sslKeyFile=ssl/my.key
-;sslCertFile=ssl/my.cert
 maxRequestSize=16000
 maxMultiPartSize=1000000
-</pre><p></code> After server start, the size of the thread pool is always 0. Threads are started on demand when requests come in. The cleanup timer reduces the number of idle threads slowly by closing one thread in each interval. But the configured minimum number of threads are kept running. </p>
-<p>For SSL support, you need an OpenSSL certificate file and a key file. Both can be created with the command <code></p><pre>
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout my.key -out my.cert
-</pre><p></code> </p>
-<p>Visit <a href="http://slproweb.com/products/Win32OpenSSL.html">http://slproweb.com/products/Win32OpenSSL.html</a> to download the Light version of OpenSSL for Windows. </p>
-<p>Please note that a listener with SSL settings can only handle HTTPS protocol. To support both HTTP and HTTPS simultaneously, you need to start two listeners on different ports - one with SLL and one without SSL. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classstefanfrings_1_1HttpConnectionHandler.html" title="Alias for QSslConfiguration if OpenSSL is not supported.">HttpConnectionHandler</a> for description of the readTimeout </dd>
-<dd>
-<a class="el" href="classstefanfrings_1_1HttpRequest.html" title="This object represents a single HTTP request.">HttpRequest</a> for description of config settings maxRequestSize and maxMultiPartSize </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="httpconnectionhandlerpool_8h_source.html#l00048">48</a> of file <a class="el" href="httpconnectionhandlerpool_8h_source.html">httpconnectionhandlerpool.h</a>.</p>
+minThreads=4
+maxThreads=100
+cleanupInterval=60000  
+</pre><p></code> </p>
+<p>The readTimeout value defines the maximum time to wait for a complete HTTP request. </p>
+<p>MaxRequestSize is the maximum size of a HTTP request. In case of multipart/form-data requests (also known as file-upload), the maximum size of the body must not exceed maxMultiPartSize. </p>
+<p>After server start, the size of the thread pool is always 0. Threads are started on demand when requests come in. The cleanup timer reduces the number of idle threads slowly by closing one thread in each interval. But the configured minimum number of threads are kept running. </p>
+<p>Additional settings for SSL (HTTPS): <code></p><pre>
+sslKeyFile=ssl/server.key
+sslCertFile=ssl/server.crt
+;caCertFile=ssl/ca.crt
+verifyPeer=false
+</pre><p></code> For SSL support, you need at least a pair of OpenSSL x509 certificate and an RSA key, both files in PEM format. To enable verification of the peer (the calling web browser), you can either use the central certificate store of the operating system, or provide a CA certificate file in PEM format. The certificates of the peers must have been derived from the CA certificate. </p>
+<p>Example commands to create these files: <code></p><pre>
+# Generate CA key
+openssl genrsa 2048 &gt; ca.key
+
+# Generate CA certificate
+openssl req -new -x509 -nodes -days 365000 -key ca.key -out ca.crt
+
+# Generate a server key and certificate request
+openssl req -newkey rsa:2048 -nodes -days 365000 -keyout server.key -out server.req
+
+# Generate a signed server certificate
+openssl x509 -req -days 365000 -set_serial 01 -in server.req -out server.crt -CA ca.crt -CAkey ca.key
+
+# Generate a client key and certificate request
+openssl req -newkey rsa:2048 -nodes -days 365000 -keyout client.key -out client.req
+
+# Generate a signed client certificate
+openssl x509 -req -days 365000 -set_serial 01 -in client.req -out client.crt  -CA ca.crt -CAkey ca.key
+
+# Combine client key and certificate into one PKCS12 file
+openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -certfile ca.crt
+
+# Remove temporary files
+rm *.req
+</pre><p></code> </p>
+<p>Please note that a listener with SSL can only handle HTTPS protocol. To support both HTTP and HTTPS simultaneously, you need to start <b>two</b> listeners on different ports one with SLL and one without SSL (usually on public ports 80 and 443, or locally on 8080 and 8443). </p>
+
+<p class="definition">Definition at line <a class="el" href="httpconnectionhandlerpool_8h_source.html#l00084">84</a> of file <a class="el" href="httpconnectionhandlerpool_8h_source.html">httpconnectionhandlerpool.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8ce1d865b1efd7495b5ce55f5d12a3ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8ce1d865b1efd7495b5ce55f5d12a3ab">&#9670;&nbsp;</a></span>HttpConnectionHandlerPool()</h2>
@@ -183,7 +210,6 @@ maxMultiPartSize=1000000
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>The requestMapper gets deleted by the destructor of this pool </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="httpconnectionhandlerpool_8cpp_source.html#l00012">12</a> of file <a class="el" href="httpconnectionhandlerpool_8cpp_source.html">httpconnectionhandlerpool.cpp</a>.</p>
 

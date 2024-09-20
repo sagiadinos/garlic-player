@@ -146,12 +146,16 @@ QString PlayerWeb::sanitizeUri(QString uri)
 {
     if (uri.isEmpty())
         return "";
+
     // add file scheme if neccessary
     if (uri.at(0) == "/")
     {
-        QString prefix_to_remove = MyMainConfiguration->getPaths("cache");
-        uri.remove(prefix_to_remove);
-        uri = "http://localhost:" + port + "/cache/" + uri;
+        uri = "file://" + uri;
+
+        // We tried to open wgt via webserver to avoid open local pdf painment, but this causes other problems.
+        // QString prefix_to_remove = MyMainConfiguration->getPaths("cache");
+        // uri.remove(prefix_to_remove);
+        // uri = "http://localhost:" + port + "/cache/" + uri;
     }
     return uri;
 }
