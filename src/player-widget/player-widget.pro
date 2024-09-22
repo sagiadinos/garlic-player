@@ -16,6 +16,7 @@ INCLUDEPATH += ../ext/zlib/includes
 INCLUDEPATH += ../ext/QtWebApp/httpserver
 INCLUDEPATH += ../garlic-lib/
 Release:DEFINES += QT_NO_DEBUG_OUTPUT
+INCLUDEPATH += ../ext/zlib/
 
 # defines for using different default content_url per player
 # remarks:

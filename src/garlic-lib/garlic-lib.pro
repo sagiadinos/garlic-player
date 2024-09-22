@@ -1,6 +1,6 @@
 include(../defaults.pri)
 include(../ext/QtWebApp/httpserver/httpserver.pri)
-include(../ext/quazip/quazip.pri)
+#include(../ext/quazip/quazip.pri)
 
 QT       += core sql network xml widgets
 lessThan(QT_MAJOR_VERSION, 6): QT += xmlpatterns
@@ -13,6 +13,7 @@ CONFIG(release, debug|release) {
     message("release")
     DEFINES += QT_NO_DEBUG_OUTPUT
 }
+INCLUDEPATH += ../ext/zlib/
 
 linux:!android {
     message( "linux compile" )

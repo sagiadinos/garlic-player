@@ -47,7 +47,7 @@ android {
      }
 }
 ios:DESTDIR = ../../libios/
-INCLUDEPATH += ../zlib/includes
+INCLUDEPATH += ../zlib/
 LIBS += -L../../lib/ -lzlib
 
 # Creating pkgconfig .pc file
