@@ -9,6 +9,7 @@ INCLUDEPATH +=../ext/zlib/includes
 INCLUDEPATH += ../ext/QtWebApp/httpserver
 INCLUDEPATH +=../ext/quazip/includes
 INCLUDEPATH += ../garlic-lib/
+INCLUDEPATH += ../ext/zlib/
 DEFINES     += QT_DEPRECATED_WARNINGS
 
 #message(check variable: $$[ANDROID_VERSION_NAME])
