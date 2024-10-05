@@ -1,52 +1,16 @@
-# garlic-player - Open Source SMIL Player for Digital Signage
+# garlic-player - SMIL Player for Digital Signage
 
-The garlic-player is a SMIL 3.0 compatible [digital signage player](https://smil-control.com/magazine/what-is-a-digital-signage-player/).
+The garlic-player is a SMIL 3.0 compatible media player that was developed specifically for the requirements of the digital signage industry. 
 
-The goal for the development was to create a most as neccessary SMIL 3.0 compatible and as most as possible platform independent free open source multimedia player to meet the needs of the digital signage industry. The garlic-player has reached now a high level of compatibility and stability. So it is used in many projects and some android hardware solutions.
+It is used in numerous projects as well as on various Android hardware solutions.
 
-[Digital Signage](https://smil-control.com/digital-signage/) is a relatively young business and it has a lack of standards. As customer you can easily trapped into a vendor-lock. A public standard like SMIL offers you more independence and security for investment.
+The garlic-player offers you more independence and security for your investment by being based on the open [SMIL standard](https://garlic-player.com/resources/digital-signage-smil/) standard. It works together with every compatible [digital signage software](https://smil-control.com/software/). This helps also to avoid vendor lock-ins.
 
-The garlic-player can be used offline and online.
+[Documentation & Tutorials](https://garlic-player.com/garlic-player/docs/)
 
-Based on [SMIL standard](https://garlic-player.com/resources/digital-signage-smil/) it works together with every compatible [digital signage software](https://smil-control.com/software/).
+[![Raspberry videos](https://img.youtube.com/vi/yNVzrWpZ93U/hqdefault.jpg)](https://youtu.be/yNVzrWpZ93U)
 
-You are able to play local and remote (via http) SMIL files with the features described below.
-
-## External Libraries Used in Latest Commit
- - [Qt5](https://www.qt.io) >= 5.15 LTS (Qt6 not supported)
- - [Quazip](http://quazip.sourceforge.net) 0.9 (included in ./src/ext)
- - [zlib](https://zlib.net) 1.2.12 (included in ./src/ext)
-
-## Official Operating Systems Supported
- - Linux
- - Windows
- - Android
- - macOS
- 
-## Successful Tested With:
- - Linux 64Bit: Kde Neon, Kubuntu, Debian, Arch64
- - Raspberry Pi: 3, 4, and 5 for 32 and 64Bit (recommended))
- - Tinker Board: (Linaro OS 1.8)
- - Android Armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2, 7.1, 9 and 10)
- - Windows 64Bit: 7, 8 and 10
- - MacOS 64Bit (Intel): High Sierra, Mojave, Catalina and Big Sur 
- - MacOS M1: Big Sur, Ventura (Universal Binary)
- - iOS 14.4.2 (experimental)
-
-For Android and iOS player-c2qml is needed, cause only QML based multimedia is supported on this operating systems.
-
-*garlic.sh [options] SMIL_INDEX*
-
-## Command line options
- - -h, --help          Displays this help.
- - -v, --version       Displays version information.
- - -c, --config		   path to a config.xml
- - -m, --windows-mode  fullscreen, bigscreen (when multi monitor) or windowed mode
- - -z, --windows-size  size of windows (when windows mode) e.g. 980x540 means 980px width and 540px height
- - -s, --screen-select Starts in selected screen number
-
-Arguments:
-SMIL_INDEX        Path to SMIL index
+Click on the image to see how a Raspberry Pi 4 playing four videos in zones.
 
 Binaries can be [downloaded](https://garlic-player.com/garlic-player/downloads/). You will find stable releases and nightly build there.
 
@@ -56,12 +20,52 @@ Binaries can be [downloaded](https://garlic-player.com/garlic-player/downloads/)
  - logging
  - resume downloads
  - 301 redirect support
- - lot's of video formats 
+ - many video formats 
  - supported SVG 1.2. Tiny Profile, Jpg, Png and Gif
  - media cache
  - SMIL3 subset, HTML5, HTML5-Widgets and (depending on device) WebGL support
  - WebWidgets with also support parameters
  - Webserver on port 8080 for Restful Api
+
+## Official Operating Systems Supported
+ - Linux
+ - Windows
+ - Android
+ - macOS
+ 
+### Successfully Tested With:
+ - Linux 64Bit: Kde Neon, Kubuntu, Debian, Arch64
+ - Raspberry Pi: 3, 4, and 5 for 32 and 64Bit
+ - Tinker Board: (Linaro OS 1.8)
+ - Android Armv7 (4.4.1, 5.0.1, 5.1.1, 6.0.2, 7.1, 9 and 10)
+ - Windows 64Bit: 7, 8, 10, and 11
+ - MacOS 64Bit (Intel): High Sierra, Mojave, Catalina and Big Sur 
+ - MacOS M1: Big Sur, Ventura (Universal Binary), Sonoma
+ - iOS 14.4.2 (experimental)
+
+## Command Line Options
+
+| Option | Description |
+|-------------------|----------------------------------------------------------------|
+| `-h, --help` | Displays help |
+| `-v, --version` | Displays version information |
+| `-c, --config` | Path to `config.xml` |
+| `-m, --windows-mode` | Full screen, big screen or window mode |
+| `-z, --windows-size` | Window size in window mode, e.g. `980x540` |
+| `-s, --screen-select` | Starts in the selected screen |
+
+Arguments:
+SMIL_INDEX        Path to SMIL index
+
+For Android and iOS player-c2qml is needed, cause only QML based multimedia is supported on this operating systems.
+
+*garlic.sh [options] SMIL_INDEX*
+
+## HotKeys
+ - toggle fullscreen with Ctrl-F (not in Android)
+ - toogle bigscreen with Ctrl-B (not in Android)
+ - quit app with Ctrl-Q
+ - open configuration dialog with Ctrl-S
 
 ## Currently supported SMIL-Features
 
@@ -96,7 +100,7 @@ Binaries can be [downloaded](https://garlic-player.com/garlic-player/downloads/)
 - **fit** fill|meet|meetbest
 
 #### Attributes for mbrush
-- **color** color in CSS Stsyle
+- **color** color in CSS Style
 
 ### Attributes for media and container (Timings and Synchronization)
 - **xml:id** with Fallback for SMIL 2.0 id
@@ -150,15 +154,7 @@ Binaries can be [downloaded](https://garlic-player.com/garlic-player/downloads/)
  - caching of remote media files
  - refresh via meta tag in cyclic timer periods
  - http 301 redirects for index and media
- - change config.xml during plaback
+ - change config.xml during playback
  - remote update
 
-[Documentation & Tutorials](https://garlic-player.com/garlic-player/docs/)
-
-## HotKeys
- - toogle fullscreen with Ctrl-F (not in Android)
- - toogle bigscreen with Ctrl-B (not in Android)
- - quit app with Ctrl-Q
- - open configuration dialog with Ctrl-S
-
-Contact: [Nikolaos Sagiadinos] (mailto:ns@smil-control.com)
+Contact: [Niko Sagiadinos] (mailto:garlic@sagiadinos.de)
