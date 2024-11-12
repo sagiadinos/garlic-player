@@ -256,7 +256,7 @@ void LibFacade::applyCommand(QString task_id, QString command)
         MyFreeDiscSpace->clearPlayerCache();
         MyFreeDiscSpace->clearWebCache();
     }
-    else if (command == "clear_playercache")
+    else if (command == "clear_playercache" || command == "clear_cache")
     {
         MyFreeDiscSpace->clearPlayerCache();
     }
@@ -264,6 +264,7 @@ void LibFacade::applyCommand(QString task_id, QString command)
     {
         MyFreeDiscSpace->clearWebCache();
     }
+    reboot(task_id); // otherwise a black screen
 }
 
 void LibFacade::takeScreenshot(QString file_path)
