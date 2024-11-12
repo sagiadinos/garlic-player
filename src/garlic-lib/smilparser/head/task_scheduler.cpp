@@ -26,7 +26,6 @@ SmilHead::TaskScheduler::TaskScheduler(DB::InventoryTable *it, MainConfiguration
 
 }
 
-
 void SmilHead::TaskScheduler::processFromUrl(QUrl url)
 {
     QFile::remove(MyConfiguration->getPaths("cache")+"task_scheduler.xml"); // remove old file
@@ -248,6 +247,4 @@ bool SmilHead::TaskScheduler::hasUsedTaskId(QString task_id, QString task_name)
 
     return false;
 }
-
-
 

@@ -37,6 +37,8 @@ namespace SmilHead
     signals:
             void finishedSoftwareDownload(QString file_path);
 
+    private:
+        void removeOldFirmware(QString file_path);
     };
 }
 #endif // FIRMWAREUPDATE_H

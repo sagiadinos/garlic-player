@@ -48,6 +48,11 @@ void SmilHead::FirmwareDownloader::processFromUrl(QUrl firmware_url)
         file_name = "garlic-player.zip";
     }
     download_file_path = MyConfiguration->getPaths("cache")+file_name;
+
+    // delete an existing file before otherwise update will failed in Android > 10
+    // as Android Launcher is not able to delete files out of his directory. Even not as root.
+    removeOldFirmware(download_file_path);
+
     MyDownloader->processFile(firmware_url, download_file_path);
 }
 
@@ -55,4 +60,16 @@ void SmilHead::FirmwareDownloader::doSucceed(TNetworkAccess *network)
 {
     Q_UNUSED(network);
     emit finishedSoftwareDownload(download_file_path);
+}
+
+void SmilHead::FirmwareDownloader::removeOldFirmware(QString file_path)
+{
+    if (QFile::exists(file_path))
+    {
+        if (!QFile::remove(file_path))
+        {
+            qWarning(MediaControl) << file_path + "could not be removed";
+        }
+    }
+
 }
