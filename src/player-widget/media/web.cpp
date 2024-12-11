@@ -26,6 +26,17 @@ PlayerWeb::PlayerWeb(QString r_id, Launcher *lc, MainConfiguration *config, QObj
     browser   = new QWebEngineView();
     port      = MyMainConfiguration->getUserConfig()->value("httpd/port").toString();
     connect(browser, SIGNAL(loadFinished(bool)), this, SLOT(doLoadFinished(bool)));
+    page = browser->page();
+    QObject::connect(page, &QWebEnginePage::featurePermissionRequested,
+                     [&](const QUrl &securityOrigin, QWebEnginePage::Feature feature)
+                     {
+                         if (feature == QWebEnginePage::MediaAudioCapture ||
+                             feature == QWebEnginePage::MediaVideoCapture ||
+                             feature == QWebEnginePage::MediaAudioVideoCapture)
+                         {
+                             page->setFeaturePermission(securityOrigin, feature, QWebEnginePage::PermissionGrantedByUser);
+                         }
+                     });
 }
 
 PlayerWeb::~PlayerWeb()
@@ -51,7 +62,6 @@ void PlayerWeb::loadMedia(BaseMedia *media, Region *reg)
     // Deactivate caching for testing
     // browser->page()->profile()->setHttpCacheType(QWebEngineProfile::NoCache);
     browser->page()->setBackgroundColor(Qt::transparent);
-
 
     browser->settings()->setAttribute(QWebEngineSettings::PlaybackRequiresUserGesture, false); // auto play video and audio
     browser->settings()->setAttribute(QWebEngineSettings::ShowScrollBars, false);
