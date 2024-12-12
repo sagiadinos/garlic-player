@@ -50,6 +50,7 @@ import android.content.Intent;
 import android.net.Uri;
 import java.lang.String;
 import android.webkit.WebSettings;
+import android.webkit.PermissionRequest;
 import android.util.Log;
 import android.webkit.WebSettings.PluginState;
 import android.graphics.Bitmap;
@@ -90,6 +91,7 @@ public class QtAndroidWebViewController
     private native void c_onReceivedTitle(long id, String title);
     private native void c_onRunJavaScriptResult(long id, long callbackId, String result);
     private native void c_onReceivedError(long id, int errorCode, String description, String url);
+    private native void c_processEventsFromQueue();
 
     // We need to block the UI thread in some cases, if it takes to long we should timeout before
     // ANR kicks in... Usually the hard limit is set to 10s and if exceed that then we're in trouble.
@@ -183,6 +185,12 @@ public class QtAndroidWebViewController
         }
 
         @Override
+        public void onPermissionRequest(PermissionRequest request)
+        {
+             request.grant(request.getResources());
+        }
+
+        @Override
         public void onReceivedIcon(WebView view, Bitmap icon)
         {
             super.onReceivedIcon(view, icon);
@@ -215,6 +223,20 @@ public class QtAndroidWebViewController
                 m_hasLocationPermission = hasLocationPermission(m_webView);
                 WebSettings webSettings = m_webView.getSettings();
 
+                // The local storage options are not user changeable in QtWebView and disabled by default on Android.
+                // In QtWebEngine and on iOS local storage is enabled by default, so we follow that.
+                webSettings.setDatabaseEnabled(true);
+                webSettings.setDomStorageEnabled(true);
+
+                // Before API level 30 accessing local files was enabled by default.
+                final boolean allowFileAccess = (System.getenv("QT5_ANDROID_WEBVIEW_ALLOW_FILE_ACCESS") != null);
+                if (allowFileAccess)
+                    webSettings.setAllowFileAccess(allowFileAccess);
+
+                final boolean allowFileAccessFromFileUrls = (System.getenv("QT5_ANDROID_WEBVIEW_ALLOW_FILE_ACCESS_FROM_URLS") != null);
+                if (allowFileAccessFromFileUrls)
+                    webSettings.setAllowFileAccessFromFileURLs(allowFileAccessFromFileUrls);
+
                 if (Build.VERSION.SDK_INT > 10) {
                     try {
                         m_webViewOnResume = m_webView.getClass().getMethod("onResume");
@@ -230,8 +252,8 @@ public class QtAndroidWebViewController
 
                 //allowing access to location without actual ACCESS_FINE_LOCATION may throw security exception
                 webSettings.setGeolocationEnabled(m_hasLocationPermission);
-                webSettings.setJavaScriptEnabled(true);
 
+                webSettings.setJavaScriptEnabled(true);
                 webSettings.setMediaPlaybackRequiresUserGesture(false);
                 webSettings.setAllowFileAccessFromFileURLs(true);
 //                websettings.setAllowFileAccess(true);
@@ -256,8 +278,56 @@ public class QtAndroidWebViewController
             }
         });
 
+        boolean semAcquired = false;
+        while (!semAcquired) {
+            try {
+                semAcquired = sem.tryAcquire(BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (!semAcquired) {
+                // If the waiting time elapsed before a permit was acquired probably we have a
+                // deadlock here. To unlock the thread that block us, we need to process events
+                // from the queue and try again.
+                c_processEventsFromQueue();
+            }
+        }
+    }
+
+    public String getUserAgent()
+    {
+        final String[] ua = {""};
+        final Semaphore sem = new Semaphore(0);
+        m_activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ua[0] = m_webView.getSettings().getUserAgentString();
+                sem.release();
+            }
+        });
+
         try {
-            sem.acquire();
+            sem.tryAcquire(BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ua[0];
+    }
+
+    public void setUserAgent(final String uaString)
+    {
+        final Semaphore sem = new Semaphore(0);
+        m_activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                m_webView.getSettings().setUserAgentString(uaString);
+                sem.release();
+            }
+        });
+
+        try {
+            sem.tryAcquire(BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             e.printStackTrace();
         }
