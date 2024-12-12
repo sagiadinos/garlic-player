@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import java.util.concurrent.ExecutionException;
 
+
 public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivity
 {
     private static GarlicActivity m_instance;
@@ -60,7 +61,7 @@ public class GarlicActivity extends org.qtproject.qt5.android.bindings.QtActivit
         }
     }
 
-    public void registerBroadcastReceiver()
+     public void registerBroadcastReceiver()
     {
         IntentFilter filter = new IntentFilter("com.sagiadinos.garlic.player.java.ConfigReceiver");
         ConfigReceiver MyConfigReceiver = new ConfigReceiver();

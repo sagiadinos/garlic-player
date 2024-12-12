@@ -41,15 +41,38 @@ void AndroidManager::fetchDeviceInformation()
 
 bool AndroidManager::checkPermissiones()
 {
-    auto  result = QtAndroid::checkPermission(QString("android.permission.WRITE_EXTERNAL_STORAGE"));
-    if(result == QtAndroid::PermissionResult::Denied)
+    QStringList permissions = {
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+    };
+
+    bool allPermissionsGranted = true;
+    for (const QString &permission : permissions)
     {
-        QtAndroid::PermissionResultMap resultHash = QtAndroid::requestPermissionsSync(QStringList({"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"}));
-        if(resultHash["android.permission.WRITE_EXTERNAL_STORAGE"] == QtAndroid::PermissionResult::Denied)
+        auto result = QtAndroid::checkPermission(permission);
+        if (result == QtAndroid::PermissionResult::Denied)
         {
+            allPermissionsGranted = false;
+            break; // break if a permission is missed
+        }
+    }
+    if (allPermissionsGranted)
+        return true;
+
+    QtAndroid::PermissionResultMap resultHash = QtAndroid::requestPermissionsSync(permissions);
+
+    for (const QString &permission : permissions)
+    {
+        if (resultHash[permission] == QtAndroid::PermissionResult::Denied)
+        {
+            qDebug() << "Permission denied:" << permission;
             return false;
         }
     }
+
     return true;
 }
 

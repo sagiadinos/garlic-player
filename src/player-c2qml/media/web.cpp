@@ -9,6 +9,7 @@ Web::Web(QQmlComponent *mc, QString r_id, Launcher *lc, MainConfiguration *confi
                         anchors.fill: parent;\n \
                    }\n"
     );
+
     port      = MyMainConfiguration->getUserConfig()->value("httpd/port").toString();
     web_item.reset(createMediaItem(mc, str));
 }
