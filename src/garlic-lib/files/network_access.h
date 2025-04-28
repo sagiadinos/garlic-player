@@ -41,6 +41,7 @@ class TNetworkAccess : public QObject
         MainConfiguration   *MyConfiguration;
         QUrl              remote_file_url;
         QNetworkRequest   prepareNetworkRequest(QUrl remote_url);
+        QNetworkRequest   prepareNetworkWithIfModifiedRequest(QUrl remote_url, const QDateTime &lastModifiedUtc);
 
     signals:
         void              succeed(TNetworkAccess *);

@@ -23,7 +23,8 @@ void FileDownloader::startDownload(QUrl url, QString file_name, qint64 rs)
     destination_file.setFileName(file_name+FILE_DOWNLOAD_SUFFIX); // add suffix to prevent overwriting
     setRemoteFileUrl(url);
 
-    QNetworkRequest request = prepareNetworkRequest(url);
+    QFileInfo fi(file_name);
+    QNetworkRequest request = prepareNetworkWithIfModifiedRequest(url, fi.lastModified().toUTC());
     if (destination_file.exists())
     {
         QByteArray rangeHeaderValue = "bytes=" + QByteArray::number(destination_file.size()) + "-";

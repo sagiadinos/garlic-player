@@ -37,7 +37,8 @@ void Downloader::processFile(QUrl url, QFileInfo fi)
     setRemoteFileUrl(url);
     setLocalFileInfo(fi);
     is_request_in_progress = true;
-    manager_head.data()->head(prepareNetworkRequest(remote_file_url));
+
+    manager_head.data()->head(prepareNetworkWithIfModifiedRequest(remote_file_url, local_file_info.lastModified().toUTC()));
     return;
 }
 
@@ -62,7 +63,7 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
     {
         // change remote_file_url with new redirect address
         QUrl remote_file_url_301 = examineRedirectUrl(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString());
-        QNetworkRequest request = prepareNetworkRequest(remote_file_url_301);
+        QNetworkRequest request = prepareNetworkWithIfModifiedRequest(remote_file_url_301, local_file_info.lastModified().toUTC());
 
         manager_head_redirect.reset(new QNetworkAccessManager(this));
         manager_head_redirect.data()->thread()->setPriority(QThread::LowestPriority);

@@ -45,5 +45,18 @@ QNetworkRequest TNetworkAccess::prepareNetworkRequest(QUrl remote_url)
     conf.setPeerVerifyMode(QSslSocket::VerifyNone);
     request.setSslConfiguration(conf);
     request.setRawHeader(QByteArray("User-Agent"), getUserAgent());
+
+    return request;
+}
+
+QNetworkRequest TNetworkAccess::prepareNetworkWithIfModifiedRequest(QUrl remote_url, const QDateTime& lastModifiedUtc)
+{
+    QNetworkRequest request = prepareNetworkRequest(remote_url);
+    // if file Not exist isValid is false
+    if (lastModifiedUtc.isValid())
+    {
+        QByteArray ifModifiedSinceValue = lastModifiedUtc.toString("ddd, dd MMM yyyy hh:mm:ss 'GMT'").toUtf8();
+        request.setRawHeader(QByteArray("If-Modified-Since"), ifModifiedSinceValue);
+    }
     return request;
 }
