@@ -116,9 +116,9 @@ void FileDownloader::finishDownload()
     qint64 tmp = destination_file.size();
     destination_file.close();
 
-    // Workaround as taskscheduler and configuration request do not sending content-length in header
+    // Workaround as php-fpm nginx & co do not send content-length when streaming
     // see downloader.cpp Row 144
-    if (tmp != remote_size && !destination_file.fileName().contains("task_scheduler") && !destination_file.fileName().contains("configuration"))
+    if (tmp != remote_size && !destination_file.fileName().contains("index") && !destination_file.fileName().contains("task_scheduler") && !destination_file.fileName().contains("configuration"))
     {
         cleanupDownload();
         emit downloadError(network_reply);
