@@ -234,6 +234,7 @@ bool Downloader::validContentType(QString content_type)
             !content_type.contains("audio/") &&
             !content_type.contains("text/") &&
             !content_type.contains("application/smil") &&
+            !content_type.contains("application/smil+xml") &&
             !content_type.contains("application/xml") &&
             !content_type.contains("application/zip") &&
             !content_type.contains("application/vnd.android.package-archive") &&
