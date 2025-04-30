@@ -350,8 +350,7 @@ void MainConfiguration::determineIndexPath()
         QUrl url(index_uri);
         setIndexPath(url.adjusted(QUrl::RemoveFilename |
                                   QUrl::RemoveQuery |
-                                  QUrl::RemoveFragment |
-                                  QUrl::RemovePort).toString());
+                                  QUrl::RemoveFragment).toString());
         if (index_path.mid(index_path.length()-1, 1) != "/")
             setIndexPath(index_path+"/");
 
