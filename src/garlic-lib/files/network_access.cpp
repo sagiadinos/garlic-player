@@ -55,7 +55,8 @@ QNetworkRequest TNetworkAccess::prepareNetworkWithIfModifiedRequest(QUrl remote_
     // if file Not exist isValid is false
     if (lastModifiedUtc.isValid())
     {
-        QByteArray ifModifiedSinceValue = lastModifiedUtc.toString("ddd, dd MMM yyyy hh:mm:ss 'GMT'").toUtf8();
+        QLocale englishLocale(QLocale::English, QLocale::AnyCountry);
+        QByteArray ifModifiedSinceValue = englishLocale.toString(lastModifiedUtc, "ddd, dd MMM yyyy hh:mm:ss 'GMT'").toUtf8();
         request.setRawHeader(QByteArray("If-Modified-Since"), ifModifiedSinceValue);
     }
     return request;
