@@ -144,8 +144,8 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
     if (content_type.contains("application/smil+xml") && reply->hasRawHeader("etag"))
     {
-        remoteEtag = reply->rawHeader("etag"); //.trimmed();
-        remoteEtag = remoteEtag.remove('\"', 1); // Ggf. Anführungszeichen entfernen
+        remoteEtag = reply->rawHeader("etag").trimmed();
+        remoteEtag = remoteEtag.remove('\"', 1);
 
         QFile file(local_file_info.absoluteFilePath());
         if (file.open(QIODevice::ReadOnly))

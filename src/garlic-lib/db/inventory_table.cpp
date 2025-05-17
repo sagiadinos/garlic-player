@@ -129,6 +129,7 @@ void DB::InventoryTable::setDbPath(QString path)
     db_file.setFileName(path+"garlic.db");
 }
 
+
 bool DB::InventoryTable::createTable()
 {
     QSqlQuery query(db);
@@ -138,6 +139,7 @@ bool DB::InventoryTable::createTable()
                   content_type TEXT, \
                   content_length INTEGER, \
                   last_update TEXT, \
+                  etag TEXT, \
                   expires TEXT, \
                   state INTEGER \
                   )";
@@ -163,6 +165,22 @@ bool DB::InventoryTable::openDbFile()
         qCritical(Database) << "database file" << db_file.fileName() << "could not be created";
         return false;
     }
+    if (tableExists("inventory") && !hasField("inventory", "etag"))
+    {
+        QSqlQuery query(db);
+        qCritical(Database) << "database file" << db_file.fileName() << " etag coould not be created";
+        return query.exec("ALTER TABLE inventory ADD COLUMN etag TEXT;");
+    }
+
+    return true;
+}
+
+
+bool DB::InventoryTable::checkFields()
+{
+    // check for etag
+    if (!hasField("inventory", "etag"))
+
     return true;
 }
 
@@ -178,6 +196,30 @@ bool DB::InventoryTable::createDbFile()
     return true;
 }
 
+bool DB::InventoryTable::hasField(const QString &tableName, const QString &fieldName)
+{
+    QSqlQuery q;
+    q.prepare(QStringLiteral("PRAGMA table_info(%1)").arg(tableName));
+    if (!q.exec()) return false;
+    while (q.next()) {
+        if (q.value(1).toString() == fieldName)
+            return true;
+    }
+    return false;
+}
+
+bool DB::InventoryTable::tableExists(const QString &tableName)
+{
+
+    QSqlQuery query(db);
+    if (!query.exec(
+            QString("SELECT name FROM sqlite_master "
+                    "WHERE type='table' AND name='%1'")
+                .arg(tableName)))
+        return false;
+    return query.next();
+}
+
 DB::InventoryDataset DB::InventoryTable::collectResult(QSqlQuery *query)
 {
     DB::InventoryDataset dataset;
@@ -186,6 +228,7 @@ DB::InventoryDataset DB::InventoryTable::collectResult(QSqlQuery *query)
     dataset.content_type   = query->value("content_type").toString();
     dataset.content_length = query->value("content_length").toLongLong();
     dataset.last_update    = QDateTime::fromString(query->value("last_update").toString());
+    dataset.etag           = query->value("etag").toString();
     dataset.expires        = QDateTime::fromString(query->value("expires").toString());
     dataset.state          = query->value("state").toInt();
     return dataset;

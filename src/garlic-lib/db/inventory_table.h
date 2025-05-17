@@ -17,6 +17,7 @@ namespace DB
             QString content_type   = "";
             qint64  content_length = 0;
             QDateTime last_update  = QDateTime();
+            QString etag = "";
             QDateTime expires      = QDateTime();
             int       state        = 0;
 
@@ -53,6 +54,9 @@ namespace DB
             bool createDbFile();
             bool openDbFile();
             bool createTable();
+            bool checkFields();
+            bool tableExists(const QString &tableName);
+            bool hasField(const QString &tableName, const QString &fieldName);
             InventoryDataset collectResult(QSqlQuery *query);
     };
 }
