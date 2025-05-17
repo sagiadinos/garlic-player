@@ -13,7 +13,7 @@ FileDownloader::~FileDownloader()
     }
 }
 
-void FileDownloader::startDownload(QUrl url, QString file_name, qint64 rs)
+void FileDownloader::startDownload(QUrl url, QString file_name, qint64 rs, QByteArray etag)
 {
     if(network_reply)
         return;
@@ -24,7 +24,7 @@ void FileDownloader::startDownload(QUrl url, QString file_name, qint64 rs)
     setRemoteFileUrl(url);
 
     QFileInfo fi(file_name);
-    QNetworkRequest request = prepareNetworkWithIfModifiedRequest(url, fi.lastModified().toUTC());
+    QNetworkRequest request = prepareNetworkWithIfModifiedRequestAndETag(url, fi.lastModified().toUTC(), etag);
     if (destination_file.exists())
     {
         QByteArray rangeHeaderValue = "bytes=" + QByteArray::number(destination_file.size()) + "-";

@@ -38,7 +38,7 @@ void Downloader::processFile(QUrl url, QFileInfo fi)
     setLocalFileInfo(fi);
     is_request_in_progress = true;
 
-    manager_head.data()->head(prepareNetworkWithIfModifiedRequest(remote_file_url, local_file_info.lastModified().toUTC()));
+    manager_head.data()->head(prepareNetworkRequest(remote_file_url));
     return;
 }
 
@@ -63,7 +63,7 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
     {
         // change remote_file_url with new redirect address
         QUrl remote_file_url_301 = examineRedirectUrl(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString());
-        QNetworkRequest request = prepareNetworkWithIfModifiedRequest(remote_file_url_301, local_file_info.lastModified().toUTC());
+        QNetworkRequest request = prepareNetworkRequest(remote_file_url_301);
 
         manager_head_redirect.reset(new QNetworkAccessManager(this));
         manager_head_redirect.data()->thread()->setPriority(QThread::LowestPriority);
@@ -139,19 +139,34 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
     if (!reply->hasRawHeader("Last-Modified"))
     {
-        list << "resourceURI" << remote_file_url.toString()
-             << "errorMessage" << "No Last-Modified in http-header after HEAD request"
-             << "lastCachedLength" << QString::number(local_file_info.size())
-             << "lastCachedModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
-//        qWarning(ContentManager) << Logger::getInstance().createEventLogMetaData("UPDATE_FAILED",list);
-        qDebug() << remote_file_url.toString() << " No Last-Modified in http-header after HEAD request";
+        qWarning() << remote_file_url.toString() << " Server not send Last-Modified in http-header after HEAD request";
+    }
+
+    if (reply->hasRawHeader("etag"))
+    {
+        remoteEtag = reply->rawHeader("etag").trimmed();
+        remoteEtag = remoteEtag.remove('\"', 1); // Ggf. Anführungszeichen entfernen
+
+        QFile file(local_file_info.absoluteFilePath());
+        if (file.open(QIODevice::ReadOnly))
+        {
+            QCryptographicHash hash(QCryptographicHash::Md5);
+            hash.addData(&file );
+            QByteArray localMd5 = hash.result().toHex();
+            file.close();
+
+            if (localMd5 == remoteEtag)
+            {
+                emit notmodified(this);
+                return;
+            }
+        }
     }
 
     QDateTime remote_last_modified = reply->header(QNetworkRequest::LastModifiedHeader).toDateTime();
     remote_size                    = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
 
-   // QList<QByteArray> my_header = reply->rawHeaderList();
-
+    // Fallback
     // we need to check for size and last Modified, cause a previous index smil on the server can have a older Date and would not be loaded
     // we need to check also if there is an already downloaded file which is signed and waiting via downloaded suffix
     QFileInfo fi(local_file_info.absoluteFilePath() + FILE_DOWNLOADED_SUFFIX);
@@ -200,7 +215,7 @@ void Downloader::startDownload(QNetworkReply *reply)
     connect(MyFileDownloader.data(), SIGNAL(downloadSuccessful()), SLOT(doDownloadSuccessFul()));
     connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply*)), SLOT(doDownloadError(QNetworkReply*)));
 
-    MyFileDownloader->startDownload(reply->url(), local_file_info.absoluteFilePath(), remote_size);
+    MyFileDownloader->startDownload(reply->url(), local_file_info.absoluteFilePath(), remote_size, remoteEtag);
 }
 
 void Downloader::doDownloadSuccessFul()

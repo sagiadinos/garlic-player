@@ -49,7 +49,7 @@ QNetworkRequest TNetworkAccess::prepareNetworkRequest(QUrl remote_url)
     return request;
 }
 
-QNetworkRequest TNetworkAccess::prepareNetworkWithIfModifiedRequest(QUrl remote_url, const QDateTime& lastModifiedUtc)
+QNetworkRequest TNetworkAccess::prepareNetworkWithIfModifiedRequestAndETag(QUrl remote_url, const QDateTime& lastModifiedUtc, QByteArray etag)
 {
     QNetworkRequest request = prepareNetworkRequest(remote_url);
     // if file Not exist isValid is false
@@ -58,6 +58,7 @@ QNetworkRequest TNetworkAccess::prepareNetworkWithIfModifiedRequest(QUrl remote_
         QLocale englishLocale(QLocale::English, QLocale::AnyCountry);
         QByteArray ifModifiedSinceValue = englishLocale.toString(lastModifiedUtc, "ddd, dd MMM yyyy hh:mm:ss 'GMT'").toUtf8();
         request.setRawHeader(QByteArray("If-Modified-Since"), ifModifiedSinceValue);
+        request.setRawHeader(QByteArray("If-None-Match"), etag);
     }
     return request;
 }

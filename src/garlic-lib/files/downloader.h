@@ -47,6 +47,7 @@ class Downloader : public TNetworkAccess
     protected:
         QFileInfo               local_file_info;
         qint64                  remote_size;
+        QByteArray              remoteEtag;
         QString                 remote_md5;
         DB::InventoryTable      *MyInventoryTable = Q_NULLPTR;
         FreeDiscSpace           *MyFreeDiscSpace = Q_NULLPTR;
