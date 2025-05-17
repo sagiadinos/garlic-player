@@ -55,6 +55,7 @@ class Downloader : public TNetworkAccess
         QScopedPointer <FileDownloader>         MyFileDownloader;
         void                    checkStatusCode(QNetworkReply *reply, int status_code);
         void                    checkHttpHeaders(QNetworkReply *reply);
+        void                    prepareDownload(QNetworkReply *reply);
         void                    startDownload(QNetworkReply *reply);
         bool                    validContentType(QString content_type);
         bool                    validFileExtension();

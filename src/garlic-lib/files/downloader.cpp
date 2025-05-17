@@ -142,9 +142,9 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         qWarning() << remote_file_url.toString() << " Server not send Last-Modified in http-header after HEAD request";
     }
 
-    if (reply->hasRawHeader("etag"))
+    if (content_type.contains("application/smil+xml") && reply->hasRawHeader("etag"))
     {
-        remoteEtag = reply->rawHeader("etag").trimmed();
+        remoteEtag = reply->rawHeader("etag"); //.trimmed();
         remoteEtag = remoteEtag.remove('\"', 1); // Ggf. Anführungszeichen entfernen
 
         QFile file(local_file_info.absoluteFilePath());
@@ -156,10 +156,10 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
             file.close();
 
             if (localMd5 == remoteEtag)
-            {
                 emit notmodified(this);
-                return;
-            }
+            else
+                prepareDownload(reply);
+            return;
         }
     }
 
@@ -183,6 +183,13 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         return;
     }
 
+    prepareDownload(reply);
+
+    return;
+}
+
+void Downloader::prepareDownload(QNetworkReply *reply)
+{
     qint64 calc = MyFreeDiscSpace->calculateNeededDiscSpaceToFree(remote_size);
     if (calc > 0 && !MyFreeDiscSpace->freeDiscSpace(calc))
     {
@@ -195,7 +202,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         DB::InventoryDataset dataset;
         dataset.resource_uri   = remote_file_url.toString();
         dataset.cache_name     = local_file_info.fileName();
-        dataset.content_type   = content_type;
+        dataset.content_type   = reply->rawHeader("Content-Type");
         dataset.content_length = remote_size;
         dataset.last_update    = QDateTime::currentDateTime();
         dataset.expires        = QDateTime();
@@ -203,9 +210,8 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         MyInventoryTable->replace(dataset);
     }
     startDownload(reply);
-
-    return;
 }
+
 
 void Downloader::startDownload(QNetworkReply *reply)
 {
