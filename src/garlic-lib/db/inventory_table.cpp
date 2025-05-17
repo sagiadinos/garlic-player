@@ -28,7 +28,7 @@ bool DB::InventoryTable::init(QString path)
 bool DB::InventoryTable::replace(DB::InventoryDataset dataset)
 {
     QSqlQuery query(db);
-    QString   sql = "REPLACE INTO inventory (resource_uri, cache_name, content_type, content_length, last_update, expires, state ) \
+    QString   sql = "REPLACE INTO inventory (resource_uri, cache_name, content_type, content_length, last_update, expires, state, etag ) \
                VALUES( \
                    '" + dataset.resource_uri + "', \
                    '" + dataset.cache_name + "', \
@@ -36,7 +36,8 @@ bool DB::InventoryTable::replace(DB::InventoryDataset dataset)
                    " + QString::number(dataset.content_length) + ", \
                    '" + dataset.last_update.toString() + "', \
                    '" + dataset.expires.toString() + "', \
-                   " + QString::number(dataset.state) + " \
+                   " + QString::number(dataset.state) + ", \
+                   '" + dataset.etag + "' \
                 )";
     if (!query.exec(sql))
     {

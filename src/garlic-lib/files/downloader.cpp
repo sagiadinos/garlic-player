@@ -205,6 +205,7 @@ void Downloader::prepareDownload(QNetworkReply *reply)
         dataset.content_type   = reply->rawHeader("Content-Type");
         dataset.content_length = remote_size;
         dataset.last_update    = QDateTime::currentDateTime();
+        dataset.etag           = remoteEtag;
         dataset.expires        = QDateTime();
         dataset.state          = DB::TRANSFER;
         MyInventoryTable->replace(dataset);
