@@ -48,21 +48,25 @@ bool DB::InventoryTable::replace(DB::InventoryDataset dataset)
 
 }
 
-DB::InventoryDataset DB::InventoryTable::getByResourceURI(QString resource_uri)
+DB::InventoryDataset DB::InventoryTable::findByResourceURI(QString resource_uri)
 {
     QSqlQuery query(db);
     if (!query.exec("SELECT * FROM inventory WHERE resource_uri ='" +resource_uri+"'"))
         qCritical(Database) << "select failed" << query.lastError().text();
+
     if (!query.first())
         return InventoryDataset();
 
     return collectResult(&query);
 }
 
-void DB::InventoryTable::updateFileStatus(QString resource_uri, int state)
+void DB::InventoryTable::updateFileStatusAndSize(QString resource_uri, int state, int size)
 {
     QSqlQuery query(db);
-    if (!query.exec("UPDATE inventory SET state = " + QString::number(state) + " WHERE resource_uri ='" +resource_uri+"'"))
+    if (!query.exec("UPDATE inventory SET state = " +
+                    QString::number(state) +
+                    ", content_length = " + QString::number(size) +
+                    " WHERE resource_uri ='" +resource_uri+"'"))
         qCritical(Database) << "delete failed" << query.lastError().text();
 }
 
@@ -176,14 +180,6 @@ bool DB::InventoryTable::openDbFile()
     return true;
 }
 
-
-bool DB::InventoryTable::checkFields()
-{
-    // check for etag
-    if (!hasField("inventory", "etag"))
-
-    return true;
-}
 
 bool DB::InventoryTable::createDbFile()
 {

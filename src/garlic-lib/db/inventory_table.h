@@ -39,22 +39,20 @@ namespace DB
             ~InventoryTable();
             bool init(QString path);
             bool replace(InventoryDataset dataset);
-            InventoryDataset getByResourceURI(QString resource_uri);
-            void updateFileStatus(QString resource_uri, int state);
+            InventoryDataset findByResourceURI(QString resource_uri);
+            void updateFileStatusAndSize(QString resource_uri, int state, int size);
             void deleteByResourceURI(QString resource_uri);
             void deleteByCacheName(QString cache_name);
             QList<DB::InventoryDataset> findPaginated(int max_results, int begin = 0);
             QList<InventoryDataset> findAll();
             DB::InventoryDataset findByCacheBaseName(QString base_name);
             void setDbPath(QString path);
-
         protected:
             QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
             QFile db_file;
             bool createDbFile();
             bool openDbFile();
             bool createTable();
-            bool checkFields();
             bool tableExists(const QString &tableName);
             bool hasField(const QString &tableName, const QString &fieldName);
             InventoryDataset collectResult(QSqlQuery *query);
