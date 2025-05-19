@@ -235,7 +235,7 @@ void Downloader::doDownloadSuccessFul()
 
     if (MyInventoryTable != Q_NULLPTR)
     {
-        MyInventoryTable->updateFileRecord(remote_file_url.toString(), DB::COMPLETE, local_file_info.size());
+        MyInventoryTable->updateFileStatusAndSize(remote_file_url.toString(), DB::COMPLETE, local_file_info.size());
     }
     is_request_in_progress = false;
 
