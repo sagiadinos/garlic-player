@@ -39,7 +39,8 @@ void Downloader::processFile(QUrl url, QFileInfo fi)
     is_request_in_progress = true;
     if (MyInventoryTable != Q_NULLPTR)
     {
-        currentDataset = MyInventoryTable->findByResourceURI(url.toString());
+        currentDataset = MyInventoryTable->findByCacheName(local_file_info.fileName());
+        handleDifferentServer();
     }
 
     manager_head.data()->head(prepareConditionalRequest(remote_file_url, currentDataset.last_update, currentDataset.etag));
@@ -351,4 +352,28 @@ quint64 Downloader::determineBytesTransfered()
         bytes_transfered = MyFileDownloader.data()->getBytesTransfered();
 
     return bytes_transfered;
+}
+
+void Downloader::handleDifferentServer()
+{
+    if (currentDataset.etag.isEmpty() && currentDataset.resource_uri != remote_file_url.toString())
+    {
+        currentDataset.etag = determineLocalFileMd5();
+    }
+
+}
+
+QString Downloader::determineLocalFileMd5()
+{
+    QFile file(local_file_info.absoluteFilePath());
+    QByteArray localMd5;
+    if (file.open(QIODevice::ReadOnly))
+    {
+        QCryptographicHash hash(QCryptographicHash::Md5);
+        hash.addData(&file );
+        localMd5 = hash.result().toHex();
+        file.close();
+    }
+
+    return QString::fromUtf8(localMd5);
 }

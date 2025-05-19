@@ -49,7 +49,6 @@ class Downloader : public TNetworkAccess
         qint64                  remote_size;
         QString                 content_type;
         QByteArray              remoteEtag;
-        QString                 remote_md5;
         DB::InventoryTable      *MyInventoryTable = Q_NULLPTR;
         FreeDiscSpace           *MyFreeDiscSpace = Q_NULLPTR;
         DB::InventoryDataset    currentDataset;
@@ -72,7 +71,9 @@ class Downloader : public TNetworkAccess
         void                    doDownloadError(QNetworkReply *reply);
         void                    insertDatabase();
     private:
-        bool is_request_in_progress = false;
+        bool                    is_request_in_progress = false;
+        void                    handleDifferentServer();
+        QString                 determineLocalFileMd5();
     signals:
         void                    notmodified(TNetworkAccess *);
         void                    notcacheable(TNetworkAccess *);
