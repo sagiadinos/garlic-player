@@ -47,10 +47,12 @@ class Downloader : public TNetworkAccess
     protected:
         QFileInfo               local_file_info;
         qint64                  remote_size;
+        QString                 content_type;
         QByteArray              remoteEtag;
         QString                 remote_md5;
         DB::InventoryTable      *MyInventoryTable = Q_NULLPTR;
         FreeDiscSpace           *MyFreeDiscSpace = Q_NULLPTR;
+        DB::InventoryDataset    currentDataset;
         QScopedPointer <QNetworkAccessManager>  manager_head, manager_head_redirect, manager_get;
         QScopedPointer <FileDownloader>         MyFileDownloader;
         void                    checkStatusCode(QNetworkReply *reply, int status_code);
@@ -62,11 +64,13 @@ class Downloader : public TNetworkAccess
         void                    handleNetworkError(QNetworkReply *reply);
         QUrl                    examineRedirectUrl(QUrl redirect_url);
         quint64                 determineBytesTransfered();
+        bool                    canStoreNewFile();
     protected slots:
         void                    finishedHeadRequest(QNetworkReply *reply);
         void                    finishedHeadRedirectRequest(QNetworkReply *reply);
         void                    doDownloadSuccessFul();
         void                    doDownloadError(QNetworkReply *reply);
+        void                    insertDatabase();
     private:
         bool is_request_in_progress = false;
     signals:

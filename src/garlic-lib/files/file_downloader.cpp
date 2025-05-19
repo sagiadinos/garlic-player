@@ -13,7 +13,7 @@ FileDownloader::~FileDownloader()
     }
 }
 
-void FileDownloader::startDownload(QUrl url, QString file_name, qint64 rs, QByteArray etag)
+void FileDownloader::startDownload(QUrl url, QString file_name, qint64 rs, QString etag)
 {
     if(network_reply)
         return;
@@ -24,7 +24,7 @@ void FileDownloader::startDownload(QUrl url, QString file_name, qint64 rs, QByte
     setRemoteFileUrl(url);
 
     QFileInfo fi(file_name);
-    QNetworkRequest request = prepareNetworkWithIfModifiedRequestAndETag(url, fi.lastModified().toUTC(), etag);
+    QNetworkRequest request = prepareConditionalRequest(url, fi.lastModified().toUTC(), etag);
     if (destination_file.exists())
     {
         QByteArray rangeHeaderValue = "bytes=" + QByteArray::number(destination_file.size()) + "-";
@@ -117,9 +117,8 @@ void FileDownloader::finishDownload()
     qint64 tmp = destination_file.size();
     destination_file.close();
 
-    // Workaround as php-fpm nginx & co do not send content-length when streaming
-    // see downloader.cpp Row 144
-    if (tmp != remote_size && !destination_file.fileName().contains("index") && !destination_file.fileName().contains("task_scheduler") && !destination_file.fileName().contains("configuration"))
+    // Some server don't send Content-length or Last-Modified. We can check size only after download
+    if (tmp == 0)
     {
         cleanupDownload();
         emit downloadError(network_reply);

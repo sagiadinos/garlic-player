@@ -40,8 +40,8 @@ class TNetworkAccess : public QObject
     protected:
         MainConfiguration   *MyConfiguration;
         QUrl              remote_file_url;
+        QNetworkRequest   prepareConditionalRequest(QUrl remote_url, const QDateTime &lastModifiedUtc, QString etag);
         QNetworkRequest   prepareNetworkRequest(QUrl remote_url);
-        QNetworkRequest   prepareNetworkWithIfModifiedRequestAndETag(QUrl remote_url, const QDateTime &lastModifiedUtc, QByteArray etag);
 
     signals:
         void              succeed(TNetworkAccess *);

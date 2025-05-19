@@ -37,8 +37,12 @@ void Downloader::processFile(QUrl url, QFileInfo fi)
     setRemoteFileUrl(url);
     setLocalFileInfo(fi);
     is_request_in_progress = true;
+    if (MyInventoryTable != Q_NULLPTR)
+    {
+        currentDataset = MyInventoryTable->findByResourceURI(url.toString());
+    }
 
-    manager_head.data()->head(prepareNetworkRequest(remote_file_url));
+    manager_head.data()->head(prepareConditionalRequest(remote_file_url, currentDataset.last_update, currentDataset.etag));
     return;
 }
 
@@ -63,7 +67,7 @@ void Downloader::finishedHeadRequest(QNetworkReply *reply)
     {
         // change remote_file_url with new redirect address
         QUrl remote_file_url_301 = examineRedirectUrl(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toString());
-        QNetworkRequest request = prepareNetworkRequest(remote_file_url_301);
+        QNetworkRequest request = prepareConditionalRequest(remote_file_url_301, currentDataset.last_update, currentDataset.etag);
 
         manager_head_redirect.reset(new QNetworkAccessManager(this));
         manager_head_redirect.data()->thread()->setPriority(QThread::LowestPriority);
@@ -107,7 +111,6 @@ void Downloader::checkStatusCode(QNetworkReply *reply, int status_code)
 
 void Downloader::checkHttpHeaders(QNetworkReply *reply)
 {
-    QString content_type = "";
     if (reply->hasRawHeader("Content-Type"))
     {
         content_type = reply->rawHeader("Content-Type");
@@ -139,28 +142,24 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
     if (!reply->hasRawHeader("Last-Modified"))
     {
-        qWarning() << remote_file_url.toString() << " Server not send Last-Modified in http-header after HEAD request";
+        qWarning() << remote_file_url.toString() << " Server did not replied with Last-Modified to HEAD request";
     }
 
-    if (content_type.contains("application/smil+xml") && reply->hasRawHeader("etag"))
+    if (reply->hasRawHeader("etag"))
     {
         remoteEtag = reply->rawHeader("etag").trimmed();
-        remoteEtag = remoteEtag.remove('\"', 1);
 
-        QFile file(local_file_info.absoluteFilePath());
-        if (file.open(QIODevice::ReadOnly))
-        {
-            QCryptographicHash hash(QCryptographicHash::Md5);
-            hash.addData(&file );
-            QByteArray localMd5 = hash.result().toHex();
-            file.close();
+        if (remoteEtag.startsWith('\"') && remoteEtag.endsWith('\"'))
+            remoteEtag = remoteEtag.mid(1, remoteEtag.length() - 2);
+        else if (remoteEtag.startsWith("W/\"") && remoteEtag.endsWith('\"'))
+            remoteEtag = remoteEtag.mid(3, remoteEtag.length() - 4);
 
-            if (localMd5 == remoteEtag)
-                emit notmodified(this);
-            else
-                prepareDownload(reply);
-            return;
-        }
+        if (currentDataset.etag == remoteEtag)
+            emit notmodified(this);
+        else
+            prepareDownload(reply);
+
+        return;
     }
 
     QDateTime remote_last_modified = reply->header(QNetworkRequest::LastModifiedHeader).toDateTime();
@@ -190,29 +189,15 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
 
 void Downloader::prepareDownload(QNetworkReply *reply)
 {
-    qint64 calc = MyFreeDiscSpace->calculateNeededDiscSpaceToFree(remote_size);
-    if (calc > 0 && !MyFreeDiscSpace->freeDiscSpace(calc))
+    if (!canStoreNewFile())
     {
         handleNetworkError(reply);
         return;
     }
 
-    if (MyInventoryTable != Q_NULLPTR)
-    {
-        DB::InventoryDataset dataset;
-        dataset.resource_uri   = remote_file_url.toString();
-        dataset.cache_name     = local_file_info.fileName();
-        dataset.content_type   = reply->rawHeader("Content-Type");
-        dataset.content_length = remote_size;
-        dataset.last_update    = QDateTime::currentDateTime();
-        dataset.etag           = remoteEtag;
-        dataset.expires        = QDateTime();
-        dataset.state          = DB::TRANSFER;
-        MyInventoryTable->replace(dataset);
-    }
+    insertDatabase();
     startDownload(reply);
 }
-
 
 void Downloader::startDownload(QNetworkReply *reply)
 {
@@ -222,22 +207,65 @@ void Downloader::startDownload(QNetworkReply *reply)
     connect(MyFileDownloader.data(), SIGNAL(downloadSuccessful()), SLOT(doDownloadSuccessFul()));
     connect(MyFileDownloader.data(), SIGNAL(downloadError(QNetworkReply*)), SLOT(doDownloadError(QNetworkReply*)));
 
-    MyFileDownloader->startDownload(reply->url(), local_file_info.absoluteFilePath(), remote_size, remoteEtag);
+    MyFileDownloader->startDownload(reply->url(), local_file_info.absoluteFilePath(), remote_size, currentDataset.etag);
 }
 
 void Downloader::doDownloadSuccessFul()
 {
     QStringList list;
+    if (!canStoreNewFile())
+    {
+        QFile::remove(local_file_info.filePath());
+        list << "resourceURI" << remote_file_url.toString()
+             << "errorMessage" << "Disk quota full cannot store"
+             << "transferLength" << QString::number(determineBytesTransfered())
+             << "lastCachedLength" << QString::number(local_file_info.size())
+             << "lastCachedModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
+        qWarning(ContentManager) << Logger::getInstance().createEventLogMetaData("FETCH_ERROR",list);
+
+        return;
+    }
+
+
     list  << "resourceURI" << remote_file_url.toString()
           << "contentLength" << QString::number(local_file_info.size())
           << "lastModifiedTime" << local_file_info.lastModified().toString(Qt::ISODate);
 
     qInfo(ContentManager) << Logger::getInstance().createEventLogMetaData("OBJECT_UPDATED", list);
-    if (MyInventoryTable != Q_NULLPTR)
-        MyInventoryTable->updateFileStatus(remote_file_url.toString(), DB::COMPLETE);
 
+    if (MyInventoryTable != Q_NULLPTR)
+    {
+        MyInventoryTable->updateFileRecord(remote_file_url.toString(), DB::COMPLETE, local_file_info.size());
+    }
     is_request_in_progress = false;
+
     emit succeed(this);
+}
+
+void Downloader::insertDatabase()
+{
+    if (MyInventoryTable != Q_NULLPTR)
+    {
+        DB::InventoryDataset saveDataset;
+        saveDataset.resource_uri   = remote_file_url.toString();
+        saveDataset.cache_name     = local_file_info.fileName();
+        saveDataset.content_type   = content_type;
+        saveDataset.content_length = remote_size;
+        saveDataset.last_update    = QDateTime::currentDateTime();
+        saveDataset.etag           = QString::fromUtf8(remoteEtag);
+        saveDataset.expires        = QDateTime();
+        saveDataset.state          = DB::TRANSFER;
+        MyInventoryTable->replace(saveDataset);
+    }
+}
+
+bool Downloader::canStoreNewFile()
+{
+    qint64 calc = MyFreeDiscSpace->calculateNeededDiscSpaceToFree(remote_size);
+    if (calc > 0 && !MyFreeDiscSpace->freeDiscSpace(calc))
+        return false;
+
+    return true;
 }
 
 void Downloader::doDownloadError(QNetworkReply *reply)

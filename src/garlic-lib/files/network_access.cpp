@@ -37,6 +37,23 @@ void TNetworkAccess::setRemoteFileUrl(QUrl value)
     remote_file_url = value;
 }
 
+QNetworkRequest TNetworkAccess::prepareConditionalRequest(QUrl remote_url, const QDateTime& lastModifiedUtc, QString etag)
+{
+    QNetworkRequest request = prepareNetworkRequest(remote_url);
+    // if file Not exist isValid is false
+    if (lastModifiedUtc.isValid())
+    {
+        QLocale englishLocale(QLocale::English, QLocale::AnyCountry);
+        QByteArray ifModifiedSinceValue = englishLocale.toString(lastModifiedUtc, "ddd, dd MMM yyyy hh:mm:ss 'GMT'").toUtf8();
+        request.setRawHeader(QByteArray("If-Modified-Since"), ifModifiedSinceValue);
+    }
+
+    if (!etag.isEmpty())
+        request.setRawHeader(QByteArray("If-None-Match"), etag.toUtf8());
+
+    return request;
+}
+
 QNetworkRequest TNetworkAccess::prepareNetworkRequest(QUrl remote_url)
 {
     QNetworkRequest request(remote_url);
@@ -46,19 +63,5 @@ QNetworkRequest TNetworkAccess::prepareNetworkRequest(QUrl remote_url)
     request.setSslConfiguration(conf);
     request.setRawHeader(QByteArray("User-Agent"), getUserAgent());
 
-    return request;
-}
-
-QNetworkRequest TNetworkAccess::prepareNetworkWithIfModifiedRequestAndETag(QUrl remote_url, const QDateTime& lastModifiedUtc, QByteArray etag)
-{
-    QNetworkRequest request = prepareNetworkRequest(remote_url);
-    // if file Not exist isValid is false
-    if (lastModifiedUtc.isValid())
-    {
-        QLocale englishLocale(QLocale::English, QLocale::AnyCountry);
-        QByteArray ifModifiedSinceValue = englishLocale.toString(lastModifiedUtc, "ddd, dd MMM yyyy hh:mm:ss 'GMT'").toUtf8();
-        request.setRawHeader(QByteArray("If-Modified-Since"), ifModifiedSinceValue);
-        request.setRawHeader(QByteArray("If-None-Match"), etag);
-    }
     return request;
 }

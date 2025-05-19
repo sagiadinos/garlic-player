@@ -94,6 +94,7 @@ void LibFacade::initParserWithTemporaryFile(QString uri)
     MyIndexManager.data()->lookUpForUpdatedIndex();
    // loadIndex();
 }
+
 void LibFacade::setConfigFromExternal(QString config_path, bool restart_smil_parsing)
 {
     MyXMLConfiguration.reset(new SmilHead::XMLConfiguration(MyInventoryTable.data(), MyConfiguration.data(), MyFreeDiscSpace.data(), this));
