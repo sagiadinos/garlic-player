@@ -39,12 +39,12 @@ namespace DB
             ~InventoryTable();
             bool init(QString path);
             bool replace(InventoryDataset dataset);
-            InventoryDataset findByResourceURI(QString resource_uri);
             void updateFileStatusAndSize(QString resource_uri, int state, int size);
             void deleteByResourceURI(QString resource_uri);
             void deleteByCacheName(QString cache_name);
             QList<DB::InventoryDataset> findPaginated(int max_results, int begin = 0);
             QList<InventoryDataset> findAll();
+            DB::InventoryDataset findByCacheName(QString filename);
             DB::InventoryDataset findByCacheBaseName(QString base_name);
             void setDbPath(QString path);
         protected:

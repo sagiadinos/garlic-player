@@ -48,10 +48,10 @@ bool DB::InventoryTable::replace(DB::InventoryDataset dataset)
 
 }
 
-DB::InventoryDataset DB::InventoryTable::findByResourceURI(QString resource_uri)
+DB::InventoryDataset DB::InventoryTable::findByCacheName(QString filename)
 {
     QSqlQuery query(db);
-    if (!query.exec("SELECT * FROM inventory WHERE resource_uri ='" +resource_uri+"'"))
+    if (!query.exec("SELECT * FROM inventory WHERE cache_name ='" +filename+"' ORDER BY last_update DESC LIMIT 1"))
         qCritical(Database) << "select failed" << query.lastError().text();
 
     if (!query.first())
