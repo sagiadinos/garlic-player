@@ -103,8 +103,7 @@ void Downloader::checkStatusCode(QNetworkReply *reply, int status_code)
         case 304:
         default:
             qWarning(Develop) << "status code: " << status_code << "not handled for " << remote_file_url.toString();
-            is_request_in_progress = false;
-            emit notmodified(this);
+            emitNotModified(reply);
         break;
     }
     return;
@@ -146,6 +145,10 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         qWarning() << remote_file_url.toString() << " Server did not replied with Last-Modified to HEAD request";
     }
 
+
+    QDateTime remote_last_modified = reply->header(QNetworkRequest::LastModifiedHeader).toDateTime();
+    remote_size                    = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
+
     if (reply->hasRawHeader("etag"))
     {
         remoteEtag = reply->rawHeader("etag").trimmed();
@@ -156,15 +159,17 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
             remoteEtag = remoteEtag.mid(3, remoteEtag.length() - 4);
 
         if (currentDataset.etag == remoteEtag)
-            emit notmodified(this);
+        {
+            qDebug() << remote_file_url.toString() << " no need for update";
+            emitNotModified(reply);
+            return;
+        }
         else
             prepareDownload(reply);
 
         return;
     }
 
-    QDateTime remote_last_modified = reply->header(QNetworkRequest::LastModifiedHeader).toDateTime();
-    remote_size                    = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
 
     // Fallback
     // we need to check for size and last Modified, cause a previous index smil on the server can have a older Date and would not be loaded
@@ -177,9 +182,7 @@ void Downloader::checkHttpHeaders(QNetworkReply *reply)
         )
     {
         qDebug() << remote_file_url.toString() << " no need for update";
-        is_request_in_progress = false;
-        emit notmodified(this);
-        reply->deleteLater();
+        emitNotModified(reply);
         return;
     }
 
@@ -267,6 +270,13 @@ bool Downloader::canStoreNewFile()
         return false;
 
     return true;
+}
+
+void Downloader::emitNotModified(QNetworkReply *reply)
+{
+    is_request_in_progress = false;
+    emit notmodified(this);
+    reply->deleteLater();
 }
 
 void Downloader::doDownloadError(QNetworkReply *reply)
