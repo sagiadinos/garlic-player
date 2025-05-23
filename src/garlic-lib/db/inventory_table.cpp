@@ -28,20 +28,20 @@ bool DB::InventoryTable::init(QString path)
 bool DB::InventoryTable::replace(DB::InventoryDataset dataset)
 {
     QSqlQuery query(db);
-    QString   sql = "REPLACE INTO inventory (resource_uri, cache_name, content_type, content_length, last_update, expires, state, etag ) \
-               VALUES( \
-                   '" + dataset.resource_uri + "', \
-                   '" + dataset.cache_name + "', \
-                   '" + dataset.content_type + "', \
-                   " + QString::number(dataset.content_length) + ", \
-                   '" + dataset.last_update.toString() + "', \
-                   '" + dataset.expires.toString() + "', \
-                   " + QString::number(dataset.state) + ", \
-                   '" + dataset.etag + "' \
-                )";
+    QString   sql;
+    if (countByCacheName(dataset.cache_name) > 0)
+        sql = buildInsertSql(dataset);
+    else if (countByCacheName(dataset.cache_name) == -1)
+    {
+        qCritical(Database) << "replase failed" << sql << query.lastError().text();
+        return false;
+    }
+    else
+        sql = buildUpdateSql(dataset);
+
     if (!query.exec(sql))
     {
-        qCritical(Database) << "replace/insert failed" << sql << query.lastError().text();
+        qCritical(Database) << "replace failed" << sql << query.lastError().text();
         return false;
     }
     return true;
@@ -59,6 +59,7 @@ DB::InventoryDataset DB::InventoryTable::findByCacheName(QString filename)
 
     return collectResult(&query);
 }
+
 
 void DB::InventoryTable::updateFileStatusAndSize(QString resource_uri, int state, int size)
 {
@@ -125,7 +126,6 @@ QList<DB::InventoryDataset> DB::InventoryTable::findPaginated(int max_results, i
     while (query.next());
 
     return result;
-
 }
 
 
@@ -134,13 +134,12 @@ void DB::InventoryTable::setDbPath(QString path)
     db_file.setFileName(path+"garlic.db");
 }
 
-
 bool DB::InventoryTable::createTable()
 {
     QSqlQuery query(db);
     QString sql = "CREATE TABLE inventory ( \
                   resource_uri TEXT PRIMARY KEY, \
-                  cache_name TEXT, \
+                  cache_name TEXT UNIQUE, \
                   content_type TEXT, \
                   content_length INTEGER, \
                   last_update TEXT, \
@@ -162,6 +161,19 @@ bool DB::InventoryTable::createTable()
     return true;
 }
 
+bool DB::InventoryTable::dropTable(QString tableName)
+{
+    QSqlQuery query(db);
+    QString sql = "DROP TABLE " + tableName;
+    if (!query.exec(sql))
+    {
+        qCritical(Database) << "Table "+tableName+" could not dropped" << query.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+
 bool DB::InventoryTable::openDbFile()
 {
     db.setDatabaseName(db_file.fileName());
@@ -172,14 +184,21 @@ bool DB::InventoryTable::openDbFile()
     }
     if (tableExists("inventory") && !hasField("inventory", "etag"))
     {
-        QSqlQuery query(db);
-        qCritical(Database) << "database file" << db_file.fileName() << " etag coould not be created";
-        return query.exec("ALTER TABLE inventory ADD COLUMN etag TEXT;");
+        dropTable("inventory");
+        return createTable();
     }
-
+    QSqlQuery query(db);
+    if (!query.exec("SELECT EXISTS (SELECT 1 FROM pragma_index_list('inventory') AS il JOIN pragma_index_info(il.name) AS ii ON il.unique = 1 AND ii.name = 'cache_name');"))
+    {
+        qCritical(Database) << "Failed to execute query:" << query.lastError().text();
+        if (query.next() && !query.value(0).toBool())
+        {
+            dropTable("inventory");
+            return createTable();
+        }
+    }
     return true;
 }
-
 
 bool DB::InventoryTable::createDbFile()
 {
@@ -192,6 +211,48 @@ bool DB::InventoryTable::createDbFile()
     db_file.close();
     return true;
 }
+
+QString DB::InventoryTable::buildInsertSql(InventoryDataset dataset)
+{
+    return "INSERT INTO inventory (resource_uri, cache_name, content_type, content_length, last_update, expires, state, etag ) \
+    VALUES( \
+            '" + dataset.resource_uri + "', \
+            '" + dataset.cache_name + "', \
+            '" + dataset.content_type + "', \
+            " + QString::number(dataset.content_length) + ", \
+            '" + dataset.last_update.toString() + "', \
+            '" + dataset.expires.toString() + "', \
+            " + QString::number(dataset.state) + ", \
+            '" + dataset.etag + "' \
+        )";
+}
+
+QString DB::InventoryTable::buildUpdateSql(InventoryDataset dataset)
+{
+    return "UPDATE inventory SET \
+           resource_uri = '" + dataset.resource_uri + "', \
+           content_type = '" + dataset.content_type + "', \
+           content_length = " + QString::number(dataset.content_length) + ", \
+           last_update = '" + dataset.last_update.toString() + "', \
+           expires = '" + dataset.expires.toString() + "', \
+           state = " + QString::number(dataset.state) + ", \
+           etag = '" + dataset.etag + "' \
+           WHERE cache_name = '" + dataset.cache_name + "'";
+}
+
+int DB::InventoryTable::countByCacheName(QString cacheName)
+{
+    QSqlQuery query(db);
+    if (!query.exec("SELECT COUNT(cache_name) FROM inventory WHERE cache_name ='" +cacheName+"'"))
+        return -1;
+
+    int count = 0;
+    if (query.next())
+        count = query.value(0).toInt();
+
+    return count;
+}
+
 
 bool DB::InventoryTable::hasField(const QString &tableName, const QString &fieldName)
 {
@@ -207,11 +268,9 @@ bool DB::InventoryTable::hasField(const QString &tableName, const QString &field
 
 bool DB::InventoryTable::tableExists(const QString &tableName)
 {
-
     QSqlQuery query(db);
     if (!query.exec(
-            QString("SELECT name FROM sqlite_master "
-                    "WHERE type='table' AND name='%1'")
+            QString("SELECT name FROM sqlite_master WHERE type='table' AND name='%1'")
                 .arg(tableName)))
         return false;
     return query.next();

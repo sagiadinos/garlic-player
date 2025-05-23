@@ -47,13 +47,17 @@ namespace DB
             DB::InventoryDataset findByCacheName(QString filename);
             DB::InventoryDataset findByCacheBaseName(QString base_name);
             void setDbPath(QString path);
-        protected:
+        private:
             QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
             QFile db_file;
             bool createDbFile();
             bool openDbFile();
             bool createTable();
+            bool dropTable(QString tableName);
             bool tableExists(const QString &tableName);
+            QString buildInsertSql(InventoryDataset dataset);
+            QString buildUpdateSql(InventoryDataset dataset);
+            int countByCacheName(QString cacheName);
             bool hasField(const QString &tableName, const QString &fieldName);
             InventoryDataset collectResult(QSqlQuery *query);
     };
